@@ -1,0 +1,2 @@
+del keyword_translate_table.properties
+native2ascii -encoding utf8 keyword_translate_table_utf8.properties keyword_translate_table.properties
