@@ -10,16 +10,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import parser.L;
-import parser.P;
-import parser.T;
-import translator.model.ChWrongMessage;
-import translator.model.DbField;
-import translator.model.DbTable;
-import translator.model.EquationModel;
-import translator.model.NoSuchFieldException;
-import translator.model.NoSuchTableException;
-import translator.model.QueryModel;
+import parser.*;
+import translator.model.*;
 
 import antlr.ANTLRException;
 import antlr.CharStreamIOException;
@@ -43,6 +35,18 @@ import antlr.TokenStreamRetryException;
  */
 public class Translator {
   private static final String KEYWORD_TRANSLATE_TABLE = "keyword_translate_table";
+  private static final String CN_KEY_WORDS = "cnKeyWords";
+  
+  public static final String CNKEY_WORDS = "cnKeyWords";
+  public static final String CNKEY_FUNC = "cnFunc";
+  public static final String CNKEY_OPERSYMBOL = "operSymbol";
+  public static final String CNKEY_NUMBERSYMBOL = "numberSymbol";
+
+  public static final String SELECT = "select";
+  public static final String COLUMN = "column";
+  public static final String FROM = "from";
+  public static final String WHERE = "where";
+
   private String chQuery;
   private String enQuery;
   private Map mapKeyword = new HashMap();
@@ -66,7 +70,7 @@ public class Translator {
     while (keys.hasMoreElements()) {
       String key = keys.nextElement().toString();
       String val = bundle.getString(key);
-      mapKeyword.put(val, key);
+      mapKeyword.put(key, val);
     }
   }
 
@@ -77,6 +81,24 @@ public class Translator {
       ret[i++]=(String)it.next();
     return ret;
   }
+  
+  public String getCnKeyWords(String keyName) {
+    String[] cnKeyWordsArr = new String[]{CNKEY_WORDS, CNKEY_FUNC, CNKEY_OPERSYMBOL, CNKEY_NUMBERSYMBOL};
+    
+    String cnKeyWords = "";
+    ResourceBundle bundle = ResourceBundle.getBundle(CN_KEY_WORDS, Locale.CHINESE);
+    if (keyName == null || keyName.equals("")){
+      for (int i = 0; i < cnKeyWordsArr.length; i++){
+        cnKeyWords +=  bundle.getString(cnKeyWordsArr[i]);
+        if (i < cnKeyWordsArr.length - 1)
+          cnKeyWords += ",";
+      }
+    }else{
+      cnKeyWords = bundle.getString(keyName);
+    }
+    return cnKeyWords;
+  }
+  
 /*
   private String getEnQuery() {
     return enQuery;
@@ -119,12 +141,12 @@ public class Translator {
   public void setTableInfo(DbTable[] tables) {
     for (int i=0; i<tables.length; i++) {
       if (tables[i].getEnName()==null)
-        antlrExceptions.add(new NoSuchTableException(tables[i].getChName()));
+        antlrExceptions.add(new NoSuchDbTableException(tables[i].getChName()));
       DbField[] fields=tables[i].getFields();
       for (int j=0; j<fields.length; j++) {
         if (fields[j].getEnName()==null)
           antlrExceptions.add(
-              new NoSuchFieldException(tables[i].getChName(), fields[j].getChName()));
+              new NoSuchDbFieldException(tables[i].getChName(), fields[j].getChName()));
       }
       if (queryModel!=null)
         queryModel.addTableInfo(tables[i]);
@@ -180,39 +202,72 @@ public class Translator {
     // TODO 如果chQuery==null抛出异常
     return chQuery;
   }
-
+  private void initTranslator(String query) {
+    this.mapEn2Ch.clear();
+    this.mapPosEn2Ch.clear();
+    this.antlrExceptions.clear();
+    this.chWrongMessages.clear();
+    
+    this.chQuery = query;
+    this.enQuery = "";
+  }
   /**
    * 设置中文查询语句，准备进行语法验证与翻译
    * @param chQuery
    */
   public void setChQuery(String chQuery) {
-    this.mapEn2Ch.clear();
-    this.mapPosEn2Ch.clear();
-    this.antlrExceptions.clear();
-    this.chWrongMessages.clear();
-    
-    this.chQuery = chQuery;
-    this.enQuery = "";
+    initTranslator(chQuery);
     translateQuery();
   }
 
+  public void setChSegment(String segment_type, String chSegment) {
+    initTranslator(chSegment);
+    if (chQuery == null || chQuery.equals("")) {
+      enQuery = "";
+      return;
+    }
+    enQuery = segment_type+" "+chQuery;
+
+    translateKeyword();
+
+    lexer=new L(new StringReader(enQuery));
+    parser=new P(lexer);
+    tree=new T();
+    
+    try {
+      parser.segment();
+      CommonAST parserTree=(CommonAST)parser.getAST();
+      enQuery=tree.segment(parserTree);
+      queryModel=new SegmentModel(enQuery);
+    } catch (RecognitionException e) {
+      antlrExceptions.add(e);
+    } catch (TokenStreamException e) {
+      antlrExceptions.add(e);
+    }
+
+  }
+  
   /**
    * 设置中文条件语句，准备进行语法验证与翻译
    * @param equation
    */
   public void setChEquation(String equation) {
-    this.mapEn2Ch.clear();
-    this.mapPosEn2Ch.clear();
-    this.antlrExceptions.clear();
-    this.chWrongMessages.clear();
-
-    this.chQuery=equation;
-    this.enQuery="";
-    translateEquation();
-    
-    queryModel=new EquationModel(enQuery);
+    setChSegment(WHERE, equation);
+//    initTranslator(equation);
+//    translateEquation();
+//    
+//    queryModel=new EquationModel(enQuery);
   }
-  
+
+  public void setChColumnList(String columnList) {
+    setChSegment(SELECT, columnList);
+//    initTranslator(columnList);
+//    translateColumnList();
+//    
+//    queryModel=new ColumnListModel(enQuery);
+  }
+
+/*
   private void translateEquation() {
     if (chQuery == null || chQuery.equals("")) {
       enQuery = "";
@@ -240,6 +295,40 @@ public class Translator {
     }
   }
 
+  public void setChColumnList(String columnList) {
+    initTranslator(columnList);
+    translateColumnList();
+    
+    queryModel=new ColumnListModel(enQuery);
+  }
+
+  private void translateColumnList() {
+    if (chQuery == null || chQuery.equals("")) {
+      enQuery = "";
+      return;
+    }
+    enQuery = chQuery;
+
+    translateKeyword();
+    parseColumnList();
+  }
+  
+  private void parseColumnList() {
+    lexer=new L(new StringReader(enQuery));
+    parser=new P(lexer);
+    tree=new T();
+    
+    try {
+      parser.columnList();
+      CommonAST parserTree=(CommonAST)parser.getAST();
+      enQuery=tree.columnList(parserTree);
+    } catch (RecognitionException e) {
+      antlrExceptions.add(e);
+    } catch (TokenStreamException e) {
+      antlrExceptions.add(e);
+    }
+  }
+*/
   public QueryModel getQueryModel() {
     return queryModel;
   }
@@ -260,7 +349,7 @@ public class Translator {
     tree=new T();
 
     try {
-      parser.statement();
+      parser.query();
       CommonAST parserTree=(CommonAST)parser.getAST();
 //      enQuery=tree.statement(parserTree);
       queryModel=tree.statement(parserTree);
@@ -349,10 +438,10 @@ public class Translator {
       ret=translateException((TokenStreamRecognitionException)exception);
     if (exception instanceof TokenStreamRetryException)
       ret=translateException((TokenStreamRetryException)exception);
-    if (exception instanceof NoSuchTableException)
-      ret=translateException((NoSuchTableException)exception);
-    if (exception instanceof NoSuchFieldException)
-      ret=translateException((NoSuchFieldException)exception);
+    if (exception instanceof NoSuchDbTableException)
+      ret=translateException((NoSuchDbTableException)exception);
+    if (exception instanceof NoSuchDbFieldException)
+      ret=translateException((NoSuchDbFieldException)exception);
     return ret;
   }
   
@@ -413,7 +502,7 @@ public class Translator {
     msg.setMessage("无法识别的关键字 '"+tokenCh+"'");
     msg.setLine(exception.line);
     msg.setColumn(getChPos(exception.line, exception.column));
-    msg.setLength(token.length());
+    msg.setLength((token==null)?0:token.length());
     return msg;
   }
 
@@ -456,13 +545,13 @@ public class Translator {
     return msg;
   }
 
-  private ChWrongMessage translateException(NoSuchTableException exception) {
+  private ChWrongMessage translateException(NoSuchDbTableException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage("不存在表 \""+exception.getTableName()+"\"");
     return msg;
   }
   
-  private ChWrongMessage translateException(NoSuchFieldException exception) {
+  private ChWrongMessage translateException(NoSuchDbFieldException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(
         "表 \""+exception.getTableChName()+"\" 中不存在字段 \""+exception.getFieldChName()+"\"");
