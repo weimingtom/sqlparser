@@ -1,0 +1,4 @@
+// $ANTLR 2.7.7 (2006-11-01): src/parser/getting_start.g -> GSPTokenTypes.txt$
+GSP    // output token vocab name
+QUOTED_STRING=4
+ESC=5
