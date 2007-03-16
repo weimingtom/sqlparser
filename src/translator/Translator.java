@@ -81,7 +81,7 @@ public class Translator {
       ret[i++]=(String)it.next();
     return ret;
   }
-  
+
   public String getCnKeyWords(String keyName) {
     String[] cnKeyWordsArr = new String[]{CNKEY_WORDS, CNKEY_FUNC, CNKEY_OPERSYMBOL, CNKEY_NUMBERSYMBOL};
     
@@ -98,7 +98,7 @@ public class Translator {
     }
     return cnKeyWords;
   }
-  
+
 /*
   private String getEnQuery() {
     return enQuery;
@@ -126,8 +126,8 @@ public class Translator {
 */
 
   /**
-   * »ñÈ¡µ±Ç°²éÑ¯Óï¾ä°üº¬µÄÊı¾İ¿â±í¶ÔÏóÁĞ±í£¬
-   * ÒµÎñÏµÍ³ĞèÒªµ÷ÓÃÕâ¸öº¯Êı»ñµÃÖĞÎÄ±í¶ÔÏóÁĞ±íºó´ÓÊı¾İ¿âÖĞ»ñÈ¡Ã¿¸ö±íÏàÓ¦µÄÓ¢ÎÄÃû
+   * è·å–å½“å‰æŸ¥è¯¢è¯­å¥åŒ…å«çš„æ•°æ®åº“è¡¨å¯¹è±¡åˆ—è¡¨ï¼Œ
+   * ä¸šåŠ¡ç³»ç»Ÿéœ€è¦è°ƒç”¨è¿™ä¸ªå‡½æ•°è·å¾—ä¸­æ–‡è¡¨å¯¹è±¡åˆ—è¡¨åä»æ•°æ®åº“ä¸­è·å–æ¯ä¸ªè¡¨ç›¸åº”çš„è‹±æ–‡å
    * @return
    */
   public DbTable[] getTables() {
@@ -135,7 +135,7 @@ public class Translator {
   }
 
   /**
-   * »ñÈ¡±í¸ñĞÅÏ¢£¨Ó¢ÎÄ±íÃû¡¢×Ö¶ÎÃû£©ºó½«ĞÅÏ¢ÉèÖÃ»ØqueryModel
+   * è·å–è¡¨æ ¼ä¿¡æ¯ï¼ˆè‹±æ–‡è¡¨åã€å­—æ®µåï¼‰åå°†ä¿¡æ¯è®¾ç½®å›queryModel
    * @param tables
    */
   public void setTableInfo(DbTable[] tables) {
@@ -195,11 +195,11 @@ public class Translator {
   }
 */  
   /**
-   * »ñÈ¡ÖĞÎÄ²éÑ¯Óï¾ä£¬Èç¹ûĞèÒª¼ì²é»ò´æÊı¾İ¿â
-   * @return ÖĞÎÄ²éÑ¯Óï¾ä 
+   * è·å–ä¸­æ–‡æŸ¥è¯¢è¯­å¥ï¼Œå¦‚æœéœ€è¦æ£€æŸ¥æˆ–å­˜æ•°æ®åº“
+   * @return ä¸­æ–‡æŸ¥è¯¢è¯­å¥ 
    */
   public String getChQuery() {
-    // TODO Èç¹ûchQuery==nullÅ×³öÒì³£
+    // TODO å¦‚æœchQuery==nullæŠ›å‡ºå¼‚å¸¸
     return chQuery;
   }
   private void initTranslator(String query) {
@@ -212,7 +212,7 @@ public class Translator {
     this.enQuery = "";
   }
   /**
-   * ÉèÖÃÖĞÎÄ²éÑ¯Óï¾ä£¬×¼±¸½øĞĞÓï·¨ÑéÖ¤Óë·­Òë
+   * è®¾ç½®ä¸­æ–‡æŸ¥è¯¢è¯­å¥ï¼Œå‡†å¤‡è¿›è¡Œè¯­æ³•éªŒè¯ä¸ç¿»è¯‘
    * @param chQuery
    */
   public void setChQuery(String chQuery) {
@@ -248,7 +248,7 @@ public class Translator {
   }
   
   /**
-   * ÉèÖÃÖĞÎÄÌõ¼şÓï¾ä£¬×¼±¸½øĞĞÓï·¨ÑéÖ¤Óë·­Òë
+   * è®¾ç½®ä¸­æ–‡æ¡ä»¶è¯­å¥ï¼Œå‡†å¤‡è¿›è¡Œè¯­æ³•éªŒè¯ä¸ç¿»è¯‘
    * @param equation
    */
   public void setChEquation(String equation) {
@@ -368,7 +368,7 @@ public class Translator {
   }
 
   /**
-   * »ñÈ¡ÖĞÎÄ´íÎó¶ÔÏó£¬¸øÇ°Ì¨½øĞĞ´íÎóÌáÊ¾
+   * è·å–ä¸­æ–‡é”™è¯¯å¯¹è±¡ï¼Œç»™å‰å°è¿›è¡Œé”™è¯¯æç¤º
    * @return
    */
   public ChWrongMessage[] showWrongMsgs() {
@@ -468,8 +468,8 @@ public class Translator {
     inputCh=inputCh==null?input:inputCh;
 
     String message=
-      "´íÎóÊäÈë£¬ĞèÒª \""+expectingCh+"\" "+
-      " Êµ¼ÊÊäÈë \""+inputCh+"\"";
+      "é”™è¯¯è¾“å…¥ï¼Œéœ€è¦ \""+expectingCh+"\" "+
+      " å®é™…è¾“å…¥ \""+inputCh+"\"";
     msg.setMessage(message);
     msg.setLength(inputCh.length());
     return msg;
@@ -499,7 +499,7 @@ public class Translator {
     ChWrongMessage msg=new ChWrongMessage();
     String token=exception.token.getText();
     String tokenCh=translateEn2Ch(token);
-    msg.setMessage("ÎŞ·¨Ê¶±ğµÄ¹Ø¼ü×Ö '"+tokenCh+"'");
+    msg.setMessage("æ— æ³•è¯†åˆ«çš„å…³é”®å­— '"+tokenCh+"'");
     msg.setLine(exception.line);
     msg.setColumn(getChPos(exception.line, exception.column));
     msg.setLength((token==null)?0:token.length());
@@ -534,7 +534,7 @@ public class Translator {
     msg.setLength(-1);
     char ch=0;
     ch=chQuery.charAt(msg.getColumn()-1);
-    msg.setMessage("·Ç·¨×Ö·û'"+ch+"'");
+    msg.setMessage("éæ³•å­—ç¬¦'"+ch+"'");
     return msg;
   }
 
@@ -547,14 +547,14 @@ public class Translator {
 
   private ChWrongMessage translateException(NoSuchDbTableException exception) {
     ChWrongMessage msg=new ChWrongMessage();
-    msg.setMessage("²»´æÔÚ±í \""+exception.getTableName()+"\"");
+    msg.setMessage("ä¸å­˜åœ¨è¡¨ \""+exception.getTableName()+"\"");
     return msg;
   }
   
   private ChWrongMessage translateException(NoSuchDbFieldException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(
-        "±í \""+exception.getTableChName()+"\" ÖĞ²»´æÔÚ×Ö¶Î \""+exception.getFieldChName()+"\"");
+        "è¡¨ \""+exception.getTableChName()+"\" ä¸­ä¸å­˜åœ¨å­—æ®µ \""+exception.getFieldChName()+"\"");
     return msg;
   }
 
