@@ -21,8 +21,8 @@ public class TestMain {
     TestMain main=new TestMain();
 //    main.gettingStart();
     main.testSelect();
-//    main.testTranslator();
-//    main.testFragment();
+    main.testTranslator();
+    main.testFragment();
 //    System.out.println("a"+(char)32+"b");
   }
   
@@ -70,12 +70,12 @@ public class TestMain {
   }
   private void testTranslator() {
     String[] testStr=new String[] {
-        "±íºÏ²¢ ±í1£¬±í2 ´æµ½ ÁÙÊ±±í",
-        "±í±È½Ï ±í1£¬±í2 ´æµ½ tt Ìõ¼þ ²»´æÔÚ a.×Ö¶Î6 ´óÓÚ b.×Ö¶Î2 ²¢ÇÒ a.×Ö¶Î2 µÈÓÚ 'abcd' »òÕß b.×Ö¶Î1 µÈÓÚ 20",
-        "²éÑ¯ ËùÓÐ À´×Ô ±í1 Ìõ¼þ ±í1.×Ö¶Î1 µÈÓÚ 1 ²¢ÇÒ ±í1.×Ö¶Î2 °üº¬ 'abcd' ·Ö×é ±í1.×Ö¶Î2 ÅÅÐò ±í.×Ö¶Î1",
-        "²éÑ¯ AI_94´«Æ±¶ÔÕÕ±í.ÐÐºÅ, AI_94´«Æ±¶ÔÕÕ±í.»õ±ÒÂë À´×Ô AI_94´«Æ±¶ÔÕÕ±í Ìõ¼þ AI_94´«Æ±¶ÔÕÕ±í.ÐÐºÅ µÈÓÚ '01' ÅÅÐò AI_94´«Æ±¶ÔÕÕ±í.ÐÐºÅ ·Ö×é AI_94´«Æ±¶ÔÕÕ±í.ÐÐºÅ",
-        "²éÑ¯ AI_94´«Æ±¶ÔÕÕ±í.ÐÐºÅ, AI_94´«Æ±¶ÔÕÕ±í.»õ±ÒÂë, AI_94´«Æ±¶ÔÕÕ±í.ÒµÎñÀà±ð  À´×Ô AI_94´«Æ±¶ÔÕÕ±í Ìõ¼þ AI_94´«Æ±¶ÔÕÕ±í.ÐÐºÅ µÈÓÚ",
-        "²éÑ¯ [AI_94´«Æ±¶ÔÕÕ±í.ÐÐºÅ] ×÷Îª tf À´×Ô [AI_94´«Æ±¶ÔÕÕ±í] Ìõ¼þ [AI_94´«Æ±¶ÔÕÕ±í.ÐÐºÅ] µÈÓÚ \"8047\" ·Ö×é [AI_94´«Æ±¶ÔÕÕ±í.ÐÐºÅ] ÅÅÐò [AI_94´«Æ±¶ÔÕÕ±í.ÐÐºÅ]"
+        "è¡¨åˆå¹¶ è¡¨1ï¼Œè¡¨2 å­˜åˆ° ä¸´æ—¶è¡¨",
+        "è¡¨æ¯”è¾ƒ è¡¨1ï¼Œè¡¨2 å­˜åˆ° tt æ¡ä»¶ ä¸å­˜åœ¨ a.å­—æ®µ6 å¤§äºŽ b.å­—æ®µ2 å¹¶ä¸” a.å­—æ®µ2 ç­‰äºŽ 'abcd' æˆ–è€… b.å­—æ®µ1 ç­‰äºŽ 20",
+        "æŸ¥è¯¢ æ‰€æœ‰ æ¥è‡ª è¡¨1 æ¡ä»¶ è¡¨1.å­—æ®µ1 ç­‰äºŽ 1 å¹¶ä¸” è¡¨1.å­—æ®µ2 åŒ…å« 'abcd' åˆ†ç»„ è¡¨1.å­—æ®µ2 æŽ’åº è¡¨.å­—æ®µ1",
+        "æŸ¥è¯¢ AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è¡Œå·, AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è´§å¸ç  æ¥è‡ª AI_94ä¼ ç¥¨å¯¹ç…§è¡¨ æ¡ä»¶ AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è¡Œå· ç­‰äºŽ '01' æŽ’åº AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è¡Œå· åˆ†ç»„ AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è¡Œå·",
+        "æŸ¥è¯¢ AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è¡Œå·, AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è´§å¸ç , AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.ä¸šåŠ¡ç±»åˆ«  æ¥è‡ª AI_94ä¼ ç¥¨å¯¹ç…§è¡¨ æ¡ä»¶ AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è¡Œå· ç­‰äºŽ",
+        "æŸ¥è¯¢ [AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è¡Œå·] ä½œä¸º tf æ¥è‡ª [AI_94ä¼ ç¥¨å¯¹ç…§è¡¨] æ¡ä»¶ [AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è¡Œå·] ç­‰äºŽ \"8047\" åˆ†ç»„ [AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è¡Œå·] æŽ’åº [AI_94ä¼ ç¥¨å¯¹ç…§è¡¨.è¡Œå·]"
     };
     
     Translator translator=new Translator();
@@ -86,18 +86,18 @@ public class TestMain {
 //    set table info
       for (int j=0; j<tables.length; j++) {
         tables[j].setEnName("table"+j);
-        tables[j].addDbField("×Ö¶Î1", "field1");
-        tables[j].addDbField("×Ö¶Î2", "field2");
-        tables[j].addDbField("×Ö¶Î3", "field3");
-        tables[j].addDbField("×Ö¶Î4", "field4");
-        tables[j].addDbField("³®»ã±êÖ¾", "field5");
-        tables[j].addDbField("»õ±ÒÂë", "field6");
-        tables[j].addDbField("ÐÐºÅ", "field7");
-        tables[j].addDbField("Ê¡/ÊÐ´úºÅ", "field8");
-        tables[j].addDbField("ÒµÎñÀà±ð", "field9");
-        tables[j].addDbField("¹«Ë¾´úÂë", "field10");
-        tables[j].addDbField("ÕÊºÅ", "field11");
-        tables[j].addDbField("½ð¶î", "field12");
+        tables[j].addDbField("å­—æ®µ1", "field1");
+        tables[j].addDbField("å­—æ®µ2", "field2");
+        tables[j].addDbField("å­—æ®µ3", "field3");
+        tables[j].addDbField("å­—æ®µ4", "field4");
+        tables[j].addDbField("é’žæ±‡æ ‡å¿—", "field5");
+        tables[j].addDbField("è´§å¸ç ", "field6");
+        tables[j].addDbField("è¡Œå·", "field7");
+        tables[j].addDbField("çœ/å¸‚ä»£å·", "field8");
+        tables[j].addDbField("ä¸šåŠ¡ç±»åˆ«", "field9");
+        tables[j].addDbField("å…¬å¸ä»£ç ", "field10");
+        tables[j].addDbField("å¸å·", "field11");
+        tables[j].addDbField("é‡‘é¢", "field12");
       }
       translator.setTableInfo(tables);
       if (translator.hasError()) {
@@ -113,9 +113,9 @@ public class TestMain {
   }
   
   private void testFragment() {
-    String equation="[a.×Ö/¶Î6] ´óÓÚ [b.×Ö¶Î3] ²¢ÇÒ [a.×Ö¶Î2] µÈÓÚ 'abcd' »òÕß [b.×Ö¶Î1] µÈÓÚ 'abcd'";
-    String columnList="[a.×Ö/¶Î6] ¼Ó [b.×Ö¶Î2]+([a.×Ö¶Î2])£¬[a.×Ö¶Î2]£¬[b.×Ö¶Î1]";
-    String column="[a.×Ö/¶Î6] ¼Ó [b.×Ö¶Î2]+([a.×Ö¶Î2])";
+    String equation="[a.å­—/æ®µ6] å¤§äºŽ [b.å­—æ®µ3] å¹¶ä¸” [a.å­—æ®µ2] ç­‰äºŽ 'abcd' æˆ–è€… [b.å­—æ®µ1] ç­‰äºŽ 'abcd'";
+    String columnList="[a.å­—/æ®µ6] åŠ  [b.å­—æ®µ2]+([a.å­—æ®µ2])ï¼Œ[a.å­—æ®µ2]ï¼Œ[b.å­—æ®µ1]";
+    String column="[a.å­—/æ®µ6] åŠ  [b.å­—æ®µ2]+([a.å­—æ®µ2])";
     Translator translator=new Translator();
     translator.setChSegment(Translator.COLUMN, column);
     System.out.println(translator.getChQuery());
@@ -127,12 +127,12 @@ public class TestMain {
 //  set table info
     for (int j=0; j<tables.length; j++) {
       tables[j].setEnName("table"+j);
-      tables[j].addDbField("×Ö¶Î1", "field1");
-      tables[j].addDbField("×Ö¶Î2", "field2");
-      tables[j].addDbField("×Ö¶Î3", "field3");
-      tables[j].addDbField("×Ö¶Î4", "field4");
-      tables[j].addDbField("×Ö¶Î5", "field5");
-      tables[j].addDbField("×Ö/¶Î6", "field6");
+      tables[j].addDbField("å­—æ®µ1", "field1");
+      tables[j].addDbField("å­—æ®µ2", "field2");
+      tables[j].addDbField("å­—æ®µ3", "field3");
+      tables[j].addDbField("å­—æ®µ4", "field4");
+      tables[j].addDbField("å­—æ®µ5", "field5");
+      tables[j].addDbField("å­—/æ®µ6", "field6");
     }
     translator.setTableInfo(tables);
 
