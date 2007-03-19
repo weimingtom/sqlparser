@@ -7,6 +7,8 @@ import java.util.Map;
 public class DbTable {
   private String chName;
   private String enName;
+  private boolean existInFromClause;
+  
   private Map chFields = new HashMap();
 
   // private Map enFields=new HashMap();
@@ -79,5 +81,13 @@ public class DbTable {
     for (Iterator it = chFields.values().iterator(); it.hasNext();)
       ret[i++] = (DbField) it.next();
     return ret;
+  }
+
+  public boolean isExistInFromClause() {
+    return existInFromClause;
+  }
+
+  public void setExistInFromClause(boolean existInFromClause) {
+    this.existInFromClause = existInFromClause;
   }
 }

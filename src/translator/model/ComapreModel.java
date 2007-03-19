@@ -8,8 +8,8 @@ public class ComapreModel extends QueryModel {
   private String chTable1, chTable2, intoTable, method, equation;
   
   public ComapreModel(String chTable1, String chTable2, String intoTable, String method, String equation) {
-    this.chTable1=chTable1;
-    this.chTable2=chTable2;
+    this.chTable1=chTable1.substring(1, chTable1.length()-1);
+    this.chTable2=chTable2.substring(1, chTable2.length()-1);
     this.intoTable=intoTable;
     this.method=method;
     this.equation=equation;
@@ -18,7 +18,7 @@ public class ComapreModel extends QueryModel {
   public String getEnQuery() {
     DbTable t1=(DbTable)chTableMap.get(chTable1);
     DbTable t2=(DbTable)chTableMap.get(chTable2);
-    String equ=translateField(equation);
+    String equ=translateFieldCh2En(equation);
     return replace(
         compareStr,
         new String[]{"_INTO_TABLE_NAME_", "_TABLE1_", "_TABLE2_", "_METHOD_", "_CONDITION_"},

@@ -6,7 +6,7 @@ public class ColumnListModel extends QueryModel {
     this.columnList=columnList;
   }
   public String getEnQuery() {
-    return translateField(columnList);
+    return translateFieldCh2En(columnList);
   }
 
 }
