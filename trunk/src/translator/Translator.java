@@ -142,6 +142,8 @@ public class Translator {
     for (int i=0; i<tables.length; i++) {
       if (tables[i].getEnName()==null)
         antlrExceptions.add(new NoSuchDbTableException(tables[i].getChName()));
+      if (!tables[i].isExistInFromClause())
+        antlrExceptions.add(new TableNotInFromClause(tables[i].getChName()));
       DbField[] fields=tables[i].getFields();
       for (int j=0; j<fields.length; j++) {
         if (fields[j].getEnName()==null)
@@ -239,6 +241,8 @@ public class Translator {
       CommonAST parserTree=(CommonAST)parser.getAST();
       enQuery=tree.segment(parserTree);
       queryModel=new SegmentModel(enQuery);
+      queryModel.setMapEn2Ch(mapEn2Ch);
+      queryModel.setChQuery(chQuery);
     } catch (RecognitionException e) {
       antlrExceptions.add(e);
     } catch (TokenStreamException e) {
@@ -253,18 +257,10 @@ public class Translator {
    */
   public void setChEquation(String equation) {
     setChSegment(WHERE, equation);
-//    initTranslator(equation);
-//    translateEquation();
-//    
-//    queryModel=new EquationModel(enQuery);
   }
 
   public void setChColumnList(String columnList) {
     setChSegment(SELECT, columnList);
-//    initTranslator(columnList);
-//    translateColumnList();
-//    
-//    queryModel=new ColumnListModel(enQuery);
   }
 
 /*
@@ -349,10 +345,11 @@ public class Translator {
     tree=new T();
 
     try {
-      parser.query();
+      parser.statement();
       CommonAST parserTree=(CommonAST)parser.getAST();
-//      enQuery=tree.statement(parserTree);
       queryModel=tree.statement(parserTree);
+      queryModel.setMapEn2Ch(mapEn2Ch);
+      queryModel.setChQuery(chQuery);
     } catch (RecognitionException e) {
       antlrExceptions.add(e);
     } catch (TokenStreamException e) {
@@ -405,12 +402,14 @@ public class Translator {
         mapNewPos.put(p, o);
       }
       mapPosEn2Ch=mapNewPos;
-      ret=ret.replaceFirst(from, to);
+      String f="\\Q"+from+"\\E";
+      ret=ret.replaceFirst(f, to);
     }
     return ret;
   }
 
   private void translateExceptions() {
+    chWrongMessages.clear();
     for (Iterator it=antlrExceptions.iterator(); it.hasNext();) {
       ChWrongMessage msg=translateException((ANTLRException)it.next());
       if (msg!=null)
@@ -442,6 +441,8 @@ public class Translator {
       ret=translateException((NoSuchDbTableException)exception);
     if (exception instanceof NoSuchDbFieldException)
       ret=translateException((NoSuchDbFieldException)exception);
+    if (exception instanceof TableNotInFromClause)
+      ret=translateException((TableNotInFromClause)exception);
     return ret;
   }
   
@@ -557,7 +558,13 @@ public class Translator {
         "表 \""+exception.getTableChName()+"\" 中不存在字段 \""+exception.getFieldChName()+"\"");
     return msg;
   }
-
+  
+  private ChWrongMessage translateException(TableNotInFromClause exception) {
+    ChWrongMessage msg=new ChWrongMessage();
+    msg.setMessage(
+        "表 \""+exception.getTableName()+"\" 没有在 [来自] 段出现");
+    return msg;
+  }
   private int getChPos(int line, int enPos) {
     int ret=enPos-2;
     for (int i=ret; i>=0; i--) {
@@ -570,6 +577,12 @@ public class Translator {
 
   public boolean hasError() {
     return antlrExceptions.size()>0;
+  }
+
+  public void setSegmentTableInfo(DbTable[] tables) {
+    for (int i=0; i<tables.length; i++)
+      tables[i].setExistInFromClause(true);
+    setTableInfo(tables);
   }
 
 }

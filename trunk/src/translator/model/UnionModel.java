@@ -9,8 +9,8 @@ public class UnionModel extends QueryModel {
   private String chTable1, chTable2, chIntoTable;
   
   public UnionModel(String t1, String t2, String into) {
-    this.chTable1=t1;
-    this.chTable2=t2;
+    this.chTable1=t1.substring(1, t1.length()-1);
+    this.chTable2=t2.substring(1, t2.length()-1);
     this.chIntoTable=into;
   }
   

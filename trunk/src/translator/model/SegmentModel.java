@@ -8,8 +8,8 @@ public class SegmentModel extends QueryModel {
   }
   
   public String getEnQuery() {
-    String ret=translateField(segment);
-    return translateTable(ret);
+    String ret=translateFieldCh2En(segment);
+    return translateTableCh2En(ret);
   }
 
 }

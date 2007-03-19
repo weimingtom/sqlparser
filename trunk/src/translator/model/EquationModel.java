@@ -8,7 +8,7 @@ public class EquationModel extends QueryModel {
   }
 
   public String getEnQuery() {
-    return translateField(equation);
+    return translateFieldCh2En(equation);
   }
 
 }

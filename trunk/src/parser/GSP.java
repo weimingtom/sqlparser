@@ -48,7 +48,7 @@ public GSP(ParserSharedInputState state) {
 		
 		try {      // for error handling
 			n = LT(1);
-			match(QUOTED_STRING);
+			match(START);
 			System.out.println("You input: "+n.getText());
 		}
 		catch (RecognitionException ex) {
@@ -63,8 +63,7 @@ public GSP(ParserSharedInputState state) {
 		"EOF",
 		"<2>",
 		"NULL_TREE_LOOKAHEAD",
-		"QUOTED_STRING",
-		"ESC"
+		"START"
 	};
 	
 	private static final long[] mk_tokenSet_0() {

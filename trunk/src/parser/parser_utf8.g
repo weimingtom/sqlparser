@@ -15,7 +15,9 @@ tokens {
 	EQUATION_START;
 	SELECT_STATEMENT;
 	GROUP_CLAUSE;
+	UNION_CLAUSE;
 	ORDER_CLAUSE;
+	FIELD_NAME;
 }
 
 segment
@@ -25,9 +27,6 @@ segment
 	|	WHERE equations)
 	EOF!
 	;
-
-query
-	:	statement (SEMI! statement)* EOF!;
 
 statement
 	:	(tableUnion
@@ -51,7 +50,6 @@ tableSelect
 		{
 			#tableSelect.addChild(astFactory.create(GROUP_CLAUSE, "G_C"));
 			#tableSelect.addChild(astFactory.create(ORDER_CLAUSE, "O_C"));
-//			System.out.println(#tableSelect.toStringList());
 		}
 	;
 
@@ -60,7 +58,7 @@ selectClause
 	;
 
 groupClause
-	:	GROUP_BY (ALL^)? columnList
+	:	GROUP_BY columnList
 	;
 	
 orderClause
@@ -68,28 +66,34 @@ orderClause
 	;
 
 unionClause
-	:	UNION^ (ALL)? tableSelect
+	:	(UNION^ (ALL)?)+
 	;
 	
-columnList
-	:	column (COMMA^ columnList)?
-	;
-
 fieldList
 	:	fieldName (COMMA^ fieldList)?
 	;
 	
-column
-	:	func
-	|	equElem
-	|	(STAR)=>STAR
-		{#column=#([ALL_FIELDS]);}
+columnList
+	:	(ALL|DISTINCT)? columns
+	;
+	
+columns
+	:	column (COMMA^ column)*
 	;
 
-func:	FUNC_NAME^ LPAREN! (ALL|DISTINCT)? funcArgs RPAREN!;
+column
+	:	equElem
+	|	(STAR)=>STAR
+		{#column=#([ALL_FIELDS]);}
+	|	ALL_FIELDS
+	;
 
 funcArgs
 	:	equElem (COMMA^ equElem)*;
+
+fromClauseTableList
+	:	tableList
+	;
 
 tableList
 	:	tableName (COMMA^ tableName)*
@@ -106,25 +110,29 @@ equations
 
 equation
 	:	equElem COMPARATOR^ equElem
+//	|	JOIN
 //	|	(fieldName BETWEEN^)=>fieldName BETWEEN^ constant AND! constant
 	;
 
 tableName
 	:	ID
-	|	NAME_START! ID NAME_END!
+	|	NAME_START! tableName NAME_END!
 	;
 
 equElem
-	:	elem ((OPERATOR^|STAR^) equElem )?
+	:	elem ((OPERATOR^|STAR^) equElem)?
 	|	LPAREN equElem RPAREN (OPERATOR^ equElem)?
 	;
 
 elem:	fieldName (AS^ ID)?
 	|	constant
+	|	func
 	;
 
+func:	FUNC_NAME^ LPAREN! (ALL|DISTINCT)? funcArgs RPAREN!;
+
 fieldName
-	:	tableName POINT^ ID
+	:	ID POINT^ ID
 	|	NAME_START! fieldName NAME_END!
 	;
 
@@ -138,7 +146,7 @@ class L extends Lexer;
 
 options {
 	k=5;
-	charVocabulary = '\u0001' .. '\uFFFE';
+	charVocabulary = '\u0000' .. '\uFFFE';
 	testLiterals=false;
 	caseSensitive = false;
 	caseSensitiveLiterals = false;
@@ -150,7 +158,7 @@ TABLE_UNION
 TABLE_COMPARE
 	:	"t_compare";
 TABLE_SELECT
-	:	"select";
+	:	"select" | "ch_select";
 INTO:	"into";
 WHERE
 	:	"where";
@@ -177,6 +185,8 @@ BETWEEN
 OPERATOR
 	:	'+'|'-'|'/';
 STAR:	'*';
+ALL_FIELDS
+	:	"(*)";
 LOGIC_OP
 	:	"and"|"or";
 AS	:	"as";
@@ -194,14 +204,14 @@ FUNC_NAME
 	|	"sum"
 	|	"right"
 	|	"ltrim"
-	|	"rtrim"	// 去掉右空格
-	|	"substring"	// 字符串截取
-	|	"char_length"	// 求字符串的长度
-	|	"floor"	// 求四舍后的整数
-	|	"count"	// 求记录总数
-	|	"lower"	// 将字符串转为小写
-	|	"ceiling"	// 求五入后的整数
-	|	"charindex"	// 存在于
+	|	"rtrim"
+	|	"substring"
+	|	"char_length"
+	|	"floor"
+	|	"count"
+	|	"lower"
+	|	"ceiling"
+	|	"charindex"
 	|	"str"
 	;
 
@@ -210,7 +220,9 @@ COLUMN
 
 /////////////////////////////////////////////////////
 // general symbol
-ID	:	ID_START_LETTER ( ID_LETTER )*;
+ID	:	ID_START_LETTER ( ID_LETTER )*
+	;
+
 protected
 ID_START_LETTER
     :    'a'..'z'
@@ -343,6 +355,12 @@ class T extends TreeParser;
 		}
 		return table;
 	}
+	
+	private DbTable addFromTableByChName(String chName) {
+		DbTable table=addTableByChName(chName);
+		table.setExistInFromClause(true);
+		return table;
+	}
 }
 
 segment returns [String segment]
@@ -400,14 +418,16 @@ columnList returns [String clist]
 	|	elem=column
 		{clist=elem;}
 	|	ALL_FIELDS
-		{clist="*";}
+		{clist="(*)";}
+	|	ALL c1=columnList
+		{clist="ALL "+c1;}
+	|	DISTINCT c1=columnList
+		{clist="DISTINCT "+c1;}
 	;
 	
 column returns [String c]
 	{String args; c="";}
 	:	c=equElem
-	|	#(fn:FUNC_NAME args=funcArgs)
-		{c=fn.getText()+"("+args+")";}
 	;
 
 
@@ -456,7 +476,7 @@ equations returns [String equStr]
 	;
 
 equElem	returns [String equElemStr]
-	{String e1, e2, f; equElemStr="";}
+	{String e1, e2, f, args; equElemStr="";}
 	:	#(op:OPERATOR e1=equElem e2=equElem)
 		{equElemStr=e1+op.getText()+e2;}
 	|	#(star:STAR e1=equElem e2=equElem)
@@ -471,6 +491,8 @@ equElem	returns [String equElemStr]
 		{equElemStr=s.getText();}
 	|	#(AS e1=equElem tempField:ID)
 		{equElemStr=e1+" as "+tempField.getText();}
+	|	#(fn:FUNC_NAME args=funcArgs)
+		{equElemStr=fn.getText()+"("+args+")";}
 	;
 
 tableName returns [String tableStr]
@@ -478,7 +500,7 @@ tableName returns [String tableStr]
 	:	t:ID 
 		{
 			tableStr="["+t.getText()+"]";
-			addTableByChName(tableStr);
+			addFromTableByChName(t.getText());
 		}
 	;
 

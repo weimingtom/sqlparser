@@ -9,8 +9,9 @@ public abstract class QueryModel {
   protected Map mapKeyword;
   
   private String chQuery;
+  private Map mapEn2Ch;
   
-  protected String translateField(String src) {
+  protected String translateFieldCh2En(String src) {
     String ret=src;
     for (Iterator t_it=chTableMap.values().iterator(); t_it.hasNext();) {
       DbTable t=(DbTable)t_it.next();
@@ -23,13 +24,23 @@ public abstract class QueryModel {
     }
     return ret;
   }
-  protected String translateTable(String src) {
+  protected String translateTableCh2En(String src) {
     String ret=src;
     for (Iterator t_it=chTableMap.values().iterator(); t_it.hasNext();) {
       DbTable t=(DbTable)t_it.next();
       String from="["+t.getChName()+"]";
       String to=t.getEnName();
       ret=replace(ret, from, to);
+    }
+    return ret;
+  }
+  
+  protected String translateKeywordEn2Ch(String src) {
+    String ret=src;
+    for (Iterator it=mapEn2Ch.keySet().iterator(); it.hasNext();) {
+      String key=(String)it.next();
+      if (src.indexOf(key)>=0)
+        ret=replace(ret, key, (String)mapEn2Ch.get(key));
     }
     return ret;
   }
@@ -49,8 +60,14 @@ public abstract class QueryModel {
     chTableMap.put(table.getChName(), table);
   }
   
+  public void setMapEn2Ch(Map mapEn2Ch) {
+    this.mapEn2Ch=mapEn2Ch;
+  }
+  
   protected String replace(String src, String from, String to) {
 //    String f=Pattern.quote(from);
+    if (src==null)
+      return null;
     String f="\\Q"+from+"\\E";
     return src.replaceAll(f, to);
   }

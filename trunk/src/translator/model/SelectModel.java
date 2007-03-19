@@ -22,11 +22,11 @@ public class SelectModel extends QueryModel {
   }
   
   public String getEnQuery() {
-    String clist=translateField(columnList);
-    String tlist=translateTable(tableList);
-    String equ=translateField(equation);
-    String g=translateField(groupBy);
-    String o=translateField(orderBy);
+    String clist=translateFieldCh2En(columnList);
+    String tlist=translateTableCh2En(tableList);
+    String equ=translateFieldCh2En(equation);
+    String g=translateFieldCh2En(groupBy);
+    String o=translateFieldCh2En(orderBy);
     String ret=replace(
         selectStr,
         new String[]{"_COLUMN_LIST_", "_TABLE_LIST_", "_EQUATION_"},
@@ -53,5 +53,53 @@ public class SelectModel extends QueryModel {
   public String getChQuery() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  public String getChColumnList() {
+    return translateKeywordEn2Ch(columnList);
+  }
+
+  public String getEnColumnList() {
+    return columnList;
+  }
+  
+  public String getChEquation() {
+    return translateKeywordEn2Ch(equation);
+  }
+  
+  public String getEnEquation() {
+    return equation;
+  }
+
+  public String getChGroupBy() {
+    return groupBy;
+  }
+
+  public String getEnGroupBy() {
+    return groupBy;
+  }
+  
+  public String getChOrderBy() {
+    return orderBy;
+  }
+
+  public String getEnOrderBy() {
+    return orderBy;
+  }
+  
+  public String getChTableList() {
+    return tableList;
+  }
+  
+  public String getEnTableList() {
+    return tableList;
+  }
+
+  public SelectModel getUnionSelect() {
+    return unionSelect;
+  }
+
+  public void setUnionSelect(SelectModel unionSelect) {
+    this.unionSelect = unionSelect;
   }
 }

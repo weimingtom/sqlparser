@@ -5,6 +5,5 @@ package parser;
 public interface GSPTokenTypes {
 	int EOF = 1;
 	int NULL_TREE_LOOKAHEAD = 3;
-	int QUOTED_STRING = 4;
-	int ESC = 5;
+	int START = 4;
 }
