@@ -28,7 +28,7 @@
 			<manifest>
 				<attribute name="Main-Class" value="test.TestMain"/>
 			</manifest>
-			<zipfileset src="${dir.lib}/antlr-2.7.7.jar"/>
+			<zipfileset src="${dir.lib}/antlr.jar"/>
 		</jar>
 	</target>
 	
@@ -63,6 +63,9 @@
 
 	<target name="testAntlr"
 		description="Test antlr with a simple .g file">
+		<exec executable="native2ascii.exe">
+			<arg line="-encoding ${charset} ${parser}/getting_start_utf8.g ${parser}/getting_start.g" />
+		</exec>
     	<java classname="antlr.Tool">
 			<arg line="-o ${parser} ${parser}/getting_start.g"/>
             <classpath>
