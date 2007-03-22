@@ -23,6 +23,7 @@ public class T extends antlr.TreeParser       implements PTokenTypes
  {
 
 	Map tables=new HashMap();
+	Map fieldAliasMap = new HashMap();
 	Map segment=new HashMap();
 	
 	public DbTable[] getTables() {
@@ -47,6 +48,52 @@ public class T extends antlr.TreeParser       implements PTokenTypes
 		DbTable table=addTableByChName(chName);
 		table.setExistInFromClause(true);
 		return table;
+	}
+	
+	//Add DbTable Object By tableCnName And tableAlias
+	private DbTable addTableByChNameAndTableAlias(String chName, String tableAlias) {
+		DbTable table=(DbTable) tables.get(chName);
+		if (table==null) {
+			table=new DbTable();
+			table.setChName(chName);
+			table.setAlias(tableAlias);
+			tables.put(chName, table);
+		}else{
+			table.setAlias(tableAlias);
+			tables.put(chName, table);
+			
+		}
+		return table;
+	}
+	
+	//Add DbTable Object By tableCnName And tableAlias
+	private DbTable addFromTableByChName(String chName, String tableAlias) {
+		DbTable table=addTableByChNameAndTableAlias(chName, tableAlias);
+		table.setExistInFromClause(true);
+		return table;
+	}
+	
+	//================= Column Fields EquElement AS FieldAlias =================//
+	//Add FieldAlias Object By CnFieldAliasName
+	private DbFieldAlias addFieldAliasByChAliasName(String columnEquElem, String chAliasName){
+		DbFieldAlias _dbFieldAlias = (DbFieldAlias) fieldAliasMap.get(chAliasName);
+		if (_dbFieldAlias == null){
+			_dbFieldAlias = new DbFieldAlias();
+			_dbFieldAlias.setCnFieldAlias(chAliasName);
+			_dbFieldAlias.setColumnEquElem(columnEquElem);
+			fieldAliasMap.put(chAliasName, _dbFieldAlias);
+		}
+		return _dbFieldAlias;
+	}
+	
+	//Get ALL FieldAlias Object Array
+	public DbFieldAlias[] getDbFieldAlias() {
+		int i = 0;
+		DbFieldAlias[] _rDbFieldAlias = new DbFieldAlias[fieldAliasMap.size()];
+		for (Iterator it = fieldAliasMap.values().iterator(); it.hasNext();){
+			_rDbFieldAlias[i++] = (DbFieldAlias) it.next();
+		}
+		return _rDbFieldAlias;
 	}
 public T() {
 	tokenNames = _tokenNames;
@@ -315,11 +362,7 @@ public T() {
 		
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
-			if ((_tokenSet_0.member(_t.getType()))) {
-				c=equElem(_t);
-				_t = _retTree;
-			}
-			else if ((_t.getType()==AS)) {
+			if ((_t.getType()==AS)) {
 				AST __t132 = _t;
 				a = _t==ASTNULL ? null :(AST)_t;
 				match(_t,AS);
@@ -331,7 +374,14 @@ public T() {
 				_t = _t.getNextSibling();
 				_t = __t132;
 				_t = _t.getNextSibling();
-				c=args+" "+a.getText()+" "+d.getText();
+				
+							c=args+" "+a.getText()+" "+d.getText();
+							addFieldAliasByChAliasName(args, d.getText());
+						
+			}
+			else if ((_tokenSet_0.member(_t.getType()))) {
+				c=equElem(_t);
+				_t = _retTree;
 			}
 			else {
 				throw new NoViableAltException(_t);
@@ -466,7 +516,8 @@ public T() {
 				_t = _t.getNextSibling();
 				
 							tableStr="["+t1.getText()+"] "+a.getText()+" "+t2.getText();
-							addFromTableByChName(t1.getText());
+							//addFromTableByChName(t1.getText());
+							addFromTableByChName(t1.getText(), t2.getText());
 						
 				break;
 			}
