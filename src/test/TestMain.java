@@ -13,6 +13,7 @@ import parser.T;
 import translator.Translator;
 import translator.model.ChWrongMessage;
 import translator.model.DbField;
+import translator.model.DbFieldAlias;
 import translator.model.DbTable;
 import translator.model.QueryModel;
 import translator.model.SelectModel;
@@ -44,7 +45,6 @@ public class TestMain extends TestCase {
       model = QueryModel.createModelFromXml(xml);
       System.out.println(model);
     } catch (DocumentException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
@@ -90,12 +90,14 @@ public class TestMain extends TestCase {
   
   public void myTestChQuery() {
     String selectStr=
-      "[查询] [所有], 表1.字段1+[求和](表1.字段2) [作为] c, 表2.字段1 [来自] 表1, 表2 [作为] a, 表2 [作为] b [条件] 表1.字段1 [等于] 1.00";
+      "[查询] [所有], 表1.字段1 [作为] c, 表2.字段1, a.字段2 [来自] 表1 [作为] a, 表2";
     Translator t=new Translator();
     t.setChQuery(selectStr);
     System.out.println(t.getParser().getAST().toStringList());
+    DbFieldAlias[] _gDbFieldAliasArr = t.getDbFieldAlias();
     t.setTableInfo(setTableInfo(t.getTables()));
-    
+    t.setDbFieldAlias(setDbFieldAliasInfo(t.getDbFieldAlias()));
+    /*
     DbTable[] tables=t.getTables();
     for (int i=0; i<tables.length; i++)
       for (int j=0; j<tables[i].getFields().length; j++) {
@@ -103,6 +105,7 @@ public class TestMain extends TestCase {
         if (f.isExistInQuery())
           System.out.println(tables[i].getChName()+" "+tables[i].getEnName()+" "+f.getChName()+" "+f.getEnName());
       }
+    */
     
     if (t.hasError()) {
       ChWrongMessage[] msgs=t.showWrongMsgs();
@@ -238,7 +241,6 @@ public class TestMain extends TestCase {
         QueryModel model=QueryModel.createModelFromXml(xml[i]);
         assertNotNull(model);
       } catch (DocumentException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
@@ -261,6 +263,13 @@ public class TestMain extends TestCase {
       tables[j].addDbField("货币码", "code");
     }
     return tables;
+  }
+  
+  private DbFieldAlias[] setDbFieldAliasInfo(DbFieldAlias[] _iDbFieldAlias) {
+    for (int j = 0; j < _iDbFieldAlias.length; j++) {
+      _iDbFieldAlias[j].setEnFieldAlias("en_field_alias_" + (j + 1));
+    }
+    return _iDbFieldAlias;
   }
   
   private DbTable[] setTableInfo(DbTable[] tables, int fieldSize) {
