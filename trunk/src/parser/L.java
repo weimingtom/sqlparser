@@ -126,7 +126,7 @@ tryAgain:
 						mTABLE_COMPARE(true);
 						theRetToken=_returnToken;
 					}
-					else if ((LA(1)=='c'||LA(1)=='s') && (LA(2)=='e'||LA(2)=='h') && (LA(3)=='_'||LA(3)=='l') && (LA(4)=='e'||LA(4)=='s') && (LA(5)=='c'||LA(5)=='e')) {
+					else if ((LA(1)=='s') && (LA(2)=='e') && (LA(3)=='l') && (LA(4)=='e') && (LA(5)=='c')) {
 						mTABLE_SELECT(true);
 						theRetToken=_returnToken;
 					}
@@ -274,22 +274,7 @@ tryAgain:
 		_ttype = TABLE_SELECT;
 		int _saveIndex;
 		
-		switch ( LA(1)) {
-		case 's':
-		{
-			match("select");
-			break;
-		}
-		case 'c':
-		{
-			match("ch_select");
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
-		}
-		}
+		match("select");
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -710,13 +695,13 @@ tryAgain:
 		
 		mID_START_LETTER(false);
 		{
-		_loop76:
+		_loop79:
 		do {
 			if ((_tokenSet_5.member(LA(1)))) {
 				mID_LETTER(false);
 			}
 			else {
-				break _loop76;
+				break _loop79;
 			}
 			
 		} while (true);
@@ -807,7 +792,7 @@ tryAgain:
 		{
 		if ((LA(1)=='.')) {
 			mPOINT(false);
-			mNUM(false);
+			mDOT_NUM(false);
 		}
 		else {
 		}
@@ -837,13 +822,13 @@ tryAgain:
 		{
 			mNUM_START(false);
 			{
-			_loop83:
+			_loop89:
 			do {
 				if (((LA(1) >= '0' && LA(1) <= '9'))) {
 					mNUM_LETTER(false);
 				}
 				else {
-					break _loop83;
+					break _loop89;
 				}
 				
 			} while (true);
@@ -875,12 +860,25 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
-	protected final void mNUM_START(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+	protected final void mDOT_NUM(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = NUM_START;
+		_ttype = DOT_NUM;
 		int _saveIndex;
 		
-		matchRange('1','9');
+		{
+		int _cnt86=0;
+		_loop86:
+		do {
+			if (((LA(1) >= '0' && LA(1) <= '9'))) {
+				mNUM_LETTER(false);
+			}
+			else {
+				if ( _cnt86>=1 ) { break _loop86; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+			}
+			
+			_cnt86++;
+		} while (true);
+		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -901,6 +899,19 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
+	protected final void mNUM_START(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = NUM_START;
+		int _saveIndex;
+		
+		matchRange('1','9');
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
 	public final void mML_COMMENT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
 		_ttype = ML_COMMENT;
@@ -908,7 +919,7 @@ tryAgain:
 		
 		match("/*");
 		{
-		_loop89:
+		_loop95:
 		do {
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\ufffe')) && ((LA(4) >= '\u0000' && LA(4) <= '\ufffe')) && (true)) {
 				match('\r');
@@ -932,7 +943,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop89;
+				break _loop95;
 			}
 			
 		} while (true);
@@ -1084,7 +1095,7 @@ tryAgain:
 		}
 		}
 		{
-		_loop103:
+		_loop109:
 		do {
 			if ((LA(1)=='\\')) {
 				mESC(false);
@@ -1095,7 +1106,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop103;
+				break _loop109;
 			}
 			
 		} while (true);

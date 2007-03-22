@@ -1,13 +1,17 @@
 package translator.model;
 
-public class ComapreModel extends QueryModel {
+import org.dom4j.Element;
+
+public class CompareModel extends QueryModel {
 
   private static final String compareStr=
     "SELECT * INTO _INTO_TABLE_NAME_ " +
     "FROM _TABLE1_ WHERE _METHOD_ (SELECT * FROM _TABLE2_ WHERE _CONDITION_)";
   private String chTable1, chTable2, intoTable, method, equation;
   
-  public ComapreModel(String chTable1, String chTable2, String intoTable, String method, String equation) {
+  CompareModel() {}
+  
+  public CompareModel(String chTable1, String chTable2, String intoTable, String method, String equation) {
     this.chTable1=chTable1.substring(1, chTable1.length()-1);
     this.chTable2=chTable2.substring(1, chTable2.length()-1);
     this.intoTable=intoTable;
@@ -30,6 +34,28 @@ public class ComapreModel extends QueryModel {
 ////      .replace("_T2_FIELDS_", t2.getFieldsStr())
 //      .replaceAll("_METHOD_", method)
 //      .replaceAll("_CONDITION_", equ);
+  }
+
+  protected void getModelElement(Element element) {
+    element.addAttribute("class", getClass().getName());
+    addPropertyElement(element, "ch_table1", chTable1);
+    addPropertyElement(element, "ch_table2", chTable2);
+    addPropertyElement(element, "ch_into", intoTable);
+    addPropertyElement(element, "method", method);
+    addPropertyElement(element, "equation", equation);
+  }
+
+  protected void initProperty(Element element) {
+    if (element.attributeValue("name").equals("ch_table1"))
+      this.chTable1=element.attributeValue("value");
+    if (element.attributeValue("name").equals("ch_table2"))
+      this.chTable2=element.attributeValue("value");
+    if (element.attributeValue("name").equals("ch_into"))
+      this.intoTable=element.attributeValue("value");
+    if (element.attributeValue("name").equals("method"))
+      this.method=element.attributeValue("value");
+    if (element.attributeValue("name").equals("equation"))
+      this.equation=element.attributeValue("value");
   }
 
 }

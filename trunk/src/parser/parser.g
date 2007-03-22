@@ -44,14 +44,18 @@ tableCompare
 	;
 
 tableSelect
-	:	TABLE_SELECT^ columnList FROM! tableList WHERE! equations
-		(groupClause)?
+	:	TABLE_SELECT^ columnList FROM! tableList 
+		(WHERE^ equations)?
+		(GROUP_BY^ columnList)?
+		(ORDER_BY^ orderClause)?
+		{#tableSelect=#([SELECT_STATEMENT], #tableSelect);}
+/*		(groupClause)?
 		(orderClause)?
 		{
 			#tableSelect.addChild(astFactory.create(GROUP_CLAUSE, "G_C"));
 			#tableSelect.addChild(astFactory.create(ORDER_CLAUSE, "O_C"));
 		}
-	;
+*/	;
 
 selectClause
 	:	TABLE_SELECT^ columnList FROM! tableList WHERE! equations 
@@ -62,7 +66,7 @@ groupClause
 	;
 	
 orderClause
-	:	ORDER_BY columnList (ASC^)?
+	:	columnList (ASC^)?
 	;
 
 unionClause
@@ -82,7 +86,7 @@ columns
 	;
 
 column
-	:	equElem
+	:	equElem (AS^ ID)?
 	|	(STAR)=>STAR
 		{#column=#([ALL_FIELDS]);}
 	|	ALL_FIELDS
@@ -96,7 +100,7 @@ fromClauseTableList
 	;
 
 tableList
-	:	tableName (COMMA^ tableName)*
+	:	tableElem (COMMA^ tableElem)*
 	;
 
 method
@@ -114,6 +118,10 @@ equation
 //	|	(fieldName BETWEEN^)=>fieldName BETWEEN^ constant AND! constant
 	;
 
+tableElem
+	:	tableName (AS^ ID)?
+	;
+
 tableName
 	:	ID
 	|	NAME_START! tableName NAME_END!
@@ -124,9 +132,9 @@ equElem
 	|	LPAREN equElem RPAREN (OPERATOR^ equElem)?
 	;
 
-elem:	fieldName (AS^ ID)?
-	|	constant
+elem:	fieldName 
 	|	func
+	|	constant
 	;
 
 func:	FUNC_NAME^ LPAREN! (ALL|DISTINCT)? funcArgs RPAREN!;
@@ -158,7 +166,7 @@ TABLE_UNION
 TABLE_COMPARE
 	:	"t_compare";
 TABLE_SELECT
-	:	"select" | "ch_select";
+	:	"select";
 INTO:	"into";
 WHERE
 	:	"where";
@@ -237,8 +245,14 @@ ID_LETTER
     ;
 
 REAL_NUM
-	:	NUM (POINT NUM)?
+	:	NUM (POINT DOT_NUM)?
 	;
+	
+protected
+DOT_NUM
+	:	(NUM_LETTER)+
+	;
+
 protected
 NUM	:	'0'
 	|	NUM_START (NUM_LETTER)*
@@ -337,6 +351,7 @@ import translator.model.*;
 class T extends TreeParser;
 {
 	Map tables=new HashMap();
+	Map segment=new HashMap();
 	
 	public DbTable[] getTables() {
 		int i=0;
@@ -372,21 +387,47 @@ segment returns [String segment]
 	;
 
 statement returns [QueryModel model]
-	{String clist, tlist, g, o, t1, t2, into, m, e; model=null;}
+	{String statement, clist, tlist, g, o, t1, t2, into, m, e;model=null;}
 	:	#(TABLE_UNION t1=tableName t2=tableName into=tableName)
 		{model=new UnionModel(t1, t2, into);}
 	|	#(TABLE_COMPARE t1=tableName t2=tableName into=tableName m=method e=equations)
-		{model=new ComapreModel(t1, t2, into, m, e);}
+		{model=new CompareModel(t1, t2, into, m, e);}
+	|	#(SELECT_STATEMENT statement=selectStatement)
+		{model=new SelectModel(
+			(String)segment.get("clist"),
+			(String)segment.get("tlist"),
+			(String)segment.get("equations"),
+			(String)segment.get("groupby"),
+			(String)segment.get("orderby"),
+			null);}
+/*		{System.out.println(statement);}
 	|	#(TABLE_SELECT clist=columnList tlist=tableList e=equations g=optionalClause o=optionalClause)
 		{model=new SelectModel(clist, tlist, e, g, o, null);}
-	;
+*/	;
 
-selectStatement returns [SelectModel model]
-	{String clist, tlist, e, g, o; model=null;}
-	:	#(TABLE_SELECT clist=columnList tlist=tableList e=equations g=optionalClause o=optionalClause)
-		{model=new SelectModel(clist, tlist, e, g, o, null);}
+selectStatement returns [String statement]
+	{String clist, tlist, e, g, o, s; statement="";}
+	:	#(TABLE_SELECT clist=columnList tlist=tableList)
+		{
+			segment.put("clist", clist);
+			segment.put("tlist", tlist);
+		}
+	|	#(WHERE s=selectStatement e=equations)
+		{segment.put("equations", e);}
+	|	#(GROUP_BY s=selectStatement g=columnList)
+		{segment.put("groupby", g);}
+	|	#(ORDER_BY s=selectStatement o=orderClause)
+		{segment.put("orderby", o);}
 	;
 	
+orderClause returns [String clause]
+	{String c; clause="";}
+	:	clause=columnList
+	|	#(a:ASC c=columnList)
+		{clause=c+" "+a.getText();}
+	;
+
+/*
 optionalClause returns [String optional]
 	{String o; optional="";}
 	:	#(all:ALL GROUP_BY o=columnList)
@@ -402,6 +443,7 @@ optionalClause returns [String optional]
 	|	ORDER_CLAUSE
 		{optional="";}
 	;
+*/
 
 method returns [String m]
 	{m="";}
@@ -428,6 +470,8 @@ columnList returns [String clist]
 column returns [String c]
 	{String args; c="";}
 	:	c=equElem
+	|	#(a:AS args=equElem d:ID)
+		{c=args+" "+a.getText()+" "+d.getText();}
 	;
 
 
@@ -489,8 +533,8 @@ equElem	returns [String equElemStr]
 		{equElemStr=n.getText();}
 	|	s:QUOTED_STRING
 		{equElemStr=s.getText();}
-	|	#(AS e1=equElem tempField:ID)
-		{equElemStr=e1+" as "+tempField.getText();}
+	|	#(a:AS e1=equElem tempField:ID)
+		{equElemStr=e1+" "+a.getText()+" "+tempField.getText();}
 	|	#(fn:FUNC_NAME args=funcArgs)
 		{equElemStr=fn.getText()+"("+args+")";}
 	;
@@ -501,6 +545,11 @@ tableName returns [String tableStr]
 		{
 			tableStr="["+t.getText()+"]";
 			addFromTableByChName(t.getText());
+		}
+	|	#(a:AS t1:ID t2:ID)
+		{
+			tableStr="["+t1.getText()+"] "+a.getText()+" "+t2.getText();
+			addFromTableByChName(t1.getText());
 		}
 	;
 

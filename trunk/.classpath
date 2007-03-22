@@ -2,6 +2,8 @@
 <classpath>
 	<classpathentry kind="src" output="build" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.4"/>
-	<classpathentry kind="lib" path="F:/home/ws_job/abcas_svn0.5/lib/antlr.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/antlr-2.7.6"/>
+	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

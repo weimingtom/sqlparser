@@ -23,6 +23,7 @@ public class T extends antlr.TreeParser       implements PTokenTypes
  {
 
 	Map tables=new HashMap();
+	Map segment=new HashMap();
 	
 	public DbTable[] getTables() {
 		int i=0;
@@ -121,7 +122,7 @@ public T() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t122 = _t;
+				AST __t130 = _t;
 				AST tmp5_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -129,15 +130,15 @@ public T() {
 				_t = _retTree;
 				c2=columnList(_t);
 				_t = _retTree;
-				_t = __t122;
+				_t = __t130;
 				_t = _t.getNextSibling();
 				clist=c1+","+c2;
 				break;
 			}
+			case AS:
 			case STAR:
 			case LPAREN:
 			case OPERATOR:
-			case AS:
 			case FUNC_NAME:
 			case POINT:
 			case REAL_NUM:
@@ -201,7 +202,7 @@ public T() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t128 = _t;
+				AST __t137 = _t;
 				AST tmp9_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -209,11 +210,12 @@ public T() {
 				_t = _retTree;
 				t2=tableList(_t);
 				_t = _retTree;
-				_t = __t128;
+				_t = __t137;
 				_t = _t.getNextSibling();
 				tlist=t1+","+t2;
 				break;
 			}
+			case AS:
 			case ID:
 			{
 				t1=tableName(_t);
@@ -248,20 +250,20 @@ public T() {
 			switch ( _t.getType()) {
 			case EQUATION_START:
 			{
-				AST __t132 = _t;
+				AST __t141 = _t;
 				AST tmp10_AST_in = (AST)_t;
 				match(_t,EQUATION_START);
 				_t = _t.getFirstChild();
 				e1=equations(_t);
 				_t = _retTree;
-				_t = __t132;
+				_t = __t141;
 				_t = _t.getNextSibling();
 				equStr=e1;
 				break;
 			}
 			case LOGIC_OP:
 			{
-				AST __t133 = _t;
+				AST __t142 = _t;
 				lop = _t==ASTNULL ? null :(AST)_t;
 				match(_t,LOGIC_OP);
 				_t = _t.getFirstChild();
@@ -269,14 +271,14 @@ public T() {
 				_t = _retTree;
 				e2=equations(_t);
 				_t = _retTree;
-				_t = __t133;
+				_t = __t142;
 				_t = _t.getNextSibling();
 				equStr=e1+" "+lop+" "+e2;
 				break;
 			}
 			case COMPARATOR:
 			{
-				AST __t134 = _t;
+				AST __t143 = _t;
 				op = _t==ASTNULL ? null :(AST)_t;
 				match(_t,COMPARATOR);
 				_t = _t.getFirstChild();
@@ -284,7 +286,7 @@ public T() {
 				_t = _retTree;
 				e2=equElem(_t);
 				_t = _retTree;
-				_t = __t134;
+				_t = __t143;
 				_t = _t.getNextSibling();
 				equStr=e1+" "+op.getText()+" "+e2;
 				break;
@@ -307,11 +309,34 @@ public T() {
 		String c;
 		
 		AST column_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		AST a = null;
+		AST d = null;
 		String args; c="";
 		
 		try {      // for error handling
-			c=equElem(_t);
-			_t = _retTree;
+			if (_t==null) _t=ASTNULL;
+			if ((_tokenSet_0.member(_t.getType()))) {
+				c=equElem(_t);
+				_t = _retTree;
+			}
+			else if ((_t.getType()==AS)) {
+				AST __t132 = _t;
+				a = _t==ASTNULL ? null :(AST)_t;
+				match(_t,AS);
+				_t = _t.getFirstChild();
+				args=equElem(_t);
+				_t = _retTree;
+				d = (AST)_t;
+				match(_t,ID);
+				_t = _t.getNextSibling();
+				_t = __t132;
+				_t = _t.getNextSibling();
+				c=args+" "+a.getText()+" "+d.getText();
+			}
+			else {
+				throw new NoViableAltException(_t);
+			}
+			
 		}
 		catch (RecognitionException ex) {
 			reportError(ex);
@@ -325,14 +350,14 @@ public T() {
 		QueryModel model;
 		
 		AST statement_AST_in = (_t == ASTNULL) ? null : (AST)_t;
-		String clist, tlist, g, o, t1, t2, into, m, e; model=null;
+		String statement, clist, tlist, g, o, t1, t2, into, m, e;model=null;
 		
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			switch ( _t.getType()) {
 			case TABLE_UNION:
 			{
-				AST __t112 = _t;
+				AST __t118 = _t;
 				AST tmp11_AST_in = (AST)_t;
 				match(_t,TABLE_UNION);
 				_t = _t.getFirstChild();
@@ -342,14 +367,14 @@ public T() {
 				_t = _retTree;
 				into=tableName(_t);
 				_t = _retTree;
-				_t = __t112;
+				_t = __t118;
 				_t = _t.getNextSibling();
 				model=new UnionModel(t1, t2, into);
 				break;
 			}
 			case TABLE_COMPARE:
 			{
-				AST __t113 = _t;
+				AST __t119 = _t;
 				AST tmp12_AST_in = (AST)_t;
 				match(_t,TABLE_COMPARE);
 				_t = _t.getFirstChild();
@@ -363,30 +388,28 @@ public T() {
 				_t = _retTree;
 				e=equations(_t);
 				_t = _retTree;
-				_t = __t113;
+				_t = __t119;
 				_t = _t.getNextSibling();
-				model=new ComapreModel(t1, t2, into, m, e);
+				model=new CompareModel(t1, t2, into, m, e);
 				break;
 			}
-			case TABLE_SELECT:
+			case SELECT_STATEMENT:
 			{
-				AST __t114 = _t;
+				AST __t120 = _t;
 				AST tmp13_AST_in = (AST)_t;
-				match(_t,TABLE_SELECT);
+				match(_t,SELECT_STATEMENT);
 				_t = _t.getFirstChild();
-				clist=columnList(_t);
+				statement=selectStatement(_t);
 				_t = _retTree;
-				tlist=tableList(_t);
-				_t = _retTree;
-				e=equations(_t);
-				_t = _retTree;
-				g=optionalClause(_t);
-				_t = _retTree;
-				o=optionalClause(_t);
-				_t = _retTree;
-				_t = __t114;
+				_t = __t120;
 				_t = _t.getNextSibling();
-				model=new SelectModel(clist, tlist, e, g, o, null);
+				model=new SelectModel(
+							(String)segment.get("clist"),
+							(String)segment.get("tlist"),
+							(String)segment.get("equations"),
+							(String)segment.get("groupby"),
+							(String)segment.get("orderby"),
+							null);
 				break;
 			}
 			default:
@@ -408,16 +431,50 @@ public T() {
 		
 		AST tableName_AST_in = (_t == ASTNULL) ? null : (AST)_t;
 		AST t = null;
+		AST a = null;
+		AST t1 = null;
+		AST t2 = null;
 		String ts; tableStr="";
 		
 		try {      // for error handling
-			t = (AST)_t;
-			match(_t,ID);
-			_t = _t.getNextSibling();
-			
-						tableStr="["+t.getText()+"]";
-						addFromTableByChName(t.getText());
-					
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case ID:
+			{
+				t = (AST)_t;
+				match(_t,ID);
+				_t = _t.getNextSibling();
+				
+							tableStr="["+t.getText()+"]";
+							addFromTableByChName(t.getText());
+						
+				break;
+			}
+			case AS:
+			{
+				AST __t150 = _t;
+				a = _t==ASTNULL ? null :(AST)_t;
+				match(_t,AS);
+				_t = _t.getFirstChild();
+				t1 = (AST)_t;
+				match(_t,ID);
+				_t = _t.getNextSibling();
+				t2 = (AST)_t;
+				match(_t,ID);
+				_t = _t.getNextSibling();
+				_t = __t150;
+				_t = _t.getNextSibling();
+				
+							tableStr="["+t1.getText()+"] "+a.getText()+" "+t2.getText();
+							addFromTableByChName(t1.getText());
+						
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
 		}
 		catch (RecognitionException ex) {
 			reportError(ex);
@@ -466,83 +523,76 @@ public T() {
 		return m;
 	}
 	
-	public final String  optionalClause(AST _t) throws RecognitionException {
-		String optional;
+	public final String  selectStatement(AST _t) throws RecognitionException {
+		String statement;
 		
-		AST optionalClause_AST_in = (_t == ASTNULL) ? null : (AST)_t;
-		AST all = null;
-		AST asc = null;
-		String o; optional="";
+		AST selectStatement_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		String clist, tlist, e, g, o, s; statement="";
 		
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			switch ( _t.getType()) {
-			case ALL:
+			case TABLE_SELECT:
 			{
-				AST __t118 = _t;
-				all = _t==ASTNULL ? null :(AST)_t;
-				match(_t,ALL);
-				_t = _t.getFirstChild();
+				AST __t122 = _t;
 				AST tmp16_AST_in = (AST)_t;
-				match(_t,GROUP_BY);
-				_t = _t.getNextSibling();
-				o=columnList(_t);
+				match(_t,TABLE_SELECT);
+				_t = _t.getFirstChild();
+				clist=columnList(_t);
 				_t = _retTree;
-				_t = __t118;
+				tlist=tableList(_t);
+				_t = _retTree;
+				_t = __t122;
 				_t = _t.getNextSibling();
-				optional=" GROUP BY "+all.getText()+" "+o;
+				
+							segment.put("clist", clist);
+							segment.put("tlist", tlist);
+						
+				break;
+			}
+			case WHERE:
+			{
+				AST __t123 = _t;
+				AST tmp17_AST_in = (AST)_t;
+				match(_t,WHERE);
+				_t = _t.getFirstChild();
+				s=selectStatement(_t);
+				_t = _retTree;
+				e=equations(_t);
+				_t = _retTree;
+				_t = __t123;
+				_t = _t.getNextSibling();
+				segment.put("equations", e);
 				break;
 			}
 			case GROUP_BY:
 			{
-				AST tmp17_AST_in = (AST)_t;
-				match(_t,GROUP_BY);
-				_t = _t.getNextSibling();
-				o=columnList(_t);
-				_t = _retTree;
-				optional=" GROUP BY "+o;
-				break;
-			}
-			case ASC:
-			{
-				AST __t119 = _t;
-				asc = _t==ASTNULL ? null :(AST)_t;
-				match(_t,ASC);
-				_t = _t.getFirstChild();
+				AST __t124 = _t;
 				AST tmp18_AST_in = (AST)_t;
-				match(_t,ORDER_BY);
-				_t = _t.getNextSibling();
-				o=fieldList(_t);
+				match(_t,GROUP_BY);
+				_t = _t.getFirstChild();
+				s=selectStatement(_t);
 				_t = _retTree;
-				_t = __t119;
+				g=columnList(_t);
+				_t = _retTree;
+				_t = __t124;
 				_t = _t.getNextSibling();
-				optional=" ORDER BY "+o+" "+asc.getText();
+				segment.put("groupby", g);
 				break;
 			}
 			case ORDER_BY:
 			{
+				AST __t125 = _t;
 				AST tmp19_AST_in = (AST)_t;
 				match(_t,ORDER_BY);
-				_t = _t.getNextSibling();
-				o=fieldList(_t);
+				_t = _t.getFirstChild();
+				s=selectStatement(_t);
 				_t = _retTree;
-				optional=" ORDER BY "+o;
-				break;
-			}
-			case GROUP_CLAUSE:
-			{
-				AST tmp20_AST_in = (AST)_t;
-				match(_t,GROUP_CLAUSE);
+				o=orderClause(_t);
+				_t = _retTree;
+				_t = __t125;
 				_t = _t.getNextSibling();
-				optional="";
-				break;
-			}
-			case ORDER_CLAUSE:
-			{
-				AST tmp21_AST_in = (AST)_t;
-				match(_t,ORDER_CLAUSE);
-				_t = _t.getNextSibling();
-				optional="";
+				segment.put("orderby", o);
 				break;
 			}
 			default:
@@ -556,71 +606,47 @@ public T() {
 			if (_t!=null) {_t = _t.getNextSibling();}
 		}
 		_retTree = _t;
-		return optional;
+		return statement;
 	}
 	
-	public final SelectModel  selectStatement(AST _t) throws RecognitionException {
-		SelectModel model;
+	public final String  orderClause(AST _t) throws RecognitionException {
+		String clause;
 		
-		AST selectStatement_AST_in = (_t == ASTNULL) ? null : (AST)_t;
-		String clist, tlist, e, g, o; model=null;
-		
-		try {      // for error handling
-			AST __t116 = _t;
-			AST tmp22_AST_in = (AST)_t;
-			match(_t,TABLE_SELECT);
-			_t = _t.getFirstChild();
-			clist=columnList(_t);
-			_t = _retTree;
-			tlist=tableList(_t);
-			_t = _retTree;
-			e=equations(_t);
-			_t = _retTree;
-			g=optionalClause(_t);
-			_t = _retTree;
-			o=optionalClause(_t);
-			_t = _retTree;
-			_t = __t116;
-			_t = _t.getNextSibling();
-			model=new SelectModel(clist, tlist, e, g, o, null);
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			if (_t!=null) {_t = _t.getNextSibling();}
-		}
-		_retTree = _t;
-		return model;
-	}
-	
-	public final String  fieldList(AST _t) throws RecognitionException {
-		String fList;
-		
-		AST fieldList_AST_in = (_t == ASTNULL) ? null : (AST)_t;
-		String f1, f2; fList="";
+		AST orderClause_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		AST a = null;
+		String c; clause="";
 		
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			switch ( _t.getType()) {
+			case ALL_FIELDS:
 			case COMMA:
+			case ALL:
+			case DISTINCT:
+			case AS:
+			case STAR:
+			case LPAREN:
+			case OPERATOR:
+			case FUNC_NAME:
+			case POINT:
+			case REAL_NUM:
+			case QUOTED_STRING:
 			{
-				AST __t130 = _t;
-				AST tmp23_AST_in = (AST)_t;
-				match(_t,COMMA);
-				_t = _t.getFirstChild();
-				f1=fieldList(_t);
+				clause=columnList(_t);
 				_t = _retTree;
-				f2=fieldList(_t);
-				_t = _retTree;
-				_t = __t130;
-				_t = _t.getNextSibling();
-				fList=f1+","+f2;
 				break;
 			}
-			case POINT:
+			case ASC:
 			{
-				f1=fieldName(_t);
+				AST __t127 = _t;
+				a = _t==ASTNULL ? null :(AST)_t;
+				match(_t,ASC);
+				_t = _t.getFirstChild();
+				c=columnList(_t);
 				_t = _retTree;
-				fList=f1;
+				_t = __t127;
+				_t = _t.getNextSibling();
+				clause=c+" "+a.getText();
 				break;
 			}
 			default:
@@ -634,7 +660,7 @@ public T() {
 			if (_t!=null) {_t = _t.getNextSibling();}
 		}
 		_retTree = _t;
-		return fList;
+		return clause;
 	}
 	
 	public final String  equElem(AST _t) throws RecognitionException {
@@ -645,6 +671,7 @@ public T() {
 		AST star = null;
 		AST n = null;
 		AST s = null;
+		AST a = null;
 		AST tempField = null;
 		AST fn = null;
 		String e1, e2, f, args; equElemStr="";
@@ -654,7 +681,7 @@ public T() {
 			switch ( _t.getType()) {
 			case OPERATOR:
 			{
-				AST __t136 = _t;
+				AST __t145 = _t;
 				op = _t==ASTNULL ? null :(AST)_t;
 				match(_t,OPERATOR);
 				_t = _t.getFirstChild();
@@ -662,14 +689,14 @@ public T() {
 				_t = _retTree;
 				e2=equElem(_t);
 				_t = _retTree;
-				_t = __t136;
+				_t = __t145;
 				_t = _t.getNextSibling();
 				equElemStr=e1+op.getText()+e2;
 				break;
 			}
 			case STAR:
 			{
-				AST __t137 = _t;
+				AST __t146 = _t;
 				star = _t==ASTNULL ? null :(AST)_t;
 				match(_t,STAR);
 				_t = _t.getFirstChild();
@@ -677,19 +704,19 @@ public T() {
 				_t = _retTree;
 				e2=equElem(_t);
 				_t = _retTree;
-				_t = __t137;
+				_t = __t146;
 				_t = _t.getNextSibling();
 				equElemStr=e1+star.getText()+e2;
 				break;
 			}
 			case LPAREN:
 			{
-				AST tmp24_AST_in = (AST)_t;
+				AST tmp20_AST_in = (AST)_t;
 				match(_t,LPAREN);
 				_t = _t.getNextSibling();
 				e1=equElem(_t);
 				_t = _retTree;
-				AST tmp25_AST_in = (AST)_t;
+				AST tmp21_AST_in = (AST)_t;
 				match(_t,RPAREN);
 				_t = _t.getNextSibling();
 				equElemStr="("+e1+")";
@@ -720,8 +747,8 @@ public T() {
 			}
 			case AS:
 			{
-				AST __t138 = _t;
-				AST tmp26_AST_in = (AST)_t;
+				AST __t147 = _t;
+				a = _t==ASTNULL ? null :(AST)_t;
 				match(_t,AS);
 				_t = _t.getFirstChild();
 				e1=equElem(_t);
@@ -729,20 +756,20 @@ public T() {
 				tempField = (AST)_t;
 				match(_t,ID);
 				_t = _t.getNextSibling();
-				_t = __t138;
+				_t = __t147;
 				_t = _t.getNextSibling();
-				equElemStr=e1+" as "+tempField.getText();
+				equElemStr=e1+" "+a.getText()+" "+tempField.getText();
 				break;
 			}
 			case FUNC_NAME:
 			{
-				AST __t139 = _t;
+				AST __t148 = _t;
 				fn = _t==ASTNULL ? null :(AST)_t;
 				match(_t,FUNC_NAME);
 				_t = _t.getFirstChild();
 				args=funcArgs(_t);
 				_t = _retTree;
-				_t = __t139;
+				_t = __t148;
 				_t = _t.getNextSibling();
 				equElemStr=fn.getText()+"("+args+")";
 				break;
@@ -772,7 +799,7 @@ public T() {
 			switch ( _t.getType()) {
 			case ALL:
 			{
-				AST tmp27_AST_in = (AST)_t;
+				AST tmp22_AST_in = (AST)_t;
 				match(_t,ALL);
 				_t = _t.getNextSibling();
 				a=funcArg(_t);
@@ -782,7 +809,7 @@ public T() {
 			}
 			case DISTINCT:
 			{
-				AST tmp28_AST_in = (AST)_t;
+				AST tmp23_AST_in = (AST)_t;
 				match(_t,DISTINCT);
 				_t = _t.getNextSibling();
 				a=funcArg(_t);
@@ -791,10 +818,10 @@ public T() {
 				break;
 			}
 			case COMMA:
+			case AS:
 			case STAR:
 			case LPAREN:
 			case OPERATOR:
-			case AS:
 			case FUNC_NAME:
 			case POINT:
 			case REAL_NUM:
@@ -830,23 +857,23 @@ public T() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t126 = _t;
-				AST tmp29_AST_in = (AST)_t;
+				AST __t135 = _t;
+				AST tmp24_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
 				f1=funcArg(_t);
 				_t = _retTree;
 				f2=funcArg(_t);
 				_t = _retTree;
-				_t = __t126;
+				_t = __t135;
 				_t = _t.getNextSibling();
 				arg=f1+","+f2;
 				break;
 			}
+			case AS:
 			case STAR:
 			case LPAREN:
 			case OPERATOR:
-			case AS:
 			case FUNC_NAME:
 			case POINT:
 			case REAL_NUM:
@@ -871,6 +898,51 @@ public T() {
 		return arg;
 	}
 	
+	public final String  fieldList(AST _t) throws RecognitionException {
+		String fList;
+		
+		AST fieldList_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		String f1, f2; fList="";
+		
+		try {      // for error handling
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case COMMA:
+			{
+				AST __t139 = _t;
+				AST tmp25_AST_in = (AST)_t;
+				match(_t,COMMA);
+				_t = _t.getFirstChild();
+				f1=fieldList(_t);
+				_t = _retTree;
+				f2=fieldList(_t);
+				_t = _retTree;
+				_t = __t139;
+				_t = _t.getNextSibling();
+				fList=f1+","+f2;
+				break;
+			}
+			case POINT:
+			{
+				f1=fieldName(_t);
+				_t = _retTree;
+				fList=f1;
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+		return fList;
+	}
+	
 	public final String  fieldName(AST _t) throws RecognitionException {
 		String fieldStr;
 		
@@ -880,8 +952,8 @@ public T() {
 		fieldStr="";
 		
 		try {      // for error handling
-			AST __t142 = _t;
-			AST tmp30_AST_in = (AST)_t;
+			AST __t152 = _t;
+			AST tmp26_AST_in = (AST)_t;
 			match(_t,POINT);
 			_t = _t.getFirstChild();
 			f1 = (AST)_t;
@@ -890,7 +962,7 @@ public T() {
 			f2 = (AST)_t;
 			match(_t,ID);
 			_t = _t.getNextSibling();
-			_t = __t142;
+			_t = __t152;
 			_t = _t.getNextSibling();
 			
 						String t=f1.getText();
@@ -935,6 +1007,8 @@ public T() {
 		"UNION",
 		"ALL",
 		"DISTINCT",
+		"AS",
+		"ID",
 		"STAR",
 		"EXIST",
 		"NOT_EXIST",
@@ -942,11 +1016,9 @@ public T() {
 		"LPAREN",
 		"RPAREN",
 		"COMPARATOR",
-		"ID",
 		"NAME_START",
 		"NAME_END",
 		"OPERATOR",
-		"AS",
 		"FUNC_NAME",
 		"POINT",
 		"REAL_NUM",
@@ -955,6 +1027,7 @@ public T() {
 		"BETWEEN",
 		"ID_START_LETTER",
 		"ID_LETTER",
+		"DOT_NUM",
 		"NUM",
 		"NUM_START",
 		"NUM_LETTER",
@@ -964,5 +1037,10 @@ public T() {
 		"ESC"
 	};
 	
+	private static final long[] mk_tokenSet_0() {
+		long[] data = { 2132619034624L, 0L};
+		return data;
+	}
+	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
 	}
 	

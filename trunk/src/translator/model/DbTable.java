@@ -4,9 +4,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.dom4j.Element;
+
 public class DbTable {
+  private String flag;
   private String chName;
   private String enName;
+  private String alias;
   private boolean existInFromClause;
   
   private Map chFields = new HashMap();
@@ -89,5 +93,46 @@ public class DbTable {
 
   public void setExistInFromClause(boolean existInFromClause) {
     this.existInFromClause = existInFromClause;
+  }
+
+  public void getModelElement(Element parent) {
+    Element elem=parent.addElement("db_info");
+    elem.addAttribute("ch_name", chName);
+    elem.addAttribute("en_name", enName);
+    elem.addAttribute("flag", flag);
+    elem.addAttribute("alias", alias);
+    elem.addAttribute("exist_in_form", String.valueOf(existInFromClause));
+    for (Iterator it=chFields.values().iterator(); it.hasNext();) {
+      DbField field=(DbField)it.next();
+      field.getModelElement(elem);
+    }
+  }
+
+  public void initFromElem(Element elem) {
+    this.chName=elem.attributeValue("ch_name");
+    this.enName=elem.attributeValue("en_name");
+    this.alias=elem.attributeValue("alias");
+    this.flag=elem.attributeValue("flag");
+    for (Iterator it=elem.elementIterator(); it.hasNext();) {
+      DbField field=new DbField();
+      field.initFromElem((Element)it.next());
+      chFields.put(field.getChName(), field);
+    }
+  }
+
+  public String getFlag() {
+    return flag;
+  }
+
+  public void setFlag(String flag) {
+    this.flag = flag;
+  }
+
+  public String getAlias() {
+    return alias;
+  }
+
+  public void setAlias(String alias) {
+    this.alias = alias;
   }
 }

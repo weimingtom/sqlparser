@@ -358,10 +358,47 @@ public class Translator {
   }
 
   private void translateKeyword() {
+    enQuery = formatStringLit(enQuery);
     for (Iterator it = mapKeyword.keySet().iterator(); it.hasNext();) {
       String chKey = it.next().toString();
       enQuery = replace(enQuery, chKey, mapKeyword.get(chKey).toString());
     }
+    enQuery = replace(enQuery, "[", "");
+    enQuery = replace(enQuery, "]", "");
+    enQuery = recoverStringLit(enQuery);
+  }
+
+  private String recoverStringLit(String str) {
+    char[] charToFormat={'[', ']'};
+    char[] charReplace={(char)1, (char)2};
+    String ret=str;
+    for (int i=0; i<charReplace.length; i++) {
+      ret=ret.replace(charReplace[i], charToFormat[i]);
+    }
+    return ret;
+  }
+
+  private String formatStringLit(String str) {
+    boolean inStrLit=false;
+    boolean changed=false;
+    String ret="";
+    char[] charToFormat={'[', ']'};
+    char[] charReplace={(char)1, (char)2};
+    for (int i=0; i<str.length(); i++) {
+      if (str.charAt(i)=='"' || str.charAt(i)=='\'')
+        inStrLit=!inStrLit;
+      if (inStrLit)
+        for (int j=0; j<charToFormat.length; j++)
+          if (str.charAt(i)==charToFormat[j]) {
+            ret+=charReplace[j];
+            changed=true;
+            break;
+          }
+      if (!changed)
+        ret+=str.charAt(i);
+      changed=false;
+    }
+    return ret;
   }
 
   /**
@@ -381,12 +418,10 @@ public class Translator {
 
   private String replace(String src, String from, String to) {
     String ret = src;
-//    while (ret.indexOf(from) != -1) {
-//      ret = ret.replace(from, to);
-//      mapEn2Ch.put(to, from);
-//    }
     int pos=0;
     int offset=to.length()-from.length();
+    String f="\\Q"+from+"\\E";
+
     while (ret.indexOf(from, pos) != -1) {
       pos=chQuery.indexOf(from, pos);
       mapEn2Ch.put(to, from);
@@ -402,7 +437,6 @@ public class Translator {
         mapNewPos.put(p, o);
       }
       mapPosEn2Ch=mapNewPos;
-      String f="\\Q"+from+"\\E";
       ret=ret.replaceFirst(f, to);
     }
     return ret;
@@ -583,6 +617,30 @@ public class Translator {
     for (int i=0; i<tables.length; i++)
       tables[i].setExistInFromClause(true);
     setTableInfo(tables);
+  }
+
+  public L getLexer() {
+    return lexer;
+  }
+
+  public void setLexer(L lexer) {
+    this.lexer = lexer;
+  }
+
+  public P getParser() {
+    return parser;
+  }
+
+  public void setParser(P parser) {
+    this.parser = parser;
+  }
+
+  public T getTree() {
+    return tree;
+  }
+
+  public void setTree(T tree) {
+    this.tree = tree;
   }
 
 }

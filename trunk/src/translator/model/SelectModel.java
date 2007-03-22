@@ -1,23 +1,21 @@
 package translator.model;
 
+import org.dom4j.Element;
+
 public class SelectModel extends QueryModel {
   private static final String selectStr=
-    "SELECT _COLUMN_LIST_ FROM _TABLE_LIST_ WHERE _EQUATION_";
+    "SELECT _COLUMN_LIST_ FROM _TABLE_LIST_";
   private String columnList, tableList, equation, orderBy, groupBy;
   private SelectModel unionSelect;
   
-  public SelectModel(String columnList, String tableList, String equation,String op1, String op2, SelectModel unionSelect) {
-    this.columnList=columnList;
-    this.tableList=tableList;
-    this.equation=equation;
-    if (op1!=null && op1.startsWith(" GROUP BY "))
-      this.groupBy=replace(op1, " GROUP BY ", "");
-    if (op1!=null && op1.startsWith(" ORDER BY "))
-      this.orderBy=replace(op1, " ORDER BY ", "");
-    if (op2!=null && op2.startsWith(" GROUP BY "))
-      this.groupBy=replace(op2, " GROUP BY ", "");
-    if (op2!=null && op2.startsWith(" ORDER BY "))
-      this.orderBy=replace(op2, " ORDER BY ", "");
+  SelectModel() {}
+  
+  public SelectModel(String columnList, String tableList, String equation,String groupBy, String orderBy, SelectModel unionSelect) {
+    this.columnList=(columnList==null)?"":columnList;
+    this.tableList=(tableList==null)?"":tableList;
+    this.equation=(equation==null)?"":equation;
+    this.groupBy=(groupBy==null)?"":groupBy;
+    this.orderBy=(orderBy==null)?"":orderBy;
     this.unionSelect=unionSelect;
   }
   
@@ -29,8 +27,10 @@ public class SelectModel extends QueryModel {
     String o=translateFieldCh2En(orderBy);
     String ret=replace(
         selectStr,
-        new String[]{"_COLUMN_LIST_", "_TABLE_LIST_", "_EQUATION_"},
-        new String[]{clist, tlist, equ});
+        new String[]{"_COLUMN_LIST_", "_TABLE_LIST_"},
+        new String[]{clist, tlist});
+    if (equ!=null && equ.length()>0)
+      ret+=" WHERE "+equ;
     if (groupBy!=null && groupBy.length()>0)
       ret+=" GROUP BY "+g;
     if (orderBy!=null && orderBy.length()>0)
@@ -50,17 +50,24 @@ public class SelectModel extends QueryModel {
     return ret+((unionSelect!=null)?unionSelect.toString():"");
   }
 
-  public String getChQuery() {
-    // TODO Auto-generated method stub
-    return null;
+  public String getColumnList() {
+    return columnList;
   }
 
   public String getChColumnList() {
-    return translateKeywordEn2Ch(columnList);
+    return translateKeywordEn2Ch(columnList); 
+  }
+  
+  public String getEnColumnList() {
+    return translateFieldCh2En(columnList);
+  }
+  
+  public void setColumnList(String columnList) {
+    this.columnList = columnList;
   }
 
-  public String getEnColumnList() {
-    return columnList;
+  public String getEquation() {
+    return equation;
   }
   
   public String getChEquation() {
@@ -68,38 +75,80 @@ public class SelectModel extends QueryModel {
   }
   
   public String getEnEquation() {
-    return equation;
+    return translateFieldCh2En(equation);
+  }
+  
+  public void setEquation(String equation) {
+    this.equation = equation;
+  }
+
+  public String getGroupBy() {
+    return groupBy;
   }
 
   public String getChGroupBy() {
-    return groupBy;
+    return translateKeywordEn2Ch(groupBy);
   }
-
+  
   public String getEnGroupBy() {
-    return groupBy;
+    return translateFieldCh2En(groupBy);
   }
   
-  public String getChOrderBy() {
+  public void setGroupBy(String groupBy) {
+    this.groupBy = groupBy;
+  }
+
+  public String getOrderBy() {
     return orderBy;
   }
 
-  public String getEnOrderBy() {
-    return orderBy;
+  public String getChOrderBy() {
+    return translateKeywordEn2Ch(orderBy);
   }
   
-  public String getChTableList() {
+  public String getEnOrderBy() {
+    return translateFieldCh2En(orderBy);
+  }
+  
+  public void setOrderBy(String orderBy) {
+    this.orderBy = orderBy;
+  }
+
+  public String getTableList() {
     return tableList;
+  }
+
+  public String getChTableList() {
+    return translateKeywordEn2Ch(tableList);
   }
   
   public String getEnTableList() {
-    return tableList;
+    return translateTableCh2En(tableList);
+  }
+  
+  public void setTableList(String tableList) {
+    this.tableList = tableList;
   }
 
-  public SelectModel getUnionSelect() {
-    return unionSelect;
+  public void getModelElement(Element element) {
+    element.addAttribute("class", getClass().getName());
+    addPropertyElement(element, "column_list", columnList);
+    addPropertyElement(element, "table_list", tableList);
+    addPropertyElement(element, "equation", equation);
+    addPropertyElement(element, "group_by", groupBy);
+    addPropertyElement(element, "order_by", orderBy);
   }
 
-  public void setUnionSelect(SelectModel unionSelect) {
-    this.unionSelect = unionSelect;
+  protected void initProperty(Element elem) {
+    if (elem.attributeValue("name").equals("column_list"))
+      this.columnList=elem.attributeValue("value");
+    if (elem.attributeValue("name").equals("table_list"))
+      this.tableList=elem.attributeValue("value");
+    if (elem.attributeValue("name").equals("equation"))
+      this.equation=elem.attributeValue("value");
+    if (elem.attributeValue("name").equals("group_by"))
+      this.groupBy=elem.attributeValue("value");
+    if (elem.attributeValue("name").equals("order_by"))
+      this.orderBy=elem.attributeValue("value");
   }
 }

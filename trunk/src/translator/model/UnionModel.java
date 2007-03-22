@@ -1,5 +1,7 @@
 package translator.model;
 
+import org.dom4j.Element;
+
 public class UnionModel extends QueryModel {
   private static final String unionStr=
     "CREATE TABLE _INTO_TABLE_NAME_ (_FIELDS_);" +
@@ -7,6 +9,8 @@ public class UnionModel extends QueryModel {
     "SELECT _FIELDS_ FROM _TABLE1_ UNION ALL " +
     "SELECT _FIELDS_ FROM _TABLE2_";
   private String chTable1, chTable2, chIntoTable;
+  
+  UnionModel() {}
   
   public UnionModel(String t1, String t2, String into) {
     this.chTable1=t1.substring(1, t1.length()-1);
@@ -27,6 +31,22 @@ public class UnionModel extends QueryModel {
 //      .replaceAll("_FIELDS_", t1.getFieldsEnStr())
 //      .replaceAll("_TABLE1_", t1.getEnName())
 //      .replaceAll("_TABLE2_", t2.getEnName());
+  }
+
+  protected void getModelElement(Element element) {
+    element.addAttribute("class", getClass().getName());
+    addPropertyElement(element, "ch_table1", chTable1);
+    addPropertyElement(element, "ch_table2", chTable2);
+    addPropertyElement(element, "ch_into", chIntoTable);
+  }
+
+  protected void initProperty(Element elem) {
+    if (elem.attributeValue("name").equals("ch_table1"))
+      this.chTable1=elem.attributeValue("value");
+    if (elem.attributeValue("name").equals("ch_table2"))
+      this.chTable2=elem.attributeValue("value");
+    if (elem.attributeValue("name").equals("ch_into"))
+      this.chIntoTable=elem.attributeValue("value");
   }
   
 }
