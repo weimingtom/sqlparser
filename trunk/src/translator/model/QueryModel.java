@@ -52,22 +52,6 @@ public abstract class QueryModel {
     return ret;
   }
   
-  /*
-  protected String translateFieldCh2En(String src) {
-    String ret = src;
-    for (Iterator t_it = chTableMap.values().iterator(); t_it.hasNext();) {
-      DbTable t = (DbTable) t_it.next();
-      DbField[] fields = t.getFields();
-      for (int i = 0; i < fields.length; i++) {
-        String from = "[" + t.getChName() + "." + fields[i].getChName() + "]";
-        String to = t.getEnName() + "." + fields[i].getEnName();
-        ret = replace(ret, from, to);
-      }
-    }
-    return ret;
-  }
-  */
-  
   protected String translateTableCh2En(String src) {
     String ret = src;
     for (Iterator t_it = chTableMap.values().iterator(); t_it.hasNext();) {
@@ -102,7 +86,11 @@ public abstract class QueryModel {
   public void addTableInfo(DbTable table) {
     chTableMap.put(table.getChName(), table);
   }
-
+  
+  public void addfieldAliasInfo(DbFieldAlias _iDbFieldAlias){
+    fieldAliasMap.put(_iDbFieldAlias.getCnFieldAlias(), _iDbFieldAlias);
+  }
+  
   public void setMapEn2Ch(Map mapEn2Ch) {
     this.mapEn2Ch = mapEn2Ch;
   }
