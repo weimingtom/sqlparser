@@ -1,9 +1,9 @@
 package translator.model;
 
 public class DbFieldAlias {
-  private String columnEquElem; //字段表达式
-  private String cnFieldAlias;  //中文别名
-  private String enFieldAlias;  //英文别名
+  private String columnEquElem;
+  private String cnFieldAlias;
+  private String enFieldAlias;
   public String getCnFieldAlias() {
     return cnFieldAlias;
   }
