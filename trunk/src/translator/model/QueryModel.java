@@ -126,7 +126,7 @@ public abstract class QueryModel {
   }
 
   /**
-   * �?有派生类必须重写此函数将成员变量添加到Element对象�?
+   * �?有派生类必须重写此函数将成员变量添加到Element对象�?
    * @param element
    */
   protected abstract void getModelElement(Element element);
@@ -158,7 +158,7 @@ public abstract class QueryModel {
    * 从XML文档恢复查询模型对象
    * @param xml
    * @return
-   * @throws DocumentException 如果文档内容有错误无法构造模型对象则抛出此异�?
+   * @throws DocumentException 如果文档内容有错误无法构造模型对象则抛出此异�?
    */
   public static QueryModel createModelFromXml(String xml)
       throws DocumentException {
@@ -195,7 +195,7 @@ public abstract class QueryModel {
   }
   
   /**
-   * 从XML文档对象中获取模型属性�??
+   * 从XML文档对象中获取模型属性�
    * @param element
    */
   protected abstract void initProperty(Element element);
