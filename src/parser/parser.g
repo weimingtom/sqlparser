@@ -351,6 +351,7 @@ import translator.model.*;
 class T extends TreeParser;
 {
 	Map tables=new HashMap();
+	Map fieldAliasMap = new HashMap();
 	Map segment=new HashMap();
 	
 	public DbTable[] getTables() {
@@ -375,6 +376,52 @@ class T extends TreeParser;
 		DbTable table=addTableByChName(chName);
 		table.setExistInFromClause(true);
 		return table;
+	}
+	
+	//Add DbTable Object By tableCnName And tableAlias
+	private DbTable addTableByChNameAndTableAlias(String chName, String tableAlias) {
+		DbTable table=(DbTable) tables.get(chName);
+		if (table==null) {
+			table=new DbTable();
+			table.setChName(chName);
+			table.setAlias(tableAlias);
+			tables.put(chName, table);
+		}else{
+			table.setAlias(tableAlias);
+			tables.put(chName, table);
+			
+		}
+		return table;
+	}
+	
+	//Add DbTable Object By tableCnName And tableAlias
+	private DbTable addFromTableByChName(String chName, String tableAlias) {
+		DbTable table=addTableByChNameAndTableAlias(chName, tableAlias);
+		table.setExistInFromClause(true);
+		return table;
+	}
+	
+	//================= Column Fields EquElement AS FieldAlias =================//
+	//Add FieldAlias Object By CnFieldAliasName
+	private DbFieldAlias addFieldAliasByChAliasName(String columnEquElem, String chAliasName){
+		DbFieldAlias _dbFieldAlias = (DbFieldAlias) fieldAliasMap.get(chAliasName);
+		if (_dbFieldAlias == null){
+			_dbFieldAlias = new DbFieldAlias();
+			_dbFieldAlias.setCnFieldAlias(chAliasName);
+			_dbFieldAlias.setColumnEquElem(columnEquElem);
+			fieldAliasMap.put(chAliasName, _dbFieldAlias);
+		}
+		return _dbFieldAlias;
+	}
+	
+	//Get ALL FieldAlias Object Array
+	public DbFieldAlias[] getDbFieldAlias() {
+		int i = 0;
+		DbFieldAlias[] _rDbFieldAlias = new DbFieldAlias[fieldAliasMap.size()];
+		for (Iterator it = fieldAliasMap.values().iterator(); it.hasNext();){
+			_rDbFieldAlias[i++] = (DbFieldAlias) it.next();
+		}
+		return _rDbFieldAlias;
 	}
 }
 
@@ -469,11 +516,13 @@ columnList returns [String clist]
 	
 column returns [String c]
 	{String args; c="";}
-	:	c=equElem
-	|	#(a:AS args=equElem d:ID)
-		{c=args+" "+a.getText()+" "+d.getText();}
+	:	#(a:AS args=equElem d:ID)
+		{
+			c=args+" "+a.getText()+" "+d.getText();
+			addFieldAliasByChAliasName(args, d.getText());
+		}
+	|	c = equElem
 	;
-
 
 funcArgs returns [String args]
 	{String a; args="";}
@@ -549,7 +598,8 @@ tableName returns [String tableStr]
 	|	#(a:AS t1:ID t2:ID)
 		{
 			tableStr="["+t1.getText()+"] "+a.getText()+" "+t2.getText();
-			addFromTableByChName(t1.getText());
+			//addFromTableByChName(t1.getText());
+			addFromTableByChName(t1.getText(), t2.getText());
 		}
 	;
 
