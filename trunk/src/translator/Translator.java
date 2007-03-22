@@ -37,10 +37,18 @@ public class Translator {
   private static final String KEYWORD_TRANSLATE_TABLE = "keyword_translate_table";
   private static final String CN_KEY_WORDS = "cnKeyWords";
   
+//中文关键字属性KEY
   public static final String CNKEY_WORDS = "cnKeyWords";
   public static final String CNKEY_FUNC = "cnFunc";
   public static final String CNKEY_OPERSYMBOL = "operSymbol";
   public static final String CNKEY_NUMBERSYMBOL = "numberSymbol";
+  
+  //英文关键字名称属性KEY
+  public static final String ENVALUE_SELECT = "select";
+  public static final String ENVALUE_FROM = "from";
+  public static final String ENVALUE_WHERE = "where";
+  public static final String ENVALUE_GROUPBY = "group_by";
+  public static final String ENVALUE_ORDERBY = "order_by";
 
   public static final String SELECT = "select";
   public static final String COLUMN = "column";
@@ -81,7 +89,24 @@ public class Translator {
       ret[i++]=(String)it.next();
     return ret;
   }
-
+  
+  /**
+   * 根据关键字值获取对应中文关键字名称
+   * @param keyName 关键字值
+   * @return String 中文关键字名称
+   */
+  public String getCnKeyWordByValue(String _mValue){
+    String _rValue = "";
+    ResourceBundle bundle = ResourceBundle.getBundle(CN_KEY_WORDS, Locale.CHINESE);
+    _rValue = bundle.getString(_mValue);
+    return _rValue;
+  }
+  
+  /**
+   * 根据关键字/函数/操作符/运算符的KEY获取对应中文关键字名称
+   * @param keyName 关键字/函数/操作符/运算符属性KEY
+   * @return String 中文关键字名称
+   */
   public String getCnKeyWords(String keyName) {
     String[] cnKeyWordsArr = new String[]{CNKEY_WORDS, CNKEY_FUNC, CNKEY_OPERSYMBOL, CNKEY_NUMBERSYMBOL};
     
@@ -98,44 +123,63 @@ public class Translator {
     }
     return cnKeyWords;
   }
-
-/*
-  private String getEnQuery() {
-    return enQuery;
+  
+  /**
+   * 返回字段属性中的别名对象数组
+   */
+  public DbFieldAlias[] getDbFieldAlias(){
+    return this.tree.getDbFieldAlias();
   }
-
-  private void setEnQuery(String enQuery) {
-    this.enQuery = enQuery;
+  
+  /**
+   * 设置字段别名信息
+   * @param _iDbFieldAlias
+   */
+  public void setDbFieldAlias(DbFieldAlias[] _iDbFieldAlias) {
+    for (int i = 0; i < _iDbFieldAlias.length; i++) {
+      if (_iDbFieldAlias[i].getEnFieldAlias() == null || 
+          _iDbFieldAlias[i].getEnFieldAlias().equals(""))
+        antlrExceptions.add(new NoSuchFieldAliasException(_iDbFieldAlias[i].getCnFieldAlias()));
+      if (queryModel != null)
+        queryModel.addfieldAliasInfo(_iDbFieldAlias[i]);
+    }
   }
-
-  private Map getMapEn2Ch() {
-    return mapEn2Ch;
-  }
-
-  private void setMapEn2Ch(Map mapEn2Ch) {
-    this.mapEn2Ch = mapEn2Ch;
-  }
-
-  private Map getMapKeyword() {
-    return mapKeyword;
-  }
-
-  private void setMapKeyword(Map mapKeyword) {
-    this.mapKeyword = mapKeyword;
-  }
-*/
-
+  
   /**
    * 获取当前查询语句包含的数据库表对象列表，
    * 业务系统需要调用这个函数获得中文表对象列表后从数据库中获取每个表相应的英文名
    * @return
    */
   public DbTable[] getTables() {
-    return tree.getTables();
+    DbTable[] tablesArr = tree.getTables();
+    DbTable[] tableLiArr = new DbTable[(tablesArr.length)];
+    
+    int m = 0;
+    for (int i = 0; i < tablesArr.length; i++){
+      DbTable dbTable = (DbTable) tablesArr[i];
+      boolean isExistFlag = false;
+      for (int j = 0; j < m; j++){
+        DbTable _mDbTable = (DbTable) tableLiArr[j];
+        if ( (_mDbTable.getChName() != null && dbTable.getChName() != null && _mDbTable.getChName().equals(dbTable.getChName())) ||
+            _mDbTable.getAlias() != null && dbTable.getChName() != null && _mDbTable.getAlias().equals(dbTable.getChName())
+            ){
+          isExistFlag = true;
+          break;
+        }
+      }
+      if (!isExistFlag){
+        tableLiArr[m] = dbTable;
+        m++;
+      }
+    }
+    
+    DbTable[] _rDbTableArr = new DbTable[m];
+    System.arraycopy(tableLiArr, 0, _rDbTableArr, 0, m);
+    return _rDbTableArr;
   }
-
+  
   /**
-   * 获取表格信息（英文表名、字段名）后将信息设置回queryModel
+   * 获取表格信息（英文表名�?�字段名）后将信息设置回queryModel
    * @param tables
    */
   public void setTableInfo(DbTable[] tables) {
@@ -503,7 +547,7 @@ public class Translator {
     inputCh=inputCh==null?input:inputCh;
 
     String message=
-      "错误输入，需要 \""+expectingCh+"\" "+
+      "错误输入，需�? \""+expectingCh+"\" "+
       " 实际输入 \""+inputCh+"\"";
     msg.setMessage(message);
     msg.setLength(inputCh.length());
@@ -589,14 +633,14 @@ public class Translator {
   private ChWrongMessage translateException(NoSuchDbFieldException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(
-        "表 \""+exception.getTableChName()+"\" 中不存在字段 \""+exception.getFieldChName()+"\"");
+        "�? \""+exception.getTableChName()+"\" 中不存在字段 \""+exception.getFieldChName()+"\"");
     return msg;
   }
   
   private ChWrongMessage translateException(TableNotInFromClause exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(
-        "表 \""+exception.getTableName()+"\" 没有在 [来自] 段出现");
+        "�? \""+exception.getTableName()+"\" 没有�? [来自] 段出�?");
     return msg;
   }
   private int getChPos(int line, int enPos) {
