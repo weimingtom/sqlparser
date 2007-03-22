@@ -633,16 +633,24 @@ public class Translator {
   private ChWrongMessage translateException(NoSuchDbFieldException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(
-        "�? \""+exception.getTableChName()+"\" 中不存在字段 \""+exception.getFieldChName()+"\"");
+        "表 \""+exception.getTableChName()+"\" 中不存在字段 \""+exception.getFieldChName()+"\"");
+    return msg;
+  }
+  
+  private ChWrongMessage translateException(NoSuchFieldAliasException exception) {
+    ChWrongMessage msg=new ChWrongMessage();
+    msg.setMessage(
+        "别名 \""+exception.getFieldChAliasName()+"\" 中不存在对应字段 \"");
     return msg;
   }
   
   private ChWrongMessage translateException(TableNotInFromClause exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(
-        "�? \""+exception.getTableName()+"\" 没有�? [来自] 段出�?");
+        "表 \""+exception.getTableName()+"\" 没有在 [来自] 段出现");
     return msg;
   }
+  
   private int getChPos(int line, int enPos) {
     int ret=enPos-2;
     for (int i=ret; i>=0; i--) {
