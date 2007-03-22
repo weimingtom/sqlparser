@@ -161,8 +161,7 @@ public class Translator {
       for (int j = 0; j < m; j++){
         DbTable _mDbTable = (DbTable) tableLiArr[j];
         if ( (_mDbTable.getChName() != null && dbTable.getChName() != null && _mDbTable.getChName().equals(dbTable.getChName())) ||
-            _mDbTable.getAlias() != null && dbTable.getChName() != null && _mDbTable.getAlias().equals(dbTable.getChName())
-            ){
+            _mDbTable.getAlias() != null && dbTable.getChName() != null && _mDbTable.getAlias().equals(dbTable.getChName())){
           isExistFlag = true;
           break;
         }
