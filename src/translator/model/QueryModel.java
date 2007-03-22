@@ -12,10 +12,47 @@ import org.dom4j.Element;
 
 public abstract class QueryModel {
   protected Map chTableMap = new HashMap();
-
+  protected Map fieldAliasMap = new HashMap();
   private String chQuery;
   private Map mapEn2Ch=new HashMap();
-
+  
+  protected String translateFieldAliasCh2En(String _iColumnStr){
+    String _rValue = _iColumnStr;
+    Iterator _it = fieldAliasMap.values().iterator();
+    while (_it.hasNext()){
+      DbFieldAlias _rDbFieldAlias = (DbFieldAlias) _it.next();
+      String from = _rDbFieldAlias.getCnFieldAlias();
+      String to = _rDbFieldAlias.getEnFieldAlias();
+      _rValue = replace(_rValue, from, to);
+    }
+    return _rValue;
+  }
+  
+  protected String translateFieldCh2En(String src) {
+    String ret = src;
+    for (Iterator t_it = chTableMap.values().iterator(); t_it.hasNext();) {
+      DbTable t = (DbTable) t_it.next();
+      DbField[] fields = t.getFields();
+      for (int i = 0; i < fields.length; i++) {
+        String from = "[" + t.getChName() + "." + fields[i].getChName() + "]";
+        String to = "";
+        if (t.getAlias() != null){
+          to = t.getAlias() + "." + fields[i].getEnName();
+          ret = replace(ret, from, to); 
+          
+          from = "[" + t.getAlias() + "." + fields[i].getChName() + "]";;
+          to = t.getAlias() + "." + fields[i].getEnName();
+          
+        }else{
+          to = t.getEnName() + "." + fields[i].getEnName();
+        }
+        ret = replace(ret, from, to);
+      }
+    }
+    return ret;
+  }
+  
+  /*
   protected String translateFieldCh2En(String src) {
     String ret = src;
     for (Iterator t_it = chTableMap.values().iterator(); t_it.hasNext();) {
@@ -29,7 +66,8 @@ public abstract class QueryModel {
     }
     return ret;
   }
-
+  */
+  
   protected String translateTableCh2En(String src) {
     String ret = src;
     for (Iterator t_it = chTableMap.values().iterator(); t_it.hasNext();) {
@@ -100,7 +138,7 @@ public abstract class QueryModel {
   }
 
   /**
-   * 所有派生类必须重写此函数将成员变量添加到Element对象中
+   * �?有派生类必须重写此函数将成员变量添加到Element对象�?
    * @param element
    */
   protected abstract void getModelElement(Element element);
@@ -132,7 +170,7 @@ public abstract class QueryModel {
    * 从XML文档恢复查询模型对象
    * @param xml
    * @return
-   * @throws DocumentException 如果文档内容有错误无法构造模型对象则抛出此异常
+   * @throws DocumentException 如果文档内容有错误无法构造模型对象则抛出此异�?
    */
   public static QueryModel createModelFromXml(String xml)
       throws DocumentException {
@@ -169,7 +207,7 @@ public abstract class QueryModel {
   }
   
   /**
-   * 从XML文档对象中获取模型属性值
+   * 从XML文档对象中获取模型属性�??
    * @param element
    */
   protected abstract void initProperty(Element element);

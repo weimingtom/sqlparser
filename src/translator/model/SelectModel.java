@@ -20,7 +20,8 @@ public class SelectModel extends QueryModel {
   }
   
   public String getEnQuery() {
-    String clist=translateFieldCh2En(columnList);
+    String aliaslist = translateFieldAliasCh2En(columnList);
+    String clist=translateFieldCh2En(aliaslist);
     String tlist=translateTableCh2En(tableList);
     String equ=translateFieldCh2En(equation);
     String g=translateFieldCh2En(groupBy);
