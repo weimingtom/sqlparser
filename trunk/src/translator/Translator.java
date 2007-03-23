@@ -54,7 +54,13 @@ public class Translator {
   public static final String COLUMN = "column";
   public static final String FROM = "from";
   public static final String WHERE = "where";
-
+  
+  private Map selectListMap = new HashMap();  //SELECT子句表达式列表
+  private Map fromListMap = new HashMap();    //FROM子句表达式列表
+  private Map whereListMap = new HashMap();   //WHERE子句表达式列表
+  private Map groupByListMap = new HashMap(); //GROUP BY子句表达式列表
+  private Map orderByListMap = new HashMap(); //ORDER BY子句表达式列表
+  
   private String chQuery;
   private String enQuery;
   private Map mapKeyword = new HashMap();
@@ -125,6 +131,43 @@ public class Translator {
   }
   
   /**
+   * 返回SELECT字句字段或表达式信息对象数组
+   * @return SelectListVO[] 字段或表达式信息对象数组
+   */
+  public SelectListVO[] getSelectListVOArr(){
+    SelectListVO[] _selectListVOArr = this.tree.getSelectListVOArr();
+    for (int i = 0; i < _selectListVOArr.length; i++){
+      _selectListVOArr[i].setCnColumnEquElem(
+          translateEn2Ch(_selectListVOArr[i].getCnColumnEquElem())
+          );
+    }
+    return _selectListVOArr;
+  }
+  
+  /**
+   * 返回FROM字句表名、表别名信息对象数组
+   * @return FromListVO[] 表名、表别名信息对象数组
+   */
+  public FromListVO[] getFromListVOArr(){
+    FromListVO[] _fromListVO = this.tree.getFromListVOArr();
+    return _fromListVO;
+  }
+  
+  /**
+   * 返回WHERE字句条件表达式、关系运算符、条件信息对象数组
+   * @return WhereListVO[] 条件表达式、关系运算符、条件信息对象数组
+   */
+  public WhereListVO[] getWhereListVOArr(){
+    WhereListVO[] _whereListVO = this.tree.getWhereListVOArr();
+    for (int i = 0; i < _whereListVO.length; i++){
+      _whereListVO[i].setCnComparSymbol(
+          translateEn2Ch(_whereListVO[i].getCnComparSymbol())
+          );
+    }
+    return _whereListVO;
+  }
+  
+  /**
    * 返回字段属性中的别名对象数组
    */
   public DbFieldAlias[] getDbFieldAlias(){
@@ -151,6 +194,8 @@ public class Translator {
    * @return
    */
   public DbTable[] getTables() {
+    return tree.getTables();
+    /*
     DbTable[] tablesArr = tree.getTables();
     DbTable[] tableLiArr = new DbTable[(tablesArr.length)];
     
@@ -175,6 +220,7 @@ public class Translator {
     DbTable[] _rDbTableArr = new DbTable[m];
     System.arraycopy(tableLiArr, 0, _rDbTableArr, 0, m);
     return _rDbTableArr;
+    */
   }
   
   /**
@@ -393,6 +439,10 @@ public class Translator {
       queryModel=tree.statement(parserTree);
       queryModel.setMapEn2Ch(mapEn2Ch);
       queryModel.setChQuery(chQuery);
+      //Add SQL Every Step EquElement
+      queryModel.setSelectListMap(tree.getSelectListMap());
+      queryModel.setFromListMap(tree.getFromListMap());
+      queryModel.setWhereListMap(tree.getWhereListMap());
     } catch (RecognitionException e) {
       antlrExceptions.add(e);
     } catch (TokenStreamException e) {
