@@ -11,6 +11,12 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 public abstract class QueryModel {
+  private Map selectListMap = new HashMap();  //SELECT子句表达式列表
+  private Map fromListMap = new HashMap();    //FROM子句表达式列表
+  private Map whereListMap = new HashMap();   //WHERE子句表达式列表
+  private Map groupByListMap = new HashMap(); //GROUP BY子句表达式列表
+  private Map orderByListMap = new HashMap(); //ORDER BY子句表达式列表
+  
   protected Map chTableMap = new HashMap();
   protected Map fieldAliasMap = new HashMap();
   private String chQuery;
@@ -67,8 +73,11 @@ public abstract class QueryModel {
     String ret = src;
     for (Iterator it = mapEn2Ch.keySet().iterator(); it.hasNext();) {
       String key = (String) it.next();
-      if (src.indexOf(key) >= 0)
-        ret = replace(ret, key, (String) mapEn2Ch.get(key));
+      if (key != null && !key.equals("")){
+        if (src.indexOf(key) >= 0){
+          ret = replace(ret, key, (String) mapEn2Ch.get(key));
+        }
+      }
     }
     return ret;
   }
@@ -122,6 +131,9 @@ public abstract class QueryModel {
     getDbInfoElement(d.getRootElement());
     getMapEn2ChElement(d.getRootElement());
     getChQuery(d.getRootElement());
+    getSelectListEqu(d.getRootElement());
+    getFromListEqu(d.getRootElement());
+    getWhereListEqu(d.getRootElement());
     return d.asXML();
   }
 
@@ -153,7 +165,34 @@ public abstract class QueryModel {
       table.getModelElement(dbInfo);
     }
   }
-
+  
+  private void getSelectListEqu(Element rootElement){
+    Element _selectListEqu = rootElement.addElement("selectListEqu");
+    for (Iterator it = selectListMap.values().iterator(); it.hasNext();) {
+      SelectListVO _selectListVO = (SelectListVO) it.next();
+      _selectListVO.setCnColumnEquElem(translateKeywordEn2Ch(_selectListVO.getCnColumnEquElem()));
+      _selectListVO.getModelElement(_selectListEqu);
+    }
+  }
+  
+  private void getFromListEqu(Element rootElement){
+    Element _fromListEqu = rootElement.addElement("fromListEqu");
+    for (Iterator it = fromListMap.values().iterator(); it.hasNext();) {
+      FromListVO _fromListVO = (FromListVO) it.next();
+      _fromListVO.getModelElement(_fromListEqu);
+    }
+  }
+  
+  private void getWhereListEqu(Element rootElement){
+    Element _whereListEqu = rootElement.addElement("whereListEqu");
+    for (Iterator it = whereListMap.values().iterator(); it.hasNext();) {
+      WhereListVO _whereListVO = (WhereListVO) it.next();
+      _whereListVO.setCnAllWhereStr(translateKeywordEn2Ch(_whereListVO.getCnAllWhereStr()));
+      _whereListVO.setCnComparSymbol(translateKeywordEn2Ch(_whereListVO.getCnComparSymbol()));
+      _whereListVO.getModelElement(_whereListEqu);
+    }
+  }
+  
   /**
    * 从XML文档恢复查询模型对象
    * @param xml
@@ -191,6 +230,12 @@ public abstract class QueryModel {
         initMapEn2Ch(elem);
       if (elem.getName().equals("ch_query"))
         this.chQuery=elem.attributeValue("value");
+      if (elem.getName().equals("selectListEqu"))
+        initSelectListMap(elem);
+      if (elem.getName().equals("fromListEqu"))
+        initFromListMap(elem);
+      if (elem.getName().equals("whereListEqu"))
+        initWhereListMap(elem);
     }
   }
   
@@ -214,7 +259,39 @@ public abstract class QueryModel {
       chTableMap.put(table.getChName(), table);
     }
   }
-
+  
+  protected void initSelectListMap(Element elem){
+    for (Iterator it = elem.elementIterator(); it.hasNext();){
+      Element e = (Element)it.next();
+      SelectListVO _selectListVO = new SelectListVO();
+      _selectListVO.setCnColumnEquElem(e.attributeValue("cnColumnEquElem"));
+      _selectListVO.setCnFieldAlias(e.attributeValue("cnFieldAlias"));
+      selectListMap.put("SQL_SELECT_" + String.valueOf(selectListMap.size() + 1), _selectListVO);
+    }
+  }
+  
+  protected void initFromListMap(Element elem){
+    for (Iterator it = elem.elementIterator(); it.hasNext();){
+      Element e = (Element)it.next();
+      FromListVO _fromListVO = new FromListVO();
+      _fromListVO.setCnTableName(e.attributeValue("cnTableName"));
+      _fromListVO.setCnTAbleAlias(e.attributeValue("cnTAbleAlias"));
+      fromListMap.put(_fromListVO.getCnTableName(), _fromListVO);
+    }
+  }
+  
+  protected void initWhereListMap(Element elem){
+    for (Iterator it = elem.elementIterator(); it.hasNext();){
+      Element e = (Element)it.next();
+      WhereListVO _whereListVO = new WhereListVO();
+      _whereListVO.setCnAllWhereStr(e.attributeValue("cnAllWhereStr"));
+      _whereListVO.setCnWhereEquElem(e.attributeValue("cnWhereEquElem"));
+      _whereListVO.setCnComparSymbol(e.attributeValue("cnComparSymbol"));
+      _whereListVO.setCnWhereValue(e.attributeValue("cnWhereValue"));
+      whereListMap.put("SQL_WHERE_" + String.valueOf(whereListMap.size() + 1), _whereListVO);
+    }
+  }
+  
   protected void addPropertyElement(Element query, String propName,
       String propVal) {
     Element prop = query.addElement("property");
@@ -235,4 +312,128 @@ public abstract class QueryModel {
     for (int i=0; i<tables.length; i++)
       chTableMap.put(tables[i].getChName(), tables[i]);
   }
+
+  public Map getFieldAliasMap() {
+    return fieldAliasMap;
+  }
+
+  public void setFieldAliasMap(Map fieldAliasMap) {
+    this.fieldAliasMap = fieldAliasMap;
+  }
+
+  public Map getSelectListMap() {
+    return selectListMap;
+  }
+  
+  /**
+   * 获取SELECT子句下所有表达式对象数组
+   * @return SelectListVO[] SelectListVO对象数组
+   */
+  public SelectListVO[] getSelectListArr() {
+    int i = 0;
+    SelectListVO[] _selectListVOArr = new SelectListVO[selectListMap.size()];
+    Iterator it = selectListMap.values().iterator();
+    while (it.hasNext()){
+      SelectListVO _selectListVO = (SelectListVO) it.next();
+      _selectListVOArr[i++] = _selectListVO;
+    }
+    return _selectListVOArr;
+  }
+  
+  /**
+   * 获取FROM子句下所有表达式对象数组
+   * @return FromListVO[] FromListVO对象数组
+   */
+  public FromListVO[] getFromListVOArr() {
+    int i = 0;
+    FromListVO[] _fromListVOArr = new FromListVO[fromListMap.size()];
+    Iterator it = fromListMap.values().iterator();
+    while (it.hasNext()){
+      FromListVO _fromListVO = (FromListVO) it.next();
+      _fromListVOArr[i++] = _fromListVO;
+    }
+    return _fromListVOArr;
+  }
+  
+  /**
+   * 获取WHERE子句下所有表达式对象数组
+   * @return WhereListVO[] WhereListVO对象数组
+   */
+  public WhereListVO[] getWhereListVOArr() {
+    int i = 0;
+    WhereListVO[] _whereListVOArr = new WhereListVO[whereListMap.size()];
+    Iterator it = whereListMap.values().iterator();
+    while (it.hasNext()){
+      WhereListVO _whereListVO = (WhereListVO) it.next();
+      _whereListVOArr[i++] = _whereListVO;
+    }
+    return _whereListVOArr;
+  }
+  
+  /**
+   * 获取GROUP BY子句下所有表达式对象数组
+   * @return GroupByListVO[] GroupByListVO对象数组
+   */
+  public GroupByListVO[] getGroupByListVOArr() {
+    int i = 0;
+    GroupByListVO[] _groupByListVOArr = new GroupByListVO[groupByListMap.size()];
+    Iterator it = groupByListMap.values().iterator();
+    while (it.hasNext()){
+      GroupByListVO _groupByListVO = (GroupByListVO) it.next();
+      _groupByListVOArr[i++] = _groupByListVO;
+    }
+    return _groupByListVOArr;
+  }
+  
+  /**
+   * 获取ORDER BY子句下所有表达式对象数组
+   * @return OrderByListVO[] OrderByListVO对象数组
+   */
+  public OrderByListVO[] getOrdereByListVOArr() {
+    int i = 0;
+    OrderByListVO[] _orderByListVOArr = new OrderByListVO[orderByListMap.size()];
+    Iterator it = orderByListMap.values().iterator();
+    while (it.hasNext()){
+      OrderByListVO _orderByListVO = (OrderByListVO) it.next();
+      _orderByListVOArr[i++] = _orderByListVO;
+    }
+    return _orderByListVOArr;
+  }
+  
+  public Map getFromListMap() {
+    return fromListMap;
+  }
+  
+  public Map getWhereListMap() {
+    return whereListMap;
+  }
+  
+  public Map getGroupByListMap() {
+    return groupByListMap;
+  }
+  
+  public Map getOrderByListMap() {
+    return orderByListMap;
+  }
+  
+  public void setSelectListMap(Map selectListMap) {
+    this.selectListMap = selectListMap;
+  }
+  
+  public void setFromListMap(Map fromListMap) {
+    this.fromListMap = fromListMap;
+  }
+
+  public void setWhereListMap(Map whereListMap) {
+    this.whereListMap = whereListMap;
+  }
+  
+  public void setGroupByListMap(Map groupByListMap) {
+    this.groupByListMap = groupByListMap;
+  }
+
+  public void setOrderByListMap(Map orderByListMap) {
+    this.orderByListMap = orderByListMap;
+  }
+  
 }
