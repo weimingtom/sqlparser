@@ -279,7 +279,6 @@ public class Translator {
    * @return 中文查询语句 
    */
   public String getChQuery() {
-    // TODO 如果chQuery==null抛出异常
     return chQuery;
   }
   private void initTranslator(String query) {
@@ -425,6 +424,7 @@ public class Translator {
     try {
       parser.statement();
       CommonAST parserTree=(CommonAST)parser.getAST();
+      // TODO 显示Tree Frame页面
 //      ASTFrame _ASTFrame = new ASTFrame("The tree", parserTree);
 //      _ASTFrame.setVisible(true);
       queryModel=tree.statement(parserTree);
