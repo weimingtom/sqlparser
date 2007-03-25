@@ -21,16 +21,43 @@ import translator.model.*;
 
 public class T extends antlr.TreeParser       implements PTokenTypes
  {
-
-	Map tables=new HashMap();
-	Map fieldAliasMap = new HashMap();
-	Map segment=new HashMap();
 	
+	Map selectListMap = new HashMap();
+    Map fromListMap = new HashMap();
+    Map whereListMap = new HashMap();
+    Map groupByListMap = new HashMap();
+    Map orderByListMap = new HashMap();
+    
+	Map tables = new HashMap();
+	Map fieldAliasMap = new HashMap();
+	Map segment = new HashMap();
+	
+	int whereIntKey = 0;
+	
+	//Get DbTable Model (Remove the alias table Object)
 	public DbTable[] getTables() {
 		int i=0;
-		DbTable[] ret=new DbTable[tables.size()];
-		for (Iterator it=tables.values().iterator(); it.hasNext();)
-			ret[i++]=(DbTable)it.next();
+		List removeKeyLi = new ArrayList();
+    
+	    Iterator it = tables.values().iterator();
+	    while (it.hasNext()){
+	      DbTable _tDbTable = (DbTable)it.next();
+	      if (tables.keySet().contains(_tDbTable.getAlias())){
+	        if (!removeKeyLi.contains(_tDbTable.getAlias())){
+	          removeKeyLi.add(_tDbTable.getAlias());
+	        }
+	      }
+	    }
+	    
+	    for (int m = 0; m < removeKeyLi.size(); m++){
+	      tables.remove((Object) removeKeyLi.get(m));
+	    }
+	    
+	    DbTable[] ret=new DbTable[tables.size()];
+	    Iterator _rit = tables.values().iterator();
+	    while (_rit.hasNext()){
+	      ret[i++] = (DbTable)_rit.next();
+	    }
 		return ret;
 	}
 	
@@ -61,7 +88,6 @@ public class T extends antlr.TreeParser       implements PTokenTypes
 		}else{
 			table.setAlias(tableAlias);
 			tables.put(chName, table);
-			
 		}
 		return table;
 	}
@@ -80,6 +106,7 @@ public class T extends antlr.TreeParser       implements PTokenTypes
 		if (_dbFieldAlias == null){
 			_dbFieldAlias = new DbFieldAlias();
 			_dbFieldAlias.setCnFieldAlias(chAliasName);
+			_dbFieldAlias.setEnFieldAlias(chAliasName);
 			_dbFieldAlias.setColumnEquElem(columnEquElem);
 			fieldAliasMap.put(chAliasName, _dbFieldAlias);
 		}
@@ -95,6 +122,94 @@ public class T extends antlr.TreeParser       implements PTokenTypes
 		}
 		return _rDbFieldAlias;
 	}
+	
+	/**=====================================================================//
+	//															  			//
+	//				  		Get SQL Every Step EquElement				  	//
+	//															  			//
+	//======================================================================*/
+	
+	public Map getSelectListMap() {
+	    return selectListMap;
+	}
+	
+	public Map getFromListMap() {
+		return fromListMap;
+	}
+	
+	public Map getWhereListMap() {
+	    return whereListMap;
+	}
+	
+	public Map getGroupByListMap() {
+	    return groupByListMap;
+	}
+	
+	public Map getOrderByListMap() {
+	    return orderByListMap;
+	}
+	
+	//Add SelectListVO to selectListMap
+	private SelectListVO addSelectListVO(String columnEquElem, String chAliasName){
+		int intMapKey = selectListMap.size() + 1;
+		SelectListVO _selectListVO = new SelectListVO();
+		_selectListVO.setCnColumnEquElem(columnEquElem);
+		_selectListVO.setCnFieldAlias(chAliasName);
+		selectListMap.put("SQL_SELECT_" + String.valueOf(intMapKey), _selectListVO);
+		return _selectListVO;
+	}
+	
+	//Get ALL FieldEquElem Object Array from selectListMap
+	public SelectListVO[] getSelectListVOArr() {
+		int i = 0;
+		SelectListVO[] _selectListVOArr = new SelectListVO[selectListMap.size()];
+		for (Iterator it = selectListMap.values().iterator(); it.hasNext();){
+			_selectListVOArr[i++] = (SelectListVO) it.next();
+		}
+		return _selectListVOArr;
+	}
+	
+	
+	//Add FromListVO to fromListMap
+	private FromListVO addFromListVO(String chName, String tableAlias){
+		FromListVO _fromListVO = new FromListVO();
+	    _fromListVO.setCnTableName(chName);
+	    _fromListVO.setCnTAbleAlias(tableAlias);
+	    fromListMap.put(_fromListVO.getCnTableName(), _fromListVO);
+	    return _fromListVO;
+	}
+	
+	//Get ALL FromListVO(TableName) Object Array from fromListMap
+	public FromListVO[] getFromListVOArr() {
+	    int i = 0;
+	    FromListVO[] _fromListVOArr = new FromListVO[fromListMap.size()];
+	    for (Iterator it = fromListMap.values().iterator(); it.hasNext();){
+	      _fromListVOArr[i++] = (FromListVO) it.next();
+	    }
+	    return _fromListVOArr;
+	}
+	
+	//Add WhereListVO to whereListMap
+	private WhereListVO addWhereListVO(String cnWhereEquElem, String comparSymbol, String cnWhereValue){
+		int whereIntKey = whereListMap.size() + 1;
+		WhereListVO _whereListVO = new WhereListVO();
+		_whereListVO.setCnAllWhereStr(cnWhereEquElem+" "+comparSymbol+" "+cnWhereValue);
+	    _whereListVO.setCnWhereEquElem(cnWhereEquElem);
+	    _whereListVO.setCnComparSymbol(comparSymbol);
+	    _whereListVO.setCnWhereValue(cnWhereValue);
+	    whereListMap.put("SQL_WHERE_" + String.valueOf(whereIntKey), _whereListVO);
+		return _whereListVO;
+	}
+	
+	//Get ALL WhereListVO Object Array from whereListMap
+	public WhereListVO[] getWhereListVOArr() {
+    	int i = 0;
+      	WhereListVO[] _whereListVO = new WhereListVO[whereListMap.size()];
+      	for (Iterator it = whereListMap.values().iterator(); it.hasNext();){
+        	_whereListVO[i++] = (WhereListVO) it.next();
+      	}
+      	return _whereListVO;
+  	}
 public T() {
 	tokenNames = _tokenNames;
 }
@@ -201,7 +316,10 @@ public T() {
 				AST tmp6_AST_in = (AST)_t;
 				match(_t,ALL_FIELDS);
 				_t = _t.getNextSibling();
-				clist="(*)";
+				
+							clist="(*)";
+							addSelectListVO(clist, "");
+						
 				break;
 			}
 			case ALL:
@@ -290,7 +408,7 @@ public T() {
 		AST equations_AST_in = (_t == ASTNULL) ? null : (AST)_t;
 		AST lop = null;
 		AST op = null;
-		String e1, e2; equStr="";
+		String e1, e2; equStr="";int m = 0, n = 0;
 		
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
@@ -305,7 +423,9 @@ public T() {
 				_t = _retTree;
 				_t = __t141;
 				_t = _t.getNextSibling();
-				equStr=e1;
+				
+							equStr=e1;
+						
 				break;
 			}
 			case LOGIC_OP:
@@ -320,7 +440,9 @@ public T() {
 				_t = _retTree;
 				_t = __t142;
 				_t = _t.getNextSibling();
-				equStr=e1+" "+lop+" "+e2;
+				
+							equStr=e1+" "+lop+" "+e2;
+						
 				break;
 			}
 			case COMPARATOR:
@@ -335,7 +457,11 @@ public T() {
 				_t = _retTree;
 				_t = __t143;
 				_t = _t.getNextSibling();
-				equStr=e1+" "+op.getText()+" "+e2;
+				
+							equStr=e1+" "+op.getText()+" "+e2;
+							whereIntKey++;
+							addWhereListVO(e1, op.getText(), e2);
+						
 				break;
 			}
 			default:
@@ -377,11 +503,15 @@ public T() {
 				
 							c=args+" "+a.getText()+" "+d.getText();
 							addFieldAliasByChAliasName(args, d.getText());
+							addSelectListVO(args, d.getText());
 						
 			}
 			else if ((_tokenSet_0.member(_t.getType()))) {
 				c=equElem(_t);
 				_t = _retTree;
+				
+							addSelectListVO(c, "");
+						
 			}
 			else {
 				throw new NoViableAltException(_t);
@@ -497,6 +627,7 @@ public T() {
 				
 							tableStr="["+t.getText()+"]";
 							addFromTableByChName(t.getText());
+							addFromListVO(t.getText(), "");
 						
 				break;
 			}
@@ -518,6 +649,7 @@ public T() {
 							tableStr="["+t1.getText()+"] "+a.getText()+" "+t2.getText();
 							//addFromTableByChName(t1.getText());
 							addFromTableByChName(t1.getText(), t2.getText());
+							addFromListVO(t1.getText(), t2.getText());
 						
 				break;
 			}
