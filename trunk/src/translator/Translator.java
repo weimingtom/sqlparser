@@ -26,6 +26,7 @@ import antlr.TokenStreamException;
 import antlr.TokenStreamIOException;
 import antlr.TokenStreamRecognitionException;
 import antlr.TokenStreamRetryException;
+import antlr.debug.misc.ASTFrame;
 
 /**
  * 
@@ -135,13 +136,7 @@ public class Translator {
    * @return SelectListVO[] 字段或表达式信息对象数组
    */
   public SelectListVO[] getSelectListVOArr(){
-    SelectListVO[] _selectListVOArr = this.tree.getSelectListVOArr();
-    for (int i = 0; i < _selectListVOArr.length; i++){
-      _selectListVOArr[i].setCnColumnEquElem(
-          translateEn2Ch(_selectListVOArr[i].getCnColumnEquElem())
-          );
-    }
-    return _selectListVOArr;
+    return this.tree.getSelectListVOArr();
   }
   
   /**
@@ -158,13 +153,7 @@ public class Translator {
    * @return WhereListVO[] 条件表达式、关系运算符、条件信息对象数组
    */
   public WhereListVO[] getWhereListVOArr(){
-    WhereListVO[] _whereListVO = this.tree.getWhereListVOArr();
-    for (int i = 0; i < _whereListVO.length; i++){
-      _whereListVO[i].setCnComparSymbol(
-          translateEn2Ch(_whereListVO[i].getCnComparSymbol())
-          );
-    }
-    return _whereListVO;
+    return this.tree.getWhereListVOArr();
   }
   
   /**
@@ -436,6 +425,8 @@ public class Translator {
     try {
       parser.statement();
       CommonAST parserTree=(CommonAST)parser.getAST();
+//      ASTFrame _ASTFrame = new ASTFrame("The tree", parserTree);
+//      _ASTFrame.setVisible(true);
       queryModel=tree.statement(parserTree);
       queryModel.setMapEn2Ch(mapEn2Ch);
       queryModel.setChQuery(chQuery);
