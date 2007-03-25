@@ -207,6 +207,7 @@ public abstract class QueryModel {
     Element _orderByListEqu = rootElement.addElement("orderByListEqu");
     for (Iterator it = orderByListMap.values().iterator(); it.hasNext();) {
       OrderByListVO _orderByListVO = (OrderByListVO) it.next();
+      _orderByListVO.setCnOrderType(translateKeywordEn2Ch(_orderByListVO.getCnOrderType()));
       _orderByListVO.getModelElement(_orderByListEqu);
     }
   }
@@ -254,6 +255,10 @@ public abstract class QueryModel {
         initFromListMap(elem);
       if (elem.getName().equals("whereListEqu"))
         initWhereListMap(elem);
+      if (elem.getName().equals("groupByListEqu"))
+        initGroupByListMap(elem);
+      if (elem.getName().equals("orderByListEqu"))
+        initOrderByListMap(elem);
     }
   }
   
@@ -307,6 +312,25 @@ public abstract class QueryModel {
       _whereListVO.setCnComparSymbol(e.attributeValue("cnComparSymbol"));
       _whereListVO.setCnWhereValue(e.attributeValue("cnWhereValue"));
       whereListMap.put("SQL_WHERE_" + String.valueOf(whereListMap.size() + 1), _whereListVO);
+    }
+  }
+  
+  protected void initGroupByListMap(Element elem){
+    for (Iterator it = elem.elementIterator(); it.hasNext();){
+      Element e = (Element)it.next();
+      GroupByListVO _groupByListVO = new GroupByListVO();
+      _groupByListVO.setCnGroupByEquElem(e.attributeValue("cnGroupByEquElem"));
+      groupByListMap.put("SQL_GROUPBY_" + String.valueOf(groupByListMap.size() + 1), _groupByListVO);
+    }
+  }
+  
+  protected void initOrderByListMap(Element elem){
+    for (Iterator it = elem.elementIterator(); it.hasNext();){
+      Element e = (Element)it.next();
+      OrderByListVO _orderByListVO = new OrderByListVO();
+      _orderByListVO.setCnOrerByEquElem(e.attributeValue("cnOrerByEquElem"));
+      _orderByListVO.setCnOrderType(e.attributeValue("cnOrderType"));
+      orderByListMap.put("SQL_ORDERBY_" + String.valueOf(orderByListMap.size() + 1), _orderByListVO);
     }
   }
   
