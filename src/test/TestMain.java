@@ -2,6 +2,8 @@ package test;
 
 import java.io.StringReader;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.dom4j.DocumentException;
 
@@ -15,8 +17,11 @@ import translator.model.ChWrongMessage;
 import translator.model.DbField;
 import translator.model.DbFieldAlias;
 import translator.model.DbTable;
+import translator.model.FromListVO;
 import translator.model.QueryModel;
+import translator.model.SelectListVO;
 import translator.model.SelectModel;
+import translator.model.WhereListVO;
 
 import antlr.CommonAST;
 import antlr.RecognitionException;
@@ -38,17 +43,77 @@ public class TestMain extends TestCase {
 //    System.out.println(main.replace(src, from, to));
   }
   
-  public void otherTest() {
-    String xml="<query class=\"translator.model.UnionModel\"><property name=\"ch_table1\" value=\"表1\"/><property name=\"ch_table2\" value=\"表2\"/><property name=\"ch_into\" value=\"[临时表]\"/><db_info_list><db_info ch_name=\"表1\" en_name=\"table0\" exist_in_form=\"true\"><db_field ch_name=\"行号\" en_name=\"line_num\"/><db_field ch_name=\"字/段6\" en_name=\"field6\"/><db_field ch_name=\"货币码\" en_name=\"code\"/><db_field ch_name=\"字段4\" en_name=\"field4\"/><db_field ch_name=\"字段2\" en_name=\"field2\"/><db_field ch_name=\"字段5\" en_name=\"field5\"/><db_field ch_name=\"字段3\" en_name=\"field3\"/><db_field ch_name=\"字段1\" en_name=\"field1\"/></db_info><db_info ch_name=\"表2\" en_name=\"table1\" exist_in_form=\"true\"><db_field ch_name=\"行号\" en_name=\"line_num\"/><db_field ch_name=\"字/段6\" en_name=\"field6\"/><db_field ch_name=\"货币码\" en_name=\"code\"/><db_field ch_name=\"字段4\" en_name=\"field4\"/><db_field ch_name=\"字段2\" en_name=\"field2\"/><db_field ch_name=\"字段5\" en_name=\"field5\"/><db_field ch_name=\"字段3\" en_name=\"field3\"/><db_field ch_name=\"字段1\" en_name=\"field1\"/></db_info><db_info ch_name=\"临时表\" en_name=\"table2\" exist_in_form=\"true\"><db_field ch_name=\"行号\" en_name=\"line_num\"/><db_field ch_name=\"字/段6\" en_name=\"field6\"/><db_field ch_name=\"货币码\" en_name=\"code\"/><db_field ch_name=\"字段4\" en_name=\"field4\"/><db_field ch_name=\"字段2\" en_name=\"field2\"/><db_field ch_name=\"字段5\" en_name=\"field5\"/><db_field ch_name=\"字段3\" en_name=\"field3\"/><db_field ch_name=\"字段1\" en_name=\"field1\"/></db_info></db_info_list><map_en_ch><en_to_ch en=\"into\" ch=\"[存到]\"/><en_to_ch en=\"t_union\" ch=\"[表合并]\"/><en_to_ch en=\",\" ch=\"，\"/></map_en_ch><ch_query value=\"[表合并] 表1，表2 [存到] 临时表\"/></query>";
-    QueryModel model;
-    try {
-      model = QueryModel.createModelFromXml(xml);
-      System.out.println(model);
-    } catch (DocumentException e) {
+  public void myTestChQuery() {
+    String selectStr=
+      "[查询] [所有], ([求和](表1.字段2) + [求和](表2.字段2)) [作为] c, 表2.字段1, a.字段2 [来自] 表1 [作为] a, 表2, 表3 [作为] y " +
+      "[条件] 表1.字段1 [等于] 'TEST' [并且] a.字段3 [包含] '%HJD%' [并且] 表2.字段2 [大于] 6";
+    Translator t=new Translator();
+    t.setChQuery(selectStr);
+    System.out.println(t.getParser().getAST().toStringList());
+    SelectListVO[] _selectListVOArr = t.getSelectListVOArr();
+    FromListVO[] _fromListVOArr = t.getFromListVOArr();
+    WhereListVO[] _whereListVO = t.getWhereListVOArr();
+    DbFieldAlias[] _gDbFieldAliasArr = t.getDbFieldAlias();
+    t.setTableInfo(setTableInfo(t.getTables()));
+    t.setDbFieldAlias(setDbFieldAliasInfo(t.getDbFieldAlias()));
+    String _rXMLStr = t.getQueryModel().getXmlString();
+    if (t.hasError()) {
+      ChWrongMessage[] msgs=t.showWrongMsgs();
+      for (int i=0; i<msgs.length; i++)
+        System.out.println(msgs[i]);
+    } else {
+      QueryModel _queryModel = t.getQueryModel();
+      SelectModel _selectModel = (SelectModel) _queryModel;
+      System.out.println(_queryModel.toString());
+      System.out.println(_queryModel.getEnQuery());
+      
+      SelectListVO[] _rSelectListVOArr = _selectModel.getSelectListArr();
+      for (int i = 0; i < _rSelectListVOArr.length; i++){
+        System.out.println("字段名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnColumnEquElem() +  " || " +
+            "别名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnFieldAlias());
+      }
+      
+      FromListVO[] _rFromListVOArr = _selectModel.getFromListVOArr();
+      for (int i = 0; i < _rFromListVOArr.length; i++){
+        System.out.println("表名"+(i+1)+": " + _rFromListVOArr[i].getCnTableName() +  " || " +
+            "表别名"+(i+1)+": " + _rFromListVOArr[i].getCnTAbleAlias());
+      }
+      
+      WhereListVO[] _rWhereListVOArr = _selectModel.getWhereListVOArr();
+      for (int i = 0; i < _rWhereListVOArr.length; i++){
+        System.out.println("条件表达式"+(i+1)+": " + _rWhereListVOArr[i].getCnWhereEquElem() +  " || " +
+            "关系运算符"+(i+1)+": " + _rWhereListVOArr[i].getCnComparSymbol() + " || " + "条件为: " + _rWhereListVOArr[i].getCnWhereValue());
+      }
+    }
+    
+    
+    try{
+      
+      QueryModel _queryModel = QueryModel.createModelFromXml(_rXMLStr);
+      SelectModel _selectMode = (SelectModel) _queryModel;
+      
+      SelectListVO[] _rSelectListVOArr = _queryModel.getSelectListArr();
+      for (int i = 0; i < _rSelectListVOArr.length; i++){
+        System.out.println("字段名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnColumnEquElem() +  " || " +
+            "别名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnFieldAlias());
+      }
+      
+      FromListVO[] _rFromListVOArr = _queryModel.getFromListVOArr();
+      for (int i = 0; i < _rFromListVOArr.length; i++){
+        System.out.println("表名"+(i+1)+": " + _rFromListVOArr[i].getCnTableName() +  " || " +
+            "表别名"+(i+1)+": " + _rFromListVOArr[i].getCnTAbleAlias());
+      }
+      
+      WhereListVO[] _rWhereListVOArr = _queryModel.getWhereListVOArr();
+      for (int i = 0; i < _rWhereListVOArr.length; i++){
+        System.out.println("条件表达式"+(i+1)+": " + _rWhereListVOArr[i].getCnWhereEquElem() +  " || " +
+            "关系运算符"+(i+1)+": " + _rWhereListVOArr[i].getCnComparSymbol() + " || " + "条件为: " + _rWhereListVOArr[i].getCnWhereValue());
+      }
+    }catch (DocumentException e){
       e.printStackTrace();
     }
   }
-
+  
   public String replace(String src, String from, String to) {
     String ret=src;
 //    if (src.indexOf(from)>=0) {
@@ -85,35 +150,6 @@ public class TestMain extends TestCase {
       e.printStackTrace();
     } catch (TokenStreamException e) {
       e.printStackTrace();
-    }
-  }
-  
-  public void myTestChQuery() {
-    String selectStr=
-      "[查询] [所有], 表1.字段1 [作为] c, 表2.字段1, a.字段2 [来自] 表1 [作为] a, 表2";
-    Translator t=new Translator();
-    t.setChQuery(selectStr);
-    System.out.println(t.getParser().getAST().toStringList());
-    DbFieldAlias[] _gDbFieldAliasArr = t.getDbFieldAlias();
-    t.setTableInfo(setTableInfo(t.getTables()));
-    t.setDbFieldAlias(setDbFieldAliasInfo(t.getDbFieldAlias()));
-    /*
-    DbTable[] tables=t.getTables();
-    for (int i=0; i<tables.length; i++)
-      for (int j=0; j<tables[i].getFields().length; j++) {
-        DbField f=tables[i].getFields()[j];
-        if (f.isExistInQuery())
-          System.out.println(tables[i].getChName()+" "+tables[i].getEnName()+" "+f.getChName()+" "+f.getEnName());
-      }
-    */
-    
-    if (t.hasError()) {
-      ChWrongMessage[] msgs=t.showWrongMsgs();
-      for (int i=0; i<msgs.length; i++)
-        System.out.println(msgs[i]);
-    } else {
-      QueryModel model=t.getQueryModel();
-      System.out.println(model.getEnQuery());
     }
   }
   
@@ -279,5 +315,16 @@ public class TestMain extends TestCase {
         tables[i].addDbField("字段"+j, "field"+j);
     }
     return tables;
+  }
+  
+  public void otherTest() {
+    String xml="<query class=\"translator.model.UnionModel\"><property name=\"ch_table1\" value=\"表1\"/><property name=\"ch_table2\" value=\"表2\"/><property name=\"ch_into\" value=\"[临时表]\"/><db_info_list><db_info ch_name=\"表1\" en_name=\"table0\" exist_in_form=\"true\"><db_field ch_name=\"行号\" en_name=\"line_num\"/><db_field ch_name=\"字/段6\" en_name=\"field6\"/><db_field ch_name=\"货币码\" en_name=\"code\"/><db_field ch_name=\"字段4\" en_name=\"field4\"/><db_field ch_name=\"字段2\" en_name=\"field2\"/><db_field ch_name=\"字段5\" en_name=\"field5\"/><db_field ch_name=\"字段3\" en_name=\"field3\"/><db_field ch_name=\"字段1\" en_name=\"field1\"/></db_info><db_info ch_name=\"表2\" en_name=\"table1\" exist_in_form=\"true\"><db_field ch_name=\"行号\" en_name=\"line_num\"/><db_field ch_name=\"字/段6\" en_name=\"field6\"/><db_field ch_name=\"货币码\" en_name=\"code\"/><db_field ch_name=\"字段4\" en_name=\"field4\"/><db_field ch_name=\"字段2\" en_name=\"field2\"/><db_field ch_name=\"字段5\" en_name=\"field5\"/><db_field ch_name=\"字段3\" en_name=\"field3\"/><db_field ch_name=\"字段1\" en_name=\"field1\"/></db_info><db_info ch_name=\"临时表\" en_name=\"table2\" exist_in_form=\"true\"><db_field ch_name=\"行号\" en_name=\"line_num\"/><db_field ch_name=\"字/段6\" en_name=\"field6\"/><db_field ch_name=\"货币码\" en_name=\"code\"/><db_field ch_name=\"字段4\" en_name=\"field4\"/><db_field ch_name=\"字段2\" en_name=\"field2\"/><db_field ch_name=\"字段5\" en_name=\"field5\"/><db_field ch_name=\"字段3\" en_name=\"field3\"/><db_field ch_name=\"字段1\" en_name=\"field1\"/></db_info></db_info_list><map_en_ch><en_to_ch en=\"into\" ch=\"[存到]\"/><en_to_ch en=\"t_union\" ch=\"[表合并]\"/><en_to_ch en=\",\" ch=\"，\"/></map_en_ch><ch_query value=\"[表合并] 表1，表2 [存到] 临时表\"/></query>";
+    QueryModel model;
+    try {
+      model = QueryModel.createModelFromXml(xml);
+      System.out.println(model);
+    } catch (DocumentException e) {
+      e.printStackTrace();
+    }
   }
 }
