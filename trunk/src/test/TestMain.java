@@ -18,6 +18,7 @@ import translator.model.DbField;
 import translator.model.DbFieldAlias;
 import translator.model.DbTable;
 import translator.model.FromListVO;
+import translator.model.OrderByListVO;
 import translator.model.QueryModel;
 import translator.model.SelectListVO;
 import translator.model.SelectModel;
@@ -46,7 +47,7 @@ public class TestMain extends TestCase {
   public void myTestChQuery() {
     String selectStr=
       "[查询] [所有], ([求和](表1.字段2) + [求和](表2.字段2)) [作为] c, 表2.字段1, a.字段2 [来自] 表1 [作为] a, 表2, 表3 [作为] y " +
-      "[条件] 表1.字段1 [等于] 'TEST' [并且] a.字段3 [包含] '%HJD%' [并且] 表2.字段2 [大于] 6";
+      "[条件] 表1.字段1 [等于] 'TEST' [并且] a.字段3 [包含] '%HJD%' [并且] 表2.字段2 [大于] 6 [排序] 表1.字段1 [降序]";
     Translator t=new Translator();
     t.setChQuery(selectStr);
     System.out.println(t.getParser().getAST().toStringList());
@@ -83,6 +84,12 @@ public class TestMain extends TestCase {
       for (int i = 0; i < _rWhereListVOArr.length; i++){
         System.out.println("条件表达式"+(i+1)+": " + _rWhereListVOArr[i].getCnWhereEquElem() +  " || " +
             "关系运算符"+(i+1)+": " + _rWhereListVOArr[i].getCnComparSymbol() + " || " + "条件为: " + _rWhereListVOArr[i].getCnWhereValue());
+      }
+      
+      OrderByListVO[] _orderByListVOArr = _selectModel.getOrdereByListVOArr();
+      for (int i = 0; i < _orderByListVOArr.length; i++){
+        System.out.println("条件表达式"+(i+1)+": " + _orderByListVOArr[i].getCnOrerByEquElem() +  " || " +
+            "升(降)序"+(i+1)+": " + _orderByListVOArr[i].getCnOrderType());
       }
     }
     
