@@ -349,16 +349,43 @@ import java.util.*;
 import translator.model.*;
 }
 class T extends TreeParser;
-{
-	Map tables=new HashMap();
+{	
+	Map selectListMap = new HashMap();
+    Map fromListMap = new HashMap();
+    Map whereListMap = new HashMap();
+    Map groupByListMap = new HashMap();
+    Map orderByListMap = new HashMap();
+    
+	Map tables = new HashMap();
 	Map fieldAliasMap = new HashMap();
-	Map segment=new HashMap();
+	Map segment = new HashMap();
 	
+	int whereIntKey = 0;
+	
+	//Get DbTable Model (Remove the alias table Object)
 	public DbTable[] getTables() {
 		int i=0;
-		DbTable[] ret=new DbTable[tables.size()];
-		for (Iterator it=tables.values().iterator(); it.hasNext();)
-			ret[i++]=(DbTable)it.next();
+		List removeKeyLi = new ArrayList();
+    
+	    Iterator it = tables.values().iterator();
+	    while (it.hasNext()){
+	      DbTable _tDbTable = (DbTable)it.next();
+	      if (tables.keySet().contains(_tDbTable.getAlias())){
+	        if (!removeKeyLi.contains(_tDbTable.getAlias())){
+	          removeKeyLi.add(_tDbTable.getAlias());
+	        }
+	      }
+	    }
+	    
+	    for (int m = 0; m < removeKeyLi.size(); m++){
+	      tables.remove((Object) removeKeyLi.get(m));
+	    }
+	    
+	    DbTable[] ret=new DbTable[tables.size()];
+	    Iterator _rit = tables.values().iterator();
+	    while (_rit.hasNext()){
+	      ret[i++] = (DbTable)_rit.next();
+	    }
 		return ret;
 	}
 	
@@ -389,7 +416,6 @@ class T extends TreeParser;
 		}else{
 			table.setAlias(tableAlias);
 			tables.put(chName, table);
-			
 		}
 		return table;
 	}
@@ -408,6 +434,7 @@ class T extends TreeParser;
 		if (_dbFieldAlias == null){
 			_dbFieldAlias = new DbFieldAlias();
 			_dbFieldAlias.setCnFieldAlias(chAliasName);
+			_dbFieldAlias.setEnFieldAlias(chAliasName);
 			_dbFieldAlias.setColumnEquElem(columnEquElem);
 			fieldAliasMap.put(chAliasName, _dbFieldAlias);
 		}
@@ -423,6 +450,94 @@ class T extends TreeParser;
 		}
 		return _rDbFieldAlias;
 	}
+	
+	/**=====================================================================//
+	//															  			//
+	//				  		Get SQL Every Step EquElement				  	//
+	//															  			//
+	//======================================================================*/
+	
+	public Map getSelectListMap() {
+	    return selectListMap;
+	}
+	
+	public Map getFromListMap() {
+		return fromListMap;
+	}
+	
+	public Map getWhereListMap() {
+	    return whereListMap;
+	}
+	
+	public Map getGroupByListMap() {
+	    return groupByListMap;
+	}
+	
+	public Map getOrderByListMap() {
+	    return orderByListMap;
+	}
+	
+	//Add SelectListVO to selectListMap
+	private SelectListVO addSelectListVO(String columnEquElem, String chAliasName){
+		int intMapKey = selectListMap.size() + 1;
+		SelectListVO _selectListVO = new SelectListVO();
+		_selectListVO.setCnColumnEquElem(columnEquElem);
+		_selectListVO.setCnFieldAlias(chAliasName);
+		selectListMap.put("SQL_SELECT_" + String.valueOf(intMapKey), _selectListVO);
+		return _selectListVO;
+	}
+	
+	//Get ALL FieldEquElem Object Array from selectListMap
+	public SelectListVO[] getSelectListVOArr() {
+		int i = 0;
+		SelectListVO[] _selectListVOArr = new SelectListVO[selectListMap.size()];
+		for (Iterator it = selectListMap.values().iterator(); it.hasNext();){
+			_selectListVOArr[i++] = (SelectListVO) it.next();
+		}
+		return _selectListVOArr;
+	}
+	
+	
+	//Add FromListVO to fromListMap
+	private FromListVO addFromListVO(String chName, String tableAlias){
+		FromListVO _fromListVO = new FromListVO();
+	    _fromListVO.setCnTableName(chName);
+	    _fromListVO.setCnTAbleAlias(tableAlias);
+	    fromListMap.put(_fromListVO.getCnTableName(), _fromListVO);
+	    return _fromListVO;
+	}
+	
+	//Get ALL FromListVO(TableName) Object Array from fromListMap
+	public FromListVO[] getFromListVOArr() {
+	    int i = 0;
+	    FromListVO[] _fromListVOArr = new FromListVO[fromListMap.size()];
+	    for (Iterator it = fromListMap.values().iterator(); it.hasNext();){
+	      _fromListVOArr[i++] = (FromListVO) it.next();
+	    }
+	    return _fromListVOArr;
+	}
+	
+	//Add WhereListVO to whereListMap
+	private WhereListVO addWhereListVO(String cnWhereEquElem, String comparSymbol, String cnWhereValue){
+		int whereIntKey = whereListMap.size() + 1;
+		WhereListVO _whereListVO = new WhereListVO();
+		_whereListVO.setCnAllWhereStr(cnWhereEquElem+" "+comparSymbol+" "+cnWhereValue);
+	    _whereListVO.setCnWhereEquElem(cnWhereEquElem);
+	    _whereListVO.setCnComparSymbol(comparSymbol);
+	    _whereListVO.setCnWhereValue(cnWhereValue);
+	    whereListMap.put("SQL_WHERE_" + String.valueOf(whereIntKey), _whereListVO);
+		return _whereListVO;
+	}
+	
+	//Get ALL WhereListVO Object Array from whereListMap
+	public WhereListVO[] getWhereListVOArr() {
+    	int i = 0;
+      	WhereListVO[] _whereListVO = new WhereListVO[whereListMap.size()];
+      	for (Iterator it = whereListMap.values().iterator(); it.hasNext();){
+        	_whereListVO[i++] = (WhereListVO) it.next();
+      	}
+      	return _whereListVO;
+  	}
 }
 
 segment returns [String segment]
@@ -507,7 +622,10 @@ columnList returns [String clist]
 	|	elem=column
 		{clist=elem;}
 	|	ALL_FIELDS
-		{clist="(*)";}
+		{
+			clist="(*)";
+			addSelectListVO(clist, "");
+		}
 	|	ALL c1=columnList
 		{clist="ALL "+c1;}
 	|	DISTINCT c1=columnList
@@ -520,8 +638,12 @@ column returns [String c]
 		{
 			c=args+" "+a.getText()+" "+d.getText();
 			addFieldAliasByChAliasName(args, d.getText());
+			addSelectListVO(args, d.getText());
 		}
 	|	c = equElem
+		{
+			addSelectListVO(c, "");
+		}
 	;
 
 funcArgs returns [String args]
@@ -557,13 +679,21 @@ fieldList returns [String fList]
 	;
 
 equations returns [String equStr]
-	{String e1, e2; equStr="";}
+	{String e1, e2; equStr="";int m = 0, n = 0;}
 	:	#(EQUATION_START e1=equations)
-		{equStr=e1;}
+		{
+			equStr=e1;
+		}
 	|	#(lop:LOGIC_OP e1=equations e2=equations)
-		{equStr=e1+" "+lop+" "+e2;}
+		{
+			equStr=e1+" "+lop+" "+e2;
+		}
 	|	#(op:COMPARATOR e1=equElem e2=equElem)
-		{equStr=e1+" "+op.getText()+" "+e2;}
+		{
+			equStr=e1+" "+op.getText()+" "+e2;
+			whereIntKey++;
+			addWhereListVO(e1, op.getText(), e2);
+		}
 //	|	LPAREN e1=equations EQU_RPAREN
 //		{equStr="("+e1+")";}
 	;
@@ -594,12 +724,14 @@ tableName returns [String tableStr]
 		{
 			tableStr="["+t.getText()+"]";
 			addFromTableByChName(t.getText());
+			addFromListVO(t.getText(), "");
 		}
 	|	#(a:AS t1:ID t2:ID)
 		{
 			tableStr="["+t1.getText()+"] "+a.getText()+" "+t2.getText();
 			//addFromTableByChName(t1.getText());
 			addFromTableByChName(t1.getText(), t2.getText());
+			addFromListVO(t1.getText(), t2.getText());
 		}
 	;
 
