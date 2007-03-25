@@ -434,6 +434,8 @@ public class Translator {
       queryModel.setSelectListMap(tree.getSelectListMap());
       queryModel.setFromListMap(tree.getFromListMap());
       queryModel.setWhereListMap(tree.getWhereListMap());
+      queryModel.setGroupByListMap(tree.getGroupByListMap());
+      queryModel.setOrderByListMap(tree.getOrderByListMap());
     } catch (RecognitionException e) {
       antlrExceptions.add(e);
     } catch (TokenStreamException e) {
