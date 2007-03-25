@@ -134,6 +134,8 @@ public abstract class QueryModel {
     getSelectListEqu(d.getRootElement());
     getFromListEqu(d.getRootElement());
     getWhereListEqu(d.getRootElement());
+    getGroupByListEqu(d.getRootElement());
+    getOrderByListEqu(d.getRootElement());
     return d.asXML();
   }
 
@@ -190,6 +192,22 @@ public abstract class QueryModel {
       _whereListVO.setCnAllWhereStr(translateKeywordEn2Ch(_whereListVO.getCnAllWhereStr()));
       _whereListVO.setCnComparSymbol(translateKeywordEn2Ch(_whereListVO.getCnComparSymbol()));
       _whereListVO.getModelElement(_whereListEqu);
+    }
+  }
+  
+  private void getGroupByListEqu(Element rootElement){
+    Element _groupByListEqu = rootElement.addElement("groupByListEqu");
+    for (Iterator it = groupByListMap.values().iterator(); it.hasNext();) {
+      GroupByListVO _groupByListVO = (GroupByListVO) it.next();
+      _groupByListVO.getModelElement(_groupByListEqu);
+    }
+  }
+  
+  private void getOrderByListEqu(Element rootElement){
+    Element _orderByListEqu = rootElement.addElement("orderByListEqu");
+    for (Iterator it = orderByListMap.values().iterator(); it.hasNext();) {
+      OrderByListVO _orderByListVO = (OrderByListVO) it.next();
+      _orderByListVO.getModelElement(_orderByListEqu);
     }
   }
   

@@ -1,5 +1,7 @@
 package translator.model;
 
+import org.dom4j.Element;
+
 /**
  * ORDER BY字句字段、排序等信息对象
  *
@@ -21,5 +23,9 @@ public class OrderByListVO {
     this.cnOrerByEquElem = cnOrerByEquElem;
   }
   
-  
+  public void getModelElement(Element parent){
+    Element elem=parent.addElement("OrderByListVO");
+    elem.addAttribute("cnOrerByEquElem", cnOrerByEquElem);
+    elem.addAttribute("cnOrderType", cnOrderType);
+  }
 }

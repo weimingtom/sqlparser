@@ -1,5 +1,7 @@
 package translator.model;
 
+import org.dom4j.Element;
+
 /**
  * GROUP BY字句字段/字段表达式等信息对象
  *
@@ -15,5 +17,9 @@ public class GroupByListVO {
     this.cnGroupByEquElem = cnGroupByEquElem;
   }
   
+  public void getModelElement(Element parent){
+    Element elem=parent.addElement("GroupByListVO");
+    elem.addAttribute("cnGroupByEquElem", cnGroupByEquElem);
+  }
   
 }
