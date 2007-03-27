@@ -1,7 +1,9 @@
 package translator.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Attribute;
@@ -16,6 +18,12 @@ public abstract class QueryModel {
   private Map whereListMap = new HashMap();   //WHERE子句表达式列表
   private Map groupByListMap = new HashMap(); //GROUP BY子句表达式列表
   private Map orderByListMap = new HashMap(); //ORDER BY子句表达式列表
+
+  List selectList = new ArrayList();
+  List fromList = new ArrayList();
+  List whereList = new ArrayList();
+  List groupByList = new ArrayList();
+  List orderByList = new ArrayList();
   
   protected Map chTableMap = new HashMap();
   protected Map fieldAliasMap = new HashMap();
@@ -69,6 +77,17 @@ public abstract class QueryModel {
     return ret;
   }
 
+  protected String translateSimpleKeywordEn2Ch(String src) {
+    String ret = src;
+    for (Iterator it = mapEn2Ch.keySet().iterator(); it.hasNext();) {
+      String key = (String) it.next();
+      if (key != null && !key.equals("") && key.equals(src.toLowerCase())){
+        ret = (String) mapEn2Ch.get(key);
+      }
+    }
+    return ret;
+  }
+  
   protected String translateKeywordEn2Ch(String src) {
     String ret = src;
     for (Iterator it = mapEn2Ch.keySet().iterator(); it.hasNext();) {
@@ -98,6 +117,14 @@ public abstract class QueryModel {
   
   public void addfieldAliasInfo(DbFieldAlias _iDbFieldAlias){
     fieldAliasMap.put(_iDbFieldAlias.getCnFieldAlias(), _iDbFieldAlias);
+    for (int i = 0; i < selectList.size(); i++){
+      SelectListVO _selectListVo = (SelectListVO) selectList.get(i);
+      if (_selectListVo.getCnFieldAlias() != null && !_selectListVo.getCnFieldAlias().equals("") && 
+          _selectListVo.getCnFieldAlias().equals(_iDbFieldAlias.getCnFieldAlias())){
+        _selectListVo.setEnFieldAlias(_iDbFieldAlias.getEnFieldAlias());
+        break;
+      }
+    }
   }
   
   public void setMapEn2Ch(Map mapEn2Ch) {
@@ -170,8 +197,15 @@ public abstract class QueryModel {
   
   private void getSelectListEqu(Element rootElement){
     Element _selectListEqu = rootElement.addElement("selectListEqu");
+    /*
     for (Iterator it = selectListMap.values().iterator(); it.hasNext();) {
       SelectListVO _selectListVO = (SelectListVO) it.next();
+      _selectListVO.setCnColumnEquElem(translateKeywordEn2Ch(_selectListVO.getCnColumnEquElem()));
+      _selectListVO.getModelElement(_selectListEqu);
+    }
+    */
+    for (int i = 0; i < selectList.size(); i++){
+      SelectListVO _selectListVO = (SelectListVO) selectList.get(i);
       _selectListVO.setCnColumnEquElem(translateKeywordEn2Ch(_selectListVO.getCnColumnEquElem()));
       _selectListVO.getModelElement(_selectListEqu);
     }
@@ -179,35 +213,63 @@ public abstract class QueryModel {
   
   private void getFromListEqu(Element rootElement){
     Element _fromListEqu = rootElement.addElement("fromListEqu");
+    /*
     for (Iterator it = fromListMap.values().iterator(); it.hasNext();) {
       FromListVO _fromListVO = (FromListVO) it.next();
+      _fromListVO.getModelElement(_fromListEqu);
+    }
+    */
+    for (int i = 0; i < fromList.size(); i++){
+      FromListVO _fromListVO = (FromListVO) fromList.get(i);
       _fromListVO.getModelElement(_fromListEqu);
     }
   }
   
   private void getWhereListEqu(Element rootElement){
     Element _whereListEqu = rootElement.addElement("whereListEqu");
+    /*
     for (Iterator it = whereListMap.values().iterator(); it.hasNext();) {
       WhereListVO _whereListVO = (WhereListVO) it.next();
       _whereListVO.setCnAllWhereStr(translateKeywordEn2Ch(_whereListVO.getCnAllWhereStr()));
       _whereListVO.setCnComparSymbol(translateKeywordEn2Ch(_whereListVO.getCnComparSymbol()));
       _whereListVO.getModelElement(_whereListEqu);
     }
+    */
+    for (int i = 0; i < whereList.size(); i++){
+      WhereListVO _whereListVO = (WhereListVO) whereList.get(i);
+      _whereListVO.setCnAllWhereStr(translateKeywordEn2Ch(_whereListVO.getCnAllWhereStr()));
+      _whereListVO.setCnComparSymbol(translateSimpleKeywordEn2Ch(_whereListVO.getCnComparSymbol()));
+      _whereListVO.getModelElement(_whereListEqu);
+    }
   }
   
   private void getGroupByListEqu(Element rootElement){
     Element _groupByListEqu = rootElement.addElement("groupByListEqu");
+    /*
     for (Iterator it = groupByListMap.values().iterator(); it.hasNext();) {
       GroupByListVO _groupByListVO = (GroupByListVO) it.next();
+      _groupByListVO.getModelElement(_groupByListEqu);
+    }
+    */
+    for (int i = 0; i < groupByList.size(); i++){
+      GroupByListVO _groupByListVO = (GroupByListVO) groupByList.get(i);
+      _groupByListVO.setCnGroupByEquElem(translateKeywordEn2Ch(_groupByListVO.getCnGroupByEquElem()));
       _groupByListVO.getModelElement(_groupByListEqu);
     }
   }
   
   private void getOrderByListEqu(Element rootElement){
     Element _orderByListEqu = rootElement.addElement("orderByListEqu");
+    /*
     for (Iterator it = orderByListMap.values().iterator(); it.hasNext();) {
       OrderByListVO _orderByListVO = (OrderByListVO) it.next();
       _orderByListVO.setCnOrderType(translateKeywordEn2Ch(_orderByListVO.getCnOrderType()));
+      _orderByListVO.getModelElement(_orderByListEqu);
+    }
+    */
+    for (int i = 0; i < orderByList.size(); i++){
+      OrderByListVO _orderByListVO = (OrderByListVO) orderByList.get(i);
+      _orderByListVO.setCnOrderType(translateSimpleKeywordEn2Ch(_orderByListVO.getCnOrderType()));
       _orderByListVO.getModelElement(_orderByListEqu);
     }
   }
@@ -289,7 +351,10 @@ public abstract class QueryModel {
       SelectListVO _selectListVO = new SelectListVO();
       _selectListVO.setCnColumnEquElem(e.attributeValue("cnColumnEquElem"));
       _selectListVO.setCnFieldAlias(e.attributeValue("cnFieldAlias"));
-      selectListMap.put("SQL_SELECT_" + String.valueOf(selectListMap.size() + 1), _selectListVO);
+      _selectListVO.setEnFieldAlias(e.attributeValue("enFieldAlias"));
+      _selectListVO.setFieldDataType(e.attributeValue("fieldDataType"));
+      selectList.add(_selectListVO);
+      //selectListMap.put("SQL_SELECT_" + String.valueOf(selectListMap.size() + 1), _selectListVO);
     }
   }
   
@@ -299,7 +364,8 @@ public abstract class QueryModel {
       FromListVO _fromListVO = new FromListVO();
       _fromListVO.setCnTableName(e.attributeValue("cnTableName"));
       _fromListVO.setCnTAbleAlias(e.attributeValue("cnTAbleAlias"));
-      fromListMap.put(_fromListVO.getCnTableName(), _fromListVO);
+      //fromListMap.put(_fromListVO.getCnTableName(), _fromListVO);
+      fromList.add(_fromListVO);
     }
   }
   
@@ -311,7 +377,8 @@ public abstract class QueryModel {
       _whereListVO.setCnWhereEquElem(e.attributeValue("cnWhereEquElem"));
       _whereListVO.setCnComparSymbol(e.attributeValue("cnComparSymbol"));
       _whereListVO.setCnWhereValue(e.attributeValue("cnWhereValue"));
-      whereListMap.put("SQL_WHERE_" + String.valueOf(whereListMap.size() + 1), _whereListVO);
+      _whereListVO.setCheckedFlag(e.attributeValue("checkedFlag"));
+      whereList.add(_whereListVO);
     }
   }
   
@@ -320,7 +387,8 @@ public abstract class QueryModel {
       Element e = (Element)it.next();
       GroupByListVO _groupByListVO = new GroupByListVO();
       _groupByListVO.setCnGroupByEquElem(e.attributeValue("cnGroupByEquElem"));
-      groupByListMap.put("SQL_GROUPBY_" + String.valueOf(groupByListMap.size() + 1), _groupByListVO);
+      //groupByListMap.put("SQL_GROUPBY_" + String.valueOf(groupByListMap.size() + 1), _groupByListVO);
+      groupByList.add(_groupByListVO);
     }
   }
   
@@ -330,7 +398,8 @@ public abstract class QueryModel {
       OrderByListVO _orderByListVO = new OrderByListVO();
       _orderByListVO.setCnOrerByEquElem(e.attributeValue("cnOrerByEquElem"));
       _orderByListVO.setCnOrderType(e.attributeValue("cnOrderType"));
-      orderByListMap.put("SQL_ORDERBY_" + String.valueOf(orderByListMap.size() + 1), _orderByListVO);
+      //orderByListMap.put("SQL_ORDERBY_" + String.valueOf(orderByListMap.size() + 1), _orderByListVO);
+      orderByList.add(_orderByListVO);
     }
   }
   
@@ -371,7 +440,8 @@ public abstract class QueryModel {
    * 获取SELECT子句下所有表达式对象数组
    * @return SelectListVO[] SelectListVO对象数组
    */
-  public SelectListVO[] getSelectListArr() {
+  public SelectListVO[] getSelectListVOArr() {
+    /*
     int i = 0;
     SelectListVO[] _selectListVOArr = new SelectListVO[selectListMap.size()];
     Iterator it = selectListMap.values().iterator();
@@ -379,7 +449,21 @@ public abstract class QueryModel {
       SelectListVO _selectListVO = (SelectListVO) it.next();
       _selectListVOArr[i++] = _selectListVO;
     }
+    */
+    
+    SelectListVO[] _selectListVOArr = new SelectListVO[selectList.size()];
+    for (int i = 0; i < selectList.size(); i++){
+      SelectListVO _selectListVO = (SelectListVO) selectList.get(i);
+      _selectListVOArr[i] = _selectListVO;
+    }
     return _selectListVOArr;
+  }
+  
+  public void setSelectListVOArr(SelectListVO[] _selectListVOArr){
+    selectList =  new ArrayList();
+    for (int i = 0; i < _selectListVOArr.length; i++){
+      selectList.add(_selectListVOArr[i]);
+    }
   }
   
   /**
@@ -387,12 +471,20 @@ public abstract class QueryModel {
    * @return FromListVO[] FromListVO对象数组
    */
   public FromListVO[] getFromListVOArr() {
+    /*
     int i = 0;
     FromListVO[] _fromListVOArr = new FromListVO[fromListMap.size()];
     Iterator it = fromListMap.values().iterator();
     while (it.hasNext()){
       FromListVO _fromListVO = (FromListVO) it.next();
       _fromListVOArr[i++] = _fromListVO;
+    }
+    */
+    
+    FromListVO[] _fromListVOArr = new FromListVO[fromList.size()];
+    for (int i = 0; i < fromList.size(); i++){
+      FromListVO _fromListVO = (FromListVO) fromList.get(i);
+      _fromListVOArr[i] = _fromListVO;
     }
     return _fromListVOArr;
   }
@@ -402,6 +494,7 @@ public abstract class QueryModel {
    * @return WhereListVO[] WhereListVO对象数组
    */
   public WhereListVO[] getWhereListVOArr() {
+    /*
     int i = 0;
     WhereListVO[] _whereListVOArr = new WhereListVO[whereListMap.size()];
     Iterator it = whereListMap.values().iterator();
@@ -409,7 +502,25 @@ public abstract class QueryModel {
       WhereListVO _whereListVO = (WhereListVO) it.next();
       _whereListVOArr[i++] = _whereListVO;
     }
+    */
+    
+    WhereListVO[] _whereListVOArr = new WhereListVO[whereList.size()];
+    for (int i = 0; i < whereList.size(); i++){
+      WhereListVO _whereListVO = (WhereListVO) whereList.get(i);
+      _whereListVOArr[i] = _whereListVO;
+    }
     return _whereListVOArr;
+  }
+  
+  /**
+   * 设置WHERE子句下所有表达式对象数组
+   * @return WhereListVO[] WhereListVO对象数组
+   */
+  public void setWhereListVOArr(WhereListVO[]  _whereListVOArr) {
+    whereList = new ArrayList();
+    for (int i = 0; i < _whereListVOArr.length; i++){
+      whereList.add(_whereListVOArr[i]);
+    }
   }
   
   /**
@@ -417,12 +528,20 @@ public abstract class QueryModel {
    * @return GroupByListVO[] GroupByListVO对象数组
    */
   public GroupByListVO[] getGroupByListVOArr() {
+    /*
     int i = 0;
     GroupByListVO[] _groupByListVOArr = new GroupByListVO[groupByListMap.size()];
     Iterator it = groupByListMap.values().iterator();
     while (it.hasNext()){
       GroupByListVO _groupByListVO = (GroupByListVO) it.next();
       _groupByListVOArr[i++] = _groupByListVO;
+    }
+    */
+    
+    GroupByListVO[] _groupByListVOArr = new GroupByListVO[groupByList.size()];
+    for (int i = 0; i < groupByList.size(); i++){
+      GroupByListVO _groupByListVO = (GroupByListVO) groupByList.get(i);
+      _groupByListVOArr[i] = _groupByListVO;
     }
     return _groupByListVOArr;
   }
@@ -431,13 +550,20 @@ public abstract class QueryModel {
    * 获取ORDER BY子句下所有表达式对象数组
    * @return OrderByListVO[] OrderByListVO对象数组
    */
-  public OrderByListVO[] getOrdereByListVOArr() {
+  public OrderByListVO[] getOrderByListVOArr() {
+    /*
     int i = 0;
     OrderByListVO[] _orderByListVOArr = new OrderByListVO[orderByListMap.size()];
     Iterator it = orderByListMap.values().iterator();
     while (it.hasNext()){
       OrderByListVO _orderByListVO = (OrderByListVO) it.next();
       _orderByListVOArr[i++] = _orderByListVO;
+    }
+    */
+    OrderByListVO[] _orderByListVOArr = new OrderByListVO[orderByList.size()];
+    for (int i = 0; i < orderByList.size(); i++){
+      OrderByListVO _orderByListVO = (OrderByListVO) orderByList.get(i);
+      _orderByListVOArr[i] = _orderByListVO;
     }
     return _orderByListVOArr;
   }
@@ -477,5 +603,44 @@ public abstract class QueryModel {
   public void setOrderByListMap(Map orderByListMap) {
     this.orderByListMap = orderByListMap;
   }
-  
+
+  public List getFromList() {
+    return fromList;
+  }
+
+  public void setFromList(List fromList) {
+    this.fromList = fromList;
+  }
+
+  public List getGroupByList() {
+    return groupByList;
+  }
+
+  public void setGroupByList(List groupByList) {
+    this.groupByList = groupByList;
+  }
+
+  public List getOrderByList() {
+    return orderByList;
+  }
+
+  public void setOrderByList(List orderByList) {
+    this.orderByList = orderByList;
+  }
+
+  public List getSelectList() {
+    return selectList;
+  }
+
+  public void setSelectList(List selectList) {
+    this.selectList = selectList;
+  }
+
+  public List getWhereList() {
+    return whereList;
+  }
+
+  public void setWhereList(List whereList) {
+    this.whereList = whereList;
+  }
 }

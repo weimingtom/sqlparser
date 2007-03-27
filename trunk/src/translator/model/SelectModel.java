@@ -20,12 +20,13 @@ public class SelectModel extends QueryModel {
   }
   
   public String getEnQuery() {
-    String aliaslist = translateFieldAliasCh2En(columnList);
-    String clist=translateFieldCh2En(aliaslist);
+    String clist=translateFieldCh2En(columnList);
+    clist = translateFieldAliasCh2En(clist);  //替换columnList别名
     String tlist=translateTableCh2En(tableList);
     String equ=translateFieldCh2En(equation);
     String g=translateFieldCh2En(groupBy);
     String o=translateFieldCh2En(orderBy);
+    o = translateFieldAliasCh2En(o);          //替换orderBy别名
     String ret=replace(
         selectStr,
         new String[]{"_COLUMN_LIST_", "_TABLE_LIST_"},

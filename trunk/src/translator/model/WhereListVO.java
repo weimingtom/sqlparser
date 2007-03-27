@@ -11,6 +11,7 @@ public class WhereListVO {
   private String cnWhereEquElem;  //中文条件字段或表达式
   private String cnComparSymbol;  //中文关系运算符
   private String cnWhereValue;    //中文条件的值
+  private String checkedFlag;
   
   public String getCnComparSymbol() {
     return cnComparSymbol;
@@ -37,11 +38,20 @@ public class WhereListVO {
   public void setCnAllWhereStr(String cnAllWhereStr) {
     this.cnAllWhereStr = cnAllWhereStr;
   }
+  
+  public String getCheckedFlag() {
+    return checkedFlag;
+  }
+  public void setCheckedFlag(String checkedFlag) {
+    this.checkedFlag = checkedFlag;
+  }
+  
   public void getModelElement(Element parent) {
     Element elem=parent.addElement("WhereListVO");
     elem.addAttribute("cnAllWhereStr", cnAllWhereStr);
     elem.addAttribute("cnWhereEquElem", cnWhereEquElem);
     elem.addAttribute("cnComparSymbol", cnComparSymbol);
     elem.addAttribute("cnWhereValue", cnWhereValue);
+    elem.addAttribute("checkedFlag", checkedFlag);
   }
 }
