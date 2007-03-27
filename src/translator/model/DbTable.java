@@ -11,6 +11,8 @@ public class DbTable {
   private String chName;
   private String enName;
   private String alias;
+  private String tableParam;  //表变量名称
+  
   private boolean existInFromClause;
   
   private Map chFields = new HashMap();
@@ -52,6 +54,15 @@ public class DbTable {
 
   public void setChName(String chName) {
     this.chName = chName;
+  }
+  
+  
+  public String getTableParam() {
+    return tableParam;
+  }
+
+  public void setTableParam(String tableParam) {
+    this.tableParam = tableParam;
   }
 
   /**

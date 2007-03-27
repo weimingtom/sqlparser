@@ -12,6 +12,7 @@ public class SelectListVO {
   private String cnColumnEquElem; //中文字段或表达式
   private String cnFieldAlias;    //中文字段或表达式的中文别名
   private String enFieldAlias;    //中文字段或表达式的英文别名
+  private String fieldDataType;   //字段数据类型
   
   public String getCnColumnEquElem() {
     return cnColumnEquElem;
@@ -33,10 +34,17 @@ public class SelectListVO {
     this.enFieldAlias = enFieldAlias;
   }
   
+  public String getFieldDataType() {
+    return fieldDataType;
+  }
+  public void setFieldDataType(String fieldDataType) {
+    this.fieldDataType = fieldDataType;
+  }
   public void getModelElement(Element parent) {
     Element elem=parent.addElement("SelectListVO");
     elem.addAttribute("cnColumnEquElem", cnColumnEquElem);
     elem.addAttribute("cnFieldAlias", cnFieldAlias);
     elem.addAttribute("enFieldAlias", enFieldAlias);
+    elem.addAttribute("fieldDataType", fieldDataType);
   }
 }

@@ -5,8 +5,17 @@ import org.dom4j.Element;
 public class DbField {
   private String chName;
   private String enName;
+  private String fieldParam;  //条件变量
   private boolean existInQuery;
   
+  public String getFieldParam() {
+    return fieldParam;
+  }
+
+  public void setFieldParam(String fieldParam) {
+    this.fieldParam = fieldParam;
+  }
+
   public boolean isExistInQuery() {
     return existInQuery;
   }
