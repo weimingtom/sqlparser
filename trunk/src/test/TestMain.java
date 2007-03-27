@@ -3,6 +3,7 @@ package test;
 import java.io.StringReader;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.dom4j.DocumentException;
@@ -14,14 +15,17 @@ import parser.P;
 import parser.T;
 import translator.Translator;
 import translator.model.ChWrongMessage;
+import translator.model.CompareModel;
 import translator.model.DbField;
 import translator.model.DbFieldAlias;
 import translator.model.DbTable;
 import translator.model.FromListVO;
+import translator.model.GroupByListVO;
 import translator.model.OrderByListVO;
 import translator.model.QueryModel;
 import translator.model.SelectListVO;
 import translator.model.SelectModel;
+import translator.model.UnionModel;
 import translator.model.WhereListVO;
 
 import antlr.CommonAST;
@@ -45,76 +49,141 @@ public class TestMain extends TestCase {
   }
   
   public void myTestChQuery() {
+    String _rXMLStr = "";
     String selectStr=
-      "[查询] [所有], ([求和](表1.字段2) + [求和](表2.字段2)) [作为] c, 表2.字段1, a.字段2 [来自] 表1 [作为] a, 表2, 表3 [作为] y " +
-      "[条件] 表1.字段1 [等于] 'TEST' [并且] a.字段3 [包含] '%HJD%' [并且] 表2.字段2 [大于] 6 [排序] 表1.字段1 [降序]";
+      "[查询] [所有], ([求和](表1.字段2) + [求和](表2.字段2)) [作为] c, 表2.字段1 [作为] 字段1, a.字段2 [来自] 表1 [作为] a, 表2, 表3 [作为] y " +
+      "[条件] 表1.字段1 [等于] 'TEST' [并且] a.字段3 [包含] '%HJD%' [并且] 表2.字段2 [大于] 6 [分组] 表1.字段1 [加] 20, 表1.字段2, 表1.字段3,表1.字段4 [排序] 表1.字段1, 表1.字段2";
+    
+    //selectStr = "[查询] AI_94传票对照表.省/市代号 as 省/市代号,AI_94传票对照表.行号 as 行号,[求和]( AI_94传票对照表.金额) as 金额 [来自] [AI_94传票对照表]";
+//    selectStr = "[表合并] AI_94传票对照表, AI_94传票对照月表";
+//    selectStr = "[表比较] AI_94传票对照表, AI_94传票对照月表 [条件] [存在] AI_94传票对照表.字段1 [等于] AI_94传票对照月表.字段1 [并且] AI_94传票对照表.字段1 [大于] 5";
+    selectStr = "[查询] [AI_94传票对照表.省/市代号] as 省/市代号,[AI_94传票对照表.行号] as 行号,[求和]([AI_94传票对照表.金额]) as 金额 [来自] AI_94传票对照表 [条件] [AI_94传票对照表.省/市代号] [等于] '0200' [分组] [AI_94传票对照表.省/市代号],[AI_94传票对照表.行号] [排序]  [求和]( AI_94传票对照表.金额 )  asc ";
+    System.out.println(selectStr);
     Translator t=new Translator();
     t.setChQuery(selectStr);
     System.out.println(t.getParser().getAST().toStringList());
-    SelectListVO[] _selectListVOArr = t.getSelectListVOArr();
-    FromListVO[] _fromListVOArr = t.getFromListVOArr();
-    WhereListVO[] _whereListVO = t.getWhereListVOArr();
-    DbFieldAlias[] _gDbFieldAliasArr = t.getDbFieldAlias();
-    t.setTableInfo(setTableInfo(t.getTables()));
-    t.setDbFieldAlias(setDbFieldAliasInfo(t.getDbFieldAlias()));
-    String _rXMLStr = t.getQueryModel().getXmlString();
+//    DbFieldAlias[] _gDbFieldAliasArr = t.getDbFieldAlias();
+    //t.setDbFieldAlias(setDbFieldAliasInfo(t.getDbFieldAlias()));
     if (t.hasError()) {
       ChWrongMessage[] msgs=t.showWrongMsgs();
       for (int i=0; i<msgs.length; i++)
         System.out.println(msgs[i]);
     } else {
       QueryModel _queryModel = t.getQueryModel();
-      SelectModel _selectModel = (SelectModel) _queryModel;
-      System.out.println(_queryModel.toString());
-      System.out.println(_queryModel.getEnQuery());
-      
-      SelectListVO[] _rSelectListVOArr = _selectModel.getSelectListArr();
-      for (int i = 0; i < _rSelectListVOArr.length; i++){
-        System.out.println("字段名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnColumnEquElem() +  " || " +
-            "别名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnFieldAlias());
-      }
-      
-      FromListVO[] _rFromListVOArr = _selectModel.getFromListVOArr();
-      for (int i = 0; i < _rFromListVOArr.length; i++){
-        System.out.println("表名"+(i+1)+": " + _rFromListVOArr[i].getCnTableName() +  " || " +
-            "表别名"+(i+1)+": " + _rFromListVOArr[i].getCnTAbleAlias());
-      }
-      
-      WhereListVO[] _rWhereListVOArr = _selectModel.getWhereListVOArr();
-      for (int i = 0; i < _rWhereListVOArr.length; i++){
-        System.out.println("条件表达式"+(i+1)+": " + _rWhereListVOArr[i].getCnWhereEquElem() +  " || " +
-            "关系运算符"+(i+1)+": " + _rWhereListVOArr[i].getCnComparSymbol() + " || " + "条件为: " + _rWhereListVOArr[i].getCnWhereValue());
-      }
-      
-      OrderByListVO[] _orderByListVOArr = _selectModel.getOrdereByListVOArr();
-      for (int i = 0; i < _orderByListVOArr.length; i++){
-        System.out.println("条件表达式"+(i+1)+": " + _orderByListVOArr[i].getCnOrerByEquElem() +  " || " +
-            "升(降)序"+(i+1)+": " + _orderByListVOArr[i].getCnOrderType());
+      if (_queryModel instanceof SelectModel){
+        t.setTableInfo(setTableInfo(t.getTables()));
+        SelectModel _selectModel = (SelectModel) _queryModel;
+        SelectListVO[] _rSelectListVOArr = _selectModel.getSelectListVOArr();
+        for (int i = 0; i < _rSelectListVOArr.length; i++){
+          _rSelectListVOArr[i].setFieldDataType("String");
+          System.out.println("字段名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnColumnEquElem() +  " || " +
+              "别名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnFieldAlias());
+        }
+        _selectModel.setSelectListVOArr(_rSelectListVOArr);
+        
+        FromListVO[] _rFromListVOArr = _selectModel.getFromListVOArr();
+        for (int i = 0; i < _rFromListVOArr.length; i++){
+          System.out.println("表名"+(i+1)+": " + _rFromListVOArr[i].getCnTableName() +  " || " +
+              "表别名"+(i+1)+": " + _rFromListVOArr[i].getCnTAbleAlias());
+        }
+        
+        WhereListVO[] _rWhereListVOArr = _selectModel.getWhereListVOArr();
+        for (int i = 0; i < _rWhereListVOArr.length; i++){
+          _rWhereListVOArr[i].setCheckedFlag("1");
+          System.out.println("条件表达式"+(i+1)+": " + _rWhereListVOArr[i].getCnWhereEquElem() +  " || " +
+              "关系运算符"+(i+1)+": " + _rWhereListVOArr[i].getCnComparSymbol() + " || " + "条件为: " + _rWhereListVOArr[i].getCnWhereValue());
+        }
+        _selectModel.setWhereListVOArr(_rWhereListVOArr);
+        
+        GroupByListVO[] _groupByListArr = _selectModel.getGroupByListVOArr();
+        for (int i = 0; i < _groupByListArr.length; i++){
+          System.out.println("分组表达式"+(i+1)+": " + _groupByListArr[i].getCnGroupByEquElem());
+        }
+        
+        OrderByListVO[] _orderByListVOArr = _selectModel.getOrderByListVOArr();
+        for (int i = 0; i < _orderByListVOArr.length; i++){
+          System.out.println("排序表达式"+(i+1)+": " + _orderByListVOArr[i].getCnOrerByEquElem() +  " || " +
+              "升(降)序"+(i+1)+": " + _orderByListVOArr[i].getCnOrderType());
+        }
+        System.out.println(_queryModel.toString());
+        System.out.println(_queryModel.getEnQuery());
+        
+        _rXMLStr = _selectModel.getXmlString();
+      }else if (_queryModel instanceof UnionModel){
+        t.setSimpleTableInfo(setTableInfo(t.getTables()));
+        UnionModel _unionModel = (UnionModel) _queryModel;
+        System.out.println(_unionModel.getEnQuery());
+        System.out.println(_unionModel.getExecuteEnQuery("tt"));
+        DbTable[] _dbTables = _unionModel.getDbTables();
+        _rXMLStr = _unionModel.getXmlString();
+      }else if (_queryModel instanceof CompareModel){
+        t.setSimpleTableInfo(setTableInfo(t.getTables()));
+        CompareModel _compareModel = (CompareModel) _queryModel;
+        System.out.println(_compareModel.getExcuteEnQuery("xyz"));
+        System.out.println(_compareModel.getEnQuery());
+        DbTable[] _dbTables = _compareModel.getDbTables();
+        _rXMLStr = _compareModel.getXmlString();
       }
     }
     
-    
     try{
-      
       QueryModel _queryModel = QueryModel.createModelFromXml(_rXMLStr);
-      SelectModel _selectMode = (SelectModel) _queryModel;
+      if (_queryModel instanceof SelectModel){
       
-      SelectListVO[] _rSelectListVOArr = _queryModel.getSelectListArr();
-      for (int i = 0; i < _rSelectListVOArr.length; i++){
-        System.out.println("字段名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnColumnEquElem() +  " || " +
-            "别名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnFieldAlias());
-      }
-      
-      FromListVO[] _rFromListVOArr = _queryModel.getFromListVOArr();
-      for (int i = 0; i < _rFromListVOArr.length; i++){
-        System.out.println("表名"+(i+1)+": " + _rFromListVOArr[i].getCnTableName() +  " || " +
-            "表别名"+(i+1)+": " + _rFromListVOArr[i].getCnTAbleAlias());
-      }
-      
-      WhereListVO[] _rWhereListVOArr = _queryModel.getWhereListVOArr();
-      for (int i = 0; i < _rWhereListVOArr.length; i++){
-        System.out.println("条件表达式"+(i+1)+": " + _rWhereListVOArr[i].getCnWhereEquElem() +  " || " +
-            "关系运算符"+(i+1)+": " + _rWhereListVOArr[i].getCnComparSymbol() + " || " + "条件为: " + _rWhereListVOArr[i].getCnWhereValue());
+        SelectModel _selectModel = (SelectModel) _queryModel;
+        System.out.println("=========================================");
+        System.out.println("中文查询: " + _selectModel.getChQuery());
+        System.out.println("中文SELECT: " + _selectModel.getChColumnList());
+        System.out.println("英文SELECT: " + _selectModel.getEnColumnList());
+        System.out.println("中文FROM: " + _selectModel.getChTableList());
+        System.out.println("英文FROM: " + _selectModel.getEnTableList());
+        System.out.println("中文WHERE: " + _selectModel.getChEquation());
+        System.out.println("英文WHERE: " + _selectModel.getEnEquation());
+        System.out.println("中文GROUP: " + _selectModel.getChGroupBy());
+        System.out.println("英文GROUP: " + _selectModel.getEnGroupBy());
+        System.out.println("中文ORDER: " + _selectModel.getChOrderBy());
+        System.out.println("英文ORDER: " + _selectModel.getEnOrderBy());
+        System.out.println("=========================================");
+  
+        SelectListVO[] _rSelectListVOArr = _selectModel.getSelectListVOArr();
+        for (int i = 0; i < _rSelectListVOArr.length; i++){
+          System.out.println("字段名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnColumnEquElem() +  " || " +
+              "别名" + (i + 1) + ": " + _rSelectListVOArr[i].getCnFieldAlias() + " || " + 
+              "英文别名" + (i+1) + ": " + _rSelectListVOArr[i].getEnFieldAlias() + " || " +
+              "字段数据类型" + (i+1) + ": " + _rSelectListVOArr[i].getFieldDataType());
+        }
+        
+        FromListVO[] _rFromListVOArr = _selectModel.getFromListVOArr();
+        for (int i = 0; i < _rFromListVOArr.length; i++){
+          System.out.println("表名"+(i+1)+": " + _rFromListVOArr[i].getCnTableName() +  " || " +
+              "表别名"+(i+1)+": " + _rFromListVOArr[i].getCnTAbleAlias());
+        }
+        
+        WhereListVO[] _rWhereListVOArr = _selectModel.getWhereListVOArr();
+        for (int i = 0; i < _rWhereListVOArr.length; i++){
+          System.out.println("条件表达式"+(i+1)+": " + _rWhereListVOArr[i].getCnWhereEquElem() +  " || " +
+              "关系运算符"+(i+1)+": " + _rWhereListVOArr[i].getCnComparSymbol() + " || " + "条件为: " + _rWhereListVOArr[i].getCnWhereValue());
+        }
+        
+        GroupByListVO[] _groupByListArr = _selectModel.getGroupByListVOArr();
+        for (int i = 0; i < _groupByListArr.length; i++){
+          System.out.println("分组表达式"+(i+1)+": " + _groupByListArr[i].getCnGroupByEquElem());
+        }
+        
+        OrderByListVO[] _orderByListVOArr = _selectModel.getOrderByListVOArr();
+        for (int i = 0; i < _orderByListVOArr.length; i++){
+          System.out.println("排序表达式"+(i+1)+": " + _orderByListVOArr[i].getCnOrerByEquElem() +  " || " +
+              "升(降)序"+(i+1)+": " + _orderByListVOArr[i].getCnOrderType());
+        }
+      }else if (_queryModel instanceof UnionModel){
+        UnionModel _unionModel = (UnionModel) _queryModel;
+        DbTable[] _dbTables =  _unionModel.getDbTables();
+        System.out.println("END");
+      }else if (_queryModel instanceof CompareModel){
+        CompareModel _compareModel = (CompareModel) _queryModel;
+        DbTable[] _dbTables =  _compareModel.getDbTables();
+        System.out.println(_compareModel.getChMethod());
+        System.out.println(_compareModel.getChEquation());
       }
     }catch (DocumentException e){
       e.printStackTrace();
@@ -296,12 +365,16 @@ public class TestMain extends TestCase {
   private DbTable[] setTableInfo(DbTable[] tables) {
     for (int j=0; j<tables.length; j++) {
       tables[j].setEnName("table"+j);
-      tables[j].addDbField("字段1", "field1");
-      tables[j].addDbField("字段2", "field2");
-      tables[j].addDbField("字段3", "field3");
-      tables[j].addDbField("字段4", "field4");
-      tables[j].addDbField("字段5", "field5");
-      tables[j].addDbField("字/段6", "field6");
+      if (j % 2 == 0)
+        tables[j].setFlag("casdb3");
+      else
+        tables[j].setFlag("casdb2");
+      tables[j].addDbField("省/市代号", "field1");
+      tables[j].addDbField("金额", "field2");
+      tables[j].addDbField("字段1", "field3");
+      tables[j].addDbField("字段2", "field4");
+      tables[j].addDbField("字段3", "field5");
+      tables[j].addDbField("字段4", "field6");
       tables[j].addDbField("行号", "line_num");
       tables[j].addDbField("货币码", "code");
     }
