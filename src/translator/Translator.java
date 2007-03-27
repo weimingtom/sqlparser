@@ -72,7 +72,7 @@ public class Translator {
   private P parser;
   private L lexer;
   private T tree;
-  private QueryModel queryModel=null;
+  private QueryModel queryModel = null;
 
   public Translator() {
     initKeywordMap();
@@ -129,31 +129,6 @@ public class Translator {
       cnKeyWords = bundle.getString(keyName);
     }
     return cnKeyWords;
-  }
-  
-  /**
-   * 返回SELECT字句字段或表达式信息对象数组
-   * @return SelectListVO[] 字段或表达式信息对象数组
-   */
-  public SelectListVO[] getSelectListVOArr(){
-    return this.tree.getSelectListVOArr();
-  }
-  
-  /**
-   * 返回FROM字句表名、表别名信息对象数组
-   * @return FromListVO[] 表名、表别名信息对象数组
-   */
-  public FromListVO[] getFromListVOArr(){
-    FromListVO[] _fromListVO = this.tree.getFromListVOArr();
-    return _fromListVO;
-  }
-  
-  /**
-   * 返回WHERE字句条件表达式、关系运算符、条件信息对象数组
-   * @return WhereListVO[] 条件表达式、关系运算符、条件信息对象数组
-   */
-  public WhereListVO[] getWhereListVOArr(){
-    return this.tree.getWhereListVOArr();
   }
   
   /**
@@ -227,6 +202,20 @@ public class Translator {
         if (fields[j].getEnName()==null)
           antlrExceptions.add(
               new NoSuchDbFieldException(tables[i].getChName(), fields[j].getChName()));
+      }
+      if (queryModel!=null)
+        queryModel.addTableInfo(tables[i]);
+    }
+  }
+  
+  public void setSimpleTableInfo(DbTable[] tables) {
+    for (int i = 0; i < tables.length; i++) {
+      if (tables[i].getEnName() == null)
+        antlrExceptions.add(new NoSuchDbTableException(tables[i].getChName()));
+      DbField[] fields = tables[i].getFields();
+      for (int j = 0; j < fields.length; j++) {
+        if (fields[j].getEnName() == null)
+          antlrExceptions.add(new NoSuchDbFieldException(tables[i].getChName(), fields[j].getChName()));
       }
       if (queryModel!=null)
         queryModel.addTableInfo(tables[i]);
@@ -431,11 +420,16 @@ public class Translator {
       queryModel.setMapEn2Ch(mapEn2Ch);
       queryModel.setChQuery(chQuery);
       //Add SQL Every Step EquElement
-      queryModel.setSelectListMap(tree.getSelectListMap());
-      queryModel.setFromListMap(tree.getFromListMap());
-      queryModel.setWhereListMap(tree.getWhereListMap());
-      queryModel.setGroupByListMap(tree.getGroupByListMap());
-      queryModel.setOrderByListMap(tree.getOrderByListMap());
+//      queryModel.setSelectListMap(tree.getSelectListMap());
+//      queryModel.setFromListMap(tree.getFromListMap());
+//      queryModel.setWhereListMap(tree.getWhereListMap());
+//      queryModel.setGroupByListMap(tree.getGroupByListMap());
+//      queryModel.setOrderByListMap(tree.getOrderByListMap());
+      queryModel.setSelectList(tree.getSelectList());
+      queryModel.setFromList(tree.getFromList());
+      queryModel.setWhereList(tree.getWhereList());
+      queryModel.setGroupByList(tree.getGroupByList());
+      queryModel.setOrderByList(tree.getOrderByList());
     } catch (RecognitionException e) {
       antlrExceptions.add(e);
     } catch (TokenStreamException e) {
@@ -447,6 +441,10 @@ public class Translator {
     enQuery = formatStringLit(enQuery);
     for (Iterator it = mapKeyword.keySet().iterator(); it.hasNext();) {
       String chKey = it.next().toString();
+      String enKey = (String) mapKeyword.get(chKey);
+      if (enKey.equals("asc") || enKey.equals("desc")){
+        mapEn2Ch.put(enKey, chKey);
+      }
       enQuery = replace(enQuery, chKey, mapKeyword.get(chKey).toString());
     }
     enQuery = replace(enQuery, "[", "");
@@ -507,7 +505,7 @@ public class Translator {
     int pos=0;
     int offset=to.length()-from.length();
     String f="\\Q"+from+"\\E";
-
+    
     while (ret.indexOf(from, pos) != -1) {
       pos=chQuery.indexOf(from, pos);
       mapEn2Ch.put(to, from);
