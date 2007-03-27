@@ -42,7 +42,7 @@ public L(LexerSharedInputState state) {
 	caseSensitiveLiterals = false;
 	setCaseSensitive(false);
 	literals = new Hashtable();
-	literals.put(new ANTLRHashString("null", this), new Integer(41));
+	literals.put(new ANTLRHashString("null", this), new Integer(40));
 }
 
 public Token nextToken() throws TokenStreamException {
@@ -695,13 +695,13 @@ tryAgain:
 		
 		mID_START_LETTER(false);
 		{
-		_loop79:
+		_loop93:
 		do {
 			if ((_tokenSet_5.member(LA(1)))) {
 				mID_LETTER(false);
 			}
 			else {
-				break _loop79;
+				break _loop93;
 			}
 			
 		} while (true);
@@ -822,13 +822,13 @@ tryAgain:
 		{
 			mNUM_START(false);
 			{
-			_loop89:
+			_loop103:
 			do {
 				if (((LA(1) >= '0' && LA(1) <= '9'))) {
 					mNUM_LETTER(false);
 				}
 				else {
-					break _loop89;
+					break _loop103;
 				}
 				
 			} while (true);
@@ -866,17 +866,17 @@ tryAgain:
 		int _saveIndex;
 		
 		{
-		int _cnt86=0;
-		_loop86:
+		int _cnt100=0;
+		_loop100:
 		do {
 			if (((LA(1) >= '0' && LA(1) <= '9'))) {
 				mNUM_LETTER(false);
 			}
 			else {
-				if ( _cnt86>=1 ) { break _loop86; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt100>=1 ) { break _loop100; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt86++;
+			_cnt100++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -919,7 +919,7 @@ tryAgain:
 		
 		match("/*");
 		{
-		_loop95:
+		_loop109:
 		do {
 			if ((LA(1)=='\r') && (LA(2)=='\n') && ((LA(3) >= '\u0000' && LA(3) <= '\ufffe')) && ((LA(4) >= '\u0000' && LA(4) <= '\ufffe')) && (true)) {
 				match('\r');
@@ -943,7 +943,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop95;
+				break _loop109;
 			}
 			
 		} while (true);
@@ -1095,7 +1095,7 @@ tryAgain:
 		}
 		}
 		{
-		_loop109:
+		_loop123:
 		do {
 			if ((LA(1)=='\\')) {
 				mESC(false);
@@ -1106,7 +1106,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop109;
+				break _loop123;
 			}
 			
 		} while (true);

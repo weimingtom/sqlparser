@@ -28,11 +28,19 @@ public class T extends antlr.TreeParser       implements PTokenTypes
     Map groupByListMap = new HashMap();
     Map orderByListMap = new HashMap();
     
+    List selectList = new ArrayList();
+    List fromList = new ArrayList();
+    List whereList = new ArrayList();
+    List groupByList = new ArrayList();
+    List orderByList = new ArrayList();
+    
 	Map tables = new HashMap();
 	Map fieldAliasMap = new HashMap();
 	Map segment = new HashMap();
 	
 	int whereIntKey = 0;
+	
+	GroupByListVO _lastGroupByListVO;
 	
 	//Get DbTable Model (Remove the alias table Object)
 	public DbTable[] getTables() {
@@ -149,25 +157,49 @@ public class T extends antlr.TreeParser       implements PTokenTypes
 	    return orderByListMap;
 	}
 	
+  	public List getSelectList() {
+    	return selectList;
+  	}
+	
+	public List getFromList() {
+    	return fromList;
+  	}
+  	
+    public List getWhereList() {
+    	return whereList;
+  	}
+  	
+  	public List getGroupByList() {
+	    return groupByList;
+	}
+	
+	public List getOrderByList() {
+    	return orderByList;
+  	}
+
+	
 	//Add SelectListVO to selectListMap
 	private SelectListVO addSelectListVO(String columnEquElem, String chAliasName){
 		int intMapKey = selectListMap.size() + 1;
 		SelectListVO _selectListVO = new SelectListVO();
 		_selectListVO.setCnColumnEquElem(columnEquElem);
 		_selectListVO.setCnFieldAlias(chAliasName);
-		selectListMap.put("SQL_SELECT_" + String.valueOf(intMapKey), _selectListVO);
+		if (fromList.size() == 0){
+			selectList.add(_selectListVO);
+		}
+		//selectListMap.put("SQL_SELECT_" + String.valueOf(intMapKey), _selectListVO);			
 		return _selectListVO;
 	}
 	
 	//Get ALL FieldEquElem Object Array from selectListMap
-	public SelectListVO[] getSelectListVOArr() {
-		int i = 0;
-		SelectListVO[] _selectListVOArr = new SelectListVO[selectListMap.size()];
-		for (Iterator it = selectListMap.values().iterator(); it.hasNext();){
-			_selectListVOArr[i++] = (SelectListVO) it.next();
-		}
-		return _selectListVOArr;
-	}
+//	public SelectListVO[] getSelectListVOArr() {
+//		int i = 0;
+//		SelectListVO[] _selectListVOArr = new SelectListVO[selectListMap.size()];
+//		for (Iterator it = selectListMap.values().iterator(); it.hasNext();){
+//			_selectListVOArr[i++] = (SelectListVO) it.next();
+//		}
+//		return _selectListVOArr;
+//	}
 	
 	
 	//Add FromListVO to fromListMap
@@ -175,19 +207,20 @@ public class T extends antlr.TreeParser       implements PTokenTypes
 		FromListVO _fromListVO = new FromListVO();
 	    _fromListVO.setCnTableName(chName);
 	    _fromListVO.setCnTAbleAlias(tableAlias);
-	    fromListMap.put(_fromListVO.getCnTableName(), _fromListVO);
+	    //fromListMap.put(_fromListVO.getCnTableName(), _fromListVO);
+	    fromList.add(_fromListVO);
 	    return _fromListVO;
 	}
 	
 	//Get ALL FromListVO(TableName) Object Array from fromListMap
-	public FromListVO[] getFromListVOArr() {
-	    int i = 0;
-	    FromListVO[] _fromListVOArr = new FromListVO[fromListMap.size()];
-	    for (Iterator it = fromListMap.values().iterator(); it.hasNext();){
-	      _fromListVOArr[i++] = (FromListVO) it.next();
-	    }
-	    return _fromListVOArr;
-	}
+//	public FromListVO[] getFromListVOArr() {
+//	    int i = 0;
+//	    FromListVO[] _fromListVOArr = new FromListVO[fromListMap.size()];
+//	    for (Iterator it = fromListMap.values().iterator(); it.hasNext();){
+//	      _fromListVOArr[i++] = (FromListVO) it.next();
+//	    }
+//	    return _fromListVOArr;
+//	}
 	
 	//Add WhereListVO to whereListMap
 	private WhereListVO addWhereListVO(String cnWhereEquElem, String comparSymbol, String cnWhereValue){
@@ -197,19 +230,61 @@ public class T extends antlr.TreeParser       implements PTokenTypes
 	    _whereListVO.setCnWhereEquElem(cnWhereEquElem);
 	    _whereListVO.setCnComparSymbol(comparSymbol);
 	    _whereListVO.setCnWhereValue(cnWhereValue);
-	    whereListMap.put("SQL_WHERE_" + String.valueOf(whereIntKey), _whereListVO);
+	    whereList.add(_whereListVO);
+	    //whereListMap.put("SQL_WHERE_" + String.valueOf(whereIntKey), _whereListVO);
 		return _whereListVO;
 	}
 	
 	//Get ALL WhereListVO Object Array from whereListMap
-	public WhereListVO[] getWhereListVOArr() {
-    	int i = 0;
-      	WhereListVO[] _whereListVO = new WhereListVO[whereListMap.size()];
-      	for (Iterator it = whereListMap.values().iterator(); it.hasNext();){
-        	_whereListVO[i++] = (WhereListVO) it.next();
-      	}
-      	return _whereListVO;
-  	}
+//	public WhereListVO[] getWhereListVOArr() {
+//    	int i = 0;
+//      	WhereListVO[] _whereListVO = new WhereListVO[whereListMap.size()];
+//      	for (Iterator it = whereListMap.values().iterator(); it.hasNext();){
+//        	_whereListVO[i++] = (WhereListVO) it.next();
+//      	}
+//      	return _whereListVO;
+//  	}
+  	
+  	//Add GroupByListVO to groupByListMap
+	private GroupByListVO addGroupByListVO(String cnGroupByEquElem){
+		int groupByIntKey = groupByListMap.size() + 1;
+		GroupByListVO _groupByListVO = new GroupByListVO();
+		_groupByListVO.setCnGroupByEquElem(cnGroupByEquElem);
+		groupByList.add(_groupByListVO);
+	    //groupByListMap.put("SQL_GROUPBY_" + String.valueOf(groupByIntKey), _groupByListVO);
+		return _groupByListVO;
+	}
+	
+	//Get ALL GroupByListVO Object Array from groupByListMap
+//	public GroupByListVO[] getGroupListVOArr() {
+//    	int i = 0;
+//      	GroupByListVO[] _groupByListVO = new GroupByListVO[groupByListMap.size()];
+//      	for (Iterator it = groupByListMap.values().iterator(); it.hasNext();){
+//        	_groupByListVO[i++] = (GroupByListVO) it.next();
+//      	}
+//      	return _groupByListVO;
+//  	}
+  	
+  	//Add OrderByListVO to orderByListMap
+	private OrderByListVO addOrderByListVO(String cnOrerByEquElem, String cnOrderType){
+		int orderByIntKey = orderByListMap.size() + 1;
+		OrderByListVO _orderByListVO = new OrderByListVO();
+		_orderByListVO.setCnOrerByEquElem(cnOrerByEquElem);
+	    _orderByListVO.setCnOrderType(cnOrderType);
+	    orderByList.add(_orderByListVO);
+	    //orderByListMap.put("SQL_ORDERBY_" + String.valueOf(orderByIntKey), _orderByListVO);
+		return _orderByListVO;
+	}
+	
+	//Get ALL OrderByListVO Object Array from orderByListMap
+//	public OrderByListVO[] getOrderListVOArr() {
+//    	int i = 0;
+//      	OrderByListVO[] _orderByListVO = new OrderByListVO[orderByListMap.size()];
+//      	for (Iterator it = orderByListMap.values().iterator(); it.hasNext();){
+//        	_orderByListVO[i++] = (OrderByListVO) it.next();
+//      	}
+//      	return _orderByListVO;
+//  	}
 public T() {
 	tokenNames = _tokenNames;
 }
@@ -284,7 +359,7 @@ public T() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t130 = _t;
+				AST __t153 = _t;
 				AST tmp5_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -292,7 +367,7 @@ public T() {
 				_t = _retTree;
 				c2=columnList(_t);
 				_t = _retTree;
-				_t = __t130;
+				_t = __t153;
 				_t = _t.getNextSibling();
 				clist=c1+","+c2;
 				break;
@@ -301,8 +376,8 @@ public T() {
 			case STAR:
 			case LPAREN:
 			case OPERATOR:
-			case FUNC_NAME:
 			case POINT:
+			case FUNC_NAME:
 			case REAL_NUM:
 			case QUOTED_STRING:
 			{
@@ -367,7 +442,7 @@ public T() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t137 = _t;
+				AST __t160 = _t;
 				AST tmp9_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -375,7 +450,7 @@ public T() {
 				_t = _retTree;
 				t2=tableList(_t);
 				_t = _retTree;
-				_t = __t137;
+				_t = __t160;
 				_t = _t.getNextSibling();
 				tlist=t1+","+t2;
 				break;
@@ -415,13 +490,13 @@ public T() {
 			switch ( _t.getType()) {
 			case EQUATION_START:
 			{
-				AST __t141 = _t;
+				AST __t164 = _t;
 				AST tmp10_AST_in = (AST)_t;
 				match(_t,EQUATION_START);
 				_t = _t.getFirstChild();
 				e1=equations(_t);
 				_t = _retTree;
-				_t = __t141;
+				_t = __t164;
 				_t = _t.getNextSibling();
 				
 							equStr=e1;
@@ -430,7 +505,7 @@ public T() {
 			}
 			case LOGIC_OP:
 			{
-				AST __t142 = _t;
+				AST __t165 = _t;
 				lop = _t==ASTNULL ? null :(AST)_t;
 				match(_t,LOGIC_OP);
 				_t = _t.getFirstChild();
@@ -438,7 +513,7 @@ public T() {
 				_t = _retTree;
 				e2=equations(_t);
 				_t = _retTree;
-				_t = __t142;
+				_t = __t165;
 				_t = _t.getNextSibling();
 				
 							equStr=e1+" "+lop+" "+e2;
@@ -447,7 +522,7 @@ public T() {
 			}
 			case COMPARATOR:
 			{
-				AST __t143 = _t;
+				AST __t166 = _t;
 				op = _t==ASTNULL ? null :(AST)_t;
 				match(_t,COMPARATOR);
 				_t = _t.getFirstChild();
@@ -455,7 +530,7 @@ public T() {
 				_t = _retTree;
 				e2=equElem(_t);
 				_t = _retTree;
-				_t = __t143;
+				_t = __t166;
 				_t = _t.getNextSibling();
 				
 							equStr=e1+" "+op.getText()+" "+e2;
@@ -489,7 +564,7 @@ public T() {
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			if ((_t.getType()==AS)) {
-				AST __t132 = _t;
+				AST __t155 = _t;
 				a = _t==ASTNULL ? null :(AST)_t;
 				match(_t,AS);
 				_t = _t.getFirstChild();
@@ -498,7 +573,7 @@ public T() {
 				d = (AST)_t;
 				match(_t,ID);
 				_t = _t.getNextSibling();
-				_t = __t132;
+				_t = __t155;
 				_t = _t.getNextSibling();
 				
 							c=args+" "+a.getText()+" "+d.getText();
@@ -537,7 +612,7 @@ public T() {
 			switch ( _t.getType()) {
 			case TABLE_UNION:
 			{
-				AST __t118 = _t;
+				AST __t132 = _t;
 				AST tmp11_AST_in = (AST)_t;
 				match(_t,TABLE_UNION);
 				_t = _t.getFirstChild();
@@ -545,16 +620,14 @@ public T() {
 				_t = _retTree;
 				t2=tableName(_t);
 				_t = _retTree;
-				into=tableName(_t);
-				_t = _retTree;
-				_t = __t118;
+				_t = __t132;
 				_t = _t.getNextSibling();
-				model=new UnionModel(t1, t2, into);
+				model=new UnionModel(t1, t2);
 				break;
 			}
 			case TABLE_COMPARE:
 			{
-				AST __t119 = _t;
+				AST __t133 = _t;
 				AST tmp12_AST_in = (AST)_t;
 				match(_t,TABLE_COMPARE);
 				_t = _t.getFirstChild();
@@ -562,26 +635,24 @@ public T() {
 				_t = _retTree;
 				t2=tableName(_t);
 				_t = _retTree;
-				into=tableName(_t);
-				_t = _retTree;
 				m=method(_t);
 				_t = _retTree;
 				e=equations(_t);
 				_t = _retTree;
-				_t = __t119;
+				_t = __t133;
 				_t = _t.getNextSibling();
-				model=new CompareModel(t1, t2, into, m, e);
+				model=new CompareModel(t1, t2, m, e);
 				break;
 			}
 			case SELECT_STATEMENT:
 			{
-				AST __t120 = _t;
+				AST __t134 = _t;
 				AST tmp13_AST_in = (AST)_t;
 				match(_t,SELECT_STATEMENT);
 				_t = _t.getFirstChild();
 				statement=selectStatement(_t);
 				_t = _retTree;
-				_t = __t120;
+				_t = __t134;
 				_t = _t.getNextSibling();
 				model=new SelectModel(
 							(String)segment.get("clist"),
@@ -633,7 +704,7 @@ public T() {
 			}
 			case AS:
 			{
-				AST __t150 = _t;
+				AST __t173 = _t;
 				a = _t==ASTNULL ? null :(AST)_t;
 				match(_t,AS);
 				_t = _t.getFirstChild();
@@ -643,7 +714,7 @@ public T() {
 				t2 = (AST)_t;
 				match(_t,ID);
 				_t = _t.getNextSibling();
-				_t = __t150;
+				_t = __t173;
 				_t = _t.getNextSibling();
 				
 							tableStr="["+t1.getText()+"] "+a.getText()+" "+t2.getText();
@@ -717,7 +788,7 @@ public T() {
 			switch ( _t.getType()) {
 			case TABLE_SELECT:
 			{
-				AST __t122 = _t;
+				AST __t136 = _t;
 				AST tmp16_AST_in = (AST)_t;
 				match(_t,TABLE_SELECT);
 				_t = _t.getFirstChild();
@@ -725,7 +796,7 @@ public T() {
 				_t = _retTree;
 				tlist=tableList(_t);
 				_t = _retTree;
-				_t = __t122;
+				_t = __t136;
 				_t = _t.getNextSibling();
 				
 							segment.put("clist", clist);
@@ -735,7 +806,7 @@ public T() {
 			}
 			case WHERE:
 			{
-				AST __t123 = _t;
+				AST __t137 = _t;
 				AST tmp17_AST_in = (AST)_t;
 				match(_t,WHERE);
 				_t = _t.getFirstChild();
@@ -743,39 +814,43 @@ public T() {
 				_t = _retTree;
 				e=equations(_t);
 				_t = _retTree;
-				_t = __t123;
+				_t = __t137;
 				_t = _t.getNextSibling();
 				segment.put("equations", e);
 				break;
 			}
 			case GROUP_BY:
 			{
-				AST __t124 = _t;
+				AST __t138 = _t;
 				AST tmp18_AST_in = (AST)_t;
 				match(_t,GROUP_BY);
 				_t = _t.getFirstChild();
 				s=selectStatement(_t);
 				_t = _retTree;
-				g=columnList(_t);
+				g=groupByCauseList(_t);
 				_t = _retTree;
-				_t = __t124;
+				_t = __t138;
 				_t = _t.getNextSibling();
-				segment.put("groupby", g);
+				
+							segment.put("groupby", g);
+						
 				break;
 			}
 			case ORDER_BY:
 			{
-				AST __t125 = _t;
+				AST __t139 = _t;
 				AST tmp19_AST_in = (AST)_t;
 				match(_t,ORDER_BY);
 				_t = _t.getFirstChild();
 				s=selectStatement(_t);
 				_t = _retTree;
-				o=orderClause(_t);
+				o=orderByClauseList(_t);
 				_t = _retTree;
-				_t = __t125;
+				_t = __t139;
 				_t = _t.getNextSibling();
-				segment.put("orderby", o);
+				
+							segment.put("orderby", o);
+						
 				break;
 			}
 			default:
@@ -792,44 +867,46 @@ public T() {
 		return statement;
 	}
 	
-	public final String  orderClause(AST _t) throws RecognitionException {
-		String clause;
+	public final String  groupByCauseList(AST _t) throws RecognitionException {
+		String rGroupByCause;
 		
-		AST orderClause_AST_in = (_t == ASTNULL) ? null : (AST)_t;
-		AST a = null;
-		String c; clause="";
+		AST groupByCauseList_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		String g1, g2; rGroupByCause = "";
 		
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			switch ( _t.getType()) {
-			case ALL_FIELDS:
 			case COMMA:
-			case ALL:
-			case DISTINCT:
+			{
+				AST __t141 = _t;
+				AST tmp20_AST_in = (AST)_t;
+				match(_t,COMMA);
+				_t = _t.getFirstChild();
+				g1=groupByCauseList(_t);
+				_t = _retTree;
+				g2=groupByCauseList(_t);
+				_t = _retTree;
+				_t = __t141;
+				_t = _t.getNextSibling();
+				
+							rGroupByCause = g1 + "," + g2;
+						
+				break;
+			}
 			case AS:
 			case STAR:
 			case LPAREN:
 			case OPERATOR:
-			case FUNC_NAME:
 			case POINT:
+			case FUNC_NAME:
 			case REAL_NUM:
 			case QUOTED_STRING:
 			{
-				clause=columnList(_t);
+				rGroupByCause=equElem(_t);
 				_t = _retTree;
-				break;
-			}
-			case ASC:
-			{
-				AST __t127 = _t;
-				a = _t==ASTNULL ? null :(AST)_t;
-				match(_t,ASC);
-				_t = _t.getFirstChild();
-				c=columnList(_t);
-				_t = _retTree;
-				_t = __t127;
-				_t = _t.getNextSibling();
-				clause=c+" "+a.getText();
+				
+							addGroupByListVO(rGroupByCause);
+						
 				break;
 			}
 			default:
@@ -843,7 +920,78 @@ public T() {
 			if (_t!=null) {_t = _t.getNextSibling();}
 		}
 		_retTree = _t;
-		return clause;
+		return rGroupByCause;
+	}
+	
+	public final String  orderByClauseList(AST _t) throws RecognitionException {
+		String rOrderByCause;
+		
+		AST orderByClauseList_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		AST a = null;
+		String g1, g2, o1; rOrderByCause = "";
+		
+		try {      // for error handling
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case COMMA:
+			{
+				AST __t143 = _t;
+				AST tmp21_AST_in = (AST)_t;
+				match(_t,COMMA);
+				_t = _t.getFirstChild();
+				g1=orderByClauseList(_t);
+				_t = _retTree;
+				g2=orderByClauseList(_t);
+				_t = _retTree;
+				_t = __t143;
+				_t = _t.getNextSibling();
+				
+							rOrderByCause = g1 + "," + g2;
+						
+				break;
+			}
+			case ASC:
+			{
+				AST __t144 = _t;
+				a = _t==ASTNULL ? null :(AST)_t;
+				match(_t,ASC);
+				_t = _t.getFirstChild();
+				o1=orderEquElem(_t);
+				_t = _retTree;
+				_t = __t144;
+				_t = _t.getNextSibling();
+				
+							rOrderByCause = o1 + " " + a.getText();
+							addOrderByListVO(o1, a.getText());
+						
+				break;
+			}
+			case ID:
+			case STAR:
+			case LPAREN:
+			case OPERATOR:
+			case POINT:
+			case FUNC_NAME:
+			{
+				rOrderByCause=orderEquElem(_t);
+				_t = _retTree;
+				
+							addOrderByListVO(rOrderByCause, "asc");
+						
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+		return rOrderByCause;
 	}
 	
 	public final String  equElem(AST _t) throws RecognitionException {
@@ -864,7 +1012,7 @@ public T() {
 			switch ( _t.getType()) {
 			case OPERATOR:
 			{
-				AST __t145 = _t;
+				AST __t168 = _t;
 				op = _t==ASTNULL ? null :(AST)_t;
 				match(_t,OPERATOR);
 				_t = _t.getFirstChild();
@@ -872,14 +1020,14 @@ public T() {
 				_t = _retTree;
 				e2=equElem(_t);
 				_t = _retTree;
-				_t = __t145;
+				_t = __t168;
 				_t = _t.getNextSibling();
 				equElemStr=e1+op.getText()+e2;
 				break;
 			}
 			case STAR:
 			{
-				AST __t146 = _t;
+				AST __t169 = _t;
 				star = _t==ASTNULL ? null :(AST)_t;
 				match(_t,STAR);
 				_t = _t.getFirstChild();
@@ -887,19 +1035,19 @@ public T() {
 				_t = _retTree;
 				e2=equElem(_t);
 				_t = _retTree;
-				_t = __t146;
+				_t = __t169;
 				_t = _t.getNextSibling();
 				equElemStr=e1+star.getText()+e2;
 				break;
 			}
 			case LPAREN:
 			{
-				AST tmp20_AST_in = (AST)_t;
+				AST tmp22_AST_in = (AST)_t;
 				match(_t,LPAREN);
 				_t = _t.getNextSibling();
 				e1=equElem(_t);
 				_t = _retTree;
-				AST tmp21_AST_in = (AST)_t;
+				AST tmp23_AST_in = (AST)_t;
 				match(_t,RPAREN);
 				_t = _t.getNextSibling();
 				equElemStr="("+e1+")";
@@ -930,7 +1078,7 @@ public T() {
 			}
 			case AS:
 			{
-				AST __t147 = _t;
+				AST __t170 = _t;
 				a = _t==ASTNULL ? null :(AST)_t;
 				match(_t,AS);
 				_t = _t.getFirstChild();
@@ -939,20 +1087,20 @@ public T() {
 				tempField = (AST)_t;
 				match(_t,ID);
 				_t = _t.getNextSibling();
-				_t = __t147;
+				_t = __t170;
 				_t = _t.getNextSibling();
 				equElemStr=e1+" "+a.getText()+" "+tempField.getText();
 				break;
 			}
 			case FUNC_NAME:
 			{
-				AST __t148 = _t;
+				AST __t171 = _t;
 				fn = _t==ASTNULL ? null :(AST)_t;
 				match(_t,FUNC_NAME);
 				_t = _t.getFirstChild();
 				args=funcArgs(_t);
 				_t = _retTree;
-				_t = __t148;
+				_t = __t171;
 				_t = _t.getNextSibling();
 				equElemStr=fn.getText()+"("+args+")";
 				break;
@@ -971,6 +1119,152 @@ public T() {
 		return equElemStr;
 	}
 	
+	public final String  orderEquElem(AST _t) throws RecognitionException {
+		String rOrderEquElem;
+		
+		AST orderEquElem_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		AST op = null;
+		AST star = null;
+		AST fn = null;
+		String e1, e2, args; rOrderEquElem = "";
+		
+		try {      // for error handling
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case OPERATOR:
+			{
+				AST __t146 = _t;
+				op = _t==ASTNULL ? null :(AST)_t;
+				match(_t,OPERATOR);
+				_t = _t.getFirstChild();
+				e1=orderEquElem(_t);
+				_t = _retTree;
+				e2=orderEquElem(_t);
+				_t = _retTree;
+				_t = __t146;
+				_t = _t.getNextSibling();
+				rOrderEquElem = e1 + op.getText() + e2;
+				break;
+			}
+			case STAR:
+			{
+				AST __t147 = _t;
+				star = _t==ASTNULL ? null :(AST)_t;
+				match(_t,STAR);
+				_t = _t.getFirstChild();
+				e1=orderEquElem(_t);
+				_t = _retTree;
+				e2=orderEquElem(_t);
+				_t = _retTree;
+				_t = __t147;
+				_t = _t.getNextSibling();
+				rOrderEquElem = e1 + star.getText() + e2;
+				break;
+			}
+			case LPAREN:
+			{
+				AST tmp24_AST_in = (AST)_t;
+				match(_t,LPAREN);
+				_t = _t.getNextSibling();
+				e1=orderEquElem(_t);
+				_t = _retTree;
+				AST tmp25_AST_in = (AST)_t;
+				match(_t,RPAREN);
+				_t = _t.getNextSibling();
+				rOrderEquElem = "(" + e1 + ")";
+				break;
+			}
+			case ID:
+			case POINT:
+			{
+				rOrderEquElem=fieldAliasName(_t);
+				_t = _retTree;
+				break;
+			}
+			case FUNC_NAME:
+			{
+				AST __t148 = _t;
+				fn = _t==ASTNULL ? null :(AST)_t;
+				match(_t,FUNC_NAME);
+				_t = _t.getFirstChild();
+				args=funcArgs(_t);
+				_t = _retTree;
+				_t = __t148;
+				_t = _t.getNextSibling();
+				rOrderEquElem = fn.getText()+"("+args+")";
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+		return rOrderEquElem;
+	}
+	
+	public final String  fieldAliasName(AST _t) throws RecognitionException {
+		String fieldStr;
+		
+		AST fieldAliasName_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		AST f1 = null;
+		AST f2 = null;
+		AST id = null;
+		fieldStr="";
+		
+		try {      // for error handling
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case POINT:
+			{
+				AST __t175 = _t;
+				AST tmp26_AST_in = (AST)_t;
+				match(_t,POINT);
+				_t = _t.getFirstChild();
+				f1 = (AST)_t;
+				match(_t,ID);
+				_t = _t.getNextSibling();
+				f2 = (AST)_t;
+				match(_t,ID);
+				_t = _t.getNextSibling();
+				_t = __t175;
+				_t = _t.getNextSibling();
+				
+							String t=f1.getText();
+							String f=f2.getText();
+							fieldStr="["+t+"."+f+"]";
+						
+				break;
+			}
+			case ID:
+			{
+				id = (AST)_t;
+				match(_t,ID);
+				_t = _t.getNextSibling();
+				
+							fieldStr = id.getText();
+						
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+		return fieldStr;
+	}
+	
 	public final String  funcArgs(AST _t) throws RecognitionException {
 		String args;
 		
@@ -982,7 +1276,7 @@ public T() {
 			switch ( _t.getType()) {
 			case ALL:
 			{
-				AST tmp22_AST_in = (AST)_t;
+				AST tmp27_AST_in = (AST)_t;
 				match(_t,ALL);
 				_t = _t.getNextSibling();
 				a=funcArg(_t);
@@ -992,7 +1286,7 @@ public T() {
 			}
 			case DISTINCT:
 			{
-				AST tmp23_AST_in = (AST)_t;
+				AST tmp28_AST_in = (AST)_t;
 				match(_t,DISTINCT);
 				_t = _t.getNextSibling();
 				a=funcArg(_t);
@@ -1005,8 +1299,8 @@ public T() {
 			case STAR:
 			case LPAREN:
 			case OPERATOR:
-			case FUNC_NAME:
 			case POINT:
+			case FUNC_NAME:
 			case REAL_NUM:
 			case QUOTED_STRING:
 			{
@@ -1029,6 +1323,66 @@ public T() {
 		return args;
 	}
 	
+	public final String  orderClause(AST _t) throws RecognitionException {
+		String clause;
+		
+		AST orderClause_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		AST a = null;
+		String c; clause="";
+		
+		try {      // for error handling
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case ALL_FIELDS:
+			case COMMA:
+			case ALL:
+			case DISTINCT:
+			case AS:
+			case STAR:
+			case LPAREN:
+			case OPERATOR:
+			case POINT:
+			case FUNC_NAME:
+			case REAL_NUM:
+			case QUOTED_STRING:
+			{
+				clause=columnList(_t);
+				_t = _retTree;
+				
+							addOrderByListVO(clause, "asc");
+						
+				break;
+			}
+			case ASC:
+			{
+				AST __t150 = _t;
+				a = _t==ASTNULL ? null :(AST)_t;
+				match(_t,ASC);
+				_t = _t.getFirstChild();
+				c=columnList(_t);
+				_t = _retTree;
+				_t = __t150;
+				_t = _t.getNextSibling();
+				
+							clause=c+" "+a.getText();
+							addOrderByListVO(c, a.getText());
+						
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+		return clause;
+	}
+	
 	public final String  funcArg(AST _t) throws RecognitionException {
 		String arg;
 		
@@ -1040,15 +1394,15 @@ public T() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t135 = _t;
-				AST tmp24_AST_in = (AST)_t;
+				AST __t158 = _t;
+				AST tmp29_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
 				f1=funcArg(_t);
 				_t = _retTree;
 				f2=funcArg(_t);
 				_t = _retTree;
-				_t = __t135;
+				_t = __t158;
 				_t = _t.getNextSibling();
 				arg=f1+","+f2;
 				break;
@@ -1057,8 +1411,8 @@ public T() {
 			case STAR:
 			case LPAREN:
 			case OPERATOR:
-			case FUNC_NAME:
 			case POINT:
+			case FUNC_NAME:
 			case REAL_NUM:
 			case QUOTED_STRING:
 			{
@@ -1092,15 +1446,15 @@ public T() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t139 = _t;
-				AST tmp25_AST_in = (AST)_t;
+				AST __t162 = _t;
+				AST tmp30_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
 				f1=fieldList(_t);
 				_t = _retTree;
 				f2=fieldList(_t);
 				_t = _retTree;
-				_t = __t139;
+				_t = __t162;
 				_t = _t.getNextSibling();
 				fList=f1+","+f2;
 				break;
@@ -1135,8 +1489,8 @@ public T() {
 		fieldStr="";
 		
 		try {      // for error handling
-			AST __t152 = _t;
-			AST tmp26_AST_in = (AST)_t;
+			AST __t177 = _t;
+			AST tmp31_AST_in = (AST)_t;
 			match(_t,POINT);
 			_t = _t.getFirstChild();
 			f1 = (AST)_t;
@@ -1145,7 +1499,7 @@ public T() {
 			f2 = (AST)_t;
 			match(_t,ID);
 			_t = _t.getNextSibling();
-			_t = __t152;
+			_t = __t177;
 			_t = _t.getNextSibling();
 			
 						String t=f1.getText();
@@ -1182,13 +1536,12 @@ public T() {
 		"WHERE",
 		"TABLE_UNION",
 		"COMMA",
-		"INTO",
 		"TABLE_COMPARE",
 		"GROUP_BY",
 		"ORDER_BY",
-		"ASC",
 		"UNION",
 		"ALL",
+		"ASC",
 		"DISTINCT",
 		"AS",
 		"ID",
@@ -1202,11 +1555,12 @@ public T() {
 		"NAME_START",
 		"NAME_END",
 		"OPERATOR",
-		"FUNC_NAME",
 		"POINT",
+		"FUNC_NAME",
 		"REAL_NUM",
 		"QUOTED_STRING",
 		"\"null\"",
+		"INTO",
 		"BETWEEN",
 		"ID_START_LETTER",
 		"ID_LETTER",
@@ -1221,7 +1575,7 @@ public T() {
 	};
 	
 	private static final long[] mk_tokenSet_0() {
-		long[] data = { 2132619034624L, 0L};
+		long[] data = { 1066309517312L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());

@@ -36,18 +36,22 @@ statement
 	;
 
 tableUnion
-	:	TABLE_UNION^ tableName COMMA! tableName INTO! tableName
+//	:	TABLE_UNION^ tableName COMMA! tableName INTO! tableName
+	:	TABLE_UNION^ tableName COMMA! tableName
 	;
 
 tableCompare
-	:	TABLE_COMPARE^ tableName COMMA! tableName INTO! tableName WHERE! method equations
+//	:	TABLE_COMPARE^ tableName COMMA! tableName INTO! tableName WHERE! method equations
+	:	TABLE_COMPARE^ tableName COMMA! tableName WHERE! method equations
 	;
 
 tableSelect
 	:	TABLE_SELECT^ columnList FROM! tableList 
 		(WHERE^ equations)?
-		(GROUP_BY^ columnList)?
-		(ORDER_BY^ orderClause)?
+//		(GROUP_BY^ columnList)?
+		(GROUP_BY^ groupByCauseList)?
+//		(ORDER_BY^ orderClause)?
+		(ORDER_BY^ orderByClauseList)?
 		{#tableSelect=#([SELECT_STATEMENT], #tableSelect);}
 /*		(groupClause)?
 		(orderClause)?
@@ -64,10 +68,6 @@ selectClause
 groupClause
 	:	GROUP_BY columnList
 	;
-	
-orderClause
-	:	columnList (ASC^)?
-	;
 
 unionClause
 	:	(UNION^ (ALL)?)+
@@ -76,6 +76,26 @@ unionClause
 fieldList
 	:	fieldName (COMMA^ fieldList)?
 	;
+
+groupByCauseList
+	: groupByCause (COMMA^ groupByCause)*
+	;
+
+groupByCause
+	:	equElem
+	;
+
+orderByClauseList
+	: orderClause (COMMA^ orderClause)*
+	;
+
+orderClause	
+	:	orderEquElem (ASC^)?
+	;
+
+//orderClause
+//	:	columnList (ASC^)?
+//	;
 	
 columnList
 	:	(ALL|DISTINCT)? columns
@@ -137,7 +157,23 @@ elem:	fieldName
 	|	constant
 	;
 
+orderEquElem
+	: 	orderElem ((OPERATOR^|STAR^) orderElem)?
+	| 	LPAREN orderEquElem RPAREN (OPERATOR^ orderEquElem)?
+	;
+
+orderElem
+	: 	fieldAliasName
+	|	func
+	;
+
+fieldAliasName
+	: 	ID (POINT^ ID)?
+	|	NAME_START! fieldAliasName NAME_END!
+	;
+
 func:	FUNC_NAME^ LPAREN! (ALL|DISTINCT)? funcArgs RPAREN!;
+
 
 fieldName
 	:	ID POINT^ ID
@@ -356,11 +392,19 @@ class T extends TreeParser;
     Map groupByListMap = new HashMap();
     Map orderByListMap = new HashMap();
     
+    List selectList = new ArrayList();
+    List fromList = new ArrayList();
+    List whereList = new ArrayList();
+    List groupByList = new ArrayList();
+    List orderByList = new ArrayList();
+    
 	Map tables = new HashMap();
 	Map fieldAliasMap = new HashMap();
 	Map segment = new HashMap();
 	
 	int whereIntKey = 0;
+	
+	GroupByListVO _lastGroupByListVO;
 	
 	//Get DbTable Model (Remove the alias table Object)
 	public DbTable[] getTables() {
@@ -477,25 +521,49 @@ class T extends TreeParser;
 	    return orderByListMap;
 	}
 	
+  	public List getSelectList() {
+    	return selectList;
+  	}
+	
+	public List getFromList() {
+    	return fromList;
+  	}
+  	
+    public List getWhereList() {
+    	return whereList;
+  	}
+  	
+  	public List getGroupByList() {
+	    return groupByList;
+	}
+	
+	public List getOrderByList() {
+    	return orderByList;
+  	}
+
+	
 	//Add SelectListVO to selectListMap
 	private SelectListVO addSelectListVO(String columnEquElem, String chAliasName){
 		int intMapKey = selectListMap.size() + 1;
 		SelectListVO _selectListVO = new SelectListVO();
 		_selectListVO.setCnColumnEquElem(columnEquElem);
 		_selectListVO.setCnFieldAlias(chAliasName);
-		selectListMap.put("SQL_SELECT_" + String.valueOf(intMapKey), _selectListVO);
+		if (fromList.size() == 0){
+			selectList.add(_selectListVO);
+		}
+		//selectListMap.put("SQL_SELECT_" + String.valueOf(intMapKey), _selectListVO);			
 		return _selectListVO;
 	}
 	
 	//Get ALL FieldEquElem Object Array from selectListMap
-	public SelectListVO[] getSelectListVOArr() {
-		int i = 0;
-		SelectListVO[] _selectListVOArr = new SelectListVO[selectListMap.size()];
-		for (Iterator it = selectListMap.values().iterator(); it.hasNext();){
-			_selectListVOArr[i++] = (SelectListVO) it.next();
-		}
-		return _selectListVOArr;
-	}
+//	public SelectListVO[] getSelectListVOArr() {
+//		int i = 0;
+//		SelectListVO[] _selectListVOArr = new SelectListVO[selectListMap.size()];
+//		for (Iterator it = selectListMap.values().iterator(); it.hasNext();){
+//			_selectListVOArr[i++] = (SelectListVO) it.next();
+//		}
+//		return _selectListVOArr;
+//	}
 	
 	
 	//Add FromListVO to fromListMap
@@ -503,19 +571,20 @@ class T extends TreeParser;
 		FromListVO _fromListVO = new FromListVO();
 	    _fromListVO.setCnTableName(chName);
 	    _fromListVO.setCnTAbleAlias(tableAlias);
-	    fromListMap.put(_fromListVO.getCnTableName(), _fromListVO);
+	    //fromListMap.put(_fromListVO.getCnTableName(), _fromListVO);
+	    fromList.add(_fromListVO);
 	    return _fromListVO;
 	}
 	
 	//Get ALL FromListVO(TableName) Object Array from fromListMap
-	public FromListVO[] getFromListVOArr() {
-	    int i = 0;
-	    FromListVO[] _fromListVOArr = new FromListVO[fromListMap.size()];
-	    for (Iterator it = fromListMap.values().iterator(); it.hasNext();){
-	      _fromListVOArr[i++] = (FromListVO) it.next();
-	    }
-	    return _fromListVOArr;
-	}
+//	public FromListVO[] getFromListVOArr() {
+//	    int i = 0;
+//	    FromListVO[] _fromListVOArr = new FromListVO[fromListMap.size()];
+//	    for (Iterator it = fromListMap.values().iterator(); it.hasNext();){
+//	      _fromListVOArr[i++] = (FromListVO) it.next();
+//	    }
+//	    return _fromListVOArr;
+//	}
 	
 	//Add WhereListVO to whereListMap
 	private WhereListVO addWhereListVO(String cnWhereEquElem, String comparSymbol, String cnWhereValue){
@@ -525,19 +594,61 @@ class T extends TreeParser;
 	    _whereListVO.setCnWhereEquElem(cnWhereEquElem);
 	    _whereListVO.setCnComparSymbol(comparSymbol);
 	    _whereListVO.setCnWhereValue(cnWhereValue);
-	    whereListMap.put("SQL_WHERE_" + String.valueOf(whereIntKey), _whereListVO);
+	    whereList.add(_whereListVO);
+	    //whereListMap.put("SQL_WHERE_" + String.valueOf(whereIntKey), _whereListVO);
 		return _whereListVO;
 	}
 	
 	//Get ALL WhereListVO Object Array from whereListMap
-	public WhereListVO[] getWhereListVOArr() {
-    	int i = 0;
-      	WhereListVO[] _whereListVO = new WhereListVO[whereListMap.size()];
-      	for (Iterator it = whereListMap.values().iterator(); it.hasNext();){
-        	_whereListVO[i++] = (WhereListVO) it.next();
-      	}
-      	return _whereListVO;
-  	}
+//	public WhereListVO[] getWhereListVOArr() {
+//    	int i = 0;
+//      	WhereListVO[] _whereListVO = new WhereListVO[whereListMap.size()];
+//      	for (Iterator it = whereListMap.values().iterator(); it.hasNext();){
+//        	_whereListVO[i++] = (WhereListVO) it.next();
+//      	}
+//      	return _whereListVO;
+//  	}
+  	
+  	//Add GroupByListVO to groupByListMap
+	private GroupByListVO addGroupByListVO(String cnGroupByEquElem){
+		int groupByIntKey = groupByListMap.size() + 1;
+		GroupByListVO _groupByListVO = new GroupByListVO();
+		_groupByListVO.setCnGroupByEquElem(cnGroupByEquElem);
+		groupByList.add(_groupByListVO);
+	    //groupByListMap.put("SQL_GROUPBY_" + String.valueOf(groupByIntKey), _groupByListVO);
+		return _groupByListVO;
+	}
+	
+	//Get ALL GroupByListVO Object Array from groupByListMap
+//	public GroupByListVO[] getGroupListVOArr() {
+//    	int i = 0;
+//      	GroupByListVO[] _groupByListVO = new GroupByListVO[groupByListMap.size()];
+//      	for (Iterator it = groupByListMap.values().iterator(); it.hasNext();){
+//        	_groupByListVO[i++] = (GroupByListVO) it.next();
+//      	}
+//      	return _groupByListVO;
+//  	}
+  	
+  	//Add OrderByListVO to orderByListMap
+	private OrderByListVO addOrderByListVO(String cnOrerByEquElem, String cnOrderType){
+		int orderByIntKey = orderByListMap.size() + 1;
+		OrderByListVO _orderByListVO = new OrderByListVO();
+		_orderByListVO.setCnOrerByEquElem(cnOrerByEquElem);
+	    _orderByListVO.setCnOrderType(cnOrderType);
+	    orderByList.add(_orderByListVO);
+	    //orderByListMap.put("SQL_ORDERBY_" + String.valueOf(orderByIntKey), _orderByListVO);
+		return _orderByListVO;
+	}
+	
+	//Get ALL OrderByListVO Object Array from orderByListMap
+//	public OrderByListVO[] getOrderListVOArr() {
+//    	int i = 0;
+//      	OrderByListVO[] _orderByListVO = new OrderByListVO[orderByListMap.size()];
+//      	for (Iterator it = orderByListMap.values().iterator(); it.hasNext();){
+//        	_orderByListVO[i++] = (OrderByListVO) it.next();
+//      	}
+//      	return _orderByListVO;
+//  	}
 }
 
 segment returns [String segment]
@@ -550,10 +661,14 @@ segment returns [String segment]
 
 statement returns [QueryModel model]
 	{String statement, clist, tlist, g, o, t1, t2, into, m, e;model=null;}
-	:	#(TABLE_UNION t1=tableName t2=tableName into=tableName)
-		{model=new UnionModel(t1, t2, into);}
-	|	#(TABLE_COMPARE t1=tableName t2=tableName into=tableName m=method e=equations)
-		{model=new CompareModel(t1, t2, into, m, e);}
+//	:	#(TABLE_UNION t1=tableName t2=tableName into=tableName)
+//		{model=new UnionModel(t1, t2, into);}
+	:	#(TABLE_UNION t1=tableName t2=tableName)
+		{model=new UnionModel(t1, t2);}
+//	|	#(TABLE_COMPARE t1=tableName t2=tableName into=tableName m=method e=equations)
+//		{model=new CompareModel(t1, t2, into, m, e);}
+	|	#(TABLE_COMPARE t1=tableName t2=tableName m=method e=equations)
+		{model=new CompareModel(t1, t2, m, e);}
 	|	#(SELECT_STATEMENT statement=selectStatement)
 		{model=new SelectModel(
 			(String)segment.get("clist"),
@@ -576,18 +691,76 @@ selectStatement returns [String statement]
 		}
 	|	#(WHERE s=selectStatement e=equations)
 		{segment.put("equations", e);}
-	|	#(GROUP_BY s=selectStatement g=columnList)
-		{segment.put("groupby", g);}
-	|	#(ORDER_BY s=selectStatement o=orderClause)
-		{segment.put("orderby", o);}
+//	|	#(GROUP_BY s=selectStatement g=columnList)
+//		{segment.put("groupby", g);}
+	|	#(GROUP_BY s=selectStatement g=groupByCauseList)
+		{
+			segment.put("groupby", g);
+		}
+//	|	#(ORDER_BY s=selectStatement o=orderClause)
+//		{segment.put("orderby", o);}
+	|	#(ORDER_BY s=selectStatement o=orderByClauseList)
+		{
+			segment.put("orderby", o);
+		}
+	;
+
+groupByCauseList returns [String rGroupByCause]
+	{String g1, g2; rGroupByCause = "";}
+	:	#(COMMA g1 = groupByCauseList g2 = groupByCauseList)
+		{
+			rGroupByCause = g1 + "," + g2;
+		}
+	|	rGroupByCause = equElem
+		{
+			addGroupByListVO(rGroupByCause);
+		}
+	;
+
+
+orderByClauseList returns [String rOrderByCause]
+	{String g1, g2, o1; rOrderByCause = "";}
+	:	#(COMMA g1 = orderByClauseList g2 = orderByClauseList)
+		{
+			rOrderByCause = g1 + "," + g2;
+		}
+	|	#(a:ASC o1 = orderEquElem)
+		{
+			rOrderByCause = o1 + " " + a.getText();
+			addOrderByListVO(o1, a.getText());
+		}
+	|	rOrderByCause = orderEquElem
+		{
+			addOrderByListVO(rOrderByCause, "asc");
+		}
+	;
+
+orderEquElem returns [String rOrderEquElem]
+	{String e1, e2, args; rOrderEquElem = "";}
+	: 	#(op:OPERATOR e1 = orderEquElem e2 = orderEquElem)
+		{rOrderEquElem = e1 + op.getText() + e2;}
+	|	#(star:STAR e1 = orderEquElem e2 = orderEquElem)
+		{rOrderEquElem = e1 + star.getText() + e2;}
+	|	LPAREN e1 = orderEquElem RPAREN
+		{rOrderEquElem = "(" + e1 + ")";}
+	|	rOrderEquElem = fieldAliasName
+	|	#(fn:FUNC_NAME args = funcArgs)
+		{rOrderEquElem = fn.getText()+"("+args+")";}
 	;
 	
 orderClause returns [String clause]
 	{String c; clause="";}
 	:	clause=columnList
+		{
+			addOrderByListVO(clause, "asc");
+		}
 	|	#(a:ASC c=columnList)
-		{clause=c+" "+a.getText();}
+		{
+			clause=c+" "+a.getText();
+			addOrderByListVO(c, a.getText());
+		}
 	;
+
 
 /*
 optionalClause returns [String optional]
@@ -732,6 +905,20 @@ tableName returns [String tableStr]
 			//addFromTableByChName(t1.getText());
 			addFromTableByChName(t1.getText(), t2.getText());
 			addFromListVO(t1.getText(), t2.getText());
+		}
+	;
+
+fieldAliasName returns [String fieldStr]
+	{fieldStr="";}
+	: 	#(POINT f1:ID f2:ID)
+		{
+			String t=f1.getText();
+			String f=f2.getText();
+			fieldStr="["+t+"."+f+"]";
+		}
+	| 	id:ID
+		{
+			fieldStr = id.getText();
 		}
 	;
 
