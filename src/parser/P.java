@@ -63,9 +63,9 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case TABLE_SELECT:
 		{
-			AST tmp27_AST = null;
-			tmp27_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp27_AST);
+			AST tmp32_AST = null;
+			tmp32_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp32_AST);
 			match(TABLE_SELECT);
 			columnList();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -73,9 +73,9 @@ public P(ParserSharedInputState state) {
 		}
 		case COLUMN:
 		{
-			AST tmp28_AST = null;
-			tmp28_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp28_AST);
+			AST tmp33_AST = null;
+			tmp33_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp33_AST);
 			match(COLUMN);
 			column();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -83,9 +83,9 @@ public P(ParserSharedInputState state) {
 		}
 		case FROM:
 		{
-			AST tmp29_AST = null;
-			tmp29_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp29_AST);
+			AST tmp34_AST = null;
+			tmp34_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp34_AST);
 			match(FROM);
 			tableList();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -93,9 +93,9 @@ public P(ParserSharedInputState state) {
 		}
 		case WHERE:
 		{
-			AST tmp30_AST = null;
-			tmp30_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp30_AST);
+			AST tmp35_AST = null;
+			tmp35_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp35_AST);
 			match(WHERE);
 			equations();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -122,17 +122,17 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case ALL:
 		{
-			AST tmp32_AST = null;
-			tmp32_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp32_AST);
+			AST tmp37_AST = null;
+			tmp37_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp37_AST);
 			match(ALL);
 			break;
 		}
 		case DISTINCT:
 		{
-			AST tmp33_AST = null;
-			tmp33_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp33_AST);
+			AST tmp38_AST = null;
+			tmp38_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp38_AST);
 			match(DISTINCT);
 			break;
 		}
@@ -181,21 +181,19 @@ public P(ParserSharedInputState state) {
 			switch ( LA(1)) {
 			case AS:
 			{
-				AST tmp34_AST = null;
-				tmp34_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp34_AST);
+				AST tmp39_AST = null;
+				tmp39_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp39_AST);
 				match(AS);
-				AST tmp35_AST = null;
-				tmp35_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp35_AST);
+				AST tmp40_AST = null;
+				tmp40_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp40_AST);
 				match(ID);
 				break;
 			}
 			case EOF:
 			case FROM:
 			case COMMA:
-			case ORDER_BY:
-			case ASC:
 			{
 				break;
 			}
@@ -210,9 +208,9 @@ public P(ParserSharedInputState state) {
 		}
 		case STAR:
 		{
-			AST tmp36_AST = null;
-			tmp36_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp36_AST);
+			AST tmp41_AST = null;
+			tmp41_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp41_AST);
 			match(STAR);
 			if ( inputState.guessing==0 ) {
 				column_AST = (AST)currentAST.root;
@@ -227,9 +225,9 @@ public P(ParserSharedInputState state) {
 		}
 		case ALL_FIELDS:
 		{
-			AST tmp37_AST = null;
-			tmp37_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp37_AST);
+			AST tmp42_AST = null;
+			tmp42_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp42_AST);
 			match(ALL_FIELDS);
 			column_AST = (AST)currentAST.root;
 			break;
@@ -251,18 +249,18 @@ public P(ParserSharedInputState state) {
 		tableElem();
 		astFactory.addASTChild(currentAST, returnAST);
 		{
-		_loop36:
+		_loop43:
 		do {
 			if ((LA(1)==COMMA)) {
-				AST tmp38_AST = null;
-				tmp38_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp38_AST);
+				AST tmp43_AST = null;
+				tmp43_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp43_AST);
 				match(COMMA);
 				tableElem();
 				astFactory.addASTChild(currentAST, returnAST);
 			}
 			else {
-				break _loop36;
+				break _loop43;
 			}
 			
 		} while (true);
@@ -284,9 +282,9 @@ public P(ParserSharedInputState state) {
 			switch ( LA(1)) {
 			case LOGIC_OP:
 			{
-				AST tmp39_AST = null;
-				tmp39_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp39_AST);
+				AST tmp44_AST = null;
+				tmp44_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp44_AST);
 				match(LOGIC_OP);
 				equations();
 				astFactory.addASTChild(currentAST, returnAST);
@@ -316,27 +314,27 @@ public P(ParserSharedInputState state) {
 			equations_AST = (AST)currentAST.root;
 		}
 		else if ((LA(1)==LPAREN) && (LA(2)==EQUATION_START)) {
-			AST tmp40_AST = null;
-			tmp40_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp40_AST);
+			AST tmp45_AST = null;
+			tmp45_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp45_AST);
 			match(LPAREN);
-			AST tmp41_AST = null;
-			tmp41_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp41_AST);
+			AST tmp46_AST = null;
+			tmp46_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp46_AST);
 			match(EQUATION_START);
 			equations();
 			astFactory.addASTChild(currentAST, returnAST);
-			AST tmp42_AST = null;
-			tmp42_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp42_AST);
+			AST tmp47_AST = null;
+			tmp47_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp47_AST);
 			match(RPAREN);
 			{
 			switch ( LA(1)) {
 			case LOGIC_OP:
 			{
-				AST tmp43_AST = null;
-				tmp43_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp43_AST);
+				AST tmp48_AST = null;
+				tmp48_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp48_AST);
 				match(LOGIC_OP);
 				equations();
 				astFactory.addASTChild(currentAST, returnAST);
@@ -407,16 +405,13 @@ public P(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST tableUnion_AST = null;
 		
-		AST tmp45_AST = null;
-		tmp45_AST = astFactory.create(LT(1));
-		astFactory.makeASTRoot(currentAST, tmp45_AST);
+		AST tmp50_AST = null;
+		tmp50_AST = astFactory.create(LT(1));
+		astFactory.makeASTRoot(currentAST, tmp50_AST);
 		match(TABLE_UNION);
 		tableName();
 		astFactory.addASTChild(currentAST, returnAST);
 		match(COMMA);
-		tableName();
-		astFactory.addASTChild(currentAST, returnAST);
-		match(INTO);
 		tableName();
 		astFactory.addASTChild(currentAST, returnAST);
 		tableUnion_AST = (AST)currentAST.root;
@@ -429,16 +424,13 @@ public P(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST tableCompare_AST = null;
 		
-		AST tmp48_AST = null;
-		tmp48_AST = astFactory.create(LT(1));
-		astFactory.makeASTRoot(currentAST, tmp48_AST);
+		AST tmp52_AST = null;
+		tmp52_AST = astFactory.create(LT(1));
+		astFactory.makeASTRoot(currentAST, tmp52_AST);
 		match(TABLE_COMPARE);
 		tableName();
 		astFactory.addASTChild(currentAST, returnAST);
 		match(COMMA);
-		tableName();
-		astFactory.addASTChild(currentAST, returnAST);
-		match(INTO);
 		tableName();
 		astFactory.addASTChild(currentAST, returnAST);
 		match(WHERE);
@@ -456,9 +448,9 @@ public P(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST tableSelect_AST = null;
 		
-		AST tmp52_AST = null;
-		tmp52_AST = astFactory.create(LT(1));
-		astFactory.makeASTRoot(currentAST, tmp52_AST);
+		AST tmp55_AST = null;
+		tmp55_AST = astFactory.create(LT(1));
+		astFactory.makeASTRoot(currentAST, tmp55_AST);
 		match(TABLE_SELECT);
 		columnList();
 		astFactory.addASTChild(currentAST, returnAST);
@@ -469,9 +461,9 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case WHERE:
 		{
-			AST tmp54_AST = null;
-			tmp54_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp54_AST);
+			AST tmp57_AST = null;
+			tmp57_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp57_AST);
 			match(WHERE);
 			equations();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -493,11 +485,11 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case GROUP_BY:
 		{
-			AST tmp55_AST = null;
-			tmp55_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp55_AST);
+			AST tmp58_AST = null;
+			tmp58_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp58_AST);
 			match(GROUP_BY);
-			columnList();
+			groupByCauseList();
 			astFactory.addASTChild(currentAST, returnAST);
 			break;
 		}
@@ -516,11 +508,11 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case ORDER_BY:
 		{
-			AST tmp56_AST = null;
-			tmp56_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp56_AST);
+			AST tmp59_AST = null;
+			tmp59_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp59_AST);
 			match(ORDER_BY);
-			orderClause();
+			orderByClauseList();
 			astFactory.addASTChild(currentAST, returnAST);
 			break;
 		}
@@ -555,9 +547,9 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case ID:
 		{
-			AST tmp57_AST = null;
-			tmp57_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp57_AST);
+			AST tmp60_AST = null;
+			tmp60_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp60_AST);
 			match(ID);
 			tableName_AST = (AST)currentAST.root;
 			break;
@@ -588,18 +580,18 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case EXIST:
 		{
-			AST tmp60_AST = null;
-			tmp60_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp60_AST);
+			AST tmp63_AST = null;
+			tmp63_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp63_AST);
 			match(EXIST);
 			method_AST = (AST)currentAST.root;
 			break;
 		}
 		case NOT_EXIST:
 		{
-			AST tmp61_AST = null;
-			tmp61_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp61_AST);
+			AST tmp64_AST = null;
+			tmp64_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp64_AST);
 			match(NOT_EXIST);
 			method_AST = (AST)currentAST.root;
 			break;
@@ -612,36 +604,62 @@ public P(ParserSharedInputState state) {
 		returnAST = method_AST;
 	}
 	
-	public final void orderClause() throws RecognitionException, TokenStreamException {
+	public final void groupByCauseList() throws RecognitionException, TokenStreamException {
 		
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
-		AST orderClause_AST = null;
+		AST groupByCauseList_AST = null;
 		
-		columnList();
+		groupByCause();
 		astFactory.addASTChild(currentAST, returnAST);
 		{
-		switch ( LA(1)) {
-		case ASC:
+		_loop21:
+		do {
+			if ((LA(1)==COMMA)) {
+				AST tmp65_AST = null;
+				tmp65_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp65_AST);
+				match(COMMA);
+				groupByCause();
+				astFactory.addASTChild(currentAST, returnAST);
+			}
+			else {
+				break _loop21;
+			}
+			
+		} while (true);
+		}
+		groupByCauseList_AST = (AST)currentAST.root;
+		returnAST = groupByCauseList_AST;
+	}
+	
+	public final void orderByClauseList() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST orderByClauseList_AST = null;
+		
+		orderClause();
+		astFactory.addASTChild(currentAST, returnAST);
 		{
-			AST tmp62_AST = null;
-			tmp62_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp62_AST);
-			match(ASC);
-			break;
+		_loop25:
+		do {
+			if ((LA(1)==COMMA)) {
+				AST tmp66_AST = null;
+				tmp66_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp66_AST);
+				match(COMMA);
+				orderClause();
+				astFactory.addASTChild(currentAST, returnAST);
+			}
+			else {
+				break _loop25;
+			}
+			
+		} while (true);
 		}
-		case EOF:
-		{
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		}
-		}
-		orderClause_AST = (AST)currentAST.root;
-		returnAST = orderClause_AST;
+		orderByClauseList_AST = (AST)currentAST.root;
+		returnAST = orderByClauseList_AST;
 	}
 	
 	public final void selectClause() throws RecognitionException, TokenStreamException {
@@ -650,9 +668,9 @@ public P(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST selectClause_AST = null;
 		
-		AST tmp63_AST = null;
-		tmp63_AST = astFactory.create(LT(1));
-		astFactory.makeASTRoot(currentAST, tmp63_AST);
+		AST tmp67_AST = null;
+		tmp67_AST = astFactory.create(LT(1));
+		astFactory.makeASTRoot(currentAST, tmp67_AST);
 		match(TABLE_SELECT);
 		columnList();
 		astFactory.addASTChild(currentAST, returnAST);
@@ -672,9 +690,9 @@ public P(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST groupClause_AST = null;
 		
-		AST tmp66_AST = null;
-		tmp66_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp66_AST);
+		AST tmp70_AST = null;
+		tmp70_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp70_AST);
 		match(GROUP_BY);
 		columnList();
 		astFactory.addASTChild(currentAST, returnAST);
@@ -689,21 +707,21 @@ public P(ParserSharedInputState state) {
 		AST unionClause_AST = null;
 		
 		{
-		int _cnt18=0;
-		_loop18:
+		int _cnt16=0;
+		_loop16:
 		do {
 			if ((LA(1)==UNION)) {
-				AST tmp67_AST = null;
-				tmp67_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp67_AST);
+				AST tmp71_AST = null;
+				tmp71_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp71_AST);
 				match(UNION);
 				{
 				switch ( LA(1)) {
 				case ALL:
 				{
-					AST tmp68_AST = null;
-					tmp68_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp68_AST);
+					AST tmp72_AST = null;
+					tmp72_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp72_AST);
 					match(ALL);
 					break;
 				}
@@ -720,10 +738,10 @@ public P(ParserSharedInputState state) {
 				}
 			}
 			else {
-				if ( _cnt18>=1 ) { break _loop18; } else {throw new NoViableAltException(LT(1), getFilename());}
+				if ( _cnt16>=1 ) { break _loop16; } else {throw new NoViableAltException(LT(1), getFilename());}
 			}
 			
-			_cnt18++;
+			_cnt16++;
 		} while (true);
 		}
 		unionClause_AST = (AST)currentAST.root;
@@ -742,9 +760,9 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case COMMA:
 		{
-			AST tmp69_AST = null;
-			tmp69_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp69_AST);
+			AST tmp73_AST = null;
+			tmp73_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp73_AST);
 			match(COMMA);
 			fieldList();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -773,17 +791,17 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case ID:
 		{
-			AST tmp70_AST = null;
-			tmp70_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp70_AST);
+			AST tmp74_AST = null;
+			tmp74_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp74_AST);
 			match(ID);
-			AST tmp71_AST = null;
-			tmp71_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp71_AST);
+			AST tmp75_AST = null;
+			tmp75_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp75_AST);
 			match(POINT);
-			AST tmp72_AST = null;
-			tmp72_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp72_AST);
+			AST tmp76_AST = null;
+			tmp76_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp76_AST);
 			match(ID);
 			fieldName_AST = (AST)currentAST.root;
 			break;
@@ -805,33 +823,16 @@ public P(ParserSharedInputState state) {
 		returnAST = fieldName_AST;
 	}
 	
-	public final void columns() throws RecognitionException, TokenStreamException {
+	public final void groupByCause() throws RecognitionException, TokenStreamException {
 		
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
-		AST columns_AST = null;
+		AST groupByCause_AST = null;
 		
-		column();
+		equElem();
 		astFactory.addASTChild(currentAST, returnAST);
-		{
-		_loop25:
-		do {
-			if ((LA(1)==COMMA)) {
-				AST tmp75_AST = null;
-				tmp75_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp75_AST);
-				match(COMMA);
-				column();
-				astFactory.addASTChild(currentAST, returnAST);
-			}
-			else {
-				break _loop25;
-			}
-			
-		} while (true);
-		}
-		columns_AST = (AST)currentAST.root;
-		returnAST = columns_AST;
+		groupByCause_AST = (AST)currentAST.root;
+		returnAST = groupByCause_AST;
 	}
 	
 	public final void equElem() throws RecognitionException, TokenStreamException {
@@ -859,17 +860,17 @@ public P(ParserSharedInputState state) {
 				switch ( LA(1)) {
 				case OPERATOR:
 				{
-					AST tmp76_AST = null;
-					tmp76_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp76_AST);
+					AST tmp79_AST = null;
+					tmp79_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp79_AST);
 					match(OPERATOR);
 					break;
 				}
 				case STAR:
 				{
-					AST tmp77_AST = null;
-					tmp77_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp77_AST);
+					AST tmp80_AST = null;
+					tmp80_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp80_AST);
 					match(STAR);
 					break;
 				}
@@ -888,7 +889,6 @@ public P(ParserSharedInputState state) {
 			case COMMA:
 			case GROUP_BY:
 			case ORDER_BY:
-			case ASC:
 			case AS:
 			case LOGIC_OP:
 			case RPAREN:
@@ -907,23 +907,23 @@ public P(ParserSharedInputState state) {
 		}
 		case LPAREN:
 		{
-			AST tmp78_AST = null;
-			tmp78_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp78_AST);
+			AST tmp81_AST = null;
+			tmp81_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp81_AST);
 			match(LPAREN);
 			equElem();
 			astFactory.addASTChild(currentAST, returnAST);
-			AST tmp79_AST = null;
-			tmp79_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp79_AST);
+			AST tmp82_AST = null;
+			tmp82_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp82_AST);
 			match(RPAREN);
 			{
 			switch ( LA(1)) {
 			case OPERATOR:
 			{
-				AST tmp80_AST = null;
-				tmp80_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp80_AST);
+				AST tmp83_AST = null;
+				tmp83_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp83_AST);
 				match(OPERATOR);
 				equElem();
 				astFactory.addASTChild(currentAST, returnAST);
@@ -934,7 +934,6 @@ public P(ParserSharedInputState state) {
 			case COMMA:
 			case GROUP_BY:
 			case ORDER_BY:
-			case ASC:
 			case AS:
 			case LOGIC_OP:
 			case RPAREN:
@@ -959,6 +958,178 @@ public P(ParserSharedInputState state) {
 		returnAST = equElem_AST;
 	}
 	
+	public final void orderClause() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST orderClause_AST = null;
+		
+		orderEquElem();
+		astFactory.addASTChild(currentAST, returnAST);
+		{
+		switch ( LA(1)) {
+		case ASC:
+		{
+			AST tmp84_AST = null;
+			tmp84_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp84_AST);
+			match(ASC);
+			break;
+		}
+		case EOF:
+		case COMMA:
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		orderClause_AST = (AST)currentAST.root;
+		returnAST = orderClause_AST;
+	}
+	
+	public final void orderEquElem() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST orderEquElem_AST = null;
+		
+		switch ( LA(1)) {
+		case ID:
+		case NAME_START:
+		case FUNC_NAME:
+		{
+			orderElem();
+			astFactory.addASTChild(currentAST, returnAST);
+			{
+			switch ( LA(1)) {
+			case STAR:
+			case OPERATOR:
+			{
+				{
+				switch ( LA(1)) {
+				case OPERATOR:
+				{
+					AST tmp85_AST = null;
+					tmp85_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp85_AST);
+					match(OPERATOR);
+					break;
+				}
+				case STAR:
+				{
+					AST tmp86_AST = null;
+					tmp86_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp86_AST);
+					match(STAR);
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				}
+				}
+				orderElem();
+				astFactory.addASTChild(currentAST, returnAST);
+				break;
+			}
+			case EOF:
+			case COMMA:
+			case ASC:
+			case RPAREN:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
+			orderEquElem_AST = (AST)currentAST.root;
+			break;
+		}
+		case LPAREN:
+		{
+			AST tmp87_AST = null;
+			tmp87_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp87_AST);
+			match(LPAREN);
+			orderEquElem();
+			astFactory.addASTChild(currentAST, returnAST);
+			AST tmp88_AST = null;
+			tmp88_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp88_AST);
+			match(RPAREN);
+			{
+			switch ( LA(1)) {
+			case OPERATOR:
+			{
+				AST tmp89_AST = null;
+				tmp89_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp89_AST);
+				match(OPERATOR);
+				orderEquElem();
+				astFactory.addASTChild(currentAST, returnAST);
+				break;
+			}
+			case EOF:
+			case COMMA:
+			case ASC:
+			case RPAREN:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
+			orderEquElem_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = orderEquElem_AST;
+	}
+	
+	public final void columns() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST columns_AST = null;
+		
+		column();
+		astFactory.addASTChild(currentAST, returnAST);
+		{
+		_loop32:
+		do {
+			if ((LA(1)==COMMA)) {
+				AST tmp90_AST = null;
+				tmp90_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp90_AST);
+				match(COMMA);
+				column();
+				astFactory.addASTChild(currentAST, returnAST);
+			}
+			else {
+				break _loop32;
+			}
+			
+		} while (true);
+		}
+		columns_AST = (AST)currentAST.root;
+		returnAST = columns_AST;
+	}
+	
 	public final void funcArgs() throws RecognitionException, TokenStreamException {
 		
 		returnAST = null;
@@ -968,18 +1139,18 @@ public P(ParserSharedInputState state) {
 		equElem();
 		astFactory.addASTChild(currentAST, returnAST);
 		{
-		_loop32:
+		_loop39:
 		do {
 			if ((LA(1)==COMMA)) {
-				AST tmp81_AST = null;
-				tmp81_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp81_AST);
+				AST tmp91_AST = null;
+				tmp91_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp91_AST);
 				match(COMMA);
 				equElem();
 				astFactory.addASTChild(currentAST, returnAST);
 			}
 			else {
-				break _loop32;
+				break _loop39;
 			}
 			
 		} while (true);
@@ -1012,13 +1183,13 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case AS:
 		{
-			AST tmp82_AST = null;
-			tmp82_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp82_AST);
+			AST tmp92_AST = null;
+			tmp92_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp92_AST);
 			match(AS);
-			AST tmp83_AST = null;
-			tmp83_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp83_AST);
+			AST tmp93_AST = null;
+			tmp93_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp93_AST);
 			match(ID);
 			break;
 		}
@@ -1048,9 +1219,9 @@ public P(ParserSharedInputState state) {
 		
 		equElem();
 		astFactory.addASTChild(currentAST, returnAST);
-		AST tmp84_AST = null;
-		tmp84_AST = astFactory.create(LT(1));
-		astFactory.makeASTRoot(currentAST, tmp84_AST);
+		AST tmp94_AST = null;
+		tmp94_AST = astFactory.create(LT(1));
+		astFactory.makeASTRoot(currentAST, tmp94_AST);
 		match(COMPARATOR);
 		equElem();
 		astFactory.addASTChild(currentAST, returnAST);
@@ -1103,26 +1274,26 @@ public P(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST func_AST = null;
 		
-		AST tmp85_AST = null;
-		tmp85_AST = astFactory.create(LT(1));
-		astFactory.makeASTRoot(currentAST, tmp85_AST);
+		AST tmp95_AST = null;
+		tmp95_AST = astFactory.create(LT(1));
+		astFactory.makeASTRoot(currentAST, tmp95_AST);
 		match(FUNC_NAME);
 		match(LPAREN);
 		{
 		switch ( LA(1)) {
 		case ALL:
 		{
-			AST tmp87_AST = null;
-			tmp87_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp87_AST);
+			AST tmp97_AST = null;
+			tmp97_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp97_AST);
 			match(ALL);
 			break;
 		}
 		case DISTINCT:
 		{
-			AST tmp88_AST = null;
-			tmp88_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp88_AST);
+			AST tmp98_AST = null;
+			tmp98_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp98_AST);
 			match(DISTINCT);
 			break;
 		}
@@ -1158,27 +1329,27 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case REAL_NUM:
 		{
-			AST tmp90_AST = null;
-			tmp90_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp90_AST);
+			AST tmp100_AST = null;
+			tmp100_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp100_AST);
 			match(REAL_NUM);
 			constant_AST = (AST)currentAST.root;
 			break;
 		}
 		case QUOTED_STRING:
 		{
-			AST tmp91_AST = null;
-			tmp91_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp91_AST);
+			AST tmp101_AST = null;
+			tmp101_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp101_AST);
 			match(QUOTED_STRING);
 			constant_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_null:
 		{
-			AST tmp92_AST = null;
-			tmp92_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp92_AST);
+			AST tmp102_AST = null;
+			tmp102_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp102_AST);
 			match(LITERAL_null);
 			constant_AST = (AST)currentAST.root;
 			break;
@@ -1189,6 +1360,99 @@ public P(ParserSharedInputState state) {
 		}
 		}
 		returnAST = constant_AST;
+	}
+	
+	public final void orderElem() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST orderElem_AST = null;
+		
+		switch ( LA(1)) {
+		case ID:
+		case NAME_START:
+		{
+			fieldAliasName();
+			astFactory.addASTChild(currentAST, returnAST);
+			orderElem_AST = (AST)currentAST.root;
+			break;
+		}
+		case FUNC_NAME:
+		{
+			func();
+			astFactory.addASTChild(currentAST, returnAST);
+			orderElem_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = orderElem_AST;
+	}
+	
+	public final void fieldAliasName() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST fieldAliasName_AST = null;
+		
+		switch ( LA(1)) {
+		case ID:
+		{
+			AST tmp103_AST = null;
+			tmp103_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp103_AST);
+			match(ID);
+			{
+			switch ( LA(1)) {
+			case POINT:
+			{
+				AST tmp104_AST = null;
+				tmp104_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp104_AST);
+				match(POINT);
+				AST tmp105_AST = null;
+				tmp105_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp105_AST);
+				match(ID);
+				break;
+			}
+			case EOF:
+			case COMMA:
+			case ASC:
+			case STAR:
+			case RPAREN:
+			case NAME_END:
+			case OPERATOR:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			}
+			}
+			fieldAliasName_AST = (AST)currentAST.root;
+			break;
+		}
+		case NAME_START:
+		{
+			match(NAME_START);
+			fieldAliasName();
+			astFactory.addASTChild(currentAST, returnAST);
+			match(NAME_END);
+			fieldAliasName_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = fieldAliasName_AST;
 	}
 	
 	
@@ -1210,13 +1474,12 @@ public P(ParserSharedInputState state) {
 		"WHERE",
 		"TABLE_UNION",
 		"COMMA",
-		"INTO",
 		"TABLE_COMPARE",
 		"GROUP_BY",
 		"ORDER_BY",
-		"ASC",
 		"UNION",
 		"ALL",
+		"ASC",
 		"DISTINCT",
 		"AS",
 		"ID",
@@ -1230,11 +1493,12 @@ public P(ParserSharedInputState state) {
 		"NAME_START",
 		"NAME_END",
 		"OPERATOR",
-		"FUNC_NAME",
 		"POINT",
+		"FUNC_NAME",
 		"REAL_NUM",
 		"QUOTED_STRING",
 		"\"null\"",
+		"INTO",
 		"BETWEEN",
 		"ID_START_LETTER",
 		"ID_LETTER",
@@ -1253,12 +1517,12 @@ public P(ParserSharedInputState state) {
 	};
 	
 	private static final long[] mk_tokenSet_0() {
-		long[] data = { 4005124112384L, 0L};
+		long[] data = { 2071281532928L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
 	private static final long[] mk_tokenSet_1() {
-		long[] data = { 4357445648384L, 0L};
+		long[] data = { 2178722824192L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
