@@ -27,13 +27,28 @@ import antlr.SemanticException;
 import antlr.TokenStreamIOException;
 import antlr.TokenStreamRecognitionException;
 import antlr.TokenStreamRetryException;
+import antlr.debug.misc.ASTFrame;
 
+/**
+ * 编译器核心模型QueryModel及对语法解析实现类
+ *
+ */
 public class QueryModel {
-  private static final String KEYWORDS = "keywords";
-  private static Map mapKeyword = new HashMap();
+  private static final String KEYWORDS = "keywords";  //关键字属性文件名称
+  private static Map mapKeyword = new HashMap();      //存放关键字的HashMap
+  
+  private List children = new ArrayList();
+  private P parser;
+  private L lexer;
+  private T tree;
+  private DbTableModel dbTableModel = new DbTableModel();
+  private String chQuery;
+  private String circleType;  //循环语句类型(表变量/条件变量)
+  private List antlrExceptions=new ArrayList();
+  
   static {
-    ResourceBundle bundle = 
-      ResourceBundle.getBundle(KEYWORDS, Locale.CHINESE);
+    //获取所有中英文关键字并存储在HashMap的mapKeyword中
+    ResourceBundle bundle =  ResourceBundle.getBundle(KEYWORDS, Locale.CHINESE);
     Enumeration keys = bundle.getKeys();
     while (keys.hasMoreElements()) {
       String key = keys.nextElement().toString();
@@ -42,77 +57,109 @@ public class QueryModel {
     }
   }
   
+  /**
+   * 将中文的关键字（关键字/函数/运算符/操作符...）翻译成标准的关键字
+   * @param str 业务化的关键字
+   * @return String 标准的关键字
+   */
   protected static String translateStringCh2En(String str) {
     String en=(String)mapKeyword.get(str);
     return (en==null)?str:en;
   }
   
+  protected QueryModel() {}
+  
   /**
-   * parse query, return QueryModel when statement has no error.
-   * when query statement has error, return null
-   * @param chQuery
-   * @return
+   * 完整SQL语句解析，当解析正确是返回QueryModel对象
+   * @param chQuery 完整SQL语句
+   * @return QueryModel 编译器QueryModel对象
    */
   public static QueryModel parseQuery(String chQuery) {
-    List exs=new ArrayList();
-    L l=new L(new StringReader(chQuery));
-    P p=new P(l);
-    QueryModel model=null;
+    QueryModel model = null;
+    List exs = new ArrayList();
+    
+    L l = new L(new StringReader(chQuery));
+    P p = new P(l);
     try {
       p.statements();
-      CommonAST ast=(CommonAST)p.getAST();
-      T t=new T();
+      CommonAST ast = (CommonAST)p.getAST();
+      T t = new T();
+      //TODO Visible ASTFrame
+      //ASTFrame _ASTFrame = new ASTFrame("SQL PARSER", ast);
+      //_ASTFrame.setVisible(true);
       model = t.statement(ast);
     } catch (ANTLRException e) {
       exs.add(e);
     }
-    if (model==null)
-      model=new QueryModel();
+    
+    if (model == null){
+      model = new QueryModel();
+    }
     model.setParser(p);
     model.setLexer(l);
     model.setExceptions(exs);
     model.setQuery(chQuery);
+    QueryModel[] _paramModelArr = model.getModelsFromAllChildrenByClass(ParamModel.class);
+    if (_paramModelArr.length > 0)
+      model.setCircleType(((ParamModel) _paramModelArr[0]).getCircleType());
     return model;
   }
   
   /**
-   * 片断子句语法验证
+   * 片断子句语法验证，当解析正确是返回QueryModel对象
    * @param chSegment 片断子句
    * @return QueryModel 编译器QueryModel对象
    */
   public static QueryModel parseSegment(String chSegment) {
-    List exs=new ArrayList();
-    L l=new L(new StringReader(chSegment));
-    P p=new P(l);
-    QueryModel model=null;
+    QueryModel model = null;
+    
+    List exs = new ArrayList();
+    L l = new L(new StringReader(chSegment));
+    P p = new P(l);
     try {
       p.segment();
-      CommonAST ast=(CommonAST)p.getAST();
-      T t=new T();
+      CommonAST ast = (CommonAST)p.getAST();
+      T t = new T();
       model = t.segment(ast);
     } catch (ANTLRException e) {
       exs.add(e);
     }
-    if (model==null)
-      model=new QueryModel();
+    
+    if (model == null){
+      model = new QueryModel();
+    }
     model.setParser(p);
     model.setLexer(l);
     model.setExceptions(exs);
     model.setQuery(chSegment);
+    
     return model;
   }
   
-  private List children=new ArrayList();
-  private P parser;
-  private L lexer;
-  private T tree;
-  private DbTableModel dbTableModel = new DbTableModel();
-  private String chQuery;
-  private List antlrExceptions=new ArrayList();
+  /**
+   * 将传入的原始业务化查询语句保存在QueryModel的chQuery属性中
+   * @param query 业务化查询
+   */
+  public void setQuery(String query) {
+    this.chQuery = query;
+  }
   
-  protected QueryModel() {}
+  /**
+   * 取得循环语句类型（1为表变量，2为条件变量）
+   * @return String 循环语句类型
+   */
+  public String getCircleType() {
+    return circleType;
+  }
   
-  
+  /**
+   * 设置取得循环语句类型
+   * @param circleType （1为表变量，2为条件变量）
+   */
+  public void setCircleType(String circleType) {
+    this.circleType = circleType;
+  }
+
   /**
    * 增加表单对象
    * @param tableChName 中文表名
@@ -131,25 +178,34 @@ public class QueryModel {
   public void addDbField(String tableChName, String fieldChName, String fieldEnName) {
     dbTableModel.setFieldEnName(tableChName, fieldChName, fieldEnName);
   }
-
+  
+  /**
+   * 获取编译器中表名及字段名的模型对象
+   * @return DbTableModel 表名及字段名的模型对象
+   */
   public DbTableModel getDbTableModel() {
     return dbTableModel;
   }
-
-  public void setQuery(String query) {
-    this.chQuery=query;
-  }
   
+  /**
+   * 增加QueryModel对象到children的List集合中
+   * @param model QueryModel对象
+   */
   public void addChild(QueryModel model) {
-    if (model.getClass()==getClass())
-      for (Iterator it=model.children.iterator(); it.hasNext();) {
-        QueryModel m=(QueryModel)it.next();
+    if (model.getClass() == getClass()){
+      for (Iterator it = model.children.iterator(); it.hasNext();) {
+        QueryModel m = (QueryModel)it.next();
         addChild(m);
       }
-    else
+    } else {
       children.add(model);
+    }
   }
   
+  /**
+   * 增加操作符对象到QueryModel的children的List集合中（在遍历语法树时加入）
+   * @param op 操作符
+   */
   public void addOperator(String op) {
     children.add(new StringModel(op));
   }
@@ -159,26 +215,31 @@ public class QueryModel {
   }
   
   public void setParser(P parser) {
-    this.parser=parser;
+    this.parser = parser;
   }
   
   public void setLexer(L lexer) {
-    this.lexer=lexer;
+    this.lexer = lexer;
   }
   
   public void setTree(T tree) {
-    this.tree=tree;
+    this.tree = tree;
   }
   
   public void setExceptions(List antlrExceptions) {
-    this.antlrExceptions=antlrExceptions;
+    this.antlrExceptions = antlrExceptions;
   }
   
+  /**
+   * 从QueryModel的children List集合中获取对象为c的所有对象存放到QueryModel[]中
+   * @param c 指定的模型对象(StatementsModel、SelectStatementModel...）
+   * @return QueryModel[] 返回类型为指定的模型对象的所有信息集合
+   */
   public QueryModel[] getModelByClass(Class c) {
-    List models=new ArrayList();
-    for (Iterator it=children.iterator(); it.hasNext();) {
-      QueryModel q=(QueryModel)it.next();
-      if (q.getClass()==c)
+    List models = new ArrayList();
+    for (Iterator it = children.iterator(); it.hasNext();) {
+      QueryModel q = (QueryModel)it.next();
+      if (q.getClass() == c)
         models.add(q);
     }
     QueryModel[] ret=new QueryModel[models.size()];
@@ -191,113 +252,168 @@ public class QueryModel {
   }
   
   /**
-   * get first model from children
-   * if no model in children, return null
-   * @param c
-   * @return
+   * 从QueryModel的children List集合中获取对象为c的第一个对象
+   * @param c 指定的模型对象(StatementsModel、SelectStatementModel...）
+   * @return QueryModel 返回类型为指定的模型对象的第一个QueryModelQueryModel
    */
   public QueryModel getFirstModelByClass(Class c) {
-    QueryModel[] models=getModelByClass(c);
-    if (models.length>0)
+    QueryModel[] models = getModelByClass(c);
+    if (models.length > 0)
       return models[0];
     return null;
   }
   
   /**
-   * get all models from children except the first model
-   * if less than two model in children, return empty array
-   * @param c
-   * @return
+   * 从QueryModel的children List集合中获取对象为c的除了第一个外的所有对象数组
+   * 如果children的List集合中对象为c的只有一个，则返回空数组
+   * @param c 指定的模型对象(StatementsModel、SelectStatementModel...）
+   * @return QueryModel 返回类型为指定的模型对象的第一个QueryModelQueryModel
    */
   public QueryModel[] getNextModelsByClass(Class c) {
-    QueryModel[] models=getModelByClass(c);
-    if (models.length<2)
+    QueryModel[] models = getModelByClass(c);
+    if (models.length < 2)
       return new QueryModel[0];
-    QueryModel[] ret=new QueryModel[models.length-1];
-    for (int i=1; i<models.length; i++)
-      ret[i-1]=models[i];
-    return ret;
-  }
-
-  public QueryModel[] getModelsFromAllChildrenByClass(Class c) {
-    List models=new ArrayList();
-    searchChildren(models, children, c);
-    QueryModel[] ret=new QueryModel[models.size()];
-    int i=0;
-    for (Iterator it=models.iterator(); it.hasNext();)
-      ret[i++]=(QueryModel)it.next();
+    
+    QueryModel[] ret = new QueryModel[models.length - 1];
+    for (int i = 1; i < models.length; i++)
+      ret[i-1] = models[i];
     return ret;
   }
   
+  /**
+   * 从QueryModel的所有children List集合中获取对象为c的所有对象<br>
+   * @param c 指定的模型对象(StatementsModel、SelectStatementModel...）
+   * @return QueryModel[] 返回类型为指定的模型对象的所有信息集合<br>
+   */
+  public QueryModel[] getModelsFromAllChildrenByClass(Class c) {
+    List models = new ArrayList();
+    searchChildren(models, children, c);
+    QueryModel[] ret = new QueryModel[models.size()];
+    int i = 0;
+    for (Iterator it = models.iterator(); it.hasNext();)
+      ret[i++] = (QueryModel)it.next();
+    return ret;
+  }
+  
+  /**
+   * 在children的List集合中查找为c的对象，存放在models中
+   * @param models 模型对象为c的所有集合信息 
+   * @param children 编译器中的children List集合
+   * @param c 指定的模型对象
+   */
   private void searchChildren(List models, List children, Class c) {
-    for (Iterator it=children.iterator(); it.hasNext();) {
-      QueryModel m=(QueryModel)it.next();
+    for (Iterator it = children.iterator(); it.hasNext();) {
+      QueryModel m = (QueryModel)it.next();
       searchChildren(models, m.getChildren(), c);
-      if (m.getClass()==c)
+      if (m.getClass() == c){
         models.add(m);
+      }
     }
   }
 
+  /**
+   * 获取片断子句的中文SQL语句
+   * @param segmentType 片断子句类型
+   * @return String 中文SQL语句
+   */
   public String getChSegment(String segmentType) {
-    String ret="";
-    if(children.size()>0)
-      ret+=((QueryModel)children.get(0)).getChSegment(segmentType);
-    if (children.size()>1)
-      for (int i=1; i<children.size(); i++)
-        ret+=((QueryModel)children.get(i)).getChSegment(segmentType);
+    String ret = "";
+    if (children.size() > 0)
+      ret += ((QueryModel)children.get(0)).getChSegment(segmentType);
+    
+    if (children.size() > 1)
+      for (int i = 1; i < children.size(); i++)
+        ret += ((QueryModel)children.get(i)).getChSegment(segmentType);
     return ret;
   }
   
+  /**
+   * 获取片断子句的英文SQL语句
+   * @param segmentType 片断子句类型
+   * @return String 英文SQL语句
+   */
   public String getEnSegment(String segmentType) {
-    String ret="";
-    if(children.size()>0)
-      ret+=((QueryModel)children.get(0)).getEnSegment(segmentType);
-    if (children.size()>1)
-      for (int i=1; i<children.size(); i++)
-        ret+=((QueryModel)children.get(i)).getEnSegment(segmentType);
+    String ret = "";
+    if (children.size() > 0)
+      ret += ((QueryModel)children.get(0)).getEnSegment(segmentType);
+    
+    if (children.size() > 1)
+      for (int i = 1; i < children.size(); i++)
+        ret += ((QueryModel)children.get(i)).getEnSegment(segmentType);
     return ret;
   }
   
+  /**
+   * 获取完整语句的中文SQL语句（如果有分隔符，则子句间用分隔符隔开）
+   * @param split 分隔符
+   * @return String 中文SQL语句
+   */
   public String getChString(String split) {
-    String ret="";
-    if(children.size()>0)
-      ret+=((QueryModel)children.get(0)).getChString();
-    if (children.size()>1)
-      for (int i=1; i<children.size(); i++)
-        ret+=split+((QueryModel)children.get(i)).getChString();
+    String ret = "";
+    if (children.size() > 0)
+      ret += ((QueryModel)children.get(0)).getChString();
+    
+    if (children.size() > 1)
+      for (int i = 1; i < children.size(); i++)
+        ret += split + ((QueryModel)children.get(i)).getChString();
     return ret;
   }
   
+  /**
+   * 获取完整语句的中文SQL语句
+   * @return String 中文SQL语句
+   */
   public String getChString() {
     return getChString(" ");
   }
   
+  /**
+   * 获取完整语句的英文SQL语句（如果有分隔符，则子句间用分隔符隔开）
+   * @param split 分隔符
+   * @return String 英文SQL语句
+   */
   public String getEnString(String split) {
-    String ret="";
-    if(children.size()>0)
-      ret+=((QueryModel)children.get(0)).getEnString();
+    String ret = "";
+    if (children.size() > 0)
+      ret += ((QueryModel)children.get(0)).getEnString();
     if (children.size()>1)
       for (int i=1; i<children.size(); i++)
         ret+=split+((QueryModel)children.get(i)).getEnString();
     return ret;
   }
   
+  /**
+   * 获取完整语句的英文SQL语句
+   * @return String 英文SQL语句
+   */
   public String getEnString() {
     return getEnString(" ");
   }
 
+  /**
+   * 获取查询语句的英文SQL语句
+   * @return String 英文SQL语句
+   */
   public String getEnQuery() {
     return getEnString();
   }
   
+  /**
+   * 获取查询语句中所有的表名信息，返回表单信息对象数组
+   * @return TableModel[] 表单信息对象数组
+   */
   public TableModel[] getTables() {
-    QueryModel[] models=getModelsFromAllChildrenByClass(TableModel.class);
-    TableModel[] ret=new TableModel[models.length];
-    for (int i=0; i<models.length; i++)
-        ret[i]=(TableModel)models[i];
+    QueryModel[] models = getModelsFromAllChildrenByClass(TableModel.class);
+    TableModel[] ret = new TableModel[models.length];
+    for (int i = 0; i < models.length; i++)
+        ret[i] = (TableModel)models[i];
     return ret;
   }
   
+  /**
+   * 获取查询语句中所有的字段信息，返回字段属性信息对象数组
+   * @return FieldModel[] 字段属性信息对象数组
+   */
   public FieldModel[] getFields() {
     QueryModel[] models = getModelsFromAllChildrenByClass(FieldModel.class);
     
@@ -307,7 +423,7 @@ public class QueryModel {
     List fields = new ArrayList();
     for (int i = 0; i < models.length; i++) {
       //for (int j=0; j<aliases.length; j++) {
-        FieldModel f = (FieldModel)models[i];
+        FieldModel f = (FieldModel) models[i];
         _fieldModelArr[i] = f;
         //AliasModel a=(AliasModel)aliases[j];
         //if (f.getFieldName().equals(a.getAlias())) {
@@ -328,51 +444,77 @@ public class QueryModel {
     */
   }
   
+  /**
+   * 判断编译器进行语法解析时是否存在错误
+   * @return boolean（true表示存在错误，false表示不存在错误）
+   */
   public boolean hasError() {
-    return antlrExceptions.size()>0;
+    return antlrExceptions.size() > 0;
   }
   
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(ANTLRException exception) {
     ChWrongMessage ret=null;
     if (exception instanceof CharStreamIOException)
       ret=translateException((CharStreamIOException)exception);
-    if (exception instanceof MismatchedCharException)
+    else if (exception instanceof MismatchedCharException)
       ret=translateException((MismatchedCharException)exception);
-    if (exception instanceof MismatchedTokenException)
+    else if (exception instanceof MismatchedTokenException)
       ret=translateException((MismatchedTokenException)exception);
-    if (exception instanceof NoViableAltException)
+    else if (exception instanceof NoViableAltException)
       ret=translateException((NoViableAltException)exception);
-    if (exception instanceof NoViableAltForCharException)
+    else if (exception instanceof NoViableAltForCharException)
       ret=translateException((NoViableAltForCharException)exception);
-    if (exception instanceof SemanticException)
+    else if (exception instanceof SemanticException)
       ret=translateException((SemanticException)exception);
-    if (exception instanceof TokenStreamIOException)
+    else if (exception instanceof TokenStreamIOException)
       ret=translateException((TokenStreamIOException)exception);
-    if (exception instanceof TokenStreamRecognitionException)
+    else if (exception instanceof TokenStreamRecognitionException)
       ret=translateException((TokenStreamRecognitionException)exception);
-    if (exception instanceof TokenStreamRetryException)
+    else if (exception instanceof TokenStreamRetryException)
       ret=translateException((TokenStreamRetryException)exception);
-    if (exception instanceof NoSuchTableException)
+    else if (exception instanceof NoSuchTableException)
       ret=translateException((NoSuchTableException)exception);
-    if (exception instanceof NoSuchFieldException)
+    else if (exception instanceof NoSuchFieldException)
       ret=translateException((NoSuchFieldException)exception);
-    if (exception instanceof TableNotInFromClause)
+    else if (exception instanceof TableNotInFromClause)
       ret=translateException((TableNotInFromClause)exception);
+    else
+      ret=translateException((Exception)exception);
     return ret;
   }
   
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(CharStreamIOException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(exception.getMessage());
     return msg;
   }
-
+  
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(MismatchedCharException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(exception.getMessage());
     return msg;
   }
-
+  
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息（标记符不正确）
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(MismatchedTokenException exception) {
     ChWrongMessage msg = new ChWrongMessage();
     msg.setLine(exception.line);
@@ -390,44 +532,69 @@ public class QueryModel {
     
     String message=
       "错误输入，需要 \""+expecting+"\" "+
-      " 实际输入 \""+input+"\"";
+      " 实际输入 \""+input+"\"。";
     msg.setMessage(message);
     if (input != null && input.equals("") && input.length() > 0)
       msg.setLength(input.length());
     return msg;
   }
 
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息（无法识别的关键字）
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(NoViableAltException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     String token=exception.token.getText();
-    msg.setMessage("无法识别的关键字 \""+token+"\"");
+    msg.setMessage("无法识别的关键字 \""+token+"\"。");
     msg.setLine(exception.line);
     msg.setColumn(exception.column);
     msg.setLength((token==null)?0:token.length());
     return msg;
   }
-
+  
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(NoViableAltForCharException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(exception.getMessage());
     msg.setLine(1);
     return msg;
   }
-
+  
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(SemanticException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(exception.getMessage());
     msg.setLine(2);
     return msg;
   }
-
+  
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(TokenStreamIOException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(exception.getMessage());
     msg.setLine(3);
     return msg;
   }
-
+  
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(TokenStreamRecognitionException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setLine(exception.recog.line);
@@ -435,46 +602,87 @@ public class QueryModel {
     msg.setLength(-1);
     char ch=0;
     ch=chQuery.charAt(msg.getColumn()-1);
-    msg.setMessage("非法字符 \""+ch+"\"");
+    msg.setMessage("非法字符 \""+ch+"\"。");
     return msg;
   }
-
+  
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(TokenStreamRetryException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(exception.getMessage());
     msg.setLine(5);
     return msg;
   }
-
+  
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息（输入的表不存在）
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(NoSuchTableException exception) {
     ChWrongMessage msg=new ChWrongMessage();
-    msg.setMessage("不存在表 \""+exception.getTableName()+"\"");
+    msg.setMessage("不存在表 \""+exception.getTableName()+"\"。");
     return msg;
   }
   
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息（表中不存在所输入的字段）
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(NoSuchFieldException exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(
-        "表 \""+exception.getTableChName()+"\" 中不存在字段 \""+exception.getFieldChName()+"\"");
+        "表 \""+exception.getTableChName()+"\" 中不存在字段 \""+exception.getFieldChName()+"\"。");
     return msg;
   }
   
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息（SELECT的字段中的表没有在FROM中出现）
+   * @return ChWrongMessage 错误信息对象
+   */
   private ChWrongMessage translateException(TableNotInFromClause exception) {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(
-        "表 \""+exception.getTableName()+"\" 没有在 [来自] 段出现");
+        "表 \""+exception.getTableName()+"\" 没有在 [来自] 段出现。");
     return msg;
   }
-
+  
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息（不可识别异常）
+   * @return ChWrongMessage 错误信息对象
+   */
+  private ChWrongMessage translateException(Exception exception) {
+    ChWrongMessage msg=new ChWrongMessage();
+    msg.setMessage("语法解析过程中发生错误，请与系统管理员联系。");
+    return msg;
+  }
+  
+  /**
+   * 增加ANTLR异常信息到编译器antlrExceptions的List集合中
+   * @param e ANTLRException ANTLR异常信息
+   */
   public void addException(ANTLRException e) {
     antlrExceptions.add(e);
   }
   
+  /**
+   * 获取所有错误信息到ChWrongMessage[]错误对象数组
+   * @return ChWrongMessage[] 错误对象数组
+   */
   public ChWrongMessage[] getWrongMessages() {
-    ChWrongMessage[] ret=new ChWrongMessage[antlrExceptions.size()];
-    int i=0;
-    for (Iterator it=antlrExceptions.iterator(); it.hasNext();)
-      ret[i]=(translateException((ANTLRException)it.next()));
+    ChWrongMessage[] ret = new ChWrongMessage[antlrExceptions.size()];
+    int i = 0;
+    for (Iterator it = antlrExceptions.iterator(); it.hasNext();){
+      ret[i] = (translateException((ANTLRException)it.next()));
+      i++;
+    }
     return ret;
   }
 

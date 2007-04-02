@@ -3,16 +3,16 @@ package translator;
 import org.dom4j.Element;
 
 /**
- * WHEREå­—å¥è¡¨è¾¾å¼ã€è¿ç®—ç¬¦ã€å¯¹åº”çš„æ¡ä»¶ç­‰ä¿¡æ¯å¯¹è±¡
+ * WHERE×Ö¾ä±í´ïÊ½¡¢ÔËËã·û¡¢¶ÔÓ¦µÄÌõ¼şµÈĞÅÏ¢¶ÔÏó
  *
  */
 public class WhereListVO {
-  private String cnAllWhereStr;   //æœ¬ä¸­æ–‡æ¡ä»¶æ‰€æœ‰å¥å­
-  private String cnWhereEquElem;  //ä¸­æ–‡æ¡ä»¶å­—æ®µæˆ–è¡¨è¾¾å¼
-  private String cnComparSymbol;  //ä¸­æ–‡å…³ç³»è¿ç®—ç¬¦
-  private String cnWhereValue;    //ä¸­æ–‡æ¡ä»¶çš„å€¼
-  private String checkedFlag;     //æ˜¯å¦é€‰ä¸­æ ‡è¯†
-  private boolean isConstant = false ;     //æ˜¯å¦å¸¸é‡
+  private String cnAllWhereStr;   //±¾ÖĞÎÄÌõ¼şËùÓĞ¾ä×Ó
+  private String cnWhereEquElem;  //ÖĞÎÄÌõ¼ş×Ö¶Î»ò±í´ïÊ½
+  private String cnComparSymbol;  //ÖĞÎÄ¹ØÏµÔËËã·û
+  private String cnWhereValue;    //ÖĞÎÄÌõ¼şµÄÖµ
+  private String checkedFlag;     //ÊÇ·ñÑ¡ÖĞ±êÊ¶
+  private boolean isConstant = false ;     //ÊÇ·ñ³£Á¿
   
   public String getCnComparSymbol() {
     return cnComparSymbol;

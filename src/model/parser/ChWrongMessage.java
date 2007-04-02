@@ -30,6 +30,6 @@ public class ChWrongMessage {
     this.message = message;
   }
   public String toString() {
-    return "行: "+line+" 列: "+column+" "+message;
+    return "行: " + line + " 列: " + column + " " + message;
   }
 }
