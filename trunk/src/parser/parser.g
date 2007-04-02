@@ -85,7 +85,7 @@ order_expression
 	:	(alias|field_name|aggregate_func|function) ("\u5347\u5e8f"^|"\u964d\u5e8f"^|"asc"^|"desc"^)?
 	;
 expression
-	:	(field_name|constant|function) 
+	:	(field_name|constant|function|param_equ)
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
 	|	LPAREN expression RPAREN 
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
@@ -101,11 +101,20 @@ expression_with_aggr_func
 	|	one_arg_op expression_with_aggr_func 
 		{#expression_with_aggr_func=#([ONE_ARG_OP, "one_arg_op"], #expression_with_aggr_func);}
 	;
+
 equation
 	:	expression (("="|compare_op) expression
-	{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
-			| ("is"! "null"^|"is"! "not"^ "null"!|"\u4e3a\u7a7a"^|"\u975e\u7a7a"^)
-			| ("between"^|"\u8303\u56f4"^) expression ("and"!)? expression)
+		{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
+	| 	("is"! "null"^|"is"! "not"^ "null"!|"\u4e3a\u7a7a"^|"\u975e\u7a7a"^)
+	| 	("between"^|"\u8303\u56f4"^) expression ("and"!)? expression)
+	;
+
+//param_equ
+//	:	PARAM_LPAREN ID^ PARAM_RPAREN
+//	;
+
+param_equ
+	:	PARAM_ID
 	;
 
 alias
@@ -199,34 +208,6 @@ NOT_EXIST:
 	"not exist";
 EXIST:
 	"exist";
-/*
-SELECT : "select" | '\u67e5''\u8be2';
-FROM : "from" | '\u6765''\u81ea';
-WHERE : "where" | '\u6761''\u4ef6';
-GROUP_BY : "group by" | '\u5206''\u7ec4';
-ORDER_BY : "order by" | '\u6392''\u5e8f';
-ALL : "all" | '\u5168''\u90e8';
-DISTINCT : "distinct" | '\u552f''\u4e00';
-ASC : "asc" | '\u5347''\u5e8f';
-DESC : "desc" |'\u964d''\u5e8f';
-AS : "as" | '\u4f5c''\u4e3a';
-ALL_FIELDS
-	:	"(*)" | '\u6240''\u6709';
-EQU	:	'=' | '\u7b49''\u4e8e';
-IS_NULL 
-	:	"is null" | '\u4e3a''\u7a7a' | "is not null" | '\u975e''\u7a7a';
-BETWEEN
-	:	"between" | '\u8303''\u56f4';
-LOGIC_OP
-	:	"and" | "or"
-	|	'\u5e76''\u4e14' | '\u6216''\u8005'
-	;
-*/
-
-COLUMN
-	:	"column";
-WHERE
-	:	"where";
 COMMA
 	:	',';
 SEMI:	';';
@@ -236,6 +217,18 @@ LPAREN
 	:	'(';
 RPAREN
 	:	')';
+
+PARAM_LPAREN
+	:	'{';
+
+PARAM_RPAREN
+	:	'}';
+
+
+COLUMN
+	:	"column";
+WHERE
+	:	"where";
 
 WS	:	(' '|'\n'|'\r'|'\t')+ {$setType(Token.SKIP);}
     ;
@@ -275,6 +268,10 @@ ESC
 			:	'0'..'7'
 			)?
 		)
+	;
+
+PARAM_ID
+	: PARAM_LPAREN ID PARAM_RPAREN
 	;
 
 ID	options {testLiterals=true;}
@@ -583,13 +580,15 @@ alias returns [AliasModel model]
 	;
 
 expression returns [ExpressionModel model]
-{FieldModel f; FunctionModel func; ExpressionModel e1, e2; model=new ExpressionModel();}
+{FieldModel f; FunctionModel func; ParamModel param; ExpressionModel e1, e2; model=new ExpressionModel();}
 	:	#(TWO_ARG_OP e1=expression op:two_arg_op e2=expression)
 	{model.addChild(e1); model.addOperator(op.getText()); model.addChild(e2);}
 	|	#(ONE_ARG_OP op1:one_arg_op e1=expression)
 	{model.addOperator(op1.getText()); model.addChild(e1);}
 	|	lp:LPAREN e1=expression rp:RPAREN
 	{model.addOperator(lp.getText()); model.addChild(e1); model.addOperator(rp.getText());}
+	|	param=param_equ
+	{model.addParam(param);}
 	|	f=field_name
 	{model.addField(f);}
 	|	func=function
@@ -600,6 +599,14 @@ expression returns [ExpressionModel model]
 	{model.addConstant(qs.getText());}
 	|	allf:ALL_FIELDS
 	{model.addOperator(allf.getText());}
+	;
+
+param_equ returns [ParamModel model]
+	{model = null;}
+	:	paramName:PARAM_ID
+		{model = new ParamModel(paramName.getText(), "{", "}");}
+//	|	#(paramName:ID lp:PARAM_LPAREN rp:PARAM_RPAREN)
+//		{model = new ParamModel(paramName.getText(), lp.getText(), rp.getText());}
 	;
 	
 field_name returns [FieldModel model]

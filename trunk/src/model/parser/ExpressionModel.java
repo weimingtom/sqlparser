@@ -9,9 +9,15 @@ public class ExpressionModel extends QueryModel {
   public boolean hasConstant() {
     return hasConstant;
   }
+  
+  public void addParam(ParamModel model) {
+    addChild(model);
+  }
+  
   public void addField(FieldModel model) {
     addChild(model);
   }
+  
   public void addFunction(FunctionModel model) {
     addChild(model);
   }

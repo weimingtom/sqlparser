@@ -25,6 +25,7 @@ import model.parser.NoSuchTableException;
 import model.parser.OrderAliasModel;
 import model.parser.OrderExpressionListModel;
 import model.parser.OrderExpressionModel;
+import model.parser.ParamModel;
 import model.parser.QueryModel;
 import model.parser.SearchConditionModel;
 import model.parser.SelectListModel;
@@ -34,6 +35,10 @@ import model.parser.TableModel;
 import model.parser.TableNotInFromClause;
 import model.parser.TableUnionModel;
 
+/**
+ * 编译器与翻译器基本功能的实现类V1.0
+ *
+ */
 public class Translator {
   //业务常用关键字、函数的属性文件
   private static final String CN_KEY_WORDS = "cnKeyWords";
@@ -58,6 +63,9 @@ public class Translator {
   public static final String FROM = "from";
   public static final String WHERE = "where";
   
+  public static final String CIRCLE_TYPE_TABLE = "1"; //表变量循环
+  public static final String CIRCLE_TYPE_WHERE = "2"; //条件变量循环
+  
   private QueryModel model;
   private DbTable[] tables;
   private DbTableInfo info = new DbTableInfo();
@@ -69,12 +77,6 @@ public class Translator {
   private OrderByListVO[] orderByListVOArr = new OrderByListVO[0];
   private List aliasModelList = new ArrayList();
   private List orderAliasModelList = new ArrayList();
-  
-//  private List selectListArr = new ArrayList();
-//  private List fromListArr = new ArrayList();
-//  private List whereListArr = new ArrayList();
-//  private List groupByListArr = new ArrayList();
-//  private List orderByListArr = new ArrayList();
   
   /**
    * 根据关键字值获取对应中文关键字名称
@@ -209,7 +211,7 @@ public class Translator {
     int i = 0;
     for (Iterator it = tables.iterator(); it.hasNext();)
       ret[i++] = (DbTable) it.next();
-    this.tables=ret;  //Add
+    this.tables = ret;  //Add
     return ret;
   }
   
@@ -224,32 +226,56 @@ public class Translator {
       if (_appDbTablesArr.length == ts.length){
         for (int i = 0; i < ts.length; i++) {
           DbTable _dbTable = ts[i];
+          String cnTableName = t.getTableEnName(_dbTable.getChName());
+          if (cnTableName == null || cnTableName.equals("")){
+            model.addException(new NoSuchTableException(_dbTable.getChName()));
+          }
           _dbTable.setEnName(t.getTableEnName(_dbTable.getChName()));
-           AppDbField[] _appDbFieldsArr = _appDbTablesArr[i].getFields();
-           for (int j = 0; j < _appDbFieldsArr.length; j++){
-             String cnFieldName = _appDbFieldsArr[j].getChName();
-             String enFieldName = _appDbFieldsArr[j].getEnName();
-             _dbTable.addToDbField(cnFieldName, enFieldName);
-           }
+          AppDbField[] _appDbFieldsArr = _appDbTablesArr[i].getFields();
+          for (int j = 0; j < _appDbFieldsArr.length; j++){
+            String cnFieldName = _appDbFieldsArr[j].getChName();
+            String enFieldName = _appDbFieldsArr[j].getEnName();
+            if (enFieldName == null || enFieldName.equals("")){
+              model.addException(new NoSuchFieldException(_dbTable.getChName(), cnFieldName));
+            }
+            _dbTable.addToDbField(cnFieldName, enFieldName);
+          }
         }
       }
     }else{
       for (int i = 0; i < ts.length; i++) {
         DbTable dbt = ts[i];
-        dbt.setEnName(t.getTableEnName(dbt.getChName()));
+        String cnTableName = t.getTableEnName(dbt.getChName());
+        if (cnTableName == null || cnTableName.equals("")){
+          model.addException(new NoSuchTableException(dbt.getChName()));
+        }
+        dbt.setEnName(cnTableName);
         for (Iterator it = dbt.getFields().iterator(); it.hasNext();) {
           DbField dbf = (DbField)it.next();
           dbf.setTableEnName(dbt.getEnName());
+          String cnFieldName = t.getFieldEnName(dbt.getChName(), dbf.getChName());
+          if (cnFieldName == null || cnFieldName.equals("")){
+            model.addException(new NoSuchFieldException(dbt.getChName(), dbf.getChName()));
+          }
           dbf.setEnName(t.getFieldEnName(dbt.getChName(), dbf.getChName()));
         }
       }
     }
   }
   
+  /**
+   * 获取业务系统中表单及字段信息
+   * @return DbTableInfo 包含表单HashMap及字段属性，
+   *                     每个表单的字段属性也为HashMap
+   */
   public DbTableInfo getInfo() {
     return info;
   }
-
+  
+  /**
+   * 设置业务系统中表单及字段信息
+   * @param info DbTableInfo 表单及字段信息对象
+   */
   public void setInfo(DbTableInfo info) {
     this.info = info;
   }
@@ -271,6 +297,7 @@ public class Translator {
    * @param flag 是否临时表标识
    */
   public void addDbTable(String tableChName, String tableEnName, String flag) {
+    this.getQueryModel().addDbTable(tableChName, tableEnName);
     info.setTableEnName(tableChName, tableEnName, flag);
   }
   
@@ -279,9 +306,12 @@ public class Translator {
    * @param tableChName 中文表名
    * @param tableEnName 英文表名
    * @param flag 是否临时表标识
-   * @param tableParam 是否表变量
+   * @param tableParam 表变量名称
    */
   public void addDbTable(String tableChName, String tableEnName, String flag, String tableParam) {
+    if (tableParam != null && !tableParam.equals(""))
+      this.getQueryModel().setCircleType(CIRCLE_TYPE_TABLE);  //设置为表循环
+    this.getQueryModel().addDbTable(tableChName, tableEnName);
     info.setTableEnName(tableChName, tableEnName, flag, tableParam);
   }
   
@@ -292,8 +322,8 @@ public class Translator {
    * @param fieldEnName 英文字段
    */
   public void addDbField(String tableChName, String fieldChName, String fieldEnName) {
-    info.setFieldEnName(tableChName, fieldChName, fieldEnName);
     this.getQueryModel().addDbField(tableChName, fieldChName, fieldEnName);
+    info.setFieldEnName(tableChName, fieldChName, fieldEnName);
   }
   
   /**
@@ -301,9 +331,14 @@ public class Translator {
    * @param tableChName 中文表名
    * @param fieldChName 中文字段
    * @param fieldEnName 英文字段
-   * @param fieldParam 是否条件变量
+   * @param fieldParam 条件变量名称
    */
   public void addDbField(String tableChName, String fieldChName, String fieldEnName, String fieldParam) {
+    if ((this.getQueryModel().getCircleType() == null || this.getQueryModel().getCircleType().equals("")) &&
+        fieldParam != null && !fieldParam.equals("")){
+      this.getQueryModel().setCircleType(CIRCLE_TYPE_WHERE);  //设置为条件循环
+    }
+    this.getQueryModel().addDbField(tableChName, fieldChName, fieldEnName);
     info.setFieldEnName(tableChName, fieldChName, fieldEnName, fieldParam);
   }
   
@@ -350,25 +385,6 @@ public class Translator {
     }
   }
   
-  public void setTableInfoToModel(DbTable[] tables, List appTableArr){
-    for (int i = 0; i < tables.length; i++){
-      int m = -1;
-      for (int j = 0; j < appTableArr.size(); j++){
-        if (tables[i].getChName().equals(((AppDbTable)appTableArr.get(j)).getTableName())){
-          m = j;
-          break;
-        }
-      }
-      if (m >= 0){
-        tables[i].setEnName( ((AppDbTable)appTableArr.get(m)).getTableEnName());
-        AppDbField[] appDbFields = ((AppDbTable) appTableArr.get(m)).getFields();
-        for (int k = 0; k < appDbFields.length; k++){
-          tables[i].addDbField(appDbFields[k].getChName(), appDbFields[k].getEnName());
-        }
-      }
-    }
-  }
-  
   /**
    * 设置表单及字段属性信息对象数组到编译器
    * @param tables 表单及字段属性信息对象数组
@@ -387,10 +403,6 @@ public class Translator {
     }
   }
 
-  public void setSegmentTableInfo(DbTable[] tables) {
-    
-  }
-  
   /**
    * 获取经过解析后的编译器QueryModel模型对象
    * @return QueryModel 编译器QueryModel模型对象
@@ -423,6 +435,7 @@ public class Translator {
     Document d = DocumentHelper.createDocument();
     Element e = d.addElement("query");
     Element chQueryString = e.addElement("ch_query_string");
+    chQueryString.addAttribute("circleType", model.getCircleType());
     chQueryString.addText(model.getChString());
     info.getElement(e); //将表名称信息及字段属性信息转化成XML内容
 //    for (int i = 0; i < appDbTableList.size(); i++){
@@ -477,6 +490,7 @@ public class Translator {
     Element root = document.getRootElement();
     String query = root.elementText("ch_query_string");
     model = QueryModel.parseQuery(query);
+    
 //    DbTable[] tables = getTables();
 //    for (int i = 0; i < tables.length; i++){
 //      for (Iterator it = root.elementIterator("db_info"); it.hasNext();){
@@ -499,6 +513,9 @@ public class Translator {
     //如果XML内容中存在着SelectListVO需要的信息则进行设置
     for (Iterator it = root.elementIterator(); it.hasNext();) {
       Element elem = (Element)it.next();
+      if (elem.getName().equals("ch_query_string")){
+        //model.setCircleType(elem.attributeValue("circleType"));
+      }
       if (elem.getName().equals("db_info")){
         //AppDbTable appDbTable = new AppDbTable();
         //appDbTable.setTableName(elem.attributeValue("ch_name"));
@@ -552,7 +569,7 @@ public class Translator {
         }
       }
     }
-//    updateDbTables(this, this.getTables());
+    //updateDbTables(this, this.getTables());
     //DbTable[] _dbTablesArr = this.getTables();
     //setTableInfoToModel(_dbTablesArr, appDbTableList);
     //setTableInfo(_dbTablesArr);
@@ -758,52 +775,92 @@ public class Translator {
     }
   }
   
+  /**
+   * 获取SELECT子句下的字段或字段表达式信息
+   * @return SelectListVO[] 字段或字段表达式对象数组
+   */
   public SelectListVO[] getSelectListVOArr() {
     if (selectListVOArr.length == 0)
       selectListVOArr = getSelectListVOArrByModel();
     return selectListVOArr;
   }
-
+  
+  /**
+   * 设置SELECT子句的字段或字段表达式信息
+   * @param selectListVOArr 字段或字段表达式信息对象数组
+   */
   public void setSelectListVOArr(SelectListVO[] selectListVOArr) {
     this.selectListVOArr = selectListVOArr;
   }
   
+  /**
+   * 获取FROM子句下的表名信息
+   * @return FromListVO[] 表名信息对象数组
+   */
   public FromListVO[] getFromListVOArr() {
     if (fromListVOArr.length == 0)
       fromListVOArr = getFromListVOArrByModel();
     return fromListVOArr;
   }
-
+  
+  /**
+   * 设置FROM子句下的表名信息
+   * @param fromListVOArr 表名信息对象数组
+   */
   public void setFromListVOArr(FromListVO[] fromListVOArr) {
     this.fromListVOArr = fromListVOArr;
   }
-
+  
+  /**
+   * 获取WHERE子句下的条件或条件表达式信息
+   * @return WhereListVO[] 条件或条件表达式信息对象数组
+   */
   public WhereListVO[] getWhereListVOArr() {
     if (whereListVOArr.length == 0)
       whereListVOArr = getWhereListVOArrByModel();
     return whereListVOArr;
   }
-
+  
+  /**
+   * 设置WHERE子句下的条件或条件表达式信息
+   * @param whereListVOArr 条件或条件表达式信息对象数组
+   */
   public void setWhereListVOArr(WhereListVO[] whereListVOArr) {
     this.whereListVOArr = whereListVOArr;
   }
   
+  /**
+   * 获取WHERE子句下的分组字段或分组表达式信息
+   * @return GroupByListVO[] 分组字段或分组表达式信息对象数组
+   */
   public GroupByListVO[] getGroupByListVOArr() {
     if (groupByListVOArr.length == 0)
       groupByListVOArr = getGroupByListVOArrByModel();
     return groupByListVOArr;
   }
-
+  
+  /**
+   * 设置WHERE子句下的分组字段或分组表达式信息
+   * @param groupByListVOArr 分组字段或分组表达式信息对象数组
+   */
   public void setGroupByListVOArr(GroupByListVO[] groupByListVOArr) {
     this.groupByListVOArr = groupByListVOArr;
   }
-
+  
+  /**
+   * 获取ORDER BY子句下的排序字段或排序表达式信息
+   * @return OrderByListVO[] 排序字段或排序表达式信息对象数组
+   */
   public OrderByListVO[] getOrderByListVOArr() {
     if (orderByListVOArr.length == 0)
       orderByListVOArr = getOrderByListVOArrByModel();
     return orderByListVOArr;
   }
-
+  
+  /**
+   * 设置ORDER BY子句下的排序字段或排序表达式信息
+   * @param orderByListVOArr 排序字段或排序表达式信息对象数组
+   */
   public void setOrderByListVOArr(OrderByListVO[] orderByListVOArr) {
     this.orderByListVOArr = orderByListVOArr;
   }

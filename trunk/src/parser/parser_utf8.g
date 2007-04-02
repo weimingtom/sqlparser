@@ -85,7 +85,7 @@ order_expression
 	:	(alias|field_name|aggregate_func|function) ("升序"^|"降序"^|"asc"^|"desc"^)?
 	;
 expression
-	:	(field_name|constant|function) 
+	:	(field_name|constant|function|param_equ)
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
 	|	LPAREN expression RPAREN 
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
@@ -101,11 +101,20 @@ expression_with_aggr_func
 	|	one_arg_op expression_with_aggr_func 
 		{#expression_with_aggr_func=#([ONE_ARG_OP, "one_arg_op"], #expression_with_aggr_func);}
 	;
+
 equation
 	:	expression (("="|compare_op) expression
-	{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
-			| ("is"! "null"^|"is"! "not"^ "null"!|"为空"^|"非空"^)
-			| ("between"^|"范围"^) expression ("and"!)? expression)
+		{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
+	| 	("is"! "null"^|"is"! "not"^ "null"!|"为空"^|"非空"^)
+	| 	("between"^|"范围"^) expression ("and"!)? expression)
+	;
+
+//param_equ
+//	:	PARAM_LPAREN ID^ PARAM_RPAREN
+//	;
+
+param_equ
+	:	PARAM_ID
 	;
 
 alias
@@ -199,34 +208,6 @@ NOT_EXIST:
 	"not exist";
 EXIST:
 	"exist";
-/*
-SELECT : "select" | '查''询';
-FROM : "from" | '来''自';
-WHERE : "where" | '条''件';
-GROUP_BY : "group by" | '分''组';
-ORDER_BY : "order by" | '排''序';
-ALL : "all" | '全''部';
-DISTINCT : "distinct" | '唯''一';
-ASC : "asc" | '升''序';
-DESC : "desc" |'降''序';
-AS : "as" | '作''为';
-ALL_FIELDS
-	:	"(*)" | '所''有';
-EQU	:	'=' | '等''于';
-IS_NULL 
-	:	"is null" | '为''空' | "is not null" | '非''空';
-BETWEEN
-	:	"between" | '范''围';
-LOGIC_OP
-	:	"and" | "or"
-	|	'并''且' | '或''者'
-	;
-*/
-
-COLUMN
-	:	"column";
-WHERE
-	:	"where";
 COMMA
 	:	',';
 SEMI:	';';
@@ -236,6 +217,18 @@ LPAREN
 	:	'(';
 RPAREN
 	:	')';
+
+PARAM_LPAREN
+	:	'{';
+
+PARAM_RPAREN
+	:	'}';
+
+
+COLUMN
+	:	"column";
+WHERE
+	:	"where";
 
 WS	:	(' '|'\n'|'\r'|'\t')+ {$setType(Token.SKIP);}
     ;
@@ -275,6 +268,10 @@ ESC
 			:	'0'..'7'
 			)?
 		)
+	;
+
+PARAM_ID
+	: PARAM_LPAREN ID PARAM_RPAREN
 	;
 
 ID	options {testLiterals=true;}
@@ -583,13 +580,15 @@ alias returns [AliasModel model]
 	;
 
 expression returns [ExpressionModel model]
-{FieldModel f; FunctionModel func; ExpressionModel e1, e2; model=new ExpressionModel();}
+{FieldModel f; FunctionModel func; ParamModel param; ExpressionModel e1, e2; model=new ExpressionModel();}
 	:	#(TWO_ARG_OP e1=expression op:two_arg_op e2=expression)
 	{model.addChild(e1); model.addOperator(op.getText()); model.addChild(e2);}
 	|	#(ONE_ARG_OP op1:one_arg_op e1=expression)
 	{model.addOperator(op1.getText()); model.addChild(e1);}
 	|	lp:LPAREN e1=expression rp:RPAREN
 	{model.addOperator(lp.getText()); model.addChild(e1); model.addOperator(rp.getText());}
+	|	param=param_equ
+	{model.addParam(param);}
 	|	f=field_name
 	{model.addField(f);}
 	|	func=function
@@ -600,6 +599,14 @@ expression returns [ExpressionModel model]
 	{model.addConstant(qs.getText());}
 	|	allf:ALL_FIELDS
 	{model.addOperator(allf.getText());}
+	;
+
+param_equ returns [ParamModel model]
+	{model = null;}
+	:	paramName:PARAM_ID
+		{model = new ParamModel(paramName.getText(), "{", "}");}
+//	|	#(paramName:ID lp:PARAM_LPAREN rp:PARAM_RPAREN)
+//		{model = new ParamModel(paramName.getText(), lp.getText(), rp.getText());}
 	;
 	
 field_name returns [FieldModel model]
