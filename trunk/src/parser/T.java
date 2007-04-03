@@ -426,7 +426,7 @@ public T() {
 		AST t = null;
 		AST t1 = null;
 		AST t2 = null;
-		AliasModel a; model=null;
+		AliasModel a; model=null; TableAliasModel ta;
 		
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
@@ -448,11 +448,11 @@ public T() {
 				t1 = (AST)_t;
 				match(_t,ID);
 				_t = _t.getNextSibling();
-				a=alias(_t);
+				ta=tableAlias(_t);
 				_t = _retTree;
 				_t = __t196;
 				_t = _t.getNextSibling();
-				model=new TableModel(t1.getText()); model.setAlias(a);
+				model = new TableModel(t1.getText()); model.setAlias(ta);
 				break;
 			}
 			case 33:
@@ -464,11 +464,11 @@ public T() {
 				t2 = (AST)_t;
 				match(_t,ID);
 				_t = _t.getNextSibling();
-				a=alias(_t);
+				ta=tableAlias(_t);
 				_t = _retTree;
 				_t = __t197;
 				_t = _t.getNextSibling();
-				model=new TableModel(t2.getText()); model.setAlias(a);
+				model = new TableModel(t2.getText()); model.setAlias(ta);
 				break;
 			}
 			default:
@@ -2581,6 +2581,47 @@ public T() {
 				e=expression(_t);
 				_t = _retTree;
 				model.addParameter(e);
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+		return model;
+	}
+	
+	public final TableAliasModel  tableAlias(AST _t) throws RecognitionException {
+		TableAliasModel model;
+		
+		AST tableAlias_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		AST a1 = null;
+		AST a2 = null;
+		model=null;
+		
+		try {      // for error handling
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case QUOTED_STRING:
+			{
+				a1 = (AST)_t;
+				match(_t,QUOTED_STRING);
+				_t = _t.getNextSibling();
+				model = new TableAliasModel(a1.getText());
+				break;
+			}
+			case ID:
+			{
+				a2 = (AST)_t;
+				match(_t,ID);
+				_t = _t.getNextSibling();
+				model = new TableAliasModel(a2.getText());
 				break;
 			}
 			default:
