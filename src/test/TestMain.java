@@ -26,8 +26,8 @@ public class TestMain {
   public static void main(String[] args) {
     TestMain main = new TestMain();
     main.testTranslator();
-//    main.testUnion();
-//    main.testCompare();
+    main.testUnion();
+    main.testCompare();
 //    main.testSegment();
   }
   
@@ -111,6 +111,8 @@ public class TestMain {
     }
     System.out.println(t.getChQuery());
     System.out.println(t.getQueryModel().getEnString());
+    System.out.println(t.getQueryModel().getEmptyExecuteEnString("CNF238494"));
+    System.out.println(t.getQueryModel().getExecuteEnString("CNF238494"));
     String xml = t.getXmlString();
     System.out.println("TO DB XML: " + xml);
     
@@ -118,6 +120,11 @@ public class TestMain {
     try{
       QueryModel queryModel = t1.loadModelFromXML(xml);
       if (queryModel instanceof TableCompareModel){
+        t1.addDbTable("AI_94传票对照表", "CNF_HJD_2007");
+        t1.addDbTable("AI_94传票对照月表", "CNF_TEST_HJD_2007");
+        t1.updateDbTables(t1, t1.getTables());
+        System.out.println(t1.getQueryModel().getEnString());
+        System.out.println(t1.getQueryModel().getExecuteEnString("CNF070403"));
         TableCompareModel tableCompareModel = (TableCompareModel) queryModel;
         System.out.println(tableCompareModel.getChCompareMethod());
         AppDbTable[] appDbTableArr = t1.getInfo().getDbTableInfoToAppTableArr();
@@ -155,12 +162,19 @@ public class TestMain {
     
     System.out.println(t.getChQuery());
     System.out.println(t.getQueryModel().getEnString());
+    System.out.println(t.getQueryModel().getEmptyExecuteEnString("CNF2087803"));
+    System.out.println(t.getQueryModel().getExecuteEnString("CNF2087803"));
     String xml = t.getXmlString();
     System.out.println("TO DB XML: " + xml);
     Translator t1 = new Translator();
     try{
       QueryModel queryModel = t1.loadModelFromXML(xml);
       if (queryModel instanceof TableUnionModel){
+        t1.addDbTable("表1", "CNF_HJD_2007");
+        t1.addDbTable("表2", "CNF_TEST_HJD_2007");
+        t1.updateDbTables(t1, t1.getTables());
+        System.out.println(t1.getQueryModel().getEnString());
+        System.out.println(t1.getQueryModel().getExecuteEnString("CNF070403"));
         AppDbTable[] appDbTableArr = t1.getInfo().getDbTableInfoToAppTableArr();
         for (int i = 0; i < appDbTableArr.length; i++){
           AppDbTable appDbTable = appDbTableArr[i];
@@ -183,75 +197,62 @@ public class TestMain {
         + "条件 1 等于 1 并且 e.字段1+e.字段2 大于 '30' 或者 表2.字段3 包含 'abcd' 或者 表3.字段1 非空 或者 表3.字段2 范围 1 2 "
         + "分组 表1.字段1, 字符串截取(表1.字段3, 1, 4), 数值转字符串(表2.字段3), 表2.字段3 加 表2.字段4 "
         + "排序 a, 表1.字段1 升序, 数值转字符串(表2.字段3), 求和(表2.字段4) 降序, 字符串截取(表1.字段3, 1, 4)";
-    str = " 查询 AI_94传票对照表.省/市代号 作为 省/市代号, 测试.行号 作为 行号, 求和(AI_94传票对照表.金额) 作为 金额 " +
-          " 来自 AI_94传票对照表 作为 测试" + 
+    str = " 查询 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 as 行号, 求和(AI_94传票对照表.金额) 作为 金额" +
+          " 来自 AI_94传票对照表 作为 CNF_AS_D" + 
           " 条件 AI_94传票对照表.省/市代号 等于 {机构变量} 并且 求平方根(AI_94传票对照表.金额) 大于 40 " +
           " 分组 AI_94传票对照表.省/市代号,AI_94传票对照表.行号" +
-          " 排序 求和(AI_94传票对照表.金额) 升序, AI_94传票对照表.行号 降序";
-    str = "查询 求和(AI_94传票对照表.金额) 来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 '测试' 并且 AI_94传票对照表.省/市代号 等于 {条件变量1} 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序 求和(AI_94传票对照表.金额) , AI_94传票对照表.行号 降序";
+          " 排序 AI_94传票对照表.行号, 金额, AI_94传票对照表.行号 降序";
+//    str = "查询 求和(AI_94传票对照表.金额) 来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 '测试' 并且 AI_94传票对照表.省/市代号 等于 {条件变量1} 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序 求和(AI_94传票对照表.金额) , AI_94传票对照表.行号 降序";
     
     Translator t = new Translator();
     t.setChQuery(str);
     System.out.println(t.getChQuery());
-    t.addDbTable("AI_94传票对照表", "CNF", "casdb2");
+    QueryModel[] tableAliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(TableAliasModel.class);
+    for (int i = 0; i < tableAliasModelArr.length; i++){
+      System.out.println(tableAliasModelArr[i].getChString());
+      TableAliasModel aliasModel = (TableAliasModel) tableAliasModelArr[i];
+      aliasModel.setEnAlias("CNF20070101");
+      System.out.println(tableAliasModelArr[i].getEnString());
+    }
+    t.addDbTable("AI_94传票对照表", "CNF");
     t.addDbField("AI_94传票对照表", "省/市代号", "CNF01");
     t.addDbField("AI_94传票对照表", "行号", "CNF02");
     t.addDbField("AI_94传票对照表", "金额", "CNF03");
     t.addDbField("AI_94传票对照表", "货币码", "CNF04");
-//    t.addDbTable("表2", "CNF_TEST");
-//    t.addDbField("表2", "省/市代号", "CNF01");
-//    t.addDbField("表2", "行号", "CNF02");
-//    t.addDbField("表2", "金额", "CNF03");
-//    t.addDbField("表2", "货币码", "CNF04");
+//  t.addDbTable("AI_94传票对照表", "CNF", "casdb2");
+//  t.addDbField("AI_94传票对照表", "省/市代号", "CNF01");
+//  t.addDbField("AI_94传票对照表", "行号", "CNF02");
+//  t.addDbField("AI_94传票对照表", "金额", "CNF03");
+//  t.addDbField("AI_94传票对照表", "货币码", "CNF04");
+//  t.addDbTable("表2", "CNF_TEST");
+//  t.addDbField("表2", "省/市代号", "CNF01");
+//  t.addDbField("表2", "行号", "CNF02");
+//  t.addDbField("表2", "金额", "CNF03");
+//  t.addDbField("表2", "货币码", "CNF04");
     DbTable[] ts = t.getTables();
     t.updateDbTables(t, ts);
     
+    //获取循环语句条件变量参数
     QueryModel[] paramModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(ParamModel.class);
     for (int i = 0; i < paramModelArr.length; i++){
       ParamModel paramModel = (ParamModel) paramModelArr[i];
       System.out.println(paramModelArr[i].getEnString());
       paramModel.setParamValue("01");
-      paramModel.setCircleType(t.CIRCLE_TYPE_WHERE);
       System.out.println(paramModelArr[i].getEnString());
     }
     System.out.println(t.getQueryModel().getEnString());
     
-//    t.addDbTable("AI_94传票对照表", "CNF", "casdb2");
-//    t.addDbField("AI_94传票对照表", "省/市代号", "CNF01");
-//    t.addDbField("AI_94传票对照表", "行号", "CNF02");
-//    t.addDbField("AI_94传票对照表", "金额", "CNF03");
-//    t.addDbField("AI_94传票对照表", "货币码", "CNF04");
+    String selectStr = t.getChSelectStr();
+    String fromStr = t.getChFromStr();
+    String whereStr = t.getChWhereStr();
+    String groupByStr = t.getChGroupByStr();
+    String orderByStr = t.getChOrderByStr();
     
-    
-    if (t.getQueryModel() instanceof TableUnionModel){
-      System.out.println("xx");
-    }else if (t.getQueryModel() instanceof SelectStatementModel){
-      System.out.println(t.getQueryModel().getCircleType());
-      System.out.println("yy");
-    }
-    
-//    AppDbTable[] tmpTables = new AppDbTable[1];
-//    AppDbTable tmpTable = new AppDbTable();
-//    tmpTable.setTableName("AI_94传票对照表");
-//    tmpTable.setTableEnName("CNF");
-//    tmpTable.addDbField("省/市代号", "CNF01");
-//    tmpTable.addDbField("行号", "CNF02");
-//    tmpTable.addDbField("金额", "CNF03");
-//    tmpTables[0] = tmpTable;
-//    tmpTable = new AppDbTable();
-//    tmpTable.setTableName("AI_94传票对照月表");
-//    tmpTable.setTableEnName("CNFF");
-//    tmpTable.addDbField("省/市代号", "CNF01");
-//    tmpTable.addDbField("行号", "CNF02");
-//    tmpTable.addDbField("金额", "CNF03");
-//    tmpTables[1] = tmpTable;
-//    t.setTableInfoToModel(ts, tmpTables);
-//    t.setTableInfo(ts);
-    
+    //进行翻译后的英文表名及字段名
+    System.out.println("============DB Table============");
     for (int i = 0; i < ts.length; i++){
       System.out.println(ts[i].getChName());
       System.out.println(ts[i].getEnName());
-      
       for (Iterator it = ts[i].getFields().iterator(); it.hasNext();){
         DbField dbField = (DbField) it.next();
         System.out.println(dbField.getChName());
@@ -259,54 +260,67 @@ public class TestMain {
       }
     }
     
-//    setTableInfo(ts);
-    
-//    System.out.println(t.getChSelectStr());
-//    System.out.println(t.getChFromStr());
-//    System.out.println(t.getChWhereStr());
-//    System.out.println(t.getChGroupByStr());
-//    System.out.println(t.getChOrderByStr());
+    //各子句内容
+    System.out.println("============Segment SQL===========");
+    System.out.println(t.getChSelectStr());
+    System.out.println(t.getChFromStr());
+    System.out.println(t.getChWhereStr());
+    System.out.println(t.getChGroupByStr());
+    System.out.println(t.getChOrderByStr());
     
     if (t.hasError()){
       ChWrongMessage[] msgs = t.showWrongMsgs();
-      for (int i = 0; i < msgs.length; i++)
+      for (int i = 0; i < msgs.length; i++){
         System.out.println(msgs[i]);
-    }else{
-      AliasModel[] aliasModels = t.getAliasModelListVOArrByModel();
-      for (int i = 0; i < aliasModels.length; i++){
-        aliasModels[i].setEnAlias("Xalias" + i);
       }
-      
+    }else{
       SelectListVO[] _selectListVOArr = t.getSelectListVOArr();
       FromListVO[] _fromListVOArr = t.getFromListVOArr();
       WhereListVO[] _whereListVOArr = t.getWhereListVOArr();
       GroupByListVO[] _groupListVOArr = t.getGroupByListVOArr();
       OrderByListVO[] _orderListVOArr = t.getOrderByListVOArr();
-
+      
+      System.out.println("============SELECT EQUEM===========");
       for (int i = 0; i < _selectListVOArr.length; i++){
+        System.out.println(_selectListVOArr[i].getCnColumnEquElem());
+        _selectListVOArr[i].setCnFieldAlias("代号" + i);
         _selectListVOArr[i].setFieldDataType("String");
       }
+      //t.setSelectListVOArrToModel(_selectListVOArr);
       t.setSelectListVOArr(_selectListVOArr);
-
+      
+      AliasModel[] aliasModels = t.getAliasModelListVOArrByModel();
+      for (int i = 0; i < aliasModels.length; i++){
+        System.out.println(aliasModels[i].getChString());
+      }
+      
+      
+      System.out.println("============WHERE EQUEM===========");
       for (int i = 0; i < _whereListVOArr.length; i++){
+        System.out.println(_whereListVOArr[i].getCnAllWhereStr());
         _whereListVOArr[i].setCheckedFlag("1");
       }
       t.setWhereListVOArr(_whereListVOArr);
-
-      SelectListVO[] selectListVOArr = t.getSelectListVOArr();
+      
+      System.out.println("============COLUNM ALIAS===========");
       QueryModel[] aliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(AliasModel.class);
       for (int i = 0; i < aliasModelArr.length; i++){
+        System.out.println(aliasModelArr[i].getChString());
         AliasModel aliasModel = (AliasModel) aliasModelArr[i];
         aliasModel.setEnAlias("enAlias" + i);
       }
 
+      System.out.println("============ORDER ALIAS===========");
       QueryModel[] orderAliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(OrderAliasModel.class);
       for (int i = 0; i < orderAliasModelArr.length; i++){
+        System.out.println(orderAliasModelArr[i].getChString());
         OrderAliasModel orderAliasModel = (OrderAliasModel) orderAliasModelArr[i];
         orderAliasModel.setEnAlias("enOrderAlias" + i);
       }
       System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
       System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
+      System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
+      System.out.println("EXE SQL IS: " + t.getQueryModel().getExecuteEnString("S001"));
       String xml1 = t.getXmlString();
       System.out.println("TO DB XML: " + xml1);
     }
@@ -318,12 +332,13 @@ public class TestMain {
       + "<query><ch_query_string>查询 AI_94传票对照表.省/市代号 作为 省/市代号 , AI_94传票对照表.行号 作为 行号 , 求和(AI_94传票对照表.金额) 作为 金额  来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 '0200' 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序 求和(AI_94传票对照表.金额) 升序, AI_94传票对照表.行号 降序</ch_query_string><db_info ch_name=\"AI_94传票对照表\" en_name=\"CNF\" flag=\"casdb2\" tableParam=\"\"><db_field ch_name=\"行号\" en_name=\"CNF02\" fieldParam=\"\"/><db_field ch_name=\"货币码\" en_name=\"CNF04\" fieldParam=\"\"/><db_field ch_name=\"省/市代号\" en_name=\"CNF01\" fieldParam=\"\"/><db_field ch_name=\"金额\" en_name=\"CNF03\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"省/市代号\" enAlias=\"enAlias0\"/><aliasListVO alias=\"行号\" enAlias=\"enAlias1\"/><aliasListVO alias=\"金额\" enAlias=\"enAlias2\"/></aliasListEqu><orderAliasListEqu/></query>";
     rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
       + "<query><ch_query_string circleType=\"1\">查询 AI_94传票对照表.省/市代号 作为 省/市代号 , AI_94传票对照表.行号 作为 行号 , 求和(AI_94传票对照表.金额) 作为 金额  来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 '0200' 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序 求和(AI_94传票对照表.金额) 升序, AI_94传票对照表.行号 降序</ch_query_string><db_info ch_name=\"AI_94传票对照表\" en_name=\"CNF\" flag=\"casdb2\" tableParam=\"CNF_table_Param\"><db_field ch_name=\"行号\" en_name=\"CNF02\" fieldParam=\"\"/><db_field ch_name=\"货币码\" en_name=\"CNF04\" fieldParam=\"\"/><db_field ch_name=\"省/市代号\" en_name=\"CNF01\" fieldParam=\"\"/><db_field ch_name=\"金额\" en_name=\"CNF03\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"省/市代号\" enAlias=\"enAlias0\"/><aliasListVO alias=\"行号\" enAlias=\"enAlias1\"/><aliasListVO alias=\"金额\" enAlias=\"enAlias2\"/></aliasListEqu><orderAliasListEqu/></query>";
-//    rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-//       + "<query><ch_query_string circleType=\"2\">查询 AI_94传票对照表.省/市代号 作为 省/市代号 , AI_94传票对照表.行号 作为 行号 , 求和(AI_94传票对照表.金额) 作为 金额  来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 '测试' 并且 AI_94传票对照表.省/市代号 等于 {条件变量1} 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序 求和(AI_94传票对照表.金额) 升序, AI_94传票对照表.行号 降序</ch_query_string><db_info ch_name=\"AI_94传票对照表\" en_name=\"CNF\" flag=\"casdb2\" tableParam=\"\"><db_field ch_name=\"行号\" en_name=\"CNF02\" fieldParam=\"\"/><db_field ch_name=\"货币码\" en_name=\"CNF04\" fieldParam=\"\"/><db_field ch_name=\"省/市代号\" en_name=\"CNF01\" fieldParam=\"\"/><db_field ch_name=\"金额\" en_name=\"CNF03\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"省/市代号\" enAlias=\"enAlias0\"/><aliasListVO alias=\"行号\" enAlias=\"enAlias1\"/><aliasListVO alias=\"金额\" enAlias=\"enAlias2\"/></aliasListEqu><orderAliasListEqu/></query>";
+    rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+       + "<query><ch_query_string circleType=\"2\">查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, 求和(AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF_AS_D 条件 AI_94传票对照表.省/市代号 等于 {机构变量} 并且 求平方根(AI_94传票对照表.金额) 大于 40 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序  金额 升序, AI_94传票对照表.行号 降序</ch_query_string><db_info ch_name=\"AI_94传票对照表\" en_name=\"CNF\" flag=\"\" tableParam=\"\"><db_field ch_name=\"行号\" en_name=\"CNF02\" fieldParam=\"\"/><db_field ch_name=\"货币码\" en_name=\"CNF04\" fieldParam=\"\"/><db_field ch_name=\"省/市代号\" en_name=\"CNF01\" fieldParam=\"\"/><db_field ch_name=\"金额\" en_name=\"CNF03\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"省/市代号\" enAlias=\"enAlias0\"/><aliasListVO alias=\"行号\" enAlias=\"enAlias1\"/><aliasListVO alias=\"金额\" enAlias=\"enAlias2\"/></aliasListEqu><tableAliasListEqu><tableAliasListVO alias=\"CNF_AS_D\" enAlias=\"CNF20070101\"/></tableAliasListEqu><orderAliasListEqu><orderAliasListVO alias=\"金额\" enAlias=\"enOrderAlias0\"/></orderAliasListEqu></query>";
     try{
       System.out.println(rXML);
       QueryModel m = t1.loadModelFromXML(rXML);
       t1.setAliasModelListVOArrByXML();
+      t1.setTableAliasModelListVOArrByXML();
       t1.setOrderAliasModelListVOArrByXML();
       System.out.println(m.getCircleType());
       SelectListVO[] r_selectListVOArr = t1.getSelectListVOArr();
@@ -349,8 +364,12 @@ public class TestMain {
 //      }
 //      t1.setSelectListVOArr(r_selectListVOArr);
       AliasModel[] aliasModels = t1.getAliasModelListVOArrByModel();
+      TableAliasModel[] tableAliasModels = t1.getTableAliasModelListVOArrByModel();
+      tableAliasModels[0].setEnAlias("CNF00000");
+      t1.updateDbTables(t1, t1.getTables());
       System.out.println(m.getChString());
       System.out.println(m.getEnString());
+      System.out.println(m.getExecuteEnString("xxx"));
       System.out.println(t1.getXmlString());
     }catch (DocumentException e){
       e.printStackTrace();
