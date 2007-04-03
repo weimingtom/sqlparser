@@ -2,7 +2,10 @@ package translator;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import model.parser.DbTableModel;
 
 import org.dom4j.Element;
 
@@ -113,28 +116,50 @@ public class DbTableInfo {
     return appDbTableArr;
   } 
   
-  public void getElement(Element parent) {
-    Iterator it = tables.keySet().iterator();
-    while (it.hasNext()){
+  public void getElement(DbTableModel tableModel, Element parent) {
+    
+    String[] tablesName = tableModel.getTablesNameArr();
+    for (int i = 0; i < tablesName.length; i++){
       Element elem = parent.addElement("db_info");
-      String cnTableName = (String) it.next();
-      Table t = (Table) tables.get(cnTableName);
-      elem.addAttribute("ch_name", cnTableName);
+      Table t = (Table) tables.get(tablesName[i]);
+      elem.addAttribute("ch_name", tablesName[i]);
       elem.addAttribute("en_name", t.enName);
       elem.addAttribute("flag", t.flag);
       elem.addAttribute("tableParam", t.tableParam);
       
       Map _fields = t.fields;
-      Iterator it1 = _fields.keySet().iterator();
-      while (it1.hasNext()){
+      String[] fieldsNameArr = tableModel.getFieldsNameArrByTableName(tablesName[i]);
+      for (int j = 0; j < fieldsNameArr.length; j++){
         Element e = elem.addElement("db_field");
-        String fieldChName = (String) it1.next();
-        Field field = (Field) _fields.get(fieldChName);
-        e.addAttribute("ch_name", fieldChName);
+        Field field = (Field) _fields.get(fieldsNameArr[j]);
+        e.addAttribute("ch_name", fieldsNameArr[j]);
         e.addAttribute("en_name", field.enName);
         e.addAttribute("fieldParam", field.fieldParam);
       }
+      
     }
+    
+//    Iterator it = tables.keySet().iterator();
+//    while (it.hasNext()){
+//      Element elem = parent.addElement("db_info");
+//      String cnTableName = (String) it.next();
+//      Table t = (Table) tables.get(cnTableName);
+//      elem.addAttribute("ch_name", cnTableName);
+//      elem.addAttribute("en_name", t.enName);
+//      elem.addAttribute("flag", t.flag);
+//      elem.addAttribute("tableParam", t.tableParam);
+//      
+//      Map _fields = t.fields;
+//      Iterator it1 = _fields.keySet().iterator();
+//      while (it1.hasNext()){
+//        Element e = elem.addElement("db_field");
+//        String fieldChName = (String) it1.next();
+//        Field field = (Field) _fields.get(fieldChName);
+//        e.addAttribute("ch_name", fieldChName);
+//        e.addAttribute("en_name", field.enName);
+//        e.addAttribute("fieldParam", field.fieldParam);
+//      }
+//    }
   }
   
   public void initDbTableInfoElement(Element dbElem) {
