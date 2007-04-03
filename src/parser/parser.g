@@ -640,16 +640,28 @@ parameters returns [ParametersModel model]
 	|	e=expression
 	{model.addParameter(e);}
 	;
+
 table_name returns [TableModel model]
-{AliasModel a; model=null;}
+{AliasModel a; model=null; TableAliasModel ta;}
 	:	t:ID
 	{model=new TableModel(t.getText());}
-	|	#("as" t1:ID a=alias)
-	{model=new TableModel(t1.getText()); model.setAlias(a);}
-	|	#("\u4f5c\u4e3a" t2:ID a=alias)
-	{model=new TableModel(t2.getText()); model.setAlias(a);}
+//	|	#("as" t1:ID a=alias)
+//	{model=new TableModel(t1.getText()); model.setAlias(a);}
+//	|	#("\u4f5c\u4e3a" t2:ID a = alias)
+//	{model = new TableModel(t2.getText()); model.setAlias(a);}
+	|	#("as" t1:ID ta = tableAlias)
+	{model = new TableModel(t1.getText()); model.setAlias(ta);}
+	|	#("\u4f5c\u4e3a" t2:ID ta = tableAlias)
+	{model = new TableModel(t2.getText()); model.setAlias(ta);}
 	;
-	
+
+tableAlias returns [TableAliasModel model]
+{model=null;}
+	:	a1:QUOTED_STRING
+	{model = new TableAliasModel(a1.getText());}
+	|	a2:ID
+	{model = new TableAliasModel(a2.getText());}
+	;	
 //////////////////////////////////////////////////////////////
 // \u5e38\u91cf
 select : "\u67e5\u8be2" | "select";
