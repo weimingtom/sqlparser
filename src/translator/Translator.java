@@ -16,6 +16,7 @@ import model.parser.AggregateExprModel;
 import model.parser.AliasModel;
 import model.parser.ChWrongMessage;
 import model.parser.ColumnModel;
+import model.parser.DbTableModel;
 import model.parser.EquationModel;
 import model.parser.ExpressionModel;
 import model.parser.FieldModel;
@@ -30,6 +31,7 @@ import model.parser.QueryModel;
 import model.parser.SearchConditionModel;
 import model.parser.SelectListModel;
 import model.parser.StringModel;
+import model.parser.TableAliasModel;
 import model.parser.TableListModel;
 import model.parser.TableModel;
 import model.parser.TableNotInFromClause;
@@ -76,6 +78,7 @@ public class Translator {
   private GroupByListVO[] groupByListVOArr = new GroupByListVO[0];
   private OrderByListVO[] orderByListVOArr = new OrderByListVO[0];
   private List aliasModelList = new ArrayList();
+  private List tableAliasModelList = new ArrayList();
   private List orderAliasModelList = new ArrayList();
   
   /**
@@ -221,46 +224,69 @@ public class Translator {
    * @param ts DbTable对象数组
    */
   public void updateDbTables(Translator t, DbTable[] ts) {
-    if (t.getQueryModel() instanceof TableUnionModel){
+    if (t.getQueryModel() instanceof TableUnionModel){  //如果为表合并（追加）
       AppDbTable[] _appDbTablesArr = t.info.getDbTableInfoToAppTableArr();
       if (_appDbTablesArr.length == ts.length){
+        
         for (int i = 0; i < ts.length; i++) {
           DbTable _dbTable = ts[i];
-          String cnTableName = t.getTableEnName(_dbTable.getChName());
-          if (cnTableName == null || cnTableName.equals("")){
+          
+          //根据DbTable的中文表名获取业务上传入的英文表名
+          String enTableName = t.getTableEnName(_dbTable.getChName());
+          
+          //如果业务上英文表名不存在则提示错误信息，如果存在则将英文表名赋值给DbTable对象
+          if (enTableName == null || enTableName.equals("")){
             model.addException(new NoSuchTableException(_dbTable.getChName()));
+          }else{
+            _dbTable.setEnName(t.getTableEnName(_dbTable.getChName()));
           }
-          _dbTable.setEnName(t.getTableEnName(_dbTable.getChName()));
+          
+          //获取业务上传入的当前表名所有字段属性
           AppDbField[] _appDbFieldsArr = _appDbTablesArr[i].getFields();
           for (int j = 0; j < _appDbFieldsArr.length; j++){
             String cnFieldName = _appDbFieldsArr[j].getChName();
             String enFieldName = _appDbFieldsArr[j].getEnName();
+            
+            //如果业务上的英文字段不存在则提示错误信息，如果存在则将英文字段赋值给DbTable对象的DbField属性
             if (enFieldName == null || enFieldName.equals("")){
               model.addException(new NoSuchFieldException(_dbTable.getChName(), cnFieldName));
+            }else{
+              _dbTable.addToDbField(cnFieldName, enFieldName);
             }
-            _dbTable.addToDbField(cnFieldName, enFieldName);
           }
+          
         }
+        
       }
-    }else{
+    }else{  //如果为常规语句或者比较语句
       for (int i = 0; i < ts.length; i++) {
         DbTable dbt = ts[i];
-        String cnTableName = t.getTableEnName(dbt.getChName());
-        if (cnTableName == null || cnTableName.equals("")){
+        
+        //根据DbTable的中文表名获取业务上传入的英文表名
+        String enTableName = t.getTableEnName(dbt.getChName());
+        if (enTableName == null || enTableName.equals("")){
           model.addException(new NoSuchTableException(dbt.getChName()));
+        }else{
+          dbt.setEnName(t.getTableEnName(dbt.getChName()));
         }
-        dbt.setEnName(cnTableName);
+        
+        //获取DbTable中的当前表名所有字段属性（查询语句中的字段属性）
         for (Iterator it = dbt.getFields().iterator(); it.hasNext();) {
           DbField dbf = (DbField)it.next();
           dbf.setTableEnName(dbt.getEnName());
-          String cnFieldName = t.getFieldEnName(dbt.getChName(), dbf.getChName());
-          if (cnFieldName == null || cnFieldName.equals("")){
+          //获取业务上传入的英文字段名称
+          String enFieldName = t.getFieldEnName(dbt.getChName(), dbf.getChName());
+          //如果业务上的英文字段不存在则提示错误信息，如果存在则将英文字段赋值给DbTable对象的DbField属性
+          if (enFieldName == null || enFieldName.equals("")){
             model.addException(new NoSuchFieldException(dbt.getChName(), dbf.getChName()));
+          }else{
+            dbf.setEnName(t.getFieldEnName(dbt.getChName(), dbf.getChName()));
           }
-          dbf.setEnName(t.getFieldEnName(dbt.getChName(), dbf.getChName()));
         }
       }
+      
     }
+    
   }
   
   /**
@@ -437,7 +463,8 @@ public class Translator {
     Element chQueryString = e.addElement("ch_query_string");
     chQueryString.addAttribute("circleType", model.getCircleType());
     chQueryString.addText(model.getChString());
-    info.getElement(e); //将表名称信息及字段属性信息转化成XML内容
+    info.getElement(model.getDbTableModel(), e); //将表名称信息及字段属性信息转化成XML内容
+    
 //    for (int i = 0; i < appDbTableList.size(); i++){
 //      AppDbTable appDbTable = (AppDbTable) appDbTableList.get(i);
 //      appDbTable.getElement(e);
@@ -466,6 +493,15 @@ public class Translator {
       Element aliasListElem = aliasListEquElem.addElement("aliasListVO");
       aliasListElem.addAttribute("alias", ((AliasModel)aliasModelArr[i]).getAlias());
       aliasListElem.addAttribute("enAlias", ((AliasModel)aliasModelArr[i]).getEnAlias());
+    }
+    
+    //表别名TableAliasModel内容转化成XML内容
+    Element tableAliasListEquElem = e.addElement("tableAliasListEqu");
+    QueryModel[] tableAliasModelArr = model.getModelsFromAllChildrenByClass(TableAliasModel.class);
+    for (int i = 0; i < tableAliasModelArr.length; i++){
+      Element tableAliasListElem = tableAliasListEquElem.addElement("tableAliasListVO");
+      tableAliasListElem.addAttribute("alias", ((TableAliasModel)tableAliasModelArr[i]).getAlias());
+      tableAliasListElem.addAttribute("enAlias", ((TableAliasModel)tableAliasModelArr[i]).getEnAlias());
     }
     
     //排序别名OrderAliasModel内容转成XML内容
@@ -559,6 +595,16 @@ public class Translator {
         }
       }
       
+      //如果XML内容中存在着tableAliasModelList需要的别名信息则进行设置
+      if (elem.getName().equals("tableAliasListEqu")){
+        for (Iterator it1 = elem.elementIterator(); it1.hasNext();){
+          Element e = (Element)it1.next();
+          TableAliasModel tableAliasModel = new TableAliasModel(e.attributeValue("alias"));
+          tableAliasModel.setEnAlias(e.attributeValue("enAlias"));
+          tableAliasModelList.add(tableAliasModel);
+        }
+      }
+      
       //如果XML内容中存在着orderAliasModelList需要的别名信息则进行设置
       if (elem.getName().equals("orderAliasListEqu")){
         for (Iterator it1 = elem.elementIterator(); it1.hasNext();){
@@ -598,6 +644,30 @@ public class Translator {
     return _selectListVOArr;
   }
   
+  /**
+   * 将SELECT子句的SelectListVO[]对象数组相关信息更新到编译器ColumnModel模型对象
+   * （目前只针对没有别名情况下，可通过SelectListVO[]的别名设置）
+   * @param selectListVOArr SELECT子句对象数组
+   */
+  public void setSelectListVOArrToModel(SelectListVO[] selectListVOArr) {
+    QueryModel[] columnModelArr = model.getModelsFromAllChildrenByClass(ColumnModel.class);
+    if (selectListVOArr != null && selectListVOArr.length > 0 
+        && columnModelArr.length == selectListVOArr.length){
+      
+      for (int i = 0; i < selectListVOArr.length; i++){
+        //从对应的COLUMN模型中获取字段别名模型
+        AliasModel aliasModel = (AliasModel) columnModelArr[i].getFirstModelByClass(AliasModel.class);
+        
+        //如果编译器中不存在字段别名模型但SelectListVO却有，则设置到编译器COLUMN模型ColumnModel中
+        if (aliasModel == null && !selectListVOArr[i].getCnFieldAlias().equals("")){
+          aliasModel = new AliasModel(selectListVOArr[i].getCnFieldAlias());
+          aliasModel.setEnAlias(selectListVOArr[i].getEnFieldAlias());
+          ((ColumnModel)columnModelArr[i]).addAlias(aliasModel); //增加字段别名模型AliasModel
+        }
+      }
+      
+    }
+  }
   
   /**
    * 获取FROM子句下所有表达式对象数组
@@ -728,6 +798,46 @@ public class Translator {
   public void setAliasModelListVOArrByXML(){
     AliasModel[] _aliasModelArr1 = getAliasModelListVOArrByModel();
     AliasModel[] _aliasModelArr2 = getAliasModelListVOArrByXML();
+    if (_aliasModelArr1.length != _aliasModelArr2.length)
+      return;
+    for (int i = 0; i < _aliasModelArr1.length; i++){
+      _aliasModelArr1[i].setEnAlias(_aliasModelArr2[i].getEnAlias());
+    }
+  }
+  
+  /**
+   * 获取QueryModel模型的所有表别名对象数组
+   * @return  TableAliasModel[] 表别名对象数组
+   */
+  public TableAliasModel[] getTableAliasModelListVOArrByModel(){
+    QueryModel[] aliasModelArr = model.getModelsFromAllChildrenByClass(TableAliasModel.class);
+    TableAliasModel[] _aliasModelArr = new TableAliasModel[aliasModelArr.length];
+    for (int i = 0; i < aliasModelArr.length; i++){
+      TableAliasModel aliasModel = (TableAliasModel) aliasModelArr[i];
+      _aliasModelArr[i] = aliasModel;
+    }
+    return _aliasModelArr;
+  }
+  
+  /**
+   * 获取XML内容转化后的所有表别名对象数组
+   * @return TableAliasModel[] 表别名对象数组
+   */
+  public TableAliasModel[] getTableAliasModelListVOArrByXML(){
+    TableAliasModel[] _aliasModelArr = new TableAliasModel[tableAliasModelList.size()];
+    for (int i = 0; i < tableAliasModelList.size(); i++){
+      TableAliasModel aliasModel = (TableAliasModel) tableAliasModelList.get(i);
+      _aliasModelArr[i] = aliasModel;
+    }
+    return _aliasModelArr;
+  }
+  
+  /**
+   * 将获取到XML内容的表别名对象数组设置到QueryModel模型中
+   */
+  public void setTableAliasModelListVOArrByXML(){
+    TableAliasModel[] _aliasModelArr1 = getTableAliasModelListVOArrByModel();
+    TableAliasModel[] _aliasModelArr2 = getTableAliasModelListVOArrByXML();
     if (_aliasModelArr1.length != _aliasModelArr2.length)
       return;
     for (int i = 0; i < _aliasModelArr1.length; i++){
