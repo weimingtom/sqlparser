@@ -21,13 +21,13 @@ public class OrderAliasModel extends QueryModel {
   }
 
   public String getChString() {
-    return " " + alias;
+    return alias;
   }
   
   public String getEnString() {
     if (enAlias != null && !enAlias.equals(""))
-      return " " + enAlias;
+      return enAlias;
     else
-      return " " + alias;
+      return alias;
   }
 }

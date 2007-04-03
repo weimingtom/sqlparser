@@ -5,8 +5,10 @@ import util.StringUtil;
 public class TableUnionModel extends QueryModel {
   private int TABLE_NUMBER = 2;
   private static final String unionStr1 = "INSERT INTO _INTO_TABLE_NAME_ (_FIELDS_) ";
-  private static final String unionStr2 = "SELECT _FIELDS_ FROM _TABLE1_ UNION ALL " +
+  private static final String unionStr2 = "SELECT _FIELDS_ FROM _TABLE1_ " +
+                                          " UNION ALL " +
                                           "SELECT _FIELDS_ FROM _TABLE2_";
+  private static final String unionStr3 = "SELECT _FIELDS_ INTO _INTO_TABLE_NAME_ FROM _TABLE1_ WHERE 1 = 0";
   
   public void addTableModel1(TableModel tableModel){
     addChild(tableModel);
@@ -26,8 +28,12 @@ public class TableUnionModel extends QueryModel {
     }
     return ret;
   }
-
+  
   public String getEnString() {
+    return getExecuteEnString("");
+  }
+  
+  public String getExecuteEnString(String intoTableName) {
     String rValue = "";
     QueryModel[] tableModelArr = getModelsFromAllChildrenByClass(TableModel.class);
     if (tableModelArr.length == TABLE_NUMBER){
@@ -35,14 +41,33 @@ public class TableUnionModel extends QueryModel {
       TableModel tableModel1 = (TableModel) tableModelArr[0];
       TableModel tableModel2 = (TableModel) tableModelArr[1];
       String enFieldStr = _dbTableModel.getFieldsEnStr(tableModel1.getChString());
-      
-      rValue = StringUtil.replace(unionStr2,
-          new String[]{"_FIELDS_", "_TABLE1_", "_TABLE2_"},
-          new String[]{enFieldStr, tableModel1.getEnString(), tableModel2.getEnString()}
-        );
+      if (intoTableName == null || intoTableName.equals("") || intoTableName.length() == 0){
+        rValue = StringUtil.replace(unionStr2,
+            new String[]{"_FIELDS_", "_TABLE1_", "_TABLE2_"},
+            new String[]{enFieldStr, tableModel1.getEnString(), tableModel2.getEnString()}
+          );
+      }else{
+        rValue = StringUtil.replace(unionStr1 + unionStr2,
+            new String[]{"_INTO_TABLE_NAME_", "_FIELDS_", "_TABLE1_", "_TABLE2_"},
+            new String[]{intoTableName, enFieldStr, tableModel1.getEnString(), tableModel2.getEnString()}
+          );
+      }
     }
     return rValue;
   }
   
-  
+  public String getEmptyExecuteEnString(String intoTableName) {
+    String rValue = "";
+    QueryModel[] tableModelArr = getModelsFromAllChildrenByClass(TableModel.class);
+    if (tableModelArr.length == TABLE_NUMBER){
+      DbTableModel _dbTableModel = getDbTableModel();
+      TableModel tableModel1 = (TableModel) tableModelArr[0];
+      String enFieldStr = _dbTableModel.getFieldsEnStr(tableModel1.getChString());
+      rValue = StringUtil.replace(unionStr3,
+          new String[]{"_FIELDS_", "_TABLE1_", "_INTO_TABLE_NAME_"},
+          new String[]{enFieldStr, tableModel1.getEnString(), intoTableName}
+        );
+    }
+    return rValue;
+  }
 }

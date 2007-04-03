@@ -364,7 +364,25 @@ public class QueryModel {
    * @return String 中文SQL语句
    */
   public String getChString() {
-    return getChString(" ");
+    return getChString("");
+  }
+  
+  /**
+   * 获取完整的可执行英文SQL语句（必须有INTO的表名）
+   * @param intoTableName INTO的名称
+   * @return String 可执行英文SQL语句
+   */
+  public String getExecuteEnString(String intoTableName) {
+    return getExecuteEnString(intoTableName);
+  }
+  
+  /**
+   * 获取空的可执行英文SQL语句（不进行数据插入操作，必须有INTO的表名）
+   * @param intoTableName INTO的名称
+   * @return String 空的可执行英文SQL语句
+   */
+  public String getEmptyExecuteEnString(String intoTableName) {
+    return getEmptyExecuteEnString(intoTableName);
   }
   
   /**
