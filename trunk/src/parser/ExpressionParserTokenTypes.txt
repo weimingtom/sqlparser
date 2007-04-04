@@ -1,0 +1,22 @@
+// $ANTLR 2.7.7 (2006-11-01): src/parser/expression.g -> ExpressionParserTokenTypes.txt$
+ExpressionParser    // output token vocab name
+PLUS=4
+MINUS=5
+MUL=6
+DIV=7
+MOD=8
+POW=9
+VAR_ELEMENT=10
+DIGIT_ELEMENT=11
+LPAREN=12
+RPAREN=13
+"-"=14
+POINT=15
+SEMI=16
+WS=17
+ELEM_START_LETTER=18
+ELEM_LETTER=19
+DIGIT_START=20
+DIGIT_NEXT=21
+DIGIT_START_LETTER=22
+DIGIT_LETTER=23
