@@ -26,8 +26,8 @@ public class TestMain {
   public static void main(String[] args) {
     TestMain main = new TestMain();
     main.testTranslator();
-    main.testUnion();
-    main.testCompare();
+//    main.testUnion();
+//    main.testCompare();
 //    main.testSegment();
   }
   
@@ -153,10 +153,10 @@ public class TestMain {
     t.addDbField("表1", "金额", "CNF03");
     t.addDbField("表1", "货币码", "CNF04");
     t.addDbTable("表2", "CNF_TEST");
-    t.addDbField("表2", "省/市代号", "CNF01");
-    t.addDbField("表2", "行号", "CNF02");
-    t.addDbField("表2", "金额", "CNF03");
-    t.addDbField("表2", "货币码", "CNF04");
+    t.addDbField("表2", "省/市代号", "CNF011");
+    t.addDbField("表2", "行号", "CNF022");
+    t.addDbField("表2", "金额", "CNF033");
+    t.addDbField("表2", "货币码", "CNF044");
     DbTable[] ts = t.getTables();
     t.updateDbTables(t, ts);
     
@@ -199,14 +199,22 @@ public class TestMain {
         + "排序 a, 表1.字段1 升序, 数值转字符串(表2.字段3), 求和(表2.字段4) 降序, 字符串截取(表1.字段3, 1, 4)";
     str = " 查询 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 as 行号, 求和(AI_94传票对照表.金额) 作为 金额" +
           " 来自 AI_94传票对照表 作为 CNF_AS_D" + 
-          " 条件 AI_94传票对照表.省/市代号 等于 {机构变量} 并且 求平方根(AI_94传票对照表.金额) 大于 40 " +
+          " 条件 (AI_94传票对照表.金额 - 45) > 0 并且 AI_94传票对照表.省/市代号 等于 {机构变量} 并且 求平方根(AI_94传票对照表.金额) 大于 -5" +
           " 分组 AI_94传票对照表.省/市代号,AI_94传票对照表.行号" +
           " 排序 AI_94传票对照表.行号, 金额, AI_94传票对照表.行号 降序";
-//    str = "查询 求和(AI_94传票对照表.金额) 来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 '测试' 并且 AI_94传票对照表.省/市代号 等于 {条件变量1} 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序 求和(AI_94传票对照表.金额) , AI_94传票对照表.行号 降序";
+//    str = "查询 AI_94传票对照表.金额 来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 -5";
     
     Translator t = new Translator();
     t.setChQuery(str);
     System.out.println(t.getChQuery());
+    if (t.hasError()){
+      ChWrongMessage[] msgs = t.showWrongMsgs();
+      for (int i = 0; i < msgs.length; i++){
+        System.out.println(msgs[i]);
+      }
+      return;
+    }
+    
     QueryModel[] tableAliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(TableAliasModel.class);
     for (int i = 0; i < tableAliasModelArr.length; i++){
       System.out.println(tableAliasModelArr[i].getChString());
@@ -268,62 +276,55 @@ public class TestMain {
     System.out.println(t.getChGroupByStr());
     System.out.println(t.getChOrderByStr());
     
-    if (t.hasError()){
-      ChWrongMessage[] msgs = t.showWrongMsgs();
-      for (int i = 0; i < msgs.length; i++){
-        System.out.println(msgs[i]);
-      }
-    }else{
-      SelectListVO[] _selectListVOArr = t.getSelectListVOArr();
-      FromListVO[] _fromListVOArr = t.getFromListVOArr();
-      WhereListVO[] _whereListVOArr = t.getWhereListVOArr();
-      GroupByListVO[] _groupListVOArr = t.getGroupByListVOArr();
-      OrderByListVO[] _orderListVOArr = t.getOrderByListVOArr();
-      
-      System.out.println("============SELECT EQUEM===========");
-      for (int i = 0; i < _selectListVOArr.length; i++){
-        System.out.println(_selectListVOArr[i].getCnColumnEquElem());
-        _selectListVOArr[i].setCnFieldAlias("代号" + i);
-        _selectListVOArr[i].setFieldDataType("String");
-      }
-      //t.setSelectListVOArrToModel(_selectListVOArr);
-      t.setSelectListVOArr(_selectListVOArr);
-      
-      AliasModel[] aliasModels = t.getAliasModelListVOArrByModel();
-      for (int i = 0; i < aliasModels.length; i++){
-        System.out.println(aliasModels[i].getChString());
-      }
-      
-      
-      System.out.println("============WHERE EQUEM===========");
-      for (int i = 0; i < _whereListVOArr.length; i++){
-        System.out.println(_whereListVOArr[i].getCnAllWhereStr());
-        _whereListVOArr[i].setCheckedFlag("1");
-      }
-      t.setWhereListVOArr(_whereListVOArr);
-      
-      System.out.println("============COLUNM ALIAS===========");
-      QueryModel[] aliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(AliasModel.class);
-      for (int i = 0; i < aliasModelArr.length; i++){
-        System.out.println(aliasModelArr[i].getChString());
-        AliasModel aliasModel = (AliasModel) aliasModelArr[i];
-        aliasModel.setEnAlias("enAlias" + i);
-      }
-
-      System.out.println("============ORDER ALIAS===========");
-      QueryModel[] orderAliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(OrderAliasModel.class);
-      for (int i = 0; i < orderAliasModelArr.length; i++){
-        System.out.println(orderAliasModelArr[i].getChString());
-        OrderAliasModel orderAliasModel = (OrderAliasModel) orderAliasModelArr[i];
-        orderAliasModel.setEnAlias("enOrderAlias" + i);
-      }
-      System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
-      System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
-      System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
-      System.out.println("EXE SQL IS: " + t.getQueryModel().getExecuteEnString("S001"));
-      String xml1 = t.getXmlString();
-      System.out.println("TO DB XML: " + xml1);
+    SelectListVO[] _selectListVOArr = t.getSelectListVOArr();
+    FromListVO[] _fromListVOArr = t.getFromListVOArr();
+    WhereListVO[] _whereListVOArr = t.getWhereListVOArr();
+    GroupByListVO[] _groupListVOArr = t.getGroupByListVOArr();
+    OrderByListVO[] _orderListVOArr = t.getOrderByListVOArr();
+    
+    System.out.println("============SELECT EQUEM===========");
+    for (int i = 0; i < _selectListVOArr.length; i++){
+      System.out.println(_selectListVOArr[i].getCnColumnEquElem());
+      _selectListVOArr[i].setCnFieldAlias("代号" + i);
+      _selectListVOArr[i].setFieldDataType("String");
     }
+    //t.setSelectListVOArrToModel(_selectListVOArr);
+    t.setSelectListVOArr(_selectListVOArr);
+    
+    AliasModel[] aliasModels = t.getAliasModelListVOArrByModel();
+    for (int i = 0; i < aliasModels.length; i++){
+      System.out.println(aliasModels[i].getChString());
+    }
+    
+    
+    System.out.println("============WHERE EQUEM===========");
+    for (int i = 0; i < _whereListVOArr.length; i++){
+      System.out.println(_whereListVOArr[i].getCnAllWhereStr());
+      _whereListVOArr[i].setCheckedFlag("1");
+    }
+    t.setWhereListVOArr(_whereListVOArr);
+    
+    System.out.println("============COLUNM ALIAS===========");
+    QueryModel[] aliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(AliasModel.class);
+    for (int i = 0; i < aliasModelArr.length; i++){
+      System.out.println(aliasModelArr[i].getChString());
+      AliasModel aliasModel = (AliasModel) aliasModelArr[i];
+      aliasModel.setEnAlias("enAlias" + i);
+    }
+
+    System.out.println("============ORDER ALIAS===========");
+    QueryModel[] orderAliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(OrderAliasModel.class);
+    for (int i = 0; i < orderAliasModelArr.length; i++){
+      System.out.println(orderAliasModelArr[i].getChString());
+      OrderAliasModel orderAliasModel = (OrderAliasModel) orderAliasModelArr[i];
+      orderAliasModel.setEnAlias("enOrderAlias" + i);
+    }
+    System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
+    System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
+    System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
+    System.out.println("EXE SQL IS: " + t.getQueryModel().getExecuteEnString("S001"));
+    String xml1 = t.getXmlString();
+    System.out.println("TO DB XML: " + xml1);
     
     Translator t1 = new Translator();
     String rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -363,7 +364,7 @@ public class TestMain {
 //        r_selectListVOArr[i].setFieldDataType("Date");
 //      }
 //      t1.setSelectListVOArr(r_selectListVOArr);
-      AliasModel[] aliasModels = t1.getAliasModelListVOArrByModel();
+     aliasModels = t1.getAliasModelListVOArrByModel();
       TableAliasModel[] tableAliasModels = t1.getTableAliasModelListVOArrByModel();
       tableAliasModels[0].setEnAlias("CNF00000");
       t1.updateDbTables(t1, t1.getTables());
