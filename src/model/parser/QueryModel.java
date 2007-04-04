@@ -85,8 +85,8 @@ public class QueryModel {
       CommonAST ast = (CommonAST)p.getAST();
       T t = new T();
       //TODO Visible ASTFrame
-      //ASTFrame _ASTFrame = new ASTFrame("SQL PARSER", ast);
-      //_ASTFrame.setVisible(true);
+//      ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+//      _ASTFrame.setVisible(true);
       model = t.statement(ast);
     } catch (ANTLRException e) {
       exs.add(e);
@@ -364,7 +364,7 @@ public class QueryModel {
    * @return String ÖÐÎÄSQLÓï¾ä
    */
   public String getChString() {
-    return getChString("");
+    return getChString(" ");
   }
   
   /**
