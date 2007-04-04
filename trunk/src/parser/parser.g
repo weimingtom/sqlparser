@@ -85,7 +85,7 @@ order_expression
 	:	(alias|field_name|aggregate_func|function) ("\u5347\u5e8f"^|"\u964d\u5e8f"^|"asc"^|"desc"^)?
 	;
 expression
-	:	(field_name|constant|function|param_equ)
+	:	(negative_constant|field_name|constant|function|param_equ)
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
 	|	LPAREN expression RPAREN 
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
@@ -124,6 +124,10 @@ field_name
 //field_name
 //	:	ID
 //	|	ID POINT^ ID;
+
+negative_constant
+	:	MINUS REAL_NUM
+	;
 constant
 	:	REAL_NUM
 	|	QUOTED_STRING
@@ -143,6 +147,10 @@ parameters
 table_name
 	:	ID (("as"^|"\u4f5c\u4e3a"^) alias)?
 	;
+
+//negative_sign
+//	:	"-"
+//	;
 
 function_name
 	:	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
@@ -173,7 +181,7 @@ aggregate_func_name
 one_arg_op
 	:	ONE_ARG_OP | "\u975e";
 two_arg_op
-	:	TWO_ARG_OP | STAR
+	:	TWO_ARG_OP | STAR | MINUS
 	|	"\u4e0e" | "\u6216" | "\u5f02\u6216" | "\u52a0" | "\u51cf" | "\u4e58" | "\u9664" | "\u6c42\u6a21";
 compare_op
 	:	COMPARE_OP | "\u7b49\u4e8e" | "like"
@@ -199,7 +207,9 @@ options {
 ONE_ARG_OP
 	:	'~';
 TWO_ARG_OP
-	:	'&' | '|' | '^' | '+' | '-' | '/' | '%';	
+	:	'&' | '|' | '^' | '+' | '/' | '%';
+MINUS 
+	: 	'-' ;
 STAR
 	:	'*';
 COMPARE_OP
@@ -293,6 +303,7 @@ ID_LETTER
 REAL_NUM
 	:	NUM (POINT DOT_NUM)?
 	;
+	
 protected
 NUM	:	'0'
 	|	NUM_START (NUM_LETTER)*
@@ -593,6 +604,8 @@ expression returns [ExpressionModel model]
 	{model.addField(f);}
 	|	func=function
 	{model.addFunction(func);}
+	|	nsign: MINUS rn1:REAL_NUM
+	{model.addConstant("-1" + rn1.getText());}
 	|	rn:REAL_NUM
 	{model.addConstant(rn.getText());}
 	|	qs:QUOTED_STRING
@@ -674,7 +687,7 @@ compare_op
 one_arg_op
 	:	ONE_ARG_OP | "\u975e";
 two_arg_op
-	:	TWO_ARG_OP | STAR
+	:	TWO_ARG_OP | STAR | MINUS
 	|	"\u4e0e" | "\u6216" | "\u5f02\u6216" | "\u52a0" | "\u51cf" | "\u4e58" | "\u9664" | "\u6c42\u6a21";
 function_name
 	:	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
@@ -701,3 +714,6 @@ comparemethod_name
 	:	"not exist" | "\u4e0d\u5b58\u5728"
 	|	"exist" 	| "\u5b58\u5728"
 ;
+//negative_sign
+//	:	"-"
+//	;
