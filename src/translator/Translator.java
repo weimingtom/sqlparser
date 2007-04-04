@@ -146,7 +146,10 @@ public class Translator {
    * @return String SELECT子句的查询语句
    */
   public String getChSelectStr(){
-    return (model.getFirstModelByClass(SelectListModel.class)).getChString();
+    if (model.getFirstModelByClass(SelectListModel.class) != null)
+      return (model.getFirstModelByClass(SelectListModel.class)).getChString();
+    else
+      return "";
   }
   
   /**
@@ -154,7 +157,10 @@ public class Translator {
    * @return String FROM子句的查询语句
    */
   public String getChFromStr(){
-    return (model.getFirstModelByClass(TableListModel.class)).getChString();
+    if (model.getFirstModelByClass(TableListModel.class) != null)
+      return (model.getFirstModelByClass(TableListModel.class)).getChString();
+    else
+      return "";
   }
   
   /**
@@ -162,7 +168,10 @@ public class Translator {
    * @return String WHERE子句的查询语句
    */
   public String getChWhereStr(){
-    return (model.getFirstModelByClass(SearchConditionModel.class)).getChString();
+    if (model.getFirstModelByClass(SearchConditionModel.class) != null)
+      return (model.getFirstModelByClass(SearchConditionModel.class)).getChString();
+    else
+      return "";
   }
   
   /**
@@ -170,7 +179,10 @@ public class Translator {
    * @return String GROUP BY子句的查询语句
    */
   public String getChGroupByStr(){
-    return (model.getFirstModelByClass(AggregateExprListModel.class)).getChString();
+    if (model.getFirstModelByClass(AggregateExprListModel.class) != null)
+      return (model.getFirstModelByClass(AggregateExprListModel.class)).getChString();
+    else
+      return "";
   }
   
   /**
@@ -178,7 +190,10 @@ public class Translator {
    * @return String ORDER BY子句的查询语句
    */
   public String getChOrderByStr(){
-    return (model.getFirstModelByClass(OrderExpressionListModel.class)).getChString();
+    if (model.getFirstModelByClass(OrderExpressionListModel.class) != null)
+      return (model.getFirstModelByClass(OrderExpressionListModel.class)).getChString();
+    else
+      return "";
   }
   
   /**
