@@ -85,7 +85,7 @@ order_expression
 	:	(alias|field_name|aggregate_func|function) ("升序"^|"降序"^|"asc"^|"desc"^)?
 	;
 expression
-	:	(field_name|constant|function|param_equ)
+	:	(negative_constant|field_name|constant|function|param_equ)
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
 	|	LPAREN expression RPAREN 
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
@@ -124,6 +124,10 @@ field_name
 //field_name
 //	:	ID
 //	|	ID POINT^ ID;
+
+negative_constant
+	:	MINUS REAL_NUM
+	;
 constant
 	:	REAL_NUM
 	|	QUOTED_STRING
@@ -143,6 +147,10 @@ parameters
 table_name
 	:	ID (("as"^|"作为"^) alias)?
 	;
+
+//negative_sign
+//	:	"-"
+//	;
 
 function_name
 	:	"sqrt" 		| 	"求平方根"
@@ -173,7 +181,7 @@ aggregate_func_name
 one_arg_op
 	:	ONE_ARG_OP | "非";
 two_arg_op
-	:	TWO_ARG_OP | STAR
+	:	TWO_ARG_OP | STAR | MINUS
 	|	"与" | "或" | "异或" | "加" | "减" | "乘" | "除" | "求模";
 compare_op
 	:	COMPARE_OP | "等于" | "like"
@@ -199,7 +207,9 @@ options {
 ONE_ARG_OP
 	:	'~';
 TWO_ARG_OP
-	:	'&' | '|' | '^' | '+' | '-' | '/' | '%';	
+	:	'&' | '|' | '^' | '+' | '/' | '%';
+MINUS 
+	: 	'-' ;
 STAR
 	:	'*';
 COMPARE_OP
@@ -293,6 +303,7 @@ ID_LETTER
 REAL_NUM
 	:	NUM (POINT DOT_NUM)?
 	;
+	
 protected
 NUM	:	'0'
 	|	NUM_START (NUM_LETTER)*
@@ -593,6 +604,8 @@ expression returns [ExpressionModel model]
 	{model.addField(f);}
 	|	func=function
 	{model.addFunction(func);}
+	|	nsign: MINUS rn1:REAL_NUM
+	{model.addConstant("-1" + rn1.getText());}
 	|	rn:REAL_NUM
 	{model.addConstant(rn.getText());}
 	|	qs:QUOTED_STRING
@@ -674,7 +687,7 @@ compare_op
 one_arg_op
 	:	ONE_ARG_OP | "非";
 two_arg_op
-	:	TWO_ARG_OP | STAR
+	:	TWO_ARG_OP | STAR | MINUS
 	|	"与" | "或" | "异或" | "加" | "减" | "乘" | "除" | "求模";
 function_name
 	:	"sqrt" 		| 	"求平方根"
@@ -701,3 +714,6 @@ comparemethod_name
 	:	"not exist" | "不存在"
 	|	"exist" 	| "存在"
 ;
+//negative_sign
+//	:	"-"
+//	;
