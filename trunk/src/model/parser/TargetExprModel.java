@@ -51,6 +51,8 @@ public class TargetExprModel {
       _exprElemLi = expressionTreeParser.getExprElemLi();
     }catch (ANTLRException ex){
       antlrExs.add(ex);
+    }catch (Exception ex){
+      antlrExs.add(ex);
     }
 
     if (_model == null){
@@ -77,7 +79,10 @@ public class TargetExprModel {
       rValue = expressionTreeParser.exprExe(ast);
     }catch (ANTLRException ex){
       antlrExs.add(ex);
+    }catch (Exception ex){
+      antlrExs.add(ex);
     }
+    _model.setAntlrExceptions(antlrExs);
     return rValue;
   }
 
