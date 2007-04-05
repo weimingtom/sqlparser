@@ -62,6 +62,11 @@ search_condition
 	:	equation 
 		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
 	;
+//search_condition
+//	:	equation 
+//		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
+//	;
+
 
 aggregate_expression_list
 	:	aggregate_expr (COMMA^ aggregate_expr)*
@@ -108,6 +113,13 @@ equation
 	| 	("is"! "null"^|"is"! "not"^ "null"!|"为空"^|"非空"^)
 	| 	("between"^|"范围"^) expression ("and"!)? expression)
 	;
+
+//equation
+//	:	expression (("="|compare_op) expression
+//		{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
+//	| 	("is"! "null"^|"is"! "not"^ "null"!|"为空"^|"非空"^)
+//	| 	("between"^|"范围"^) expression ("and"!)? expression)
+//	;
 
 //param_equ
 //	:	PARAM_LPAREN ID^ PARAM_RPAREN
@@ -204,8 +216,11 @@ options {
 	caseSensitiveLiterals = true;
 }
 
+//ONE_ARG_OP
+//	:	'~';
+
 ONE_ARG_OP
-	:	'~';
+	:	"not";
 TWO_ARG_OP
 	:	'&' | '|' | '^' | '+' | '/' | '%';
 MINUS 
@@ -679,11 +694,14 @@ tableAlias returns [TableAliasModel model]
 // 常量
 select : "查询" | "select";
 distinct : "唯一" | "distinct";
+cond_logic_op
+	: "not" | "非";
 logic_op : "and" | "or" | "并且" | "或者";
 compare_op
 	:	COMPARE_OP | "等于" | "like"
 	|	"大于等于" | "小于等于" | "大于" | "小于" | "不等于"
 	|	"包含" | "不包含";
+
 one_arg_op
 	:	ONE_ARG_OP | "非";
 two_arg_op
