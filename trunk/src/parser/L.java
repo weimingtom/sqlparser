@@ -152,12 +152,6 @@ tryAgain:
 		try {   // for char stream error handling
 			try {   // for lexical error handling
 				switch ( LA(1)) {
-				case '~':
-				{
-					mONE_ARG_OP(true);
-					theRetToken=_returnToken;
-					break;
-				}
 				case '-':
 				{
 					mMINUS(true);
@@ -249,6 +243,10 @@ tryAgain:
 						mNOT_EXIST(true);
 						theRetToken=_returnToken;
 					}
+					else if ((LA(1)=='n') && (LA(2)=='o') && (LA(3)=='t') && (true) && (true)) {
+						mONE_ARG_OP(true);
+						theRetToken=_returnToken;
+					}
 					else if ((LA(1)=='{') && (_tokenSet_0.member(LA(2)))) {
 						mPARAM_ID(true);
 						theRetToken=_returnToken;
@@ -299,7 +297,7 @@ tryAgain:
 		_ttype = ONE_ARG_OP;
 		int _saveIndex;
 		
-		match('~');
+		match("not");
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
