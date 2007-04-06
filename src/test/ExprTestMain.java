@@ -19,7 +19,7 @@ import parser.ExpressionTreeParser;
 
 public class ExprTestMain {
   public static void main(String[] args) {
-    String chStr = "(-5 + A) * B";
+    String chStr = "(-5 + A) * B/D";
     
     TargetExprModel targetExprModel = new TargetExprModel();
     targetExprModel = targetExprModel.parseTargetExpr(chStr);
@@ -43,6 +43,13 @@ public class ExprTestMain {
       m++;
     }
     BigDecimal rValue = targetExprModel.ExcuteTargetExpr(targetExprModel);
+    if (targetExprModel.hasError()){
+      ChWrongMessage[] msgs = targetExprModel.getWrongMessages();
+      for (int j = 0; j < msgs.length; j++){
+        System.out.println(msgs[j]);
+      }
+      return;
+    }
     System.out.println(rValue.doubleValue());
   }
 }
