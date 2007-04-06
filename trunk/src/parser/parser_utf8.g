@@ -12,10 +12,14 @@ options {
 
 tokens {
 	SELECT_STATEMENT;
-	GROUP_BY; ORDER_BY;
+	SUBQUERY;
+	GROUP_BY;
+	ORDER_BY;
 	ALIAS_EQU;
 	FUNCTION;
 	LOGIC_OP;
+	CONTAIN_OP;
+	SUBCONTAIN_OP;
 	ALL_FIELDS;
 }
 
@@ -58,15 +62,12 @@ select_list
 table_list
 	:	table_name (COMMA^ table_name)*
 	;
+
+
 search_condition
-	:	equation 
+	:	equation
 		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
 	;
-//search_condition
-//	:	equation 
-//		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
-//	;
-
 
 aggregate_expression_list
 	:	aggregate_expr (COMMA^ aggregate_expr)*
@@ -92,9 +93,10 @@ order_expression
 expression
 	:	(negative_constant|field_name|constant|function|param_equ)
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
-	|	LPAREN expression RPAREN 
+	|	LPAREN expression RPAREN
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
 	|	one_arg_op expression {#expression=#([ONE_ARG_OP, "one_arg_op"], #expression);}
+	
 	;
 expression_with_aggr_func
 	:	(field_name|constant|function|aggregate_func) 
@@ -108,22 +110,29 @@ expression_with_aggr_func
 	;
 
 equation
-	:	expression (("="|compare_op) expression
-		{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
-	| 	("is"! "null"^|"is"! "not"^ "null"!|"为空"^|"非空"^)
-	| 	("between"^|"范围"^) expression ("and"!)? expression)
+	:	expression (
+			("="|compare_op) expression
+			{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
+		|	("is"! "null"^|"is"! "not"^ "null"!|"为空"^|"非空"^)
+		| 	("between"^|"范围"^) expression ("and"!)? expression
+		|	("not in"^|"in"^|"在于"^|"不在于"^) exp_set
+	)
 	;
 
-//equation
-//	:	expression (("="|compare_op) expression
-//		{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
-//	| 	("is"! "null"^|"is"! "not"^ "null"!|"为空"^|"非空"^)
-//	| 	("between"^|"范围"^) expression ("and"!)? expression)
-//	;
+exp_set
+	: 	LPAREN constexpset RPAREN
+	{#exp_set = #([SUBCONTAIN_OP, "subcontain_op"], #exp_set);}
+//	| subquery
+	;
 
-//param_equ
-//	:	PARAM_LPAREN ID^ PARAM_RPAREN
-//	;
+constexpset
+	:	constant (COMMA^ constant)*
+	;
+
+subquery
+	:	LPAREN select_statement RPAREN
+		{#subquery = #([SUBQUERY, "subquery"], #subquery);}
+	;
 
 param_equ
 	:	PARAM_ID
@@ -133,10 +142,6 @@ alias
 	:	ID | QUOTED_STRING;
 field_name
 	:	ID POINT^ ID;
-//field_name
-//	:	ID
-//	|	ID POINT^ ID;
-
 negative_constant
 	:	MINUS REAL_NUM
 	;
@@ -190,21 +195,30 @@ aggregate_func_name
 	|	"count" | "求记录数"
 	;
 
+//包含运算符
+contain_op
+	:	"在于" | "不在于" | "in" | "not in"
+	;
+
 one_arg_op
 	:	ONE_ARG_OP | "非";
+
 two_arg_op
 	:	TWO_ARG_OP | STAR | MINUS
 	|	"与" | "或" | "异或" | "加" | "减" | "乘" | "除" | "求模";
+
 compare_op
 	:	COMPARE_OP | "等于" | "like"
 	|	"大于等于" | "小于等于" | "大于" | "小于" | "不等于"
-	|	"包含" | "不包含";
+	|	"包含" | "不包含"
+	;
+
 logic_op
 	:	"and" | "or" | "并且" | "或者";
 
 comparemethod_name
-	:	"not exist" | "不存在"
-	|	"exist" | "存在";
+	:	"not exists" | "不存在"
+	|	"exists" | "存在";
 
 class L extends Lexer;
 
@@ -546,7 +560,11 @@ column returns [ColumnModel model]
 	;
 
 equation returns [EquationModel model]
-{ExpressionModel e1, e2, e3; EquationModel equation; model=new EquationModel();}
+{
+	ExpressionModel e1, e2, e3;
+	EquationModel equation;
+	model=new EquationModel();
+}
 	:	#(COMPARE_OP e1=expression op:compare_op e2=expression)
 	{model.addExpression(e1); model.addOperator(op.getText()); model.addExpression(e2);}
 	|	#(n:"为空" e1=expression)
@@ -563,7 +581,44 @@ equation returns [EquationModel model]
 	|	#(btw:"范围" e1=expression e2=expression e3=expression)
 	{model.addExpression(e1); model.addOperator(btw.getText());
 	 model.addExpression(e2); model.addExpression(e3);}
+	|	#("in" e1=expression e2=exp_set)
+	{model.addExpression(e1); model.addOperator("in"); model.addExpression(e2);}
+	|	#(ct1:"在于" e1=expression e2=exp_set)
+	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
+	|	#("not in" e1=expression e2=exp_set)
+	{model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);}
+	|	#(ct2:"不在于" e1=expression e2=exp_set)
+	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
 	;
+
+exp_set returns [ExpressionModel model]
+{model = new ExpressionModel(); ExprContainModel expr;}
+	: 	#(SUBCONTAIN_OP LPAREN expr=constexpset RPAREN)
+		{
+			model.addExprContainModel(expr);
+		}
+	;
+
+constexpset returns [ExprContainModel model]
+{
+	model = new ExprContainModel();
+	ExprContainModel cep1, cep2;
+	String ce, ce1, ce2;
+}
+	:	#(COMMA cep1=constexpset cep2=constexpset)
+		{model.addChild(cep1); model.addChild(cep2);}
+	|	ce=constant_expr
+		{model.addConstant(ce);}
+	;
+
+constant_expr returns [String rValue]
+{rValue = "";}
+	:	rn:REAL_NUM
+	{rValue = rn.getText();}
+	|	qs:QUOTED_STRING
+	{rValue = qs.getText();}
+	;
+
 aggregate_expression returns [AggregateExprModel model]
 {AggregateExprModel a1, a2; FieldModel field; FunctionModel func; model=new AggregateExprModel();}
 	:	#(TWO_ARG_OP a1=aggregate_expression op:two_arg_op a2=aggregate_expression)
@@ -694,14 +749,17 @@ tableAlias returns [TableAliasModel model]
 // 常量
 select : "查询" | "select";
 distinct : "唯一" | "distinct";
-cond_logic_op
-	: "not" | "非";
 logic_op : "and" | "or" | "并且" | "或者";
 compare_op
 	:	COMPARE_OP | "等于" | "like"
 	|	"大于等于" | "小于等于" | "大于" | "小于" | "不等于"
-	|	"包含" | "不包含";
+	|	"包含" | "不包含"
+	;
 
+//包含运算符
+contain_op
+	:	"在于" | "不在于" | "in" | "not in"
+	;
 one_arg_op
 	:	ONE_ARG_OP | "非";
 two_arg_op
@@ -728,9 +786,11 @@ function_name
 	|	"min" 		| 	"求最小值"
 	|	"count" 	| 	"求记录数"
 	;
+
+//比较运算符
 comparemethod_name
-	:	"not exist" | "不存在"
-	|	"exist" 	| "存在"
+	:	"not exists" | "不存在"
+	|	"exists" 	| "存在"
 ;
 //negative_sign
 //	:	"-"
