@@ -2695,6 +2695,40 @@ public T() {
 		_retTree = _t;
 	}
 	
+	public final void cond_logic_op(AST _t) throws RecognitionException {
+		
+		AST cond_logic_op_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		
+		try {      // for error handling
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case LITERAL_not:
+			{
+				AST tmp116_AST_in = (AST)_t;
+				match(_t,LITERAL_not);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 99:
+			{
+				AST tmp117_AST_in = (AST)_t;
+				match(_t,99);
+				_t = _t.getNextSibling();
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+	}
+	
 	
 	public static final String[] _tokenNames = {
 		"<0>",

@@ -62,6 +62,11 @@ search_condition
 	:	equation 
 		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
 	;
+//search_condition
+//	:	equation 
+//		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
+//	;
+
 
 aggregate_expression_list
 	:	aggregate_expr (COMMA^ aggregate_expr)*
@@ -108,6 +113,13 @@ equation
 	| 	("is"! "null"^|"is"! "not"^ "null"!|"\u4e3a\u7a7a"^|"\u975e\u7a7a"^)
 	| 	("between"^|"\u8303\u56f4"^) expression ("and"!)? expression)
 	;
+
+//equation
+//	:	expression (("="|compare_op) expression
+//		{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
+//	| 	("is"! "null"^|"is"! "not"^ "null"!|"\u4e3a\u7a7a"^|"\u975e\u7a7a"^)
+//	| 	("between"^|"\u8303\u56f4"^) expression ("and"!)? expression)
+//	;
 
 //param_equ
 //	:	PARAM_LPAREN ID^ PARAM_RPAREN
@@ -204,8 +216,11 @@ options {
 	caseSensitiveLiterals = true;
 }
 
+//ONE_ARG_OP
+//	:	'~';
+
 ONE_ARG_OP
-	:	'~';
+	:	"not";
 TWO_ARG_OP
 	:	'&' | '|' | '^' | '+' | '/' | '%';
 MINUS 
@@ -679,11 +694,14 @@ tableAlias returns [TableAliasModel model]
 // \u5e38\u91cf
 select : "\u67e5\u8be2" | "select";
 distinct : "\u552f\u4e00" | "distinct";
+cond_logic_op
+	: "not" | "\u975e";
 logic_op : "and" | "or" | "\u5e76\u4e14" | "\u6216\u8005";
 compare_op
 	:	COMPARE_OP | "\u7b49\u4e8e" | "like"
 	|	"\u5927\u4e8e\u7b49\u4e8e" | "\u5c0f\u4e8e\u7b49\u4e8e" | "\u5927\u4e8e" | "\u5c0f\u4e8e" | "\u4e0d\u7b49\u4e8e"
 	|	"\u5305\u542b" | "\u4e0d\u5305\u542b";
+
 one_arg_op
 	:	ONE_ARG_OP | "\u975e";
 two_arg_op
