@@ -24,6 +24,10 @@ public class ExpressionModel extends QueryModel {
     addChild(model);
   }
 
+  public void addExprContainModel(ExprContainModel model){
+    addChild(model);
+  }
+  
   public String getChString() {
     return getChString(" ");
   }

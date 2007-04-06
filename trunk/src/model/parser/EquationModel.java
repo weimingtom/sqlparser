@@ -10,10 +10,14 @@ public class EquationModel extends QueryModel {
   }
   
   public String getEnString() {
-    QueryModel[] exprs=getModelByClass(ExpressionModel.class);
-    if (exprs.length==3)
-      return exprs[0].getEnQuery() + " between " + 
+    String rValue = "";
+    QueryModel[] exprs = getModelByClass(ExpressionModel.class);
+    if (exprs.length == 3){
+      rValue = exprs[0].getEnQuery() + " between " + 
         exprs[1].getEnQuery() + " and " + exprs[2].getEnQuery();
-    return super.getEnString(" ");
+    }else{
+      rValue = super.getEnString(" ");
+    }
+    return rValue;
   }
 }
