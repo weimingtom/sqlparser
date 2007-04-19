@@ -89,6 +89,8 @@ public class TestMain {
   public void testCompare(){
     String str = "表比较 AI_94传票对照表, AI_94传票对照月表 条件 不存在 AI_94传票对照表.省/市代号 等于 AI_94传票对照月表.省/市代号 并且 AI_94传票对照表.行号 大于 5";
     Translator t = new Translator();
+    System.out.println(t.getCnKeyWordByValue(t.ENVALUE_COMPARE));
+    System.out.println(t.getCnKeyWords(""));
     t.setChQuery(str);
     t.addDbTable("AI_94传票对照表", "CNF");
     t.addDbField("AI_94传票对照表", "省/市代号", "CNF01");
@@ -109,6 +111,16 @@ public class TestMain {
       }
       return;
     }
+    
+    System.out.println(t.getChFromStr());
+    System.out.println(t.getChWhereStr());
+    
+    AppDbTable[] appDbTableArr = t.getInfo().getDbTableInfoToAppTableArr();
+    for (int i = 0; i < appDbTableArr.length; i++){
+      AppDbTable appDbTable = appDbTableArr[i];
+      AppDbField[] appDbFieldArr = appDbTable.getFields();
+      System.out.println(appDbTable.getTableName());
+    }
     System.out.println(t.getChQuery());
     System.out.println(t.getQueryModel().getEnString());
     System.out.println(t.getQueryModel().getEmptyExecuteEnString("CNF238494"));
@@ -120,19 +132,22 @@ public class TestMain {
     try{
       QueryModel queryModel = t1.loadModelFromXML(xml);
       if (queryModel instanceof TableCompareModel){
+        t1.clearInfo();
         t1.addDbTable("AI_94传票对照表", "CNF_HJD_2007");
         t1.addDbTable("AI_94传票对照月表", "CNF_TEST_HJD_2007");
+        t1.addDbField("AI_94传票对照表", "省/市代号", "CNF011");
+        t1.addDbField("AI_94传票对照表", "行号", "CNF021");
+        t1.addDbField("AI_94传票对照表", "金额", "CNF031");
+        t1.addDbField("AI_94传票对照表", "货币码", "CNF041");
+        t1.addDbField("AI_94传票对照月表", "省/市代号", "CNF01_1");
+        t1.addDbField("AI_94传票对照月表", "行号", "CNF02_1");
+        t1.addDbField("AI_94传票对照月表", "金额", "CNF03_1");
+        t1.addDbField("AI_94传票对照月表", "货币码", "CNF04_1");
         t1.updateDbTables(t1, t1.getTables());
         System.out.println(t1.getQueryModel().getEnString());
         System.out.println(t1.getQueryModel().getExecuteEnString("CNF070403"));
         TableCompareModel tableCompareModel = (TableCompareModel) queryModel;
         System.out.println(tableCompareModel.getChCompareMethod());
-        AppDbTable[] appDbTableArr = t1.getInfo().getDbTableInfoToAppTableArr();
-        for (int i = 0; i < appDbTableArr.length; i++){
-          AppDbTable appDbTable = appDbTableArr[i];
-          AppDbField[] appDbFieldArr = appDbTable.getFields();
-          System.out.println(appDbTable.getTableName());
-        }
         System.out.println(t1.getChWhereStr());
       }
     }catch (DocumentException e){
@@ -159,7 +174,7 @@ public class TestMain {
     t.addDbField("表2", "货币码", "CNF044");
     DbTable[] ts = t.getTables();
     t.updateDbTables(t, ts);
-    
+    System.out.println(t.getChFromStr());
     System.out.println(t.getChQuery());
     System.out.println(t.getQueryModel().getEnString());
     System.out.println(t.getQueryModel().getEmptyExecuteEnString("CNF2087803"));
@@ -198,12 +213,26 @@ public class TestMain {
         + "分组 表1.字段1, 字符串截取(表1.字段3, 1, 4), 数值转字符串(表2.字段3), 表2.字段3 加 表2.字段4 "
         + "排序 a, 表1.字段1 升序, 数值转字符串(表2.字段3), 求和(表2.字段4) 降序, 字符串截取(表1.字段3, 1, 4)";
     str = " 查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, 求和(AI_94传票对照表.金额) 作为 金额" +
-          " 来自 AI_94传票对照表 作为 CNF" + 
-          " 条件 AI_94传票对照表.金额 大于 1000000";
-//          " 条件 AI_94传票对照表.金额 大于 10000" +
+          " 来自 AI_94传票对照表 作为 CNF, AI_94传票对照表 作为 标2" + 
+//          " 条件 (" +
+          " 条件 " +
+          " AI_94传票对照表.金额 大于 -5000" + 
+//          " ((AI_94传票对照表.金额) 大于 5000)" + 
+//          " 或者 AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 不包含 '001'" +
+//          " 并且 (AI_94传票对照表.金额 加 50) 大于 -50000" +
+//          " 并且 数值转字符串(AI_94传票对照表.金额) 等于 -5" +
+//          " 并且 AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 不包含 '001'" +
+//          " 并且 AI_94传票对照表.省/市代号 非空" +
+//          " 并且 字符串截取(AI_94传票对照表.省/市代号, 1, 20) 等于 '355'" + 
+//          " 并且 AI_94传票对照表.省/市代号 范围 1 3" + 
+//          " 并且 AI_94传票对照表.金额 在于(23, 12, 34, 350)" +
+//          ")";
+//    str = "查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, AI_94传票对照表.货币码 作为 货币码 " +
+//        "来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 02 排序 AI_94传票对照表.省/市代号 升序";
+//          " 条件 (AI_94传票对照表.金额  加 20) 大于 10000";
 //          " 条件 非 (AI_94传票对照表.金额 - 45) > 0 c 并且 求平方根(AI_94传票对照表.金额) 大于 -5" +
-//          " 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号" +
-//          " 排序 AI_94传票对照表.行号, 金额, AI_94传票对照表.行号 降序";
+          " 分组 数值转字符串(AI_94传票对照表.行号), 求平方根(AI_94传票对照表.省/市代号), AI_94传票对照表.行号, 字符串截取(AI_94传票对照表.金额, 1, 3)" +
+          " 排序 AI_94传票对照表.行号 降序, 金额 降序, AI_94传票对照表.行号 降序";
 //    str = "查询 AI_94传票对照表.金额 来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 -5";
     
     Translator t = new Translator();
@@ -290,9 +319,9 @@ public class TestMain {
       _selectListVOArr[i].setCnFieldAlias("代号" + i);
       _selectListVOArr[i].setFieldDataType("String");
     }
-    //t.setSelectListVOArrToModel(_selectListVOArr);
     t.setSelectListVOArr(_selectListVOArr);
     
+//  t.setSelectListVOArrToModel(_selectListVOArr);
     AliasModel[] aliasModels = t.getAliasModelListVOArrByModel();
     for (int i = 0; i < aliasModels.length; i++){
       System.out.println(aliasModels[i].getChString());
@@ -313,7 +342,12 @@ public class TestMain {
       AliasModel aliasModel = (AliasModel) aliasModelArr[i];
       aliasModel.setEnAlias("enAlias" + i);
     }
-
+    aliasModels = t.getAliasModelListVOArrByModel();
+    for (int i = 0; i < aliasModels.length; i++){
+      System.out.println(aliasModels[i].getChString());
+    }
+    _selectListVOArr = t.getSelectListVOArr();
+    
     System.out.println("============ORDER ALIAS===========");
     QueryModel[] orderAliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(OrderAliasModel.class);
     for (int i = 0; i < orderAliasModelArr.length; i++){
