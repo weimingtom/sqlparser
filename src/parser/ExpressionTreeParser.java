@@ -74,7 +74,6 @@ public ExpressionTreeParser() {
 		AST expr_AST_in = (_t == ASTNULL) ? null : (AST)_t;
 		AST e1 = null;
 		AST e2 = null;
-		AST nsign = null;
 		AST e3 = null;
 		
 				r = "";
@@ -101,7 +100,7 @@ public ExpressionTreeParser() {
 			}
 			case PLUS:
 			{
-				AST __t44 = _t;
+				AST __t51 = _t;
 				AST tmp3_AST_in = (AST)_t;
 				match(_t,PLUS);
 				_t = _t.getFirstChild();
@@ -109,16 +108,16 @@ public ExpressionTreeParser() {
 				_t = _retTree;
 				b=expr(_t);
 				_t = _retTree;
-				_t = __t44;
+				_t = __t51;
 				_t = _t.getNextSibling();
 				
-						r = a + "+" + b;
+						r = a + " + " + b;
 					
 				break;
 			}
 			case MINUS:
 			{
-				AST __t45 = _t;
+				AST __t52 = _t;
 				AST tmp4_AST_in = (AST)_t;
 				match(_t,MINUS);
 				_t = _t.getFirstChild();
@@ -126,16 +125,16 @@ public ExpressionTreeParser() {
 				_t = _retTree;
 				b=expr(_t);
 				_t = _retTree;
-				_t = __t45;
+				_t = __t52;
 				_t = _t.getNextSibling();
 				
-						r = a + "-" + b;
+						r = a + " - " + b;
 					
 				break;
 			}
 			case MUL:
 			{
-				AST __t46 = _t;
+				AST __t53 = _t;
 				AST tmp5_AST_in = (AST)_t;
 				match(_t,MUL);
 				_t = _t.getFirstChild();
@@ -143,16 +142,16 @@ public ExpressionTreeParser() {
 				_t = _retTree;
 				b=expr(_t);
 				_t = _retTree;
-				_t = __t46;
+				_t = __t53;
 				_t = _t.getNextSibling();
 				
-						r = a + "*" + b;
+						r = a + " * " + b;
 					
 				break;
 			}
 			case DIV:
 			{
-				AST __t47 = _t;
+				AST __t54 = _t;
 				AST tmp6_AST_in = (AST)_t;
 				match(_t,DIV);
 				_t = _t.getFirstChild();
@@ -160,16 +159,16 @@ public ExpressionTreeParser() {
 				_t = _retTree;
 				b=expr(_t);
 				_t = _retTree;
-				_t = __t47;
+				_t = __t54;
 				_t = _t.getNextSibling();
 				
-						r = a + "/" + b; 
+						r = a + " / " + b; 
 					
 				break;
 			}
 			case MOD:
 			{
-				AST __t48 = _t;
+				AST __t55 = _t;
 				AST tmp7_AST_in = (AST)_t;
 				match(_t,MOD);
 				_t = _t.getFirstChild();
@@ -177,10 +176,10 @@ public ExpressionTreeParser() {
 				_t = _retTree;
 				b=expr(_t);
 				_t = _retTree;
-				_t = __t48;
+				_t = __t55;
 				_t = _t.getNextSibling();
 				
-						r = a + "%" + b;
+						r = a + " % " + b;
 					
 				break;
 			}
@@ -206,16 +205,13 @@ public ExpressionTreeParser() {
 					
 				break;
 			}
-			case 14:
+			case NEGATIVE_DIGIT_ELEMENT:
 			{
-				nsign = _t==ASTNULL ? null : (AST)_t;
-				negative_sign(_t);
-				_t = _retTree;
 				e3 = (AST)_t;
-				match(_t,DIGIT_ELEMENT);
+				match(_t,NEGATIVE_DIGIT_ELEMENT);
 				_t = _t.getNextSibling();
 				
-						r = "-" + e3.getText();
+						r = e3.getText();
 						addExprElemModel(r, true);
 					
 				break;
@@ -234,29 +230,12 @@ public ExpressionTreeParser() {
 		return r;
 	}
 	
-	public final void negative_sign(AST _t) throws RecognitionException {
-		
-		AST negative_sign_AST_in = (_t == ASTNULL) ? null : (AST)_t;
-		
-		try {      // for error handling
-			AST tmp8_AST_in = (AST)_t;
-			match(_t,14);
-			_t = _t.getNextSibling();
-		}
-		catch (RecognitionException ex) {
-			reportError(ex);
-			if (_t!=null) {_t = _t.getNextSibling();}
-		}
-		_retTree = _t;
-	}
-	
 	public final BigDecimal  exprExe(AST _t) throws RecognitionException {
 		BigDecimal r;
 		
 		AST exprExe_AST_in = (_t == ASTNULL) ? null : (AST)_t;
 		AST e1 = null;
 		AST e2 = null;
-		AST nsign = null;
 		AST e3 = null;
 		
 				r = new BigDecimal(0);
@@ -268,12 +247,12 @@ public ExpressionTreeParser() {
 			switch ( _t.getType()) {
 			case LPAREN:
 			{
-				AST tmp9_AST_in = (AST)_t;
+				AST tmp8_AST_in = (AST)_t;
 				match(_t,LPAREN);
 				_t = _t.getNextSibling();
 				e=exprExe(_t);
 				_t = _retTree;
-				AST tmp10_AST_in = (AST)_t;
+				AST tmp9_AST_in = (AST)_t;
 				match(_t,RPAREN);
 				_t = _t.getNextSibling();
 				
@@ -283,15 +262,15 @@ public ExpressionTreeParser() {
 			}
 			case PLUS:
 			{
-				AST __t50 = _t;
-				AST tmp11_AST_in = (AST)_t;
+				AST __t57 = _t;
+				AST tmp10_AST_in = (AST)_t;
 				match(_t,PLUS);
 				_t = _t.getFirstChild();
 				a=exprExe(_t);
 				_t = _retTree;
 				b=exprExe(_t);
 				_t = _retTree;
-				_t = __t50;
+				_t = __t57;
 				_t = _t.getNextSibling();
 				
 						r = a.add(b);
@@ -300,15 +279,15 @@ public ExpressionTreeParser() {
 			}
 			case MINUS:
 			{
-				AST __t51 = _t;
-				AST tmp12_AST_in = (AST)_t;
+				AST __t58 = _t;
+				AST tmp11_AST_in = (AST)_t;
 				match(_t,MINUS);
 				_t = _t.getFirstChild();
 				a=exprExe(_t);
 				_t = _retTree;
 				b=exprExe(_t);
 				_t = _retTree;
-				_t = __t51;
+				_t = __t58;
 				_t = _t.getNextSibling();
 				
 						r = a.subtract(b);
@@ -317,15 +296,15 @@ public ExpressionTreeParser() {
 			}
 			case MUL:
 			{
-				AST __t52 = _t;
-				AST tmp13_AST_in = (AST)_t;
+				AST __t59 = _t;
+				AST tmp12_AST_in = (AST)_t;
 				match(_t,MUL);
 				_t = _t.getFirstChild();
 				a=exprExe(_t);
 				_t = _retTree;
 				b=exprExe(_t);
 				_t = _retTree;
-				_t = __t52;
+				_t = __t59;
 				_t = _t.getNextSibling();
 				
 						r = a.multiply(b);
@@ -334,15 +313,15 @@ public ExpressionTreeParser() {
 			}
 			case DIV:
 			{
-				AST __t53 = _t;
-				AST tmp14_AST_in = (AST)_t;
+				AST __t60 = _t;
+				AST tmp13_AST_in = (AST)_t;
 				match(_t,DIV);
 				_t = _t.getFirstChild();
 				a=exprExe(_t);
 				_t = _retTree;
 				b=exprExe(_t);
 				_t = _retTree;
-				_t = __t53;
+				_t = __t60;
 				_t = _t.getNextSibling();
 				
 						if (b.compareTo(new BigDecimal("0")) != 0)
@@ -354,15 +333,15 @@ public ExpressionTreeParser() {
 			}
 			case MOD:
 			{
-				AST __t54 = _t;
-				AST tmp15_AST_in = (AST)_t;
+				AST __t61 = _t;
+				AST tmp14_AST_in = (AST)_t;
 				match(_t,MOD);
 				_t = _t.getFirstChild();
 				a=exprExe(_t);
 				_t = _retTree;
 				b=exprExe(_t);
 				_t = _retTree;
-				_t = __t54;
+				_t = __t61;
 				_t = _t.getNextSibling();
 				
 						//r = a % b;
@@ -389,16 +368,13 @@ public ExpressionTreeParser() {
 					
 				break;
 			}
-			case 14:
+			case NEGATIVE_DIGIT_ELEMENT:
 			{
-				nsign = _t==ASTNULL ? null : (AST)_t;
-				negative_sign(_t);
-				_t = _retTree;
 				e3 = (AST)_t;
-				match(_t,DIGIT_ELEMENT);
+				match(_t,NEGATIVE_DIGIT_ELEMENT);
 				_t = _t.getNextSibling();
 				
-						r = getResultByElemName("-" + e3.getText());
+						r = getResultByElemName(e3.getText());
 					
 				break;
 			}
@@ -422,22 +398,24 @@ public ExpressionTreeParser() {
 		"EOF",
 		"<2>",
 		"NULL_TREE_LOOKAHEAD",
+		"MINUS_TOKEN",
 		"PLUS",
 		"MINUS",
 		"MUL",
 		"DIV",
-		"MOD",
 		"POW",
 		"VAR_ELEMENT",
 		"DIGIT_ELEMENT",
+		"NEGATIVE_DIGIT_ELEMENT",
 		"LPAREN",
 		"RPAREN",
-		"\"-\"",
 		"POINT",
+		"MOD",
 		"SEMI",
 		"WS",
 		"ELEM_START_LETTER",
 		"ELEM_LETTER",
+		"MINUS_DIGIT_ELEMENT",
 		"DIGIT_START",
 		"DIGIT_NEXT",
 		"DIGIT_START_LETTER",

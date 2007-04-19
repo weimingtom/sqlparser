@@ -32,7 +32,7 @@ protected ExpressionParser(TokenBuffer tokenBuf, int k) {
 }
 
 public ExpressionParser(TokenBuffer tokenBuf) {
-  this(tokenBuf,1);
+  this(tokenBuf,2);
 }
 
 protected ExpressionParser(TokenStream lexer, int k) {
@@ -43,11 +43,11 @@ protected ExpressionParser(TokenStream lexer, int k) {
 }
 
 public ExpressionParser(TokenStream lexer) {
-  this(lexer,1);
+  this(lexer,2);
 }
 
 public ExpressionParser(ParserSharedInputState state) {
-  super(state,1);
+  super(state,2);
   tokenNames = _tokenNames;
   buildTokenTypeASTClassMap();
   astFactory = new ASTFactory(getTokenTypeToASTClassMap());
@@ -82,17 +82,17 @@ public ExpressionParser(ParserSharedInputState state) {
 				switch ( LA(1)) {
 				case PLUS:
 				{
-					AST tmp17_AST = null;
-					tmp17_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp17_AST);
+					AST tmp16_AST = null;
+					tmp16_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp16_AST);
 					match(PLUS);
 					break;
 				}
 				case MINUS:
 				{
-					AST tmp18_AST = null;
-					tmp18_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp18_AST);
+					AST tmp17_AST = null;
+					tmp17_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp17_AST);
 					match(MINUS);
 					break;
 				}
@@ -121,36 +121,30 @@ public ExpressionParser(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST prodExpr_AST = null;
 		
+		{
 		atom();
 		astFactory.addASTChild(currentAST, returnAST);
+		}
 		{
-		_loop9:
+		_loop10:
 		do {
-			if (((LA(1) >= MUL && LA(1) <= MOD))) {
+			if ((LA(1)==MUL||LA(1)==DIV)) {
 				{
 				switch ( LA(1)) {
 				case MUL:
 				{
-					AST tmp19_AST = null;
-					tmp19_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp19_AST);
+					AST tmp18_AST = null;
+					tmp18_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp18_AST);
 					match(MUL);
 					break;
 				}
 				case DIV:
 				{
-					AST tmp20_AST = null;
-					tmp20_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp20_AST);
+					AST tmp19_AST = null;
+					tmp19_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp19_AST);
 					match(DIV);
-					break;
-				}
-				case MOD:
-				{
-					AST tmp21_AST = null;
-					tmp21_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp21_AST);
-					match(MOD);
 					break;
 				}
 				default:
@@ -163,7 +157,7 @@ public ExpressionParser(ParserSharedInputState state) {
 				astFactory.addASTChild(currentAST, returnAST);
 			}
 			else {
-				break _loop9;
+				break _loop10;
 			}
 			
 		} while (true);
@@ -181,44 +175,42 @@ public ExpressionParser(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case VAR_ELEMENT:
 		{
-			AST tmp22_AST = null;
-			tmp22_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp22_AST);
+			AST tmp20_AST = null;
+			tmp20_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp20_AST);
 			match(VAR_ELEMENT);
 			atom_AST = (AST)currentAST.root;
 			break;
 		}
 		case DIGIT_ELEMENT:
 		{
-			AST tmp23_AST = null;
-			tmp23_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp23_AST);
+			AST tmp21_AST = null;
+			tmp21_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp21_AST);
 			match(DIGIT_ELEMENT);
 			atom_AST = (AST)currentAST.root;
 			break;
 		}
-		case 14:
+		case NEGATIVE_DIGIT_ELEMENT:
 		{
-			negative_sign();
-			astFactory.addASTChild(currentAST, returnAST);
-			AST tmp24_AST = null;
-			tmp24_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp24_AST);
-			match(DIGIT_ELEMENT);
+			AST tmp22_AST = null;
+			tmp22_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp22_AST);
+			match(NEGATIVE_DIGIT_ELEMENT);
 			atom_AST = (AST)currentAST.root;
 			break;
 		}
 		case LPAREN:
 		{
-			AST tmp25_AST = null;
-			tmp25_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp25_AST);
+			AST tmp23_AST = null;
+			tmp23_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp23_AST);
 			match(LPAREN);
 			sumExpr();
 			astFactory.addASTChild(currentAST, returnAST);
-			AST tmp26_AST = null;
-			tmp26_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp26_AST);
+			AST tmp24_AST = null;
+			tmp24_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp24_AST);
 			match(RPAREN);
 			atom_AST = (AST)currentAST.root;
 			break;
@@ -231,24 +223,48 @@ public ExpressionParser(ParserSharedInputState state) {
 		returnAST = atom_AST;
 	}
 	
+	public final void minus_token() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST minus_token_AST = null;
+		
+		AST tmp25_AST = null;
+		tmp25_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp25_AST);
+		match(MINUS);
+		minus_token_AST = (AST)currentAST.root;
+		minus_token_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(MINUS_TOKEN,"minus_token")).add(minus_token_AST));
+		currentAST.root = minus_token_AST;
+		currentAST.child = minus_token_AST!=null &&minus_token_AST.getFirstChild()!=null ?
+			minus_token_AST.getFirstChild() : minus_token_AST;
+		currentAST.advanceChildToEnd();
+		minus_token_AST = (AST)currentAST.root;
+		returnAST = minus_token_AST;
+	}
+	
 	public final void powExpr() throws RecognitionException, TokenStreamException {
 		
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
 		AST powExpr_AST = null;
 		
+		{
 		atom();
 		astFactory.addASTChild(currentAST, returnAST);
+		}
 		{
 		switch ( LA(1)) {
 		case POW:
 		{
-			AST tmp27_AST = null;
-			tmp27_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp27_AST);
+			AST tmp26_AST = null;
+			tmp26_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp26_AST);
 			match(POW);
+			{
 			atom();
 			astFactory.addASTChild(currentAST, returnAST);
+			}
 			break;
 		}
 		case EOF:
@@ -265,42 +281,30 @@ public ExpressionParser(ParserSharedInputState state) {
 		returnAST = powExpr_AST;
 	}
 	
-	public final void negative_sign() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST negative_sign_AST = null;
-		
-		AST tmp28_AST = null;
-		tmp28_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp28_AST);
-		match(14);
-		negative_sign_AST = (AST)currentAST.root;
-		returnAST = negative_sign_AST;
-	}
-	
 	
 	public static final String[] _tokenNames = {
 		"<0>",
 		"EOF",
 		"<2>",
 		"NULL_TREE_LOOKAHEAD",
+		"MINUS_TOKEN",
 		"PLUS",
 		"MINUS",
 		"MUL",
 		"DIV",
-		"MOD",
 		"POW",
 		"VAR_ELEMENT",
 		"DIGIT_ELEMENT",
+		"NEGATIVE_DIGIT_ELEMENT",
 		"LPAREN",
 		"RPAREN",
-		"\"-\"",
 		"POINT",
+		"MOD",
 		"SEMI",
 		"WS",
 		"ELEM_START_LETTER",
 		"ELEM_LETTER",
+		"MINUS_DIGIT_ELEMENT",
 		"DIGIT_START",
 		"DIGIT_NEXT",
 		"DIGIT_START_LETTER",

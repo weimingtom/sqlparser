@@ -83,21 +83,24 @@ column
 	|	all:"所有" {#column=#([ALL_FIELDS, all.getText()]);}
 	|	STAR {#column=#([ALL_FIELDS, "*"]);}
 	;
+
 aggregate_expr
 	:	(field_name|function) (
 		two_arg_op aggregate_expr {#aggregate_expr=#([TWO_ARG_OP, "two_arg_op"], #aggregate_expr);})?
 	;
+
 order_expression
 	:	(alias|field_name|aggregate_func|function) ("升序"^|"降序"^|"asc"^|"desc"^)?
 	;
+
 expression
-	:	(negative_constant|field_name|constant|function|param_equ)
+	:	(field_name|constant|function|param_equ)
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
 	|	LPAREN expression RPAREN
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
 	|	one_arg_op expression {#expression=#([ONE_ARG_OP, "one_arg_op"], #expression);}
-	
 	;
+
 expression_with_aggr_func
 	:	(field_name|constant|function|aggregate_func) 
 		(two_arg_op expression_with_aggr_func 
@@ -112,7 +115,7 @@ expression_with_aggr_func
 equation
 	:	expression (
 			("="|compare_op) expression
-			{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
+			{#equation=#([COMPARE_OP, "comp_op"], #equation);}
 		|	("is"! "null"^|"is"! "not"^ "null"!|"为空"^|"非空"^)
 		| 	("between"^|"范围"^) expression ("and"!)? expression
 		|	("not in"^|"in"^|"在于"^|"不在于"^) exp_set
@@ -142,11 +145,9 @@ alias
 	:	ID | QUOTED_STRING;
 field_name
 	:	ID POINT^ ID;
-negative_constant
-	:	MINUS REAL_NUM
-	;
 constant
 	:	REAL_NUM
+	|	NEGATIVE_DIGIT_ELEMENT
 	|	QUOTED_STRING
 	|	"null"
 	;
@@ -164,10 +165,6 @@ parameters
 table_name
 	:	ID (("as"^|"作为"^) alias)?
 	;
-
-//negative_sign
-//	:	"-"
-//	;
 
 function_name
 	:	"sqrt" 		| 	"求平方根"
@@ -331,6 +328,11 @@ ID_LETTER
 
 REAL_NUM
 	:	NUM (POINT DOT_NUM)?
+	;
+
+//negative digit element
+NEGATIVE_DIGIT_ELEMENT
+	: 	MINUS NUM (POINT DOT_NUM)?
 	;
 	
 protected
@@ -674,8 +676,8 @@ expression returns [ExpressionModel model]
 	{model.addField(f);}
 	|	func=function
 	{model.addFunction(func);}
-	|	nsign: MINUS rn1:REAL_NUM
-	{model.addConstant("-1" + rn1.getText());}
+	|	nrn:NEGATIVE_DIGIT_ELEMENT
+	{model.addConstant(nrn.getText());}
 	|	rn:REAL_NUM
 	{model.addConstant(rn.getText());}
 	|	qs:QUOTED_STRING
@@ -792,6 +794,3 @@ comparemethod_name
 	:	"not exists" | "不存在"
 	|	"exists" 	| "存在"
 ;
-//negative_sign
-//	:	"-"
-//	;
