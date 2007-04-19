@@ -15,9 +15,9 @@ public class TableCompareModel extends QueryModel {
   public String getCompareMethod() {
     String rValue = "";
     if (compareMethod.equals("存在")){
-      rValue = "exist";
+      rValue = "exists";
     }else if (compareMethod.equals("不存在")){
-      rValue = "not exist";
+      rValue = "not exists";
     }else{
       rValue = compareMethod;
     }
@@ -26,9 +26,9 @@ public class TableCompareModel extends QueryModel {
   
   public String getChCompareMethod() {
     String rValue = "";
-    if (compareMethod.equals("exist")){
+    if (compareMethod.equals("exists")){
       rValue = "存在";
-    }else if (compareMethod.equals("not exist")){
+    }else if (compareMethod.equals("not exists")){
       rValue = "不存在";
     }else{
       rValue = compareMethod;
