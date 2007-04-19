@@ -70,7 +70,7 @@ public class QueryModel {
   protected QueryModel() {}
   
   /**
-   * 完整SQL语句解析，当解析正确是返回QueryModel对象
+   * 完整SQL语句解析，当解析正确时返回QueryModel对象
    * @param chQuery 完整SQL语句
    * @return QueryModel 编译器QueryModel对象
    */
@@ -85,8 +85,8 @@ public class QueryModel {
       CommonAST ast = (CommonAST)p.getAST();
       T t = new T();
       //TODO Visible ASTFrame
-      ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
-      _ASTFrame.setVisible(true);
+//      ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+//      _ASTFrame.setVisible(true);
       model = t.statement(ast);
     } catch (ANTLRException e) {
       exs.add(e);
@@ -159,7 +159,15 @@ public class QueryModel {
   public void setCircleType(String circleType) {
     this.circleType = circleType;
   }
-
+  
+  /**
+   * 清空模型中表及字段信息
+   *
+   */
+  public void clearDbTableModel(){
+    this.dbTableModel = new DbTableModel();
+  }
+  
   /**
    * 增加表单对象
    * @param tableChName 中文表名
