@@ -3,12 +3,12 @@ package translator;
 import org.dom4j.Element;
 
 /**
- * ORDER BYå­—å¥å­—æ®µã€æ’åºç­‰ä¿¡æ¯å¯¹è±¡
+ * ORDER BY×Ö¾ä×Ö¶Î¡¢ÅÅĞòµÈĞÅÏ¢¶ÔÏó
  *
  */
 public class OrderByListVO {
-  private String cnOrerByEquElem;     //ä¸­æ–‡å­—æ®µ/å­—æ®µè¡¨è¾¾å¼
-  private String cnOrderType;         //æ’åºç±»å‹ï¼ˆASC/DESCï¼‰
+  private String cnOrerByEquElem;     //ÖĞÎÄ×Ö¶Î/×Ö¶Î±í´ïÊ½
+  private String cnOrderType;         //ÅÅĞòÀàĞÍ£¨ASC/DESC£©
   
   public String getCnOrderType() {
     return cnOrderType;

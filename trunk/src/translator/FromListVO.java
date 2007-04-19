@@ -3,12 +3,12 @@ package translator;
 import org.dom4j.Element;
 
 /**
- * FROMå­—å¥çš„è¡¨åã€åˆ«åç­‰ä¿¡æ¯å¯¹è±¡
+ * FROM×Ö¾äµÄ±íÃû¡¢±ğÃûµÈĞÅÏ¢¶ÔÏó
  *
  */
 public class FromListVO {
-  private String cnTableName;     //ä¸­æ–‡è¡¨å
-  private String cnTAbleAlias;    //ä¸­æ–‡è¡¨åçš„åˆ«å
+  private String cnTableName;     //ÖĞÎÄ±íÃû
+  private String cnTAbleAlias;    //ÖĞÎÄ±íÃûµÄ±ğÃû
   
   public String getCnTAbleAlias() {
     return cnTAbleAlias;

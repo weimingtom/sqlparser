@@ -5,14 +5,14 @@ import java.util.Iterator;
 import org.dom4j.Element;
 
 /**
- * SELECTå­—å¥çš„å­—æ®µå/è¡¨è¾¾å¼ã€åˆ«åç­‰ä¿¡æ¯å¯¹è±¡
+ * SELECT×Ö¾äµÄ×Ö¶ÎÃû/±í´ïÊ½¡¢±ğÃûµÈĞÅÏ¢¶ÔÏó
  *
  */
 public class SelectListVO {
-  private String cnColumnEquElem; //ä¸­æ–‡å­—æ®µæˆ–è¡¨è¾¾å¼
-  private String cnFieldAlias;    //ä¸­æ–‡å­—æ®µæˆ–è¡¨è¾¾å¼çš„ä¸­æ–‡åˆ«å
-  private String enFieldAlias;    //ä¸­æ–‡å­—æ®µæˆ–è¡¨è¾¾å¼çš„è‹±æ–‡åˆ«å
-  private String fieldDataType;   //å­—æ®µæ•°æ®ç±»å‹
+  private String cnColumnEquElem; //ÖĞÎÄ×Ö¶Î»ò±í´ïÊ½
+  private String cnFieldAlias;    //ÖĞÎÄ×Ö¶Î»ò±í´ïÊ½µÄÖĞÎÄ±ğÃû
+  private String enFieldAlias;    //ÖĞÎÄ×Ö¶Î»ò±í´ïÊ½µÄÓ¢ÎÄ±ğÃû
+  private String fieldDataType;   //×Ö¶ÎÊı¾İÀàĞÍ
   
   public String getCnColumnEquElem() {
     return cnColumnEquElem;
