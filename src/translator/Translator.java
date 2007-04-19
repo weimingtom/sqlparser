@@ -32,6 +32,7 @@ import model.parser.SearchConditionModel;
 import model.parser.SelectListModel;
 import model.parser.StringModel;
 import model.parser.TableAliasModel;
+import model.parser.TableCompareModel;
 import model.parser.TableListModel;
 import model.parser.TableModel;
 import model.parser.TableNotInFromClause;
@@ -58,6 +59,8 @@ public class Translator {
   public static final String ENVALUE_WHERE = "where";
   public static final String ENVALUE_GROUPBY = "group_by";
   public static final String ENVALUE_ORDERBY = "order_by";
+  public static final String ENVALUE_UNION = "table_union";
+  public static final String ENVALUE_COMPARE = "table_compare";
   
   //片段子句关键字
   public static final String SELECT = "select";
@@ -83,7 +86,7 @@ public class Translator {
   
   /**
    * 根据关键字值获取对应中文关键字名称
-   * @param keyName 关键字值
+   * @param _mValue 关键字值
    * @return String 中文关键字名称
    */
   public static String getCnKeyWordByValue(String _mValue){
@@ -125,8 +128,7 @@ public class Translator {
   /**
    * 设置片段查询子句并进行验证
    * @param type 片段子句类型
-   * @param segment 片段子句
-   * @return QueryModel 编译器QueryModel模型对象
+   * @param chSegment 片段子句
    */
   public void setChSegment(String type, String chSegment) {
     String cnQuery = type + " " + chSegment;
@@ -157,10 +159,20 @@ public class Translator {
    * @return String FROM子句的查询语句
    */
   public String getChFromStr(){
-    if (model.getFirstModelByClass(TableListModel.class) != null)
-      return (model.getFirstModelByClass(TableListModel.class)).getChString();
-    else
-      return "";
+    String rValue = "";
+    if (model instanceof TableCompareModel || model instanceof TableUnionModel){
+      QueryModel[] tableModelArr = model.getModelsFromAllChildrenByClass(TableModel.class);
+      if (tableModelArr.length > 0){
+        rValue = tableModelArr[0].getChString();
+        for (int i = 1; i < tableModelArr.length; i++){
+          rValue += ", " + tableModelArr[i].getChString();
+        }
+      }
+    }else{
+      if (model.getFirstModelByClass(TableListModel.class) != null)
+        rValue = (model.getFirstModelByClass(TableListModel.class)).getChString();
+    }
+    return rValue;
   }
   
   /**
@@ -302,6 +314,15 @@ public class Translator {
       
     }
     
+  }
+  
+  /**
+   * 清空DbTableInfo表及字段信息
+   *
+   */
+  public void clearInfo() {
+    this.model.clearDbTableModel(); //清空QueryModel模型中的DbTableModel信息
+    this.info = new DbTableInfo();  //清空Translator本地DbTableInfo信息
   }
   
   /**
@@ -652,8 +673,10 @@ public class Translator {
       AliasModel aliasModel = (AliasModel) columnModelArr[i].getFirstModelByClass(AliasModel.class);
       if (expressArr.length > 0)
         _selectListVO.setCnColumnEquElem(expressArr[0].getChString());
-      if (aliasModel != null)
+      if (aliasModel != null){
         _selectListVO.setCnFieldAlias(aliasModel.getAlias());
+        _selectListVO.setEnFieldAlias(aliasModel.getEnAlias());
+      }
       _selectListVOArr[i] = _selectListVO;
     }
     return _selectListVOArr;

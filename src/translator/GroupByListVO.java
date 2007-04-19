@@ -3,11 +3,11 @@ package translator;
 import org.dom4j.Element;
 
 /**
- * GROUP BYå­—å¥å­—æ®µ/å­—æ®µè¡¨è¾¾å¼ç­‰ä¿¡æ¯å¯¹è±¡
+ * GROUP BY×Ö¾ä×Ö¶Î/×Ö¶Î±í´ïÊ½µÈĞÅÏ¢¶ÔÏó
  *
  */
 public class GroupByListVO {
-  private String cnGroupByEquElem;  //ä¸­æ–‡å­—æ®µ/å­—æ®µè¡¨è¾¾å¼
+  private String cnGroupByEquElem;  //ÖĞÎÄ×Ö¶Î/×Ö¶Î±í´ïÊ½
 
   public String getCnGroupByEquElem() {
     return cnGroupByEquElem;
