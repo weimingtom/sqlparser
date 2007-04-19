@@ -12,10 +12,14 @@ options {
 
 tokens {
 	SELECT_STATEMENT;
-	GROUP_BY; ORDER_BY;
+	SUBQUERY;
+	GROUP_BY;
+	ORDER_BY;
 	ALIAS_EQU;
 	FUNCTION;
 	LOGIC_OP;
+	CONTAIN_OP;
+	SUBCONTAIN_OP;
 	ALL_FIELDS;
 }
 
@@ -58,15 +62,12 @@ select_list
 table_list
 	:	table_name (COMMA^ table_name)*
 	;
+
+
 search_condition
-	:	equation 
+	:	equation
 		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
 	;
-//search_condition
-//	:	equation 
-//		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
-//	;
-
 
 aggregate_expression_list
 	:	aggregate_expr (COMMA^ aggregate_expr)*
@@ -82,20 +83,24 @@ column
 	|	all:"\u6240\u6709" {#column=#([ALL_FIELDS, all.getText()]);}
 	|	STAR {#column=#([ALL_FIELDS, "*"]);}
 	;
+
 aggregate_expr
 	:	(field_name|function) (
 		two_arg_op aggregate_expr {#aggregate_expr=#([TWO_ARG_OP, "two_arg_op"], #aggregate_expr);})?
 	;
+
 order_expression
 	:	(alias|field_name|aggregate_func|function) ("\u5347\u5e8f"^|"\u964d\u5e8f"^|"asc"^|"desc"^)?
 	;
+
 expression
-	:	(negative_constant|field_name|constant|function|param_equ)
+	:	(field_name|constant|function|param_equ)
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
-	|	LPAREN expression RPAREN 
+	|	LPAREN expression RPAREN
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
 	|	one_arg_op expression {#expression=#([ONE_ARG_OP, "one_arg_op"], #expression);}
 	;
+
 expression_with_aggr_func
 	:	(field_name|constant|function|aggregate_func) 
 		(two_arg_op expression_with_aggr_func 
@@ -108,22 +113,29 @@ expression_with_aggr_func
 	;
 
 equation
-	:	expression (("="|compare_op) expression
-		{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
-	| 	("is"! "null"^|"is"! "not"^ "null"!|"\u4e3a\u7a7a"^|"\u975e\u7a7a"^)
-	| 	("between"^|"\u8303\u56f4"^) expression ("and"!)? expression)
+	:	expression (
+			("="|compare_op) expression
+			{#equation=#([COMPARE_OP, "comp_op"], #equation);}
+		|	("is"! "null"^|"is"! "not"^ "null"!|"\u4e3a\u7a7a"^|"\u975e\u7a7a"^)
+		| 	("between"^|"\u8303\u56f4"^) expression ("and"!)? expression
+		|	("not in"^|"in"^|"\u5728\u4e8e"^|"\u4e0d\u5728\u4e8e"^) exp_set
+	)
 	;
 
-//equation
-//	:	expression (("="|compare_op) expression
-//		{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
-//	| 	("is"! "null"^|"is"! "not"^ "null"!|"\u4e3a\u7a7a"^|"\u975e\u7a7a"^)
-//	| 	("between"^|"\u8303\u56f4"^) expression ("and"!)? expression)
-//	;
+exp_set
+	: 	LPAREN constexpset RPAREN
+	{#exp_set = #([SUBCONTAIN_OP, "subcontain_op"], #exp_set);}
+//	| subquery
+	;
 
-//param_equ
-//	:	PARAM_LPAREN ID^ PARAM_RPAREN
-//	;
+constexpset
+	:	constant (COMMA^ constant)*
+	;
+
+subquery
+	:	LPAREN select_statement RPAREN
+		{#subquery = #([SUBQUERY, "subquery"], #subquery);}
+	;
 
 param_equ
 	:	PARAM_ID
@@ -133,15 +145,9 @@ alias
 	:	ID | QUOTED_STRING;
 field_name
 	:	ID POINT^ ID;
-//field_name
-//	:	ID
-//	|	ID POINT^ ID;
-
-negative_constant
-	:	MINUS REAL_NUM
-	;
 constant
 	:	REAL_NUM
+	|	NEGATIVE_DIGIT_ELEMENT
 	|	QUOTED_STRING
 	|	"null"
 	;
@@ -159,10 +165,6 @@ parameters
 table_name
 	:	ID (("as"^|"\u4f5c\u4e3a"^) alias)?
 	;
-
-//negative_sign
-//	:	"-"
-//	;
 
 function_name
 	:	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
@@ -190,21 +192,30 @@ aggregate_func_name
 	|	"count" | "\u6c42\u8bb0\u5f55\u6570"
 	;
 
+//\u5305\u542b\u8fd0\u7b97\u7b26
+contain_op
+	:	"\u5728\u4e8e" | "\u4e0d\u5728\u4e8e" | "in" | "not in"
+	;
+
 one_arg_op
 	:	ONE_ARG_OP | "\u975e";
+
 two_arg_op
 	:	TWO_ARG_OP | STAR | MINUS
 	|	"\u4e0e" | "\u6216" | "\u5f02\u6216" | "\u52a0" | "\u51cf" | "\u4e58" | "\u9664" | "\u6c42\u6a21";
+
 compare_op
 	:	COMPARE_OP | "\u7b49\u4e8e" | "like"
 	|	"\u5927\u4e8e\u7b49\u4e8e" | "\u5c0f\u4e8e\u7b49\u4e8e" | "\u5927\u4e8e" | "\u5c0f\u4e8e" | "\u4e0d\u7b49\u4e8e"
-	|	"\u5305\u542b" | "\u4e0d\u5305\u542b";
+	|	"\u5305\u542b" | "\u4e0d\u5305\u542b"
+	;
+
 logic_op
 	:	"and" | "or" | "\u5e76\u4e14" | "\u6216\u8005";
 
 comparemethod_name
-	:	"not exist" | "\u4e0d\u5b58\u5728"
-	|	"exist" | "\u5b58\u5728";
+	:	"not exists" | "\u4e0d\u5b58\u5728"
+	|	"exists" | "\u5b58\u5728";
 
 class L extends Lexer;
 
@@ -317,6 +328,11 @@ ID_LETTER
 
 REAL_NUM
 	:	NUM (POINT DOT_NUM)?
+	;
+
+//negative digit element
+NEGATIVE_DIGIT_ELEMENT
+	: 	MINUS NUM (POINT DOT_NUM)?
 	;
 	
 protected
@@ -546,7 +562,11 @@ column returns [ColumnModel model]
 	;
 
 equation returns [EquationModel model]
-{ExpressionModel e1, e2, e3; EquationModel equation; model=new EquationModel();}
+{
+	ExpressionModel e1, e2, e3;
+	EquationModel equation;
+	model=new EquationModel();
+}
 	:	#(COMPARE_OP e1=expression op:compare_op e2=expression)
 	{model.addExpression(e1); model.addOperator(op.getText()); model.addExpression(e2);}
 	|	#(n:"\u4e3a\u7a7a" e1=expression)
@@ -563,7 +583,44 @@ equation returns [EquationModel model]
 	|	#(btw:"\u8303\u56f4" e1=expression e2=expression e3=expression)
 	{model.addExpression(e1); model.addOperator(btw.getText());
 	 model.addExpression(e2); model.addExpression(e3);}
+	|	#("in" e1=expression e2=exp_set)
+	{model.addExpression(e1); model.addOperator("in"); model.addExpression(e2);}
+	|	#(ct1:"\u5728\u4e8e" e1=expression e2=exp_set)
+	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
+	|	#("not in" e1=expression e2=exp_set)
+	{model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);}
+	|	#(ct2:"\u4e0d\u5728\u4e8e" e1=expression e2=exp_set)
+	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
 	;
+
+exp_set returns [ExpressionModel model]
+{model = new ExpressionModel(); ExprContainModel expr;}
+	: 	#(SUBCONTAIN_OP LPAREN expr=constexpset RPAREN)
+		{
+			model.addExprContainModel(expr);
+		}
+	;
+
+constexpset returns [ExprContainModel model]
+{
+	model = new ExprContainModel();
+	ExprContainModel cep1, cep2;
+	String ce, ce1, ce2;
+}
+	:	#(COMMA cep1=constexpset cep2=constexpset)
+		{model.addChild(cep1); model.addChild(cep2);}
+	|	ce=constant_expr
+		{model.addConstant(ce);}
+	;
+
+constant_expr returns [String rValue]
+{rValue = "";}
+	:	rn:REAL_NUM
+	{rValue = rn.getText();}
+	|	qs:QUOTED_STRING
+	{rValue = qs.getText();}
+	;
+
 aggregate_expression returns [AggregateExprModel model]
 {AggregateExprModel a1, a2; FieldModel field; FunctionModel func; model=new AggregateExprModel();}
 	:	#(TWO_ARG_OP a1=aggregate_expression op:two_arg_op a2=aggregate_expression)
@@ -619,8 +676,8 @@ expression returns [ExpressionModel model]
 	{model.addField(f);}
 	|	func=function
 	{model.addFunction(func);}
-	|	nsign: MINUS rn1:REAL_NUM
-	{model.addConstant("-1" + rn1.getText());}
+	|	nrn:NEGATIVE_DIGIT_ELEMENT
+	{model.addConstant(nrn.getText());}
 	|	rn:REAL_NUM
 	{model.addConstant(rn.getText());}
 	|	qs:QUOTED_STRING
@@ -694,14 +751,17 @@ tableAlias returns [TableAliasModel model]
 // \u5e38\u91cf
 select : "\u67e5\u8be2" | "select";
 distinct : "\u552f\u4e00" | "distinct";
-cond_logic_op
-	: "not" | "\u975e";
 logic_op : "and" | "or" | "\u5e76\u4e14" | "\u6216\u8005";
 compare_op
 	:	COMPARE_OP | "\u7b49\u4e8e" | "like"
 	|	"\u5927\u4e8e\u7b49\u4e8e" | "\u5c0f\u4e8e\u7b49\u4e8e" | "\u5927\u4e8e" | "\u5c0f\u4e8e" | "\u4e0d\u7b49\u4e8e"
-	|	"\u5305\u542b" | "\u4e0d\u5305\u542b";
+	|	"\u5305\u542b" | "\u4e0d\u5305\u542b"
+	;
 
+//\u5305\u542b\u8fd0\u7b97\u7b26
+contain_op
+	:	"\u5728\u4e8e" | "\u4e0d\u5728\u4e8e" | "in" | "not in"
+	;
 one_arg_op
 	:	ONE_ARG_OP | "\u975e";
 two_arg_op
@@ -728,10 +788,9 @@ function_name
 	|	"min" 		| 	"\u6c42\u6700\u5c0f\u503c"
 	|	"count" 	| 	"\u6c42\u8bb0\u5f55\u6570"
 	;
+
+//\u6bd4\u8f83\u8fd0\u7b97\u7b26
 comparemethod_name
-	:	"not exist" | "\u4e0d\u5b58\u5728"
-	|	"exist" 	| "\u5b58\u5728"
+	:	"not exists" | "\u4e0d\u5b58\u5728"
+	|	"exists" 	| "\u5b58\u5728"
 ;
-//negative_sign
-//	:	"-"
-//	;

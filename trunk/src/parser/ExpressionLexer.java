@@ -40,9 +40,8 @@ public ExpressionLexer(InputBuffer ib) {
 public ExpressionLexer(LexerSharedInputState state) {
 	super(state);
 	caseSensitiveLiterals = true;
-	setCaseSensitive(true);
+	setCaseSensitive(false);
 	literals = new Hashtable();
-	literals.put(new ANTLRHashString("-", this), new Integer(14));
 }
 
 public Token nextToken() throws TokenStreamException {
@@ -61,45 +60,9 @@ tryAgain:
 					theRetToken=_returnToken;
 					break;
 				}
-				case '+':
-				{
-					mPLUS(true);
-					theRetToken=_returnToken;
-					break;
-				}
-				case '-':
-				{
-					mMINUS(true);
-					theRetToken=_returnToken;
-					break;
-				}
-				case '*':
-				{
-					mMUL(true);
-					theRetToken=_returnToken;
-					break;
-				}
-				case '/':
-				{
-					mDIV(true);
-					theRetToken=_returnToken;
-					break;
-				}
-				case '%':
-				{
-					mMOD(true);
-					theRetToken=_returnToken;
-					break;
-				}
 				case '^':
 				{
 					mPOW(true);
-					theRetToken=_returnToken;
-					break;
-				}
-				case '(':
-				{
-					mLPAREN(true);
 					theRetToken=_returnToken;
 					break;
 				}
@@ -121,24 +84,6 @@ tryAgain:
 					theRetToken=_returnToken;
 					break;
 				}
-				case 'A':  case 'B':  case 'C':  case 'D':
-				case 'E':  case 'F':  case 'G':  case 'H':
-				case 'I':  case 'J':  case 'K':  case 'L':
-				case 'M':  case 'N':  case 'O':  case 'P':
-				case 'Q':  case 'R':  case 'S':  case 'T':
-				case 'U':  case 'V':  case 'W':  case 'X':
-				case 'Y':  case 'Z':  case 'a':  case 'b':
-				case 'c':  case 'd':  case 'e':  case 'f':
-				case 'g':  case 'h':  case 'i':  case 'j':
-				case 'k':  case 'l':  case 'm':  case 'n':
-				case 'o':  case 'p':  case 'q':  case 'r':
-				case 's':  case 't':  case 'u':  case 'v':
-				case 'w':  case 'x':  case 'y':  case 'z':
-				{
-					mVAR_ELEMENT(true);
-					theRetToken=_returnToken;
-					break;
-				}
 				case '0':  case '1':  case '2':  case '3':
 				case '4':  case '5':  case '6':  case '7':
 				case '8':  case '9':
@@ -148,14 +93,49 @@ tryAgain:
 					break;
 				}
 				default:
-				{
+					if ((LA(1)=='-'||LA(1)=='\u51cf') && ((LA(2) >= '0' && LA(2) <= '9'))) {
+						mNEGATIVE_DIGIT_ELEMENT(true);
+						theRetToken=_returnToken;
+					}
+					else if ((LA(1)=='(') && (LA(2)=='-'||LA(2)=='\u51cf')) {
+						mMINUS_DIGIT_ELEMENT(true);
+						theRetToken=_returnToken;
+					}
+					else if ((LA(1)=='+'||LA(1)=='\u52a0') && (true)) {
+						mPLUS(true);
+						theRetToken=_returnToken;
+					}
+					else if ((LA(1)=='-'||LA(1)=='\u51cf') && (true)) {
+						mMINUS(true);
+						theRetToken=_returnToken;
+					}
+					else if ((LA(1)=='*'||LA(1)=='\u4e58') && (true)) {
+						mMUL(true);
+						theRetToken=_returnToken;
+					}
+					else if ((LA(1)=='/'||LA(1)=='\u9664') && (true)) {
+						mDIV(true);
+						theRetToken=_returnToken;
+					}
+					else if ((LA(1)=='%'||LA(1)=='\u6c42') && (true)) {
+						mMOD(true);
+						theRetToken=_returnToken;
+					}
+					else if ((LA(1)=='(') && (true)) {
+						mLPAREN(true);
+						theRetToken=_returnToken;
+					}
+					else if ((_tokenSet_0.member(LA(1))) && (true)) {
+						mVAR_ELEMENT(true);
+						theRetToken=_returnToken;
+					}
+				else {
 					if (LA(1)==EOF_CHAR) {uponEOF(); _returnToken = makeToken(Token.EOF_TYPE);}
 				else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				}
 				if ( _returnToken==null ) continue tryAgain; // found SKIP token
 				_ttype = _returnToken.getType();
-				_ttype = testLiteralsTable(_ttype);
 				_returnToken.setType(_ttype);
 				return _returnToken;
 			}
@@ -192,7 +172,22 @@ tryAgain:
 		_ttype = PLUS;
 		int _saveIndex;
 		
-		match('+');
+		switch ( LA(1)) {
+		case '+':
+		{
+			match('+');
+			break;
+		}
+		case '\u52a0':
+		{
+			match('\u52a0');
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+		}
+		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -205,7 +200,22 @@ tryAgain:
 		_ttype = MINUS;
 		int _saveIndex;
 		
-		match('-');
+		switch ( LA(1)) {
+		case '-':
+		{
+			match('-');
+			break;
+		}
+		case '\u51cf':
+		{
+			match('\u51cf');
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+		}
+		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -218,7 +228,22 @@ tryAgain:
 		_ttype = MUL;
 		int _saveIndex;
 		
-		match('*');
+		switch ( LA(1)) {
+		case '*':
+		{
+			match('*');
+			break;
+		}
+		case '\u4e58':
+		{
+			match('\u4e58');
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+		}
+		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -231,7 +256,22 @@ tryAgain:
 		_ttype = DIV;
 		int _saveIndex;
 		
-		match('/');
+		switch ( LA(1)) {
+		case '/':
+		{
+			match('/');
+			break;
+		}
+		case '\u9664':
+		{
+			match('\u9664');
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+		}
+		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -244,7 +284,23 @@ tryAgain:
 		_ttype = MOD;
 		int _saveIndex;
 		
-		match('%');
+		switch ( LA(1)) {
+		case '%':
+		{
+			match('%');
+			break;
+		}
+		case '\u6c42':
+		{
+			match('\u6c42');
+			match('\u6a21');
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+		}
+		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -352,13 +408,13 @@ tryAgain:
 		
 		mELEM_START_LETTER(false);
 		{
-		_loop28:
+		_loop31:
 		do {
-			if ((_tokenSet_0.member(LA(1)))) {
+			if ((_tokenSet_1.member(LA(1)))) {
 				mELEM_LETTER(false);
 			}
 			else {
-				break _loop28;
+				break _loop31;
 			}
 			
 		} while (true);
@@ -375,34 +431,16 @@ tryAgain:
 		_ttype = ELEM_START_LETTER;
 		int _saveIndex;
 		
-		switch ( LA(1)) {
-		case 'a':  case 'b':  case 'c':  case 'd':
-		case 'e':  case 'f':  case 'g':  case 'h':
-		case 'i':  case 'j':  case 'k':  case 'l':
-		case 'm':  case 'n':  case 'o':  case 'p':
-		case 'q':  case 'r':  case 's':  case 't':
-		case 'u':  case 'v':  case 'w':  case 'x':
-		case 'y':  case 'z':
-		{
+		if (((LA(1) >= 'a' && LA(1) <= 'z'))) {
 			matchRange('a','z');
-			break;
 		}
-		case 'A':  case 'B':  case 'C':  case 'D':
-		case 'E':  case 'F':  case 'G':  case 'H':
-		case 'I':  case 'J':  case 'K':  case 'L':
-		case 'M':  case 'N':  case 'O':  case 'P':
-		case 'Q':  case 'R':  case 'S':  case 'T':
-		case 'U':  case 'V':  case 'W':  case 'X':
-		case 'Y':  case 'Z':
-		{
-			matchRange('A','Z');
-			break;
+		else if (((LA(1) >= '\u0080' && LA(1) <= '\ufffe'))) {
+			matchRange('\u0080','\ufffe');
 		}
-		default:
-		{
+		else {
 			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
 		}
-		}
+		
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -415,35 +453,89 @@ tryAgain:
 		_ttype = ELEM_LETTER;
 		int _saveIndex;
 		
-		switch ( LA(1)) {
-		case 'A':  case 'B':  case 'C':  case 'D':
-		case 'E':  case 'F':  case 'G':  case 'H':
-		case 'I':  case 'J':  case 'K':  case 'L':
-		case 'M':  case 'N':  case 'O':  case 'P':
-		case 'Q':  case 'R':  case 'S':  case 'T':
-		case 'U':  case 'V':  case 'W':  case 'X':
-		case 'Y':  case 'Z':  case 'a':  case 'b':
-		case 'c':  case 'd':  case 'e':  case 'f':
-		case 'g':  case 'h':  case 'i':  case 'j':
-		case 'k':  case 'l':  case 'm':  case 'n':
-		case 'o':  case 'p':  case 'q':  case 'r':
-		case 's':  case 't':  case 'u':  case 'v':
-		case 'w':  case 'x':  case 'y':  case 'z':
-		{
+		if ((_tokenSet_0.member(LA(1)))) {
 			mELEM_START_LETTER(false);
-			break;
 		}
-		case '0':  case '1':  case '2':  case '3':
-		case '4':  case '5':  case '6':  case '7':
-		case '8':  case '9':
-		{
+		else if (((LA(1) >= '0' && LA(1) <= '9'))) {
 			matchRange('0','9');
-			break;
 		}
-		default:
-		{
+		else {
 			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
 		}
+		
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
+	public final void mNEGATIVE_DIGIT_ELEMENT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = NEGATIVE_DIGIT_ELEMENT;
+		int _saveIndex;
+		
+		mMINUS(false);
+		mDIGIT_START(false);
+		{
+		if ((LA(1)=='.')) {
+			mPOINT(false);
+			mDIGIT_NEXT(false);
+		}
+		else {
+		}
+		
+		}
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
+	protected final void mDIGIT_START(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = DIGIT_START;
+		int _saveIndex;
+		
+		mDIGIT_START_LETTER(false);
+		{
+		_loop42:
+		do {
+			if (((LA(1) >= '0' && LA(1) <= '9'))) {
+				mDIGIT_LETTER(false);
+			}
+			else {
+				break _loop42;
+			}
+			
+		} while (true);
+		}
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}
+	
+	protected final void mDIGIT_NEXT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = DIGIT_NEXT;
+		int _saveIndex;
+		
+		{
+		int _cnt45=0;
+		_loop45:
+		do {
+			if (((LA(1) >= '0' && LA(1) <= '9'))) {
+				mDIGIT_LETTER(false);
+			}
+			else {
+				if ( _cnt45>=1 ) { break _loop45; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+			}
+			
+			_cnt45++;
+		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
@@ -474,50 +566,33 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
-	protected final void mDIGIT_START(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+	public final void mMINUS_DIGIT_ELEMENT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = DIGIT_START;
+		_ttype = MINUS_DIGIT_ELEMENT;
 		int _saveIndex;
 		
-		mDIGIT_START_LETTER(false);
+		mLPAREN(false);
+		mMINUS(false);
+		mDIGIT_START(false);
 		{
-		_loop35:
-		do {
-			if (((LA(1) >= '0' && LA(1) <= '9'))) {
-				mDIGIT_LETTER(false);
-			}
-			else {
-				break _loop35;
-			}
-			
-		} while (true);
-		}
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	protected final void mDIGIT_NEXT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = DIGIT_NEXT;
-		int _saveIndex;
-		
+		switch ( LA(1)) {
+		case '.':
 		{
-		int _cnt38=0;
-		_loop38:
-		do {
-			if (((LA(1) >= '0' && LA(1) <= '9'))) {
-				mDIGIT_LETTER(false);
-			}
-			else {
-				if ( _cnt38>=1 ) { break _loop38; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
-			}
-			
-			_cnt38++;
-		} while (true);
+			mPOINT(false);
+			mDIGIT_NEXT(false);
+			break;
 		}
+		case ')':
+		{
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+		}
+		}
+		}
+		mRPAREN(false);
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -557,9 +632,21 @@ tryAgain:
 	
 	
 	private static final long[] mk_tokenSet_0() {
-		long[] data = { 287948901175001088L, 576460743847706622L, 0L, 0L};
+		long[] data = new long[3072];
+		data[1]=576460743713488896L;
+		for (int i = 2; i<=1022; i++) { data[i]=-1L; }
+		data[1023]=9223372036854775807L;
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
+	private static final long[] mk_tokenSet_1() {
+		long[] data = new long[3072];
+		data[0]=287948901175001088L;
+		data[1]=576460743713488896L;
+		for (int i = 2; i<=1022; i++) { data[i]=-1L; }
+		data[1023]=9223372036854775807L;
+		return data;
+	}
+	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
 	
 	}
