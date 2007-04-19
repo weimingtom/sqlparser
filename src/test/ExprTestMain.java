@@ -19,7 +19,7 @@ import parser.ExpressionTreeParser;
 
 public class ExprTestMain {
   public static void main(String[] args) {
-    String chStr = "(-5 + A) * B/D";
+    String chStr = "( -6 + A - 5 )+F / ( -3 )";
     
     TargetExprModel targetExprModel = new TargetExprModel();
     targetExprModel = targetExprModel.parseTargetExpr(chStr);
@@ -30,6 +30,7 @@ public class ExprTestMain {
       }
       return;
     }
+    System.out.println(targetExprModel.getExprContent());
     
     Map elemMap = targetExprModel.getExprElemMap();
     int m = 0;
