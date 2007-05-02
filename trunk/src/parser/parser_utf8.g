@@ -21,6 +21,7 @@ tokens {
 	CONTAIN_OP;
 	SUBCONTAIN_OP;
 	ALL_FIELDS;
+	LOGIC_BLOCK;
 }
 
 segment
@@ -64,9 +65,24 @@ table_list
 	;
 
 
+//search_condition
+//	:	equation
+//		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
+//	;
+
 search_condition
-	:	equation
-		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
+	:	bool_exp;
+		
+bool_exp
+	:	bool_term 
+		(("and"^ | "or"^ | "并且"^ | "或者"^) bool_term)*
+	|	logic_onearg_op bool_term
+	;
+
+bool_term
+	:	(LPAREN bool_exp RPAREN) => LPAREN! exp:bool_exp RPAREN!
+	{#bool_term=#([LOGIC_BLOCK, "log_block"], bool_term);}
+	|	equation
 	;
 
 aggregate_expression_list
@@ -114,11 +130,11 @@ expression_with_aggr_func
 
 equation
 	:	expression (
-			("="|compare_op) expression
-			{#equation=#([COMPARE_OP, "comp_op"], #equation);}
-		|	("is"! "null"^|"is"! "not"^ "null"!|"为空"^|"非空"^)
-		| 	("between"^|"范围"^) expression ("and"!)? expression
-		|	("not in"^|"in"^|"在于"^|"不在于"^) exp_set
+		("="|compare_op) expression
+	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
+	|	("is"! "null"^|"is"! "not"^ "null"!|"为空"^|"非空"^)
+	| 	("between"^|"范围"^) expression ("and"!)? expression
+	| 	("not in"^|"in"^|"在于"^|"不在于"^) exp_set
 	)
 	;
 
@@ -210,6 +226,9 @@ compare_op
 	|	"包含" | "不包含"
 	;
 
+logic_onearg_op
+	:	"not" | "非";
+
 logic_op
 	:	"and" | "or" | "并且" | "或者";
 
@@ -227,11 +246,8 @@ options {
 	caseSensitiveLiterals = true;
 }
 
-//ONE_ARG_OP
-//	:	'~';
-
 ONE_ARG_OP
-	:	"not";
+	:	'~';
 TWO_ARG_OP
 	:	'&' | '|' | '^' | '+' | '/' | '%';
 MINUS 
@@ -525,10 +541,25 @@ table_list returns [TableListModel model]
 	{model.addTable(t);}
 	;
 
+//search_condition returns [SearchConditionModel model]
+//{SearchConditionModel m1, m2; EquationModel equ; model=new SearchConditionModel();}
+//	:	#(LOGIC_OP m1=search_condition op:logic_op m2=search_condition)
+//	{model.addChild(m1); model.addOperator(op.getText()); model.addChild(m2);}
+//	|	equ=equation
+//	{model.addEquation(equ);}
+//	;
 search_condition returns [SearchConditionModel model]
-{SearchConditionModel m1, m2; EquationModel equ; model=new SearchConditionModel();}
-	:	#(LOGIC_OP m1=search_condition op:logic_op m2=search_condition)
-	{model.addChild(m1); model.addOperator(op.getText()); model.addChild(m2);}
+{SearchConditionModel m1, m2, m3; EquationModel equ; model=new SearchConditionModel();}
+	:	#(o1:"and" m1=search_condition m2=search_condition)
+	{model.addChild(m1); model.addOperator(o1.getText()); model.addChild(m2);}
+	|	#(o2:"or" m1=search_condition m2=search_condition)
+	{model.addChild(m1); model.addOperator(o2.getText()); model.addChild(m2);}
+	|	#(o3:"并且" m1=search_condition m2=search_condition)
+	{model.addChild(m1); model.addOperator(o3.getText()); model.addChild(m2);}
+	|	#(o4:"或者" m1=search_condition m2=search_condition)
+	{model.addChild(m1); model.addOperator(o4.getText()); model.addChild(m2);}
+	|	#(LOGIC_BLOCK m3=search_condition)
+	{model.addOperator("("); model.addChild(m3); model.addOperator(")");}
 	|	equ=equation
 	{model.addEquation(equ);}
 	;
