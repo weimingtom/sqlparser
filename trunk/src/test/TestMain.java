@@ -214,24 +214,22 @@ public class TestMain {
         + "排序 a, 表1.字段1 升序, 数值转字符串(表2.字段3), 求和(表2.字段4) 降序, 字符串截取(表1.字段3, 1, 4)";
     str = " 查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, 求和(AI_94传票对照表.金额) 作为 金额" +
           " 来自 AI_94传票对照表 作为 CNF, AI_94传票对照表 作为 标2" + 
-//          " 条件 (" +
-          " 条件 " +
-          " AI_94传票对照表.金额 大于 -5000" + 
-//          " ((AI_94传票对照表.金额) 大于 5000)" + 
-//          " 或者 AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 不包含 '001'" +
-//          " 并且 (AI_94传票对照表.金额 加 50) 大于 -50000" +
-//          " 并且 数值转字符串(AI_94传票对照表.金额) 等于 -5" +
-//          " 并且 AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 不包含 '001'" +
-//          " 并且 AI_94传票对照表.省/市代号 非空" +
-//          " 并且 字符串截取(AI_94传票对照表.省/市代号, 1, 20) 等于 '355'" + 
-//          " 并且 AI_94传票对照表.省/市代号 范围 1 3" + 
-//          " 并且 AI_94传票对照表.金额 在于(23, 12, 34, 350)" +
-//          ")";
+          " 条件 非 (" +
+          " (AI_94传票对照表.金额 大于 5000 或者 AI_94传票对照表.金额 < -9000)" + 
+          " 或者 (AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 不包含 '001')" +
+          " 并且 (AI_94传票对照表.金额 加 50) 大于 -50000" +
+          " 并且 数值转字符串(AI_94传票对照表.金额) 等于 -5" +
+          " 并且 AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 不包含 '001'" +
+          " 并且 AI_94传票对照表.省/市代号 非空" +
+          " 并且 字符串截取(AI_94传票对照表.省/市代号, 1, 20) 等于 '355'" + 
+          " 并且 AI_94传票对照表.省/市代号 范围 1 3" + 
+          " 并且 AI_94传票对照表.金额 在于(23, 12, 34, 350)" +
+          ")" + 
 //    str = "查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, AI_94传票对照表.货币码 作为 货币码 " +
 //        "来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 02 排序 AI_94传票对照表.省/市代号 升序";
 //          " 条件 (AI_94传票对照表.金额  加 20) 大于 10000";
 //          " 条件 非 (AI_94传票对照表.金额 - 45) > 0 c 并且 求平方根(AI_94传票对照表.金额) 大于 -5" +
-          " 分组 数值转字符串(AI_94传票对照表.行号), 求平方根(AI_94传票对照表.省/市代号), AI_94传票对照表.行号, 字符串截取(AI_94传票对照表.金额, 1, 3)" +
+          " 分组 数值转字符串(AI_94传票对照表.行号), 求平方根(AI_94传票对照表.省/市代号), AI_94传票对照表.行号, 字符串截取(AI_94传票对照表.金额, 1, 3)" + 
           " 排序 AI_94传票对照表.行号 降序, 金额 降序, AI_94传票对照表.行号 降序";
 //    str = "查询 AI_94传票对照表.金额 来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 -5";
     
@@ -362,6 +360,7 @@ public class TestMain {
     String xml1 = t.getXmlString();
     System.out.println("TO DB XML: " + xml1);
     
+    
     Translator t1 = new Translator();
     String rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<query><ch_query_string>查询 唯一 所有 , 求和(e.字段2) 作为 a , 表1.字段1 , ( 表2.字段3 加 表2.字段4 ) 乘 表2.字段5 , 表3.字段1 加 表3.字段2 , 求平方根(表4.字段3)  来自 表1 作为 e, 表2 作为 f, 表3, 表4 条件 1 等于 1 并且 e.字段1 + e.字段2 大于 '30' 或者 表2.字段3 包含 'abcd' 或者 表3.字段1 非空 或者 表3.字段2 范围 1 2 分组 表1.字段1, 字符串截取(表1.字段3, 1, 4), 数值转字符串(表2.字段3), 表2.字段3 加 表2.字段4 排序  a, 表1.字段1 升序, 数值转字符串(表2.字段3), 求和(表2.字段4) 降序, 字符串截取(表1.字段3, 1, 4)</ch_query_string><db_info ch_name=\"表1\" en_name=\"table0\"><db_field ch_name=\"字段2\" en_name=\"field2\"/><db_field ch_name=\"字段3\" en_name=\"field3\"/><db_field ch_name=\"字段1\" en_name=\"field1\"/></db_info><db_info ch_name=\"表2\" en_name=\"table1\"><db_field ch_name=\"字段4\" en_name=\"field4\"/><db_field ch_name=\"字段5\" en_name=\"field5\"/><db_field ch_name=\"字段3\" en_name=\"field3\"/></db_info><db_info ch_name=\"表3\" en_name=\"table2\"><db_field ch_name=\"字段2\" en_name=\"field2\"/><db_field ch_name=\"字段1\" en_name=\"field1\"/></db_info><db_info ch_name=\"表4\" en_name=\"table3\"><db_field ch_name=\"字段3\" en_name=\"field3\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"a\" enAlias=\"enAlias0\"/><aliasListVO alias=\"e\" enAlias=\"enAlias1\"/><aliasListVO alias=\"f\" enAlias=\"enAlias2\"/></aliasListEqu><orderAliasListEqu><orderAliasListVO alias=\"a\" enAlias=\"enOrderAlias0\"/></orderAliasListEqu></query>";
@@ -372,8 +371,8 @@ public class TestMain {
     rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
        + "<query><ch_query_string circleType=\"2\">查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, 求和(AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF_AS_D 条件 AI_94传票对照表.省/市代号 等于 {机构变量} 并且 求平方根(AI_94传票对照表.金额) 大于 40 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序  金额 升序, AI_94传票对照表.行号 降序</ch_query_string><db_info ch_name=\"AI_94传票对照表\" en_name=\"CNF\" flag=\"\" tableParam=\"\"><db_field ch_name=\"行号\" en_name=\"CNF02\" fieldParam=\"\"/><db_field ch_name=\"货币码\" en_name=\"CNF04\" fieldParam=\"\"/><db_field ch_name=\"省/市代号\" en_name=\"CNF01\" fieldParam=\"\"/><db_field ch_name=\"金额\" en_name=\"CNF03\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"省/市代号\" enAlias=\"enAlias0\"/><aliasListVO alias=\"行号\" enAlias=\"enAlias1\"/><aliasListVO alias=\"金额\" enAlias=\"enAlias2\"/></aliasListEqu><tableAliasListEqu><tableAliasListVO alias=\"CNF_AS_D\" enAlias=\"CNF20070101\"/></tableAliasListEqu><orderAliasListEqu><orderAliasListVO alias=\"金额\" enAlias=\"enOrderAlias0\"/></orderAliasListEqu></query>";
     try{
-      System.out.println(rXML);
       QueryModel m = t1.loadModelFromXML(rXML);
+      /*
       t1.setAliasModelListVOArrByXML();
       t1.setTableAliasModelListVOArrByXML();
       t1.setOrderAliasModelListVOArrByXML();
@@ -408,6 +407,7 @@ public class TestMain {
       System.out.println(m.getEnString());
       System.out.println(m.getExecuteEnString("xxx"));
       System.out.println(t1.getXmlString());
+      */
     }catch (DocumentException e){
       e.printStackTrace();
     }
