@@ -71,12 +71,13 @@ table_list
 //	;
 
 search_condition
-	:	bool_exp;
+	:	bool_exp
+	|	("not"^ | "\u975e"^) search_condition
+	;
 		
 bool_exp
 	:	bool_term 
 		(("and"^ | "or"^ | "\u5e76\u4e14"^ | "\u6216\u8005"^) bool_term)*
-	|	logic_onearg_op bool_term
 	;
 
 bool_term
@@ -214,7 +215,7 @@ contain_op
 	;
 
 one_arg_op
-	:	ONE_ARG_OP | "\u975e";
+	:	ONE_ARG_OP;
 
 two_arg_op
 	:	TWO_ARG_OP | STAR | MINUS
@@ -549,7 +550,7 @@ table_list returns [TableListModel model]
 //	{model.addEquation(equ);}
 //	;
 search_condition returns [SearchConditionModel model]
-{SearchConditionModel m1, m2, m3; EquationModel equ; model=new SearchConditionModel();}
+{SearchConditionModel m1, m2, m3, m4, m5; EquationModel equ; model=new SearchConditionModel();}
 	:	#(o1:"and" m1=search_condition m2=search_condition)
 	{model.addChild(m1); model.addOperator(o1.getText()); model.addChild(m2);}
 	|	#(o2:"or" m1=search_condition m2=search_condition)
@@ -560,6 +561,10 @@ search_condition returns [SearchConditionModel model]
 	{model.addChild(m1); model.addOperator(o4.getText()); model.addChild(m2);}
 	|	#(LOGIC_BLOCK m3=search_condition)
 	{model.addOperator("("); model.addChild(m3); model.addOperator(")");}
+	|	#(o11:"not" m4=search_condition)
+	{model.addOperator(o11.getText()); model.addChild(m4);}
+	|	#(o12:"\u975e" m5=search_condition)
+	{model.addOperator(o12.getText()); model.addChild(m5);}
 	|	equ=equation
 	{model.addEquation(equ);}
 	;
@@ -794,7 +799,7 @@ contain_op
 	:	"\u5728\u4e8e" | "\u4e0d\u5728\u4e8e" | "in" | "not in"
 	;
 one_arg_op
-	:	ONE_ARG_OP | "\u975e";
+	:	ONE_ARG_OP;
 two_arg_op
 	:	TWO_ARG_OP | STAR | MINUS
 	|	"\u4e0e" | "\u6216" | "\u5f02\u6216" | "\u52a0" | "\u51cf" | "\u4e58" | "\u9664" | "\u6c42\u6a21";
