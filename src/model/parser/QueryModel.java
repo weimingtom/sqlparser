@@ -622,12 +622,24 @@ public class QueryModel {
    * @return ChWrongMessage 错误信息对象
    */
   private ChWrongMessage translateException(TokenStreamRecognitionException exception) {
+    
     ChWrongMessage msg=new ChWrongMessage();
     msg.setLine(exception.recog.line);
     msg.setColumn(exception.recog.column);
     msg.setLength(-1);
+    
     char ch=0;
-    ch=chQuery.charAt(msg.getColumn()-1);
+    int m = 1;
+    boolean isChFlag = false;
+    while (!isChFlag){
+      try {
+        ch = chQuery.charAt(msg.getColumn() - m);
+        isChFlag = true;
+      }catch(Exception ex){
+        m++;
+      }
+    }
+    
     msg.setMessage("非法字符 \""+ch+"\"。");
     return msg;
   }
