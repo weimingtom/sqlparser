@@ -64,7 +64,6 @@ table_list
 	:	table_name (COMMA^ table_name)*
 	;
 
-
 //search_condition
 //	:	equation
 //		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
