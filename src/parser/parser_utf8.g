@@ -182,30 +182,141 @@ table_name
 	:	ID (("as"^|"作为"^) alias)?
 	;
 
-function_name
-	:	"sqrt" 		| 	"求平方根"
-	|	"getdate" 	| 	"求当前日期时间"
-	|	"abs" 		| 	"求绝对值"
-	|	"substring" | 	"字符串截取"
-	|	"round"		|	"格式化数值"
-	|	"right" 	| 	"字符串右截"
-	|	"ltrim"		|	"去掉左空格"
-	|	"rtrim"		|	"去掉右空格"
-	|	"char_length" | "求字符串的长度"
-	|	"floor"		|	"求四舍后的整数"
-	|	"ceiling"	|	"求五入后的整数"
-	|	"lower" 	| 	"将字符串转为小写"
-	|	"charindex"	|	"存在于"
-	|	"str" 		| 	"数值转字符串"
-	;
-
-
 aggregate_func_name
 	:	"sum" 	| "求和"
 	|	"avg" 	| "求平均数"
 	|	"max" 	| "求最大值"
 	|	"min" 	| "求最小值"
 	|	"count" | "求记录数"
+	;
+
+//function_name
+//	:	"sqrt" 		| 	"求平方根"
+//	|	"getdate" 	| 	"求当前日期时间"
+//	|	"abs" 		| 	"取绝对值"
+//	|	"acos"		|	"求余弦值"
+//	|	"substring" | 	"字符串截取"
+//	|	"round"		|	"格式化数值"
+//	|	"right" 	| 	"字符串右截"
+//	|	"ltrim"		|	"去掉左空格"
+//	|	"rtrim"		|	"去掉右空格"
+//	|	"char_length" | "求字符串的长度"
+//	|	"floor"		|	"求四舍后的整数"
+//	|	"ceiling"	|	"求五入后的整数"
+//	|	"lower" 	| 	"将字符串转为小写"
+//	|	"charindex"	|	"存在于"
+//	|	"str" 		| 	"数值转字符串"
+//	;
+
+function_name
+	:	number_function
+	|	string_function
+	|	datetime_function
+	|	conversion_function
+	|	system_function
+	|	other_function
+	;
+
+number_function
+	:	"abs" 		| 	"取绝对值"
+	|	"acos"		|	"求值的余弦角"
+	|	"asin"		|	"求值的正弦角"
+	|	"atan"		|	"求值的正切角"
+	|	"atin2"		|	"求值的正弦和余弦角"
+	|	"ceiling"	|	"求五入后的整数"
+	|	"cos"		|	"求角的余弦值"
+	|	"cot"		|	"求角的余切值"
+	|	"degrees"	|	"求弧度数的角大小"
+	|	"exp"		|	"求幂值"
+	|	"floor"		|	"求四舍后的整数"
+	|	"log"		|	"求自然对数"
+	|	"log10"		|	"求10为底的对数"
+	|	"mod"		|	"求模"
+	|	"pi"		|	"求PI"
+	|	"power"		|	"求数字的次幂值"
+	|	"radians"	|	"求度数角的弧度"
+	|	"rand"		|	"求0和1间的随机数"
+	|	"round"		|	"格式化数值"
+	|	"sign"		|	"求值的符号"
+	|	"sin"		|	"求角的正弦值"
+	|	"sqrt" 		| 	"求平方根"
+	|	"tan"		|	"求角的正切值"
+	;
+
+string_function
+	:	"ascii"		|	"求第一个字符的ASCII码"
+	|	"char"		|	"求等值的字符"
+	|	"char_length" | "求字符串的长度"
+	|	"charindex"	|	"存在于"
+	|	"difference"  |	"求两个串的差值"
+	|	"lcase"
+	|	"left"		|	"字符串左截"
+	|	"length"	|	"求字符串总长度"
+	|	"lower" 	| 	"将字符串转为小写"
+	|	"ltrim"		|	"去掉左空格"
+	|	"patindex"	|	"求第一次出现位置"
+	|	"replace"	|	"字符串替换"
+	|	"right"		|	"字符串左截"
+	|	"rtrim"		|	"去掉右空格"
+	|	"str"		|	"数值转字符串"
+	|	"substring"	|	"字符串截取"
+	|	"upper"		|	"将字符串转为大写"
+	;
+
+datetime_function
+	:	"dateformat" |	"格式化日期"
+	|	"datename"	|	"求日期的分量值"
+	|	"datepart"	|	"求日期的分量整数值"
+	|	"datetime"	|	"转为日期时间"
+	|	"date"
+	|	"dayname"
+	|	"days"
+	|	"day"
+	|	"dow"
+	|	"hours"
+	|	"hour"
+	|	"minutes"
+	|	"minute"
+	|	"monthname"
+	|	"months"
+	|	"month"
+	|	"now"		|	"取当前日期时间"
+	|	"quarter"
+	|	"seconds"
+	|	"second"
+	|	"today"		|	"取当前日期"
+	|	"weeks"
+	|	"week"
+	|	"years"
+	|	"year"
+	|	"getdate"	|	"求当前日期时间"
+	|	"dateadd"	|	"日期相加"
+	|	"datediff"	|	"日期相减"
+	;
+
+conversion_function
+	:	"convert"	|	"字符转为日期"
+	|	"hextoint"	|	"十六进制转为整数"
+	|	"inttohex"	|	"整数转为十六进制"
+	|	"isdate"	|	"是日期型"
+	|	"isnumeric"	|	"是数值型"
+	;
+
+system_function
+	:	"suser_id"
+	|	"suser_name"
+	|	"user_id"
+	|	"user_name"
+	;
+
+// This is not being used currently (eg. Oracle), but might be useful at some point.
+other_function
+	:		"decode"
+	| 	"dump"
+	| 	"greatest"
+	| 	"least"
+	| 	"nvl"
+	|		"vsize"
 	;
 
 //包含运算符
@@ -802,27 +913,150 @@ one_arg_op
 two_arg_op
 	:	TWO_ARG_OP | STAR | MINUS
 	|	"与" | "或" | "异或" | "加" | "减" | "乘" | "除" | "求模";
+
+//function_name
+//	:	"sqrt" 		| 	"求平方根"
+//	|	"getdate" 	| 	"求当前日期时间"
+//	|	"abs" 		| 	"求绝对值"
+//	|	"acos"		|	"求余弦值"
+//	|	"substring" | 	"字符串截取"
+//	|	"round"		|	"格式化数值"
+//	|	"right" 	| 	"字符串右截"
+//	|	"ltrim"		|	"去掉左空格"
+//	|	"rtrim"		|	"去掉右空格"
+//	|	"char_length" | "求字符串的长度"
+//	|	"floor"		|	"求四舍后的整数"
+//	|	"ceiling"	|	"求五入后的整数"
+//	|	"lower" 	| 	"将字符串转为小写"
+//	|	"charindex"	|	"存在于"
+//	|	"str" 		| 	"数值转字符串"
+//	|	"sum" 		| 	"求和"
+//	|	"avg" 		| 	"求平均数"
+//	|	"max" 		| 	"求最大值"
+//	|	"min" 		| 	"求最小值"
+//	|	"count" 	| 	"求记录数"
+//	;
+
 function_name
-	:	"sqrt" 		| 	"求平方根"
-	|	"getdate" 	| 	"求当前日期时间"
-	|	"abs" 		| 	"求绝对值"
-	|	"substring" | 	"字符串截取"
-	|	"round"		|	"格式化数值"
-	|	"right" 	| 	"字符串右截"
-	|	"ltrim"		|	"去掉左空格"
-	|	"rtrim"		|	"去掉右空格"
-	|	"char_length" | "求字符串的长度"
-	|	"floor"		|	"求四舍后的整数"
-	|	"ceiling"	|	"求五入后的整数"
-	|	"lower" 	| 	"将字符串转为小写"
-	|	"charindex"	|	"存在于"
-	|	"str" 		| 	"数值转字符串"
-	|	"sum" 		| 	"求和"
-	|	"avg" 		| 	"求平均数"
-	|	"max" 		| 	"求最大值"
-	|	"min" 		| 	"求最小值"
-	|	"count" 	| 	"求记录数"
+	:	aggregate_func_name
+	|	number_function
+	|	string_function
+	|	datetime_function
+	|	conversion_function
+	|	system_function
+	|	other_function
 	;
+
+aggregate_func_name
+	:	"sum" 	| "求和"
+	|	"avg" 	| "求平均数"
+	|	"max" 	| "求最大值"
+	|	"min" 	| "求最小值"
+	|	"count" | "求记录数"
+	;
+
+number_function
+	:	"abs" 		| 	"取绝对值"
+	|	"acos"		|	"求值的余弦角"
+	|	"asin"		|	"求值的正弦角"
+	|	"atan"		|	"求值的正切角"
+	|	"atin2"		|	"求值的正弦和余弦角"
+	|	"ceiling"	|	"求五入后的整数"
+	|	"cos"		|	"求角的余弦值"
+	|	"cot"		|	"求角的余切值"
+	|	"degrees"	|	"求弧度数的角大小"
+	|	"exp"		|	"求幂值"
+	|	"floor"		|	"求四舍后的整数"
+	|	"log"		|	"求自然对数"
+	|	"log10"		|	"求10为底的对数"
+	|	"mod"		|	"求模"
+	|	"pi"		|	"求PI"
+	|	"power"		|	"求数字的次幂值"
+	|	"radians"	|	"求度数角的弧度"
+	|	"rand"		|	"求0和1间的随机数"
+	|	"round"		|	"格式化数值"
+	|	"sign"		|	"求值的符号"
+	|	"sin"		|	"求角的正弦值"
+	|	"sqrt" 		| 	"求平方根"
+	|	"tan"		|	"求角的正切值"
+	;
+
+string_function
+	:	"ascii"		|	"求第一个字符的ASCII码"
+	|	"char"		|	"求等值的字符"
+	|	"char_length" | "求字符串的长度"
+	|	"charindex"	|	"存在于"
+	|	"difference"  |	"求两个串的差值"
+	|	"lcase"
+	|	"left"		|	"字符串左截"
+	|	"length"	|	"求字符串总长度"
+	|	"lower" 	| 	"将字符串转为小写"
+	|	"ltrim"		|	"去掉左空格"
+	|	"patindex"	|	"求第一次出现位置"
+	|	"replace"	|	"字符串替换"
+	|	"right"		|	"字符串左截"
+	|	"rtrim"		|	"去掉右空格"
+	|	"str"		|	"数值转字符串"
+	|	"substring"	|	"字符串截取"
+	|	"upper"		|	"将字符串转为大写"
+	;
+
+datetime_function
+	:	"dateformat" |	"格式化日期"
+	|	"datename"	|	"求日期的分量值"
+	|	"datepart"	|	"求日期的分量整数值"
+	|	"datetime"	|	"转为日期时间"
+	|	"date"
+	|	"dayname"
+	|	"days"
+	|	"day"
+	|	"dow"
+	|	"hours"
+	|	"hour"
+	|	"minutes"
+	|	"minute"
+	|	"monthname"
+	|	"months"
+	|	"month"
+	|	"now"		|	"取当前日期时间"
+	|	"quarter"
+	|	"seconds"
+	|	"second"
+	|	"today"		|	"取当前日期"
+	|	"weeks"
+	|	"week"
+	|	"years"
+	|	"year"
+	|	"getdate"	|	"求当前日期时间"
+	|	"dateadd"	|	"日期相加"
+	|	"datediff"	|	"日期相减"
+	;
+
+conversion_function
+	:	"convert"	|	"字符转为日期"
+	|	"hextoint"	|	"十六进制转为整数"
+	|	"inttohex"	|	"整数转为十六进制"
+	|	"isdate"	|	"是日期型"
+	|	"isnumeric"	|	"是数值型"
+	;
+
+system_function
+	:	"suser_id"
+	|	"suser_name"
+	|	"user_id"
+	|	"user_name"
+	;
+
+// This is not being used currently (eg. Oracle), but might be useful at some point.
+other_function
+	:		"decode"
+	| 	"dump"
+	| 	"greatest"
+	| 	"least"
+	| 	"nvl"
+	|		"vsize"
+	;
+
 
 //比较运算符
 comparemethod_name
