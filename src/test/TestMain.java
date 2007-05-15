@@ -222,8 +222,9 @@ public class TestMain {
           " 并且 AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 不包含 '001'" +
           " 并且 AI_94传票对照表.省/市代号 非空" +
           " 并且 字符串截取(AI_94传票对照表.省/市代号, 1, 20) 等于 '355'" + 
-          " 并且 AI_94传票对照表.省/市代号 范围 1 3" + 
+          " 并且 (AI_94传票对照表.省/市代号 范围 1 3)" + 
           " 并且 AI_94传票对照表.金额 在于(23, 12, 34, 350)" +
+          " 并且 取绝对值(-230) > 50" + 
           ")" + 
 //    str = "查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, AI_94传票对照表.货币码 作为 货币码 " +
 //        "来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 02 排序 AI_94传票对照表.省/市代号 升序";
@@ -369,10 +370,9 @@ public class TestMain {
     rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
       + "<query><ch_query_string circleType=\"1\">查询 AI_94传票对照表.省/市代号 作为 省/市代号 , AI_94传票对照表.行号 作为 行号 , 求和(AI_94传票对照表.金额) 作为 金额  来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 '0200' 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序 求和(AI_94传票对照表.金额) 升序, AI_94传票对照表.行号 降序</ch_query_string><db_info ch_name=\"AI_94传票对照表\" en_name=\"CNF\" flag=\"casdb2\" tableParam=\"CNF_table_Param\"><db_field ch_name=\"行号\" en_name=\"CNF02\" fieldParam=\"\"/><db_field ch_name=\"货币码\" en_name=\"CNF04\" fieldParam=\"\"/><db_field ch_name=\"省/市代号\" en_name=\"CNF01\" fieldParam=\"\"/><db_field ch_name=\"金额\" en_name=\"CNF03\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"省/市代号\" enAlias=\"enAlias0\"/><aliasListVO alias=\"行号\" enAlias=\"enAlias1\"/><aliasListVO alias=\"金额\" enAlias=\"enAlias2\"/></aliasListEqu><orderAliasListEqu/></query>";
     rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-       + "<query><ch_query_string circleType=\"2\">查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, 求和(AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF_AS_D 条件 AI_94传票对照表.省/市代号 等于 {机构变量} 并且 求平方根(AI_94传票对照表.金额) 大于 40 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序  金额 升序, AI_94传票对照表.行号 降序</ch_query_string><db_info ch_name=\"AI_94传票对照表\" en_name=\"CNF\" flag=\"\" tableParam=\"\"><db_field ch_name=\"行号\" en_name=\"CNF02\" fieldParam=\"\"/><db_field ch_name=\"货币码\" en_name=\"CNF04\" fieldParam=\"\"/><db_field ch_name=\"省/市代号\" en_name=\"CNF01\" fieldParam=\"\"/><db_field ch_name=\"金额\" en_name=\"CNF03\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"省/市代号\" enAlias=\"enAlias0\"/><aliasListVO alias=\"行号\" enAlias=\"enAlias1\"/><aliasListVO alias=\"金额\" enAlias=\"enAlias2\"/></aliasListEqu><tableAliasListEqu><tableAliasListVO alias=\"CNF_AS_D\" enAlias=\"CNF20070101\"/></tableAliasListEqu><orderAliasListEqu><orderAliasListVO alias=\"金额\" enAlias=\"enOrderAlias0\"/></orderAliasListEqu></query>";
+       + "<query><ch_query_string>查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, 求和(AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF, AI_94传票对照表 作为 标2 条件 非 ( ( AI_94传票对照表.金额 大于 5000 或者 AI_94传票对照表.金额 &lt; -9000 ) 或者 ( AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 不包含 '001' ) 并且 ( AI_94传票对照表.金额 加 50 ) 大于 -50000 并且 数值转字符串(AI_94传票对照表.金额) 等于 -5 并且 AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 不包含 '001' 并且 AI_94传票对照表.省/市代号 非空 并且 字符串截取(AI_94传票对照表.省/市代号, 1, 20) 等于 '355' 并且 AI_94传票对照表.省/市代号 范围 1 3 并且 AI_94传票对照表.金额 在于 (23, 12, 34, 350) ) 分组 数值转字符串(AI_94传票对照表.行号), 求平方根(AI_94传票对照表.省/市代号), AI_94传票对照表.行号, 字符串截取(AI_94传票对照表.金额, 1, 3) 排序 AI_94传票对照表.行号 降序, 金额 降序, AI_94传票对照表.行号 降序</ch_query_string><db_info ch_name=\"AI_94传票对照表\" en_name=\"CNF\" flag=\"\" tableParam=\"\"><db_field ch_name=\"省/市代号\" en_name=\"CNF01\" fieldParam=\"\"/><db_field ch_name=\"行号\" en_name=\"CNF02\" fieldParam=\"\"/><db_field ch_name=\"金额\" en_name=\"CNF03\" fieldParam=\"\"/><db_field ch_name=\"货币码\" en_name=\"CNF04\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"省/市代号\" enAlias=\"enAlias0\"/><aliasListVO alias=\"行号\" enAlias=\"enAlias1\"/><aliasListVO alias=\"金额\" enAlias=\"enAlias2\"/></aliasListEqu><tableAliasListEqu><tableAliasListVO alias=\"CNF\" enAlias=\"CNF20070101\"/><tableAliasListVO alias=\"标2\" enAlias=\"CNF20070101\"/></tableAliasListEqu><orderAliasListEqu><orderAliasListVO alias=\"金额\" enAlias=\"enOrderAlias0\"/></orderAliasListEqu></query>";
     try{
       QueryModel m = t1.loadModelFromXML(rXML);
-      /*
       t1.setAliasModelListVOArrByXML();
       t1.setTableAliasModelListVOArrByXML();
       t1.setOrderAliasModelListVOArrByXML();
@@ -407,7 +407,6 @@ public class TestMain {
       System.out.println(m.getEnString());
       System.out.println(m.getExecuteEnString("xxx"));
       System.out.println(t1.getXmlString());
-      */
     }catch (DocumentException e){
       e.printStackTrace();
     }
