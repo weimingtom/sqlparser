@@ -85,8 +85,8 @@ public class QueryModel {
       CommonAST ast = (CommonAST)p.getAST();
       T t = new T();
       //TODO Visible ASTFrame
-//      ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
-//      _ASTFrame.setVisible(true);
+      ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+      _ASTFrame.setVisible(true);
       model = t.statement(ast);
     } catch (ANTLRException e) {
       exs.add(e);
@@ -486,31 +486,33 @@ public class QueryModel {
   private ChWrongMessage translateException(ANTLRException exception) {
     ChWrongMessage ret=null;
     if (exception instanceof CharStreamIOException)
-      ret=translateException((CharStreamIOException)exception);
+      ret = translateException((CharStreamIOException)exception);
     else if (exception instanceof MismatchedCharException)
-      ret=translateException((MismatchedCharException)exception);
+      ret = translateException((MismatchedCharException)exception);
     else if (exception instanceof MismatchedTokenException)
-      ret=translateException((MismatchedTokenException)exception);
+      ret = translateException((MismatchedTokenException)exception);
     else if (exception instanceof NoViableAltException)
-      ret=translateException((NoViableAltException)exception);
+      ret = translateException((NoViableAltException)exception);
     else if (exception instanceof NoViableAltForCharException)
-      ret=translateException((NoViableAltForCharException)exception);
+      ret = translateException((NoViableAltForCharException)exception);
     else if (exception instanceof SemanticException)
-      ret=translateException((SemanticException)exception);
+      ret = translateException((SemanticException)exception);
     else if (exception instanceof TokenStreamIOException)
-      ret=translateException((TokenStreamIOException)exception);
+      ret = translateException((TokenStreamIOException)exception);
     else if (exception instanceof TokenStreamRecognitionException)
-      ret=translateException((TokenStreamRecognitionException)exception);
+      ret = translateException((TokenStreamRecognitionException)exception);
     else if (exception instanceof TokenStreamRetryException)
-      ret=translateException((TokenStreamRetryException)exception);
+      ret = translateException((TokenStreamRetryException)exception);
+    else if (exception instanceof TableNumberException)
+    	ret = translateException((TableNumberException)exception);
     else if (exception instanceof NoSuchTableException)
-      ret=translateException((NoSuchTableException)exception);
+      ret = translateException((NoSuchTableException)exception);
     else if (exception instanceof NoSuchFieldException)
-      ret=translateException((NoSuchFieldException)exception);
+      ret = translateException((NoSuchFieldException)exception);
     else if (exception instanceof TableNotInFromClause)
-      ret=translateException((TableNotInFromClause)exception);
+      ret = translateException((TableNotInFromClause)exception);
     else
-      ret=translateException((Exception)exception);
+      ret = translateException((Exception)exception);
     return ret;
   }
   
@@ -653,6 +655,18 @@ public class QueryModel {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(exception.getMessage());
     msg.setLine(5);
+    return msg;
+  }
+  
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息（表的个数不存在）
+   * @return ChWrongMessage 错误信息对象
+   */
+  private ChWrongMessage translateException(TableNumberException exception) {
+  	ChWrongMessage msg = new ChWrongMessage();
+    msg.setMessage("表的个数不一致：需要的表的个数为"+ exception.getExistTableNumber() + 
+    		"，而实际传入的表的个数为" + exception.getInputTableNumber() + "。");
     return msg;
   }
   
