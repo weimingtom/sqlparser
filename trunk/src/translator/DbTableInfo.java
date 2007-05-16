@@ -8,12 +8,13 @@ import model.parser.DbTableModel;
 import org.dom4j.Element;
 
 public class DbTableInfo {
+	//tables Map采用双向链表的LinkedHashMap方式存储，保证表名、字段名的顺序
   private Map tables = new LinkedHashMap();
   class Table {
     String enName;
     String flag;
     String tableParam;
-    Map fields = new HashMap();
+    Map fields = new LinkedHashMap();
   }
   
   class Field {
