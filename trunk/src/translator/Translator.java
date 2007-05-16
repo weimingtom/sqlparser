@@ -36,6 +36,7 @@ import model.parser.TableCompareModel;
 import model.parser.TableListModel;
 import model.parser.TableModel;
 import model.parser.TableNotInFromClause;
+import model.parser.TableNumberException;
 import model.parser.TableUnionModel;
 
 /**
@@ -253,7 +254,7 @@ public class Translator {
   public void updateDbTables(Translator t, DbTable[] ts) {
     if (t.getQueryModel() instanceof TableUnionModel){  //如果为表合并（追加）
       AppDbTable[] _appDbTablesArr = t.info.getDbTableInfoToAppTableArr();
-      if (_appDbTablesArr.length == ts.length){
+      if (_appDbTablesArr.length >= ts.length){
         
         for (int i = 0; i < ts.length; i++) {
           DbTable _dbTable = ts[i];
@@ -284,6 +285,8 @@ public class Translator {
           
         }
         
+      }else{
+      	model.addException(new TableNumberException(ts.length, _appDbTablesArr.length));
       }
     }else{  //如果为常规语句或者比较语句
       for (int i = 0; i < ts.length; i++) {
