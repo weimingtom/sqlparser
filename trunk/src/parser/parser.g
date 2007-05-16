@@ -41,11 +41,23 @@ statement
 	;
 
 tableUnion
-	:	("t_union"^|"\u8868\u5408\u5e76"^) table_name COMMA! table_name
+	:	("t_union"^|"\u8868\u5408\u5e76"^) table_lists
+	;
+
+table_lists
+	:	table_name (COMMA^ table_name)+
 	;
 
 tableCompare
 	:	("t_compare"^|"\u8868\u6bd4\u8f83"^) table_name COMMA! table_name ("where"!|"\u6761\u4ef6"!) comparemethod_name search_condition
+	;
+
+left_join_statement
+	:	("select"^|"\u67e5\u8be2"^) ("distinct"^|"\u552f\u4e00"^)? select_list
+		("from"^|"\u6765\u81ea"^) table_name (("left" "join") | "\u5de6\u8fde\u63a5") table_name
+		(("where"^|"\u6761\u4ef6"^) search_condition)?
+		(("group"^ "by"!|"\u5206\u7ec4"^) aggregate_expression_list)?
+		(("order"^ "by"!|"\u6392\u5e8f"^) order_expression_list)?
 	;
 
 select_statement
@@ -571,12 +583,15 @@ statement returns [QueryModel model]
 	TableUnionModel union = new TableUnionModel(); 
 	TableModel tableModel1, tableModel2;
 	TableCompareModel tableCompare = new TableCompareModel();
+	TableListModel t1;
 	SearchConditionModel cond;
 }
-	:	#("\u8868\u5408\u5e76" tableModel1 = table_name tableModel2 = table_name)
+	:	#("\u8868\u5408\u5e76" t1 = tableUnionList)
+		//#("\u8868\u5408\u5e76" tableModel1 = table_name tableModel2 = table_name)
 		{
-			union.addTableModel1(tableModel1);
-			union.addTableModel2(tableModel2);
+			union.addTableListModel(t1);
+			//union.addTableModel1(tableModel1);
+			//union.addTableModel2(tableModel2);
 			model = union;
 		}
 	|	#("\u8868\u6bd4\u8f83" tableModel1 = table_name tableModel2 = table_name method = compare_method cond = search_condition)
@@ -589,6 +604,20 @@ statement returns [QueryModel model]
 		}
 	|	#(SELECT_STATEMENT model=select_statement)
 	;
+
+tableUnionList returns [TableListModel model]
+{
+	model = new TableListModel();
+	TableModel t;
+	TableListModel m1, m2;
+	
+}
+	: 	#(COMMA m1=tableUnionList m2=tableUnionList)
+		{model.addChild(m1); model.addChild(m2);}
+	|	t = table_name
+		{model.addTable(t);}
+	;
+
 
 compare_method returns [String rValue]
 	{rValue = "";}

@@ -41,11 +41,23 @@ statement
 	;
 
 tableUnion
-	:	("t_union"^|"表合并"^) table_name COMMA! table_name
+	:	("t_union"^|"表合并"^) table_lists
+	;
+
+table_lists
+	:	table_name (COMMA^ table_name)+
 	;
 
 tableCompare
 	:	("t_compare"^|"表比较"^) table_name COMMA! table_name ("where"!|"条件"!) comparemethod_name search_condition
+	;
+
+left_join_statement
+	:	("select"^|"查询"^) ("distinct"^|"唯一"^)? select_list
+		("from"^|"来自"^) table_name (("left" "join") | "左连接") table_name
+		(("where"^|"条件"^) search_condition)?
+		(("group"^ "by"!|"分组"^) aggregate_expression_list)?
+		(("order"^ "by"!|"排序"^) order_expression_list)?
 	;
 
 select_statement
@@ -571,12 +583,15 @@ statement returns [QueryModel model]
 	TableUnionModel union = new TableUnionModel(); 
 	TableModel tableModel1, tableModel2;
 	TableCompareModel tableCompare = new TableCompareModel();
+	TableListModel t1;
 	SearchConditionModel cond;
 }
-	:	#("表合并" tableModel1 = table_name tableModel2 = table_name)
+	:	#("表合并" t1 = tableUnionList)
+		//#("表合并" tableModel1 = table_name tableModel2 = table_name)
 		{
-			union.addTableModel1(tableModel1);
-			union.addTableModel2(tableModel2);
+			union.addTableListModel(t1);
+			//union.addTableModel1(tableModel1);
+			//union.addTableModel2(tableModel2);
 			model = union;
 		}
 	|	#("表比较" tableModel1 = table_name tableModel2 = table_name method = compare_method cond = search_condition)
@@ -589,6 +604,20 @@ statement returns [QueryModel model]
 		}
 	|	#(SELECT_STATEMENT model=select_statement)
 	;
+
+tableUnionList returns [TableListModel model]
+{
+	model = new TableListModel();
+	TableModel t;
+	TableListModel m1, m2;
+	
+}
+	: 	#(COMMA m1=tableUnionList m2=tableUnionList)
+		{model.addChild(m1); model.addChild(m2);}
+	|	t = table_name
+		{model.addTable(t);}
+	;
+
 
 compare_method returns [String rValue]
 	{rValue = "";}
