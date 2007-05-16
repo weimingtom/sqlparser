@@ -311,12 +311,12 @@ system_function
 
 // This is not being used currently (eg. Oracle), but might be useful at some point.
 other_function
-	:		"decode"
+	:	"decode"
 	| 	"dump"
 	| 	"greatest"
 	| 	"least"
 	| 	"nvl"
-	|		"vsize"
+	|	"vsize"
 	;
 
 //包含运算符
@@ -1049,12 +1049,12 @@ system_function
 
 // This is not being used currently (eg. Oracle), but might be useful at some point.
 other_function
-	:		"decode"
+	:	"decode"
 	| 	"dump"
 	| 	"greatest"
 	| 	"least"
 	| 	"nvl"
-	|		"vsize"
+	|	"vsize"
 	;
 
 
