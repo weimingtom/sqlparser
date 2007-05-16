@@ -117,7 +117,7 @@ public T() {
 			switch ( _t.getType()) {
 			case LITERAL_as:
 			{
-				AST __t192 = _t;
+				AST __t209 = _t;
 				AST tmp3_AST_in = (AST)_t;
 				match(_t,LITERAL_as);
 				_t = _t.getFirstChild();
@@ -125,29 +125,29 @@ public T() {
 				_t = _retTree;
 				a=alias(_t);
 				_t = _retTree;
-				_t = __t192;
+				_t = __t209;
 				_t = _t.getNextSibling();
 				model.addExpression(e); model.addAlias(a);
 				break;
 			}
-			case 45:
+			case 48:
 			{
-				AST __t193 = _t;
+				AST __t210 = _t;
 				AST tmp4_AST_in = (AST)_t;
-				match(_t,45);
+				match(_t,48);
 				_t = _t.getFirstChild();
 				e=expression(_t);
 				_t = _retTree;
 				a=alias(_t);
 				_t = _retTree;
-				_t = __t193;
+				_t = __t210;
 				_t = _t.getNextSibling();
 				model.addExpression(e); model.addAlias(a);
 				break;
 			}
 			case ALIAS_EQU:
 			{
-				AST __t194 = _t;
+				AST __t211 = _t;
 				AST tmp5_AST_in = (AST)_t;
 				match(_t,ALIAS_EQU);
 				_t = _t.getFirstChild();
@@ -155,7 +155,7 @@ public T() {
 				_t = _retTree;
 				e=expression(_t);
 				_t = _retTree;
-				_t = __t194;
+				_t = __t211;
 				_t = _t.getNextSibling();
 				model.addExpression(e); model.addAlias(a);
 				break;
@@ -197,7 +197,7 @@ public T() {
 			switch ( _t.getType()) {
 			case LITERAL_and:
 			{
-				AST __t180 = _t;
+				AST __t197 = _t;
 				o1 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,LITERAL_and);
 				_t = _t.getFirstChild();
@@ -205,14 +205,14 @@ public T() {
 				_t = _retTree;
 				m2=search_condition(_t);
 				_t = _retTree;
-				_t = __t180;
+				_t = __t197;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addOperator(o1.getText()); model.addChild(m2);
 				break;
 			}
 			case LITERAL_or:
 			{
-				AST __t181 = _t;
+				AST __t198 = _t;
 				o2 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,LITERAL_or);
 				_t = _t.getFirstChild();
@@ -220,63 +220,63 @@ public T() {
 				_t = _retTree;
 				m2=search_condition(_t);
 				_t = _retTree;
-				_t = __t181;
+				_t = __t198;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addOperator(o2.getText()); model.addChild(m2);
 				break;
 			}
-			case 40:
+			case 43:
 			{
-				AST __t182 = _t;
+				AST __t199 = _t;
 				o3 = _t==ASTNULL ? null :(AST)_t;
-				match(_t,40);
+				match(_t,43);
 				_t = _t.getFirstChild();
 				m1=search_condition(_t);
 				_t = _retTree;
 				m2=search_condition(_t);
 				_t = _retTree;
-				_t = __t182;
+				_t = __t199;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addOperator(o3.getText()); model.addChild(m2);
 				break;
 			}
-			case 41:
+			case 44:
 			{
-				AST __t183 = _t;
+				AST __t200 = _t;
 				o4 = _t==ASTNULL ? null :(AST)_t;
-				match(_t,41);
+				match(_t,44);
 				_t = _t.getFirstChild();
 				m1=search_condition(_t);
 				_t = _retTree;
 				m2=search_condition(_t);
 				_t = _retTree;
-				_t = __t183;
+				_t = __t200;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addOperator(o4.getText()); model.addChild(m2);
 				break;
 			}
 			case LOGIC_BLOCK:
 			{
-				AST __t184 = _t;
+				AST __t201 = _t;
 				AST tmp6_AST_in = (AST)_t;
 				match(_t,LOGIC_BLOCK);
 				_t = _t.getFirstChild();
 				m3=search_condition(_t);
 				_t = _retTree;
-				_t = __t184;
+				_t = __t201;
 				_t = _t.getNextSibling();
 				model.addOperator("("); model.addChild(m3); model.addOperator(")");
 				break;
 			}
-			case 37:
+			case 40:
 			{
-				AST __t186 = _t;
+				AST __t203 = _t;
 				o12 = _t==ASTNULL ? null :(AST)_t;
-				match(_t,37);
+				match(_t,40);
 				_t = _t.getFirstChild();
 				m5=search_condition(_t);
 				_t = _retTree;
-				_t = __t186;
+				_t = __t203;
 				_t = _t.getNextSibling();
 				model.addOperator(o12.getText()); model.addChild(m5);
 				break;
@@ -284,13 +284,13 @@ public T() {
 			default:
 				if (_t==null) _t=ASTNULL;
 				if ((_t.getType()==LITERAL_not)) {
-					AST __t185 = _t;
+					AST __t202 = _t;
 					o11 = _t==ASTNULL ? null :(AST)_t;
 					match(_t,LITERAL_not);
 					_t = _t.getFirstChild();
 					m4=search_condition(_t);
 					_t = _retTree;
-					_t = __t185;
+					_t = __t202;
 					_t = _t.getNextSibling();
 					model.addOperator(o11.getText()); model.addChild(m4);
 				}
@@ -323,7 +323,7 @@ public T() {
 			switch ( _t.getType()) {
 			case SEMI:
 			{
-				AST __t156 = _t;
+				AST __t171 = _t;
 				AST tmp7_AST_in = (AST)_t;
 				match(_t,SEMI);
 				_t = _t.getFirstChild();
@@ -331,7 +331,7 @@ public T() {
 				_t = _retTree;
 				s2=statements(_t);
 				_t = _retTree;
-				_t = __t156;
+				_t = __t171;
 				_t = _t.getNextSibling();
 				model.addChild(s1); model.addChild(s2);
 				break;
@@ -369,6 +369,7 @@ public T() {
 			TableUnionModel union = new TableUnionModel(); 
 			TableModel tableModel1, tableModel2;
 			TableCompareModel tableCompare = new TableCompareModel();
+			TableListModel t1;
 			SearchConditionModel cond;
 		
 		
@@ -377,26 +378,25 @@ public T() {
 			switch ( _t.getType()) {
 			case 19:
 			{
-				AST __t158 = _t;
+				AST __t173 = _t;
 				AST tmp8_AST_in = (AST)_t;
 				match(_t,19);
 				_t = _t.getFirstChild();
-				tableModel1=table_name(_t);
+				t1=tableUnionList(_t);
 				_t = _retTree;
-				tableModel2=table_name(_t);
-				_t = _retTree;
-				_t = __t158;
+				_t = __t173;
 				_t = _t.getNextSibling();
 				
-							union.addTableModel1(tableModel1);
-							union.addTableModel2(tableModel2);
+							union.addTableListModel(t1);
+							//union.addTableModel1(tableModel1);
+							//union.addTableModel2(tableModel2);
 							model = union;
 						
 				break;
 			}
 			case 22:
 			{
-				AST __t159 = _t;
+				AST __t174 = _t;
 				AST tmp9_AST_in = (AST)_t;
 				match(_t,22);
 				_t = _t.getFirstChild();
@@ -408,7 +408,7 @@ public T() {
 				_t = _retTree;
 				cond=search_condition(_t);
 				_t = _retTree;
-				_t = __t159;
+				_t = __t174;
 				_t = _t.getNextSibling();
 					
 							tableCompare.addTableModel1(tableModel1);
@@ -421,14 +421,66 @@ public T() {
 			}
 			case SELECT_STATEMENT:
 			{
-				AST __t160 = _t;
+				AST __t175 = _t;
 				AST tmp10_AST_in = (AST)_t;
 				match(_t,SELECT_STATEMENT);
 				_t = _t.getFirstChild();
 				model=select_statement(_t);
 				_t = _retTree;
-				_t = __t160;
+				_t = __t175;
 				_t = _t.getNextSibling();
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+		return model;
+	}
+	
+	public final TableListModel  tableUnionList(AST _t) throws RecognitionException {
+		TableListModel model;
+		
+		AST tableUnionList_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		
+			model = new TableListModel();
+			TableModel t;
+			TableListModel m1, m2;
+			
+		
+		
+		try {      // for error handling
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case COMMA:
+			{
+				AST __t177 = _t;
+				AST tmp11_AST_in = (AST)_t;
+				match(_t,COMMA);
+				_t = _t.getFirstChild();
+				m1=tableUnionList(_t);
+				_t = _retTree;
+				m2=tableUnionList(_t);
+				_t = _retTree;
+				_t = __t177;
+				_t = _t.getNextSibling();
+				model.addChild(m1); model.addChild(m2);
+				break;
+			}
+			case LITERAL_as:
+			case 48:
+			case ID:
+			{
+				t=table_name(_t);
+				_t = _retTree;
+				model.addTable(t);
 				break;
 			}
 			default:
@@ -467,8 +519,8 @@ public T() {
 			}
 			case LITERAL_as:
 			{
-				AST __t235 = _t;
-				AST tmp11_AST_in = (AST)_t;
+				AST __t252 = _t;
+				AST tmp12_AST_in = (AST)_t;
 				match(_t,LITERAL_as);
 				_t = _t.getFirstChild();
 				t1 = (AST)_t;
@@ -476,23 +528,23 @@ public T() {
 				_t = _t.getNextSibling();
 				ta=tableAlias(_t);
 				_t = _retTree;
-				_t = __t235;
+				_t = __t252;
 				_t = _t.getNextSibling();
 				model = new TableModel(t1.getText()); model.setAlias(ta);
 				break;
 			}
-			case 45:
+			case 48:
 			{
-				AST __t236 = _t;
-				AST tmp12_AST_in = (AST)_t;
-				match(_t,45);
+				AST __t253 = _t;
+				AST tmp13_AST_in = (AST)_t;
+				match(_t,48);
 				_t = _t.getFirstChild();
 				t2 = (AST)_t;
 				match(_t,ID);
 				_t = _t.getNextSibling();
 				ta=tableAlias(_t);
 				_t = _retTree;
-				_t = __t236;
+				_t = __t253;
 				_t = _t.getNextSibling();
 				model = new TableModel(t2.getText()); model.setAlias(ta);
 				break;
@@ -551,176 +603,176 @@ public T() {
 			switch ( _t.getType()) {
 			case 28:
 			{
-				AST __t163 = _t;
-				AST tmp13_AST_in = (AST)_t;
+				AST __t180 = _t;
+				AST tmp14_AST_in = (AST)_t;
 				match(_t,28);
 				_t = _t.getFirstChild();
 				select(_t);
 				_t = _retTree;
 				sl=select_list(_t);
 				_t = _retTree;
-				_t = __t163;
+				_t = __t180;
 				_t = _t.getNextSibling();
 				sl.setDistinct(true); model.setSelectList(sl);
 				break;
 			}
 			case LITERAL_distinct:
 			{
-				AST __t164 = _t;
-				AST tmp14_AST_in = (AST)_t;
+				AST __t181 = _t;
+				AST tmp15_AST_in = (AST)_t;
 				match(_t,LITERAL_distinct);
 				_t = _t.getFirstChild();
 				select(_t);
 				_t = _retTree;
 				sl=select_list(_t);
 				_t = _retTree;
-				_t = __t164;
+				_t = __t181;
 				_t = _t.getNextSibling();
 				sl.setDistinct(true); model.setSelectList(sl);
 				break;
 			}
 			case 26:
 			{
-				AST __t165 = _t;
-				AST tmp15_AST_in = (AST)_t;
+				AST __t182 = _t;
+				AST tmp16_AST_in = (AST)_t;
 				match(_t,26);
 				_t = _t.getFirstChild();
 				sl=select_list(_t);
 				_t = _retTree;
-				_t = __t165;
+				_t = __t182;
 				_t = _t.getNextSibling();
 				model.setSelectList(sl);
 				break;
 			}
 			case LITERAL_select:
 			{
-				AST __t166 = _t;
-				AST tmp16_AST_in = (AST)_t;
+				AST __t183 = _t;
+				AST tmp17_AST_in = (AST)_t;
 				match(_t,LITERAL_select);
 				_t = _t.getFirstChild();
 				sl=select_list(_t);
 				_t = _retTree;
-				_t = __t166;
+				_t = __t183;
 				_t = _t.getNextSibling();
 				model.setSelectList(sl);
 				break;
 			}
 			case 30:
 			{
-				AST __t167 = _t;
-				AST tmp17_AST_in = (AST)_t;
+				AST __t184 = _t;
+				AST tmp18_AST_in = (AST)_t;
 				match(_t,30);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
 				tl=table_list(_t);
 				_t = _retTree;
-				_t = __t167;
+				_t = __t184;
 				_t = _t.getNextSibling();
 				model.addChild(s); model.setTableList(tl);
 				break;
 			}
 			case LITERAL_from:
 			{
-				AST __t168 = _t;
-				AST tmp18_AST_in = (AST)_t;
+				AST __t185 = _t;
+				AST tmp19_AST_in = (AST)_t;
 				match(_t,LITERAL_from);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
 				tl=table_list(_t);
 				_t = _retTree;
-				_t = __t168;
+				_t = __t185;
 				_t = _t.getNextSibling();
 				model.addChild(s); model.setTableList(tl);
 				break;
 			}
 			case 24:
 			{
-				AST __t169 = _t;
-				AST tmp19_AST_in = (AST)_t;
+				AST __t186 = _t;
+				AST tmp20_AST_in = (AST)_t;
 				match(_t,24);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
 				cond=search_condition(_t);
 				_t = _retTree;
-				_t = __t169;
+				_t = __t186;
 				_t = _t.getNextSibling();
 				model.addChild(s); model.setSearchCondition(cond);
 				break;
 			}
 			case LITERAL_where:
 			{
-				AST __t170 = _t;
-				AST tmp20_AST_in = (AST)_t;
+				AST __t187 = _t;
+				AST tmp21_AST_in = (AST)_t;
 				match(_t,LITERAL_where);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
 				cond=search_condition(_t);
 				_t = _retTree;
-				_t = __t170;
+				_t = __t187;
 				_t = _t.getNextSibling();
 				model.addChild(s); model.setSearchCondition(cond);
 				break;
 			}
-			case 33:
+			case 36:
 			{
-				AST __t171 = _t;
-				AST tmp21_AST_in = (AST)_t;
-				match(_t,33);
+				AST __t188 = _t;
+				AST tmp22_AST_in = (AST)_t;
+				match(_t,36);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
 				group=aggregate_expression_list(_t);
 				_t = _retTree;
-				_t = __t171;
+				_t = __t188;
 				_t = _t.getNextSibling();
 				model.addChild(s); model.setGroupExpressionList(group);
 				break;
 			}
 			case LITERAL_group:
 			{
-				AST __t172 = _t;
-				AST tmp22_AST_in = (AST)_t;
+				AST __t189 = _t;
+				AST tmp23_AST_in = (AST)_t;
 				match(_t,LITERAL_group);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
 				group=aggregate_expression_list(_t);
 				_t = _retTree;
-				_t = __t172;
+				_t = __t189;
 				_t = _t.getNextSibling();
 				model.addChild(s); model.setGroupExpressionList(group);
 				break;
 			}
-			case 35:
+			case 38:
 			{
-				AST __t173 = _t;
-				AST tmp23_AST_in = (AST)_t;
-				match(_t,35);
+				AST __t190 = _t;
+				AST tmp24_AST_in = (AST)_t;
+				match(_t,38);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
 				order=order_expression_list(_t);
 				_t = _retTree;
-				_t = __t173;
+				_t = __t190;
 				_t = _t.getNextSibling();
 				model.addChild(s); model.setOrderExpressionList(order);
 				break;
 			}
 			case LITERAL_order:
 			{
-				AST __t174 = _t;
-				AST tmp24_AST_in = (AST)_t;
+				AST __t191 = _t;
+				AST tmp25_AST_in = (AST)_t;
 				match(_t,LITERAL_order);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
 				order=order_expression_list(_t);
 				_t = _retTree;
-				_t = __t174;
+				_t = __t191;
 				_t = _t.getNextSibling();
 				model.addChild(s); model.setOrderExpressionList(order);
 				break;
@@ -746,31 +798,31 @@ public T() {
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			switch ( _t.getType()) {
-			case 236:
-			{
-				AST tmp25_AST_in = (AST)_t;
-				match(_t,236);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 237:
+			case 238:
 			{
 				AST tmp26_AST_in = (AST)_t;
-				match(_t,237);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_exists:
-			{
-				AST tmp27_AST_in = (AST)_t;
-				match(_t,LITERAL_exists);
+				match(_t,238);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 239:
 			{
-				AST tmp28_AST_in = (AST)_t;
+				AST tmp27_AST_in = (AST)_t;
 				match(_t,239);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_exists:
+			{
+				AST tmp28_AST_in = (AST)_t;
+				match(_t,LITERAL_exists);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 241:
+			{
+				AST tmp29_AST_in = (AST)_t;
+				match(_t,241);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -796,14 +848,14 @@ public T() {
 			switch ( _t.getType()) {
 			case 26:
 			{
-				AST tmp29_AST_in = (AST)_t;
+				AST tmp30_AST_in = (AST)_t;
 				match(_t,26);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_select:
 			{
-				AST tmp30_AST_in = (AST)_t;
+				AST tmp31_AST_in = (AST)_t;
 				match(_t,LITERAL_select);
 				_t = _t.getNextSibling();
 				break;
@@ -834,15 +886,15 @@ public T() {
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			if ((_t.getType()==COMMA)) {
-				AST __t176 = _t;
-				AST tmp31_AST_in = (AST)_t;
+				AST __t193 = _t;
+				AST tmp32_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
 				m1=select_list(_t);
 				_t = _retTree;
 				m2=select_list(_t);
 				_t = _retTree;
-				_t = __t176;
+				_t = __t193;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addChild(m2);
 			}
@@ -875,21 +927,21 @@ public T() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t178 = _t;
-				AST tmp32_AST_in = (AST)_t;
+				AST __t195 = _t;
+				AST tmp33_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
 				m1=table_list(_t);
 				_t = _retTree;
 				m2=table_list(_t);
 				_t = _retTree;
-				_t = __t178;
+				_t = __t195;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addChild(m2);
 				break;
 			}
 			case LITERAL_as:
-			case 45:
+			case 48:
 			case ID:
 			{
 				t=table_name(_t);
@@ -920,15 +972,15 @@ public T() {
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			if ((_t.getType()==COMMA)) {
-				AST __t188 = _t;
-				AST tmp33_AST_in = (AST)_t;
+				AST __t205 = _t;
+				AST tmp34_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
 				m1=aggregate_expression_list(_t);
 				_t = _retTree;
 				m2=aggregate_expression_list(_t);
 				_t = _retTree;
-				_t = __t188;
+				_t = __t205;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addChild(m2);
 			}
@@ -959,15 +1011,15 @@ public T() {
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			if ((_t.getType()==COMMA)) {
-				AST __t190 = _t;
-				AST tmp34_AST_in = (AST)_t;
+				AST __t207 = _t;
+				AST tmp35_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
 				m1=order_expression_list(_t);
 				_t = _retTree;
 				m2=order_expression_list(_t);
 				_t = _retTree;
-				_t = __t190;
+				_t = __t207;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addChild(m2);
 			}
@@ -1011,8 +1063,8 @@ public T() {
 			switch ( _t.getType()) {
 			case COMPARE_OP:
 			{
-				AST __t196 = _t;
-				AST tmp35_AST_in = (AST)_t;
+				AST __t213 = _t;
+				AST tmp36_AST_in = (AST)_t;
 				match(_t,COMPARE_OP);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
@@ -1022,67 +1074,67 @@ public T() {
 				_t = _retTree;
 				e2=expression(_t);
 				_t = _retTree;
-				_t = __t196;
+				_t = __t213;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(op.getText()); model.addExpression(e2);
 				break;
 			}
-			case 56:
+			case 59:
 			{
-				AST __t197 = _t;
+				AST __t214 = _t;
 				n = _t==ASTNULL ? null :(AST)_t;
-				match(_t,56);
+				match(_t,59);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
-				_t = __t197;
+				_t = __t214;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(n.getText());
 				break;
 			}
 			case LITERAL_null:
 			{
-				AST __t198 = _t;
-				AST tmp36_AST_in = (AST)_t;
+				AST __t215 = _t;
+				AST tmp37_AST_in = (AST)_t;
 				match(_t,LITERAL_null);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
-				_t = __t198;
+				_t = __t215;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator("is null");
 				break;
 			}
-			case 57:
+			case 60:
 			{
-				AST __t199 = _t;
+				AST __t216 = _t;
 				nn = _t==ASTNULL ? null :(AST)_t;
-				match(_t,57);
+				match(_t,60);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
-				_t = __t199;
+				_t = __t216;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(nn.getText());
 				break;
 			}
 			case LITERAL_not:
 			{
-				AST __t200 = _t;
+				AST __t217 = _t;
 				nn_en = _t==ASTNULL ? null :(AST)_t;
 				match(_t,LITERAL_not);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
-				_t = __t200;
+				_t = __t217;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator("is not null");
 				break;
 			}
 			case LITERAL_between:
 			{
-				AST __t201 = _t;
-				AST tmp37_AST_in = (AST)_t;
+				AST __t218 = _t;
+				AST tmp38_AST_in = (AST)_t;
 				match(_t,LITERAL_between);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
@@ -1091,17 +1143,17 @@ public T() {
 				_t = _retTree;
 				e3=expression(_t);
 				_t = _retTree;
-				_t = __t201;
+				_t = __t218;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator("between");
 					 model.addExpression(e2); model.addExpression(e3);
 				break;
 			}
-			case 59:
+			case 62:
 			{
-				AST __t202 = _t;
+				AST __t219 = _t;
 				btw = _t==ASTNULL ? null :(AST)_t;
-				match(_t,59);
+				match(_t,62);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
@@ -1109,7 +1161,7 @@ public T() {
 				_t = _retTree;
 				e3=expression(_t);
 				_t = _retTree;
-				_t = __t202;
+				_t = __t219;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(btw.getText());
 					 model.addExpression(e2); model.addExpression(e3);
@@ -1117,60 +1169,60 @@ public T() {
 			}
 			case LITERAL_in:
 			{
-				AST __t203 = _t;
-				AST tmp38_AST_in = (AST)_t;
+				AST __t220 = _t;
+				AST tmp39_AST_in = (AST)_t;
 				match(_t,LITERAL_in);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
 				e2=exp_set(_t);
 				_t = _retTree;
-				_t = __t203;
+				_t = __t220;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator("in"); model.addExpression(e2);
 				break;
 			}
-			case 62:
+			case 65:
 			{
-				AST __t204 = _t;
+				AST __t221 = _t;
 				ct1 = _t==ASTNULL ? null :(AST)_t;
-				match(_t,62);
+				match(_t,65);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
 				e2=exp_set(_t);
 				_t = _retTree;
-				_t = __t204;
+				_t = __t221;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);
 				break;
 			}
-			case 60:
-			{
-				AST __t205 = _t;
-				AST tmp39_AST_in = (AST)_t;
-				match(_t,60);
-				_t = _t.getFirstChild();
-				e1=expression(_t);
-				_t = _retTree;
-				e2=exp_set(_t);
-				_t = _retTree;
-				_t = __t205;
-				_t = _t.getNextSibling();
-				model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);
-				break;
-			}
 			case 63:
 			{
-				AST __t206 = _t;
-				ct2 = _t==ASTNULL ? null :(AST)_t;
+				AST __t222 = _t;
+				AST tmp40_AST_in = (AST)_t;
 				match(_t,63);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
 				e2=exp_set(_t);
 				_t = _retTree;
-				_t = __t206;
+				_t = __t222;
+				_t = _t.getNextSibling();
+				model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);
+				break;
+			}
+			case 66:
+			{
+				AST __t223 = _t;
+				ct2 = _t==ASTNULL ? null :(AST)_t;
+				match(_t,66);
+				_t = _t.getFirstChild();
+				e1=expression(_t);
+				_t = _retTree;
+				e2=exp_set(_t);
+				_t = _retTree;
+				_t = __t223;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);
 				break;
@@ -1201,8 +1253,8 @@ public T() {
 			switch ( _t.getType()) {
 			case TWO_ARG_OP:
 			{
-				AST __t213 = _t;
-				AST tmp40_AST_in = (AST)_t;
+				AST __t230 = _t;
+				AST tmp41_AST_in = (AST)_t;
 				match(_t,TWO_ARG_OP);
 				_t = _t.getFirstChild();
 				a1=aggregate_expression(_t);
@@ -1212,7 +1264,7 @@ public T() {
 				_t = _retTree;
 				a2=aggregate_expression(_t);
 				_t = _retTree;
-				_t = __t213;
+				_t = __t230;
 				_t = _t.getNextSibling();
 				model.addChild(a1); model.addOperator(op.getText()); model.addChild(a2);
 				break;
@@ -1256,52 +1308,52 @@ public T() {
 			switch ( _t.getType()) {
 			case LITERAL_asc:
 			{
-				AST __t215 = _t;
-				AST tmp41_AST_in = (AST)_t;
+				AST __t232 = _t;
+				AST tmp42_AST_in = (AST)_t;
 				match(_t,LITERAL_asc);
 				_t = _t.getFirstChild();
 				o=order_expression(_t);
 				_t = _retTree;
-				_t = __t215;
+				_t = __t232;
 				_t = _t.getNextSibling();
 				model.addChild(o); model.setSort(OrderExpressionModel.ASC);
 				break;
 			}
-			case 50:
+			case 53:
 			{
-				AST __t216 = _t;
-				AST tmp42_AST_in = (AST)_t;
-				match(_t,50);
+				AST __t233 = _t;
+				AST tmp43_AST_in = (AST)_t;
+				match(_t,53);
 				_t = _t.getFirstChild();
 				o=order_expression(_t);
 				_t = _retTree;
-				_t = __t216;
+				_t = __t233;
 				_t = _t.getNextSibling();
 				model.addChild(o); model.setSort(OrderExpressionModel.ASC);
 				break;
 			}
 			case LITERAL_desc:
 			{
-				AST __t217 = _t;
-				AST tmp43_AST_in = (AST)_t;
+				AST __t234 = _t;
+				AST tmp44_AST_in = (AST)_t;
 				match(_t,LITERAL_desc);
 				_t = _t.getFirstChild();
 				o=order_expression(_t);
 				_t = _retTree;
-				_t = __t217;
+				_t = __t234;
 				_t = _t.getNextSibling();
 				model.addChild(o); model.setSort(OrderExpressionModel.DESC);
 				break;
 			}
-			case 51:
+			case 54:
 			{
-				AST __t218 = _t;
-				AST tmp44_AST_in = (AST)_t;
-				match(_t,51);
+				AST __t235 = _t;
+				AST tmp45_AST_in = (AST)_t;
+				match(_t,54);
 				_t = _t.getFirstChild();
 				o=order_expression(_t);
 				_t = _retTree;
-				_t = __t218;
+				_t = __t235;
 				_t = _t.getNextSibling();
 				model.addChild(o); model.setSort(OrderExpressionModel.DESC);
 				break;
@@ -1355,8 +1407,8 @@ public T() {
 			switch ( _t.getType()) {
 			case TWO_ARG_OP:
 			{
-				AST __t222 = _t;
-				AST tmp45_AST_in = (AST)_t;
+				AST __t239 = _t;
+				AST tmp46_AST_in = (AST)_t;
 				match(_t,TWO_ARG_OP);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
@@ -1366,15 +1418,15 @@ public T() {
 				_t = _retTree;
 				e2=expression(_t);
 				_t = _retTree;
-				_t = __t222;
+				_t = __t239;
 				_t = _t.getNextSibling();
 				model.addChild(e1); model.addOperator(op.getText()); model.addChild(e2);
 				break;
 			}
 			case ONE_ARG_OP:
 			{
-				AST __t223 = _t;
-				AST tmp46_AST_in = (AST)_t;
+				AST __t240 = _t;
+				AST tmp47_AST_in = (AST)_t;
 				match(_t,ONE_ARG_OP);
 				_t = _t.getFirstChild();
 				op1 = _t==ASTNULL ? null : (AST)_t;
@@ -1382,7 +1434,7 @@ public T() {
 				_t = _retTree;
 				e1=expression(_t);
 				_t = _retTree;
-				_t = __t223;
+				_t = __t240;
 				_t = _t.getNextSibling();
 				model.addOperator(op1.getText()); model.addChild(e1);
 				break;
@@ -1517,71 +1569,71 @@ public T() {
 			switch ( _t.getType()) {
 			case COMPARE_OP:
 			{
-				AST tmp47_AST_in = (AST)_t;
+				AST tmp48_AST_in = (AST)_t;
 				match(_t,COMPARE_OP);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 47:
+			case 50:
 			{
-				AST tmp48_AST_in = (AST)_t;
-				match(_t,47);
+				AST tmp49_AST_in = (AST)_t;
+				match(_t,50);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_like:
 			{
-				AST tmp49_AST_in = (AST)_t;
-				match(_t,LITERAL_like);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 229:
-			{
 				AST tmp50_AST_in = (AST)_t;
-				match(_t,229);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 230:
-			{
-				AST tmp51_AST_in = (AST)_t;
-				match(_t,230);
+				match(_t,LITERAL_like);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 231:
 			{
-				AST tmp52_AST_in = (AST)_t;
+				AST tmp51_AST_in = (AST)_t;
 				match(_t,231);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 232:
 			{
-				AST tmp53_AST_in = (AST)_t;
+				AST tmp52_AST_in = (AST)_t;
 				match(_t,232);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 233:
 			{
-				AST tmp54_AST_in = (AST)_t;
+				AST tmp53_AST_in = (AST)_t;
 				match(_t,233);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 234:
 			{
-				AST tmp55_AST_in = (AST)_t;
+				AST tmp54_AST_in = (AST)_t;
 				match(_t,234);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 235:
 			{
-				AST tmp56_AST_in = (AST)_t;
+				AST tmp55_AST_in = (AST)_t;
 				match(_t,235);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 236:
+			{
+				AST tmp56_AST_in = (AST)_t;
+				match(_t,236);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 237:
+			{
+				AST tmp57_AST_in = (AST)_t;
+				match(_t,237);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -1605,19 +1657,19 @@ public T() {
 		model = new ExpressionModel(); ExprContainModel expr;
 		
 		try {      // for error handling
-			AST __t208 = _t;
-			AST tmp57_AST_in = (AST)_t;
+			AST __t225 = _t;
+			AST tmp58_AST_in = (AST)_t;
 			match(_t,SUBCONTAIN_OP);
 			_t = _t.getFirstChild();
-			AST tmp58_AST_in = (AST)_t;
+			AST tmp59_AST_in = (AST)_t;
 			match(_t,LPAREN);
 			_t = _t.getNextSibling();
 			expr=constexpset(_t);
 			_t = _retTree;
-			AST tmp59_AST_in = (AST)_t;
+			AST tmp60_AST_in = (AST)_t;
 			match(_t,RPAREN);
 			_t = _t.getNextSibling();
-			_t = __t208;
+			_t = __t225;
 			_t = _t.getNextSibling();
 			
 						model.addExprContainModel(expr);
@@ -1646,15 +1698,15 @@ public T() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t210 = _t;
-				AST tmp60_AST_in = (AST)_t;
+				AST __t227 = _t;
+				AST tmp61_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
 				cep1=constexpset(_t);
 				_t = _retTree;
 				cep2=constexpset(_t);
 				_t = _retTree;
-				_t = __t210;
+				_t = __t227;
 				_t = _t.getNextSibling();
 				model.addChild(cep1); model.addChild(cep2);
 				break;
@@ -1731,78 +1783,78 @@ public T() {
 			switch ( _t.getType()) {
 			case TWO_ARG_OP:
 			{
-				AST tmp61_AST_in = (AST)_t;
+				AST tmp62_AST_in = (AST)_t;
 				match(_t,TWO_ARG_OP);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case STAR:
 			{
-				AST tmp62_AST_in = (AST)_t;
+				AST tmp63_AST_in = (AST)_t;
 				match(_t,STAR);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case MINUS:
 			{
-				AST tmp63_AST_in = (AST)_t;
-				match(_t,MINUS);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 220:
-			{
 				AST tmp64_AST_in = (AST)_t;
-				match(_t,220);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 221:
-			{
-				AST tmp65_AST_in = (AST)_t;
-				match(_t,221);
+				match(_t,MINUS);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 222:
 			{
-				AST tmp66_AST_in = (AST)_t;
+				AST tmp65_AST_in = (AST)_t;
 				match(_t,222);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 223:
 			{
-				AST tmp67_AST_in = (AST)_t;
+				AST tmp66_AST_in = (AST)_t;
 				match(_t,223);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 224:
 			{
-				AST tmp68_AST_in = (AST)_t;
+				AST tmp67_AST_in = (AST)_t;
 				match(_t,224);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 225:
 			{
-				AST tmp69_AST_in = (AST)_t;
+				AST tmp68_AST_in = (AST)_t;
 				match(_t,225);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 226:
 			{
-				AST tmp70_AST_in = (AST)_t;
+				AST tmp69_AST_in = (AST)_t;
 				match(_t,226);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 109:
+			case 227:
+			{
+				AST tmp70_AST_in = (AST)_t;
+				match(_t,227);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 228:
 			{
 				AST tmp71_AST_in = (AST)_t;
-				match(_t,109);
+				match(_t,228);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 112:
+			{
+				AST tmp72_AST_in = (AST)_t;
+				match(_t,112);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -1841,8 +1893,8 @@ public T() {
 			}
 			case POINT:
 			{
-				AST __t226 = _t;
-				AST tmp72_AST_in = (AST)_t;
+				AST __t243 = _t;
+				AST tmp73_AST_in = (AST)_t;
 				match(_t,POINT);
 				_t = _t.getFirstChild();
 				t = (AST)_t;
@@ -1851,7 +1903,7 @@ public T() {
 				f1 = (AST)_t;
 				match(_t,ID);
 				_t = _t.getNextSibling();
-				_t = __t226;
+				_t = __t243;
 				_t = _t.getNextSibling();
 				
 						model=new FieldModel(f1.getText(), t.getText());
@@ -1889,26 +1941,26 @@ public T() {
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			switch ( _t.getType()) {
-			case 71:
+			case 74:
 			{
-				AST __t228 = _t;
+				AST __t245 = _t;
 				all = _t==ASTNULL ? null :(AST)_t;
-				match(_t,71);
+				match(_t,74);
 				_t = _t.getFirstChild();
 				af11 = _t==ASTNULL ? null : (AST)_t;
 				function_name(_t);
 				_t = _retTree;
 				p=parameters(_t);
 				_t = _retTree;
-				_t = __t228;
+				_t = __t245;
 				_t = _t.getNextSibling();
 				model=new FunctionModel(af11.getText()); model.setFilter(FunctionModel.ALL); model.setParameters(p);
 				break;
 			}
 			case LITERAL_all:
 			{
-				AST __t229 = _t;
-				AST tmp73_AST_in = (AST)_t;
+				AST __t246 = _t;
+				AST tmp74_AST_in = (AST)_t;
 				match(_t,LITERAL_all);
 				_t = _t.getFirstChild();
 				af12 = _t==ASTNULL ? null : (AST)_t;
@@ -1916,14 +1968,14 @@ public T() {
 				_t = _retTree;
 				p=parameters(_t);
 				_t = _retTree;
-				_t = __t229;
+				_t = __t246;
 				_t = _t.getNextSibling();
 				model=new FunctionModel(af12.getText()); model.setFilter(FunctionModel.ALL); model.setParameters(p);
 				break;
 			}
 			case 28:
 			{
-				AST __t230 = _t;
+				AST __t247 = _t;
 				dist = _t==ASTNULL ? null :(AST)_t;
 				match(_t,28);
 				_t = _t.getFirstChild();
@@ -1932,15 +1984,15 @@ public T() {
 				_t = _retTree;
 				p=parameters(_t);
 				_t = _retTree;
-				_t = __t230;
+				_t = __t247;
 				_t = _t.getNextSibling();
 				model=new FunctionModel(af21.getText()); model.setFilter(FunctionModel.DISTINCT); model.setParameters(p);
 				break;
 			}
 			case LITERAL_distinct:
 			{
-				AST __t231 = _t;
-				AST tmp74_AST_in = (AST)_t;
+				AST __t248 = _t;
+				AST tmp75_AST_in = (AST)_t;
 				match(_t,LITERAL_distinct);
 				_t = _t.getFirstChild();
 				af22 = _t==ASTNULL ? null : (AST)_t;
@@ -1948,14 +2000,14 @@ public T() {
 				_t = _retTree;
 				p=parameters(_t);
 				_t = _retTree;
-				_t = __t231;
+				_t = __t248;
 				_t = _t.getNextSibling();
 				model=new FunctionModel(af22.getText()); model.setFilter(FunctionModel.DISTINCT); model.setParameters(p);
 				break;
 			}
 			default:
 				if (_t==null) _t=ASTNULL;
-				if (((_t.getType() >= LITERAL_sum && _t.getType() <= LITERAL_vsize))) {
+				if ((_tokenSet_6.member(_t.getType()))) {
 					f = _t==ASTNULL ? null : (AST)_t;
 					function_name(_t);
 					_t = _retTree;
@@ -2022,7 +2074,7 @@ public T() {
 		AST one_arg_op_AST_in = (_t == ASTNULL) ? null : (AST)_t;
 		
 		try {      // for error handling
-			AST tmp75_AST_in = (AST)_t;
+			AST tmp76_AST_in = (AST)_t;
 			match(_t,ONE_ARG_OP);
 			_t = _t.getNextSibling();
 		}
@@ -2062,116 +2114,116 @@ public T() {
 			if (_t==null) _t=ASTNULL;
 			switch ( _t.getType()) {
 			case LITERAL_sum:
-			case 73:
+			case 76:
 			case LITERAL_avg:
-			case 75:
+			case 78:
 			case LITERAL_max:
-			case 77:
+			case 80:
 			case LITERAL_min:
-			case 79:
+			case 82:
 			case LITERAL_count:
-			case 81:
+			case 84:
 			{
 				aggregate_func_name(_t);
 				_t = _retTree;
 				break;
 			}
 			case LITERAL_abs:
-			case 83:
+			case 86:
 			case LITERAL_acos:
-			case 85:
+			case 88:
 			case LITERAL_asin:
-			case 87:
-			case LITERAL_atan:
-			case 89:
 			case 90:
-			case 91:
-			case LITERAL_ceiling:
+			case LITERAL_atan:
+			case 92:
 			case 93:
+			case 94:
+			case LITERAL_ceiling:
+			case 96:
 			case LITERAL_cos:
-			case 95:
+			case 98:
 			case LITERAL_cot:
-			case 97:
+			case 100:
 			case LITERAL_degrees:
-			case 99:
+			case 102:
 			case LITERAL_exp:
-			case 101:
+			case 104:
 			case LITERAL_floor:
-			case 103:
-			case LITERAL_log:
-			case 105:
 			case 106:
-			case 107:
-			case LITERAL_mod:
+			case LITERAL_log:
+			case 108:
 			case 109:
+			case 110:
+			case LITERAL_mod:
+			case 112:
 			case LITERAL_pi:
-			case 111:
+			case 114:
 			case LITERAL_power:
-			case 113:
+			case 116:
 			case LITERAL_radians:
-			case 115:
+			case 118:
 			case LITERAL_rand:
-			case 117:
+			case 120:
 			case LITERAL_round:
-			case 119:
+			case 122:
 			case LITERAL_sign:
-			case 121:
+			case 124:
 			case LITERAL_sin:
-			case 123:
+			case 126:
 			case LITERAL_sqrt:
-			case 125:
+			case 128:
 			case LITERAL_tan:
-			case 127:
+			case 130:
 			{
 				number_function(_t);
 				_t = _retTree;
 				break;
 			}
-			case LITERAL_ascii:
-			case 129:
-			case LITERAL_char:
-			case 131:
-			case LITERAL_char_length:
-			case 133:
-			case LITERAL_charindex:
-			case 135:
-			case LITERAL_difference:
-			case 137:
-			case LITERAL_lcase:
 			case LITERAL_left:
+			case LITERAL_ascii:
+			case 132:
+			case LITERAL_char:
+			case 134:
+			case LITERAL_char_length:
+			case 136:
+			case LITERAL_charindex:
+			case 138:
+			case LITERAL_difference:
 			case 140:
-			case LITERAL_length:
+			case LITERAL_lcase:
 			case 142:
-			case LITERAL_lower:
+			case LITERAL_length:
 			case 144:
-			case LITERAL_ltrim:
+			case LITERAL_lower:
 			case 146:
-			case LITERAL_patindex:
+			case LITERAL_ltrim:
 			case 148:
-			case LITERAL_replace:
+			case LITERAL_patindex:
 			case 150:
+			case LITERAL_replace:
+			case 152:
 			case LITERAL_right:
 			case LITERAL_rtrim:
-			case 153:
-			case LITERAL_str:
 			case 155:
-			case LITERAL_substring:
+			case LITERAL_str:
 			case 157:
-			case LITERAL_upper:
+			case LITERAL_substring:
 			case 159:
+			case LITERAL_upper:
+			case 161:
 			{
 				string_function(_t);
 				_t = _retTree;
 				break;
 			}
 			case LITERAL_dateformat:
-			case 161:
-			case LITERAL_datename:
 			case 163:
-			case LITERAL_datepart:
+			case LITERAL_datename:
 			case 165:
-			case LITERAL_datetime:
+			case LITERAL_datepart:
 			case 167:
+			case LITERAL_datetime:
+			case 169:
 			case LITERAL_date:
 			case LITERAL_dayname:
 			case LITERAL_days:
@@ -2185,37 +2237,37 @@ public T() {
 			case LITERAL_months:
 			case LITERAL_month:
 			case LITERAL_now:
-			case 181:
+			case 183:
 			case LITERAL_quarter:
 			case LITERAL_seconds:
 			case LITERAL_second:
 			case LITERAL_today:
-			case 186:
+			case 188:
 			case LITERAL_weeks:
 			case LITERAL_week:
 			case LITERAL_years:
 			case LITERAL_year:
 			case LITERAL_getdate:
-			case 192:
-			case LITERAL_dateadd:
 			case 194:
-			case LITERAL_datediff:
+			case LITERAL_dateadd:
 			case 196:
+			case LITERAL_datediff:
+			case 198:
 			{
 				datetime_function(_t);
 				_t = _retTree;
 				break;
 			}
 			case LITERAL_convert:
-			case 198:
-			case LITERAL_hextoint:
 			case 200:
-			case LITERAL_inttohex:
+			case LITERAL_hextoint:
 			case 202:
-			case LITERAL_isdate:
+			case LITERAL_inttohex:
 			case 204:
-			case LITERAL_isnumeric:
+			case LITERAL_isdate:
 			case 206:
+			case LITERAL_isnumeric:
+			case 208:
 			{
 				conversion_function(_t);
 				_t = _retTree;
@@ -2263,15 +2315,15 @@ public T() {
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			if ((_t.getType()==COMMA)) {
-				AST __t233 = _t;
-				AST tmp76_AST_in = (AST)_t;
+				AST __t250 = _t;
+				AST tmp77_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
 				p1=parameters(_t);
 				_t = _retTree;
 				p2=parameters(_t);
 				_t = _retTree;
-				_t = __t233;
+				_t = __t250;
 				_t = _t.getNextSibling();
 				model.addChild(p1); model.addChild(p2);
 			}
@@ -2343,14 +2395,14 @@ public T() {
 			switch ( _t.getType()) {
 			case 28:
 			{
-				AST tmp77_AST_in = (AST)_t;
+				AST tmp78_AST_in = (AST)_t;
 				match(_t,28);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_distinct:
 			{
-				AST tmp78_AST_in = (AST)_t;
+				AST tmp79_AST_in = (AST)_t;
 				match(_t,LITERAL_distinct);
 				_t = _t.getNextSibling();
 				break;
@@ -2377,29 +2429,29 @@ public T() {
 			switch ( _t.getType()) {
 			case LITERAL_and:
 			{
-				AST tmp79_AST_in = (AST)_t;
+				AST tmp80_AST_in = (AST)_t;
 				match(_t,LITERAL_and);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_or:
 			{
-				AST tmp80_AST_in = (AST)_t;
+				AST tmp81_AST_in = (AST)_t;
 				match(_t,LITERAL_or);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 40:
+			case 43:
 			{
-				AST tmp81_AST_in = (AST)_t;
-				match(_t,40);
+				AST tmp82_AST_in = (AST)_t;
+				match(_t,43);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 41:
+			case 44:
 			{
-				AST tmp82_AST_in = (AST)_t;
-				match(_t,41);
+				AST tmp83_AST_in = (AST)_t;
+				match(_t,44);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -2423,31 +2475,31 @@ public T() {
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			switch ( _t.getType()) {
-			case 62:
+			case 65:
 			{
-				AST tmp83_AST_in = (AST)_t;
-				match(_t,62);
+				AST tmp84_AST_in = (AST)_t;
+				match(_t,65);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 63:
+			case 66:
 			{
-				AST tmp84_AST_in = (AST)_t;
-				match(_t,63);
+				AST tmp85_AST_in = (AST)_t;
+				match(_t,66);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_in:
 			{
-				AST tmp85_AST_in = (AST)_t;
+				AST tmp86_AST_in = (AST)_t;
 				match(_t,LITERAL_in);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 60:
+			case 63:
 			{
-				AST tmp86_AST_in = (AST)_t;
-				match(_t,60);
+				AST tmp87_AST_in = (AST)_t;
+				match(_t,63);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -2473,71 +2525,71 @@ public T() {
 			switch ( _t.getType()) {
 			case LITERAL_sum:
 			{
-				AST tmp87_AST_in = (AST)_t;
+				AST tmp88_AST_in = (AST)_t;
 				match(_t,LITERAL_sum);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 73:
+			case 76:
 			{
-				AST tmp88_AST_in = (AST)_t;
-				match(_t,73);
+				AST tmp89_AST_in = (AST)_t;
+				match(_t,76);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_avg:
 			{
-				AST tmp89_AST_in = (AST)_t;
+				AST tmp90_AST_in = (AST)_t;
 				match(_t,LITERAL_avg);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 75:
+			case 78:
 			{
-				AST tmp90_AST_in = (AST)_t;
-				match(_t,75);
+				AST tmp91_AST_in = (AST)_t;
+				match(_t,78);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_max:
 			{
-				AST tmp91_AST_in = (AST)_t;
+				AST tmp92_AST_in = (AST)_t;
 				match(_t,LITERAL_max);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 77:
+			case 80:
 			{
-				AST tmp92_AST_in = (AST)_t;
-				match(_t,77);
+				AST tmp93_AST_in = (AST)_t;
+				match(_t,80);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_min:
 			{
-				AST tmp93_AST_in = (AST)_t;
+				AST tmp94_AST_in = (AST)_t;
 				match(_t,LITERAL_min);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 79:
+			case 82:
 			{
-				AST tmp94_AST_in = (AST)_t;
-				match(_t,79);
+				AST tmp95_AST_in = (AST)_t;
+				match(_t,82);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_count:
 			{
-				AST tmp95_AST_in = (AST)_t;
+				AST tmp96_AST_in = (AST)_t;
 				match(_t,LITERAL_count);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 81:
+			case 84:
 			{
-				AST tmp96_AST_in = (AST)_t;
-				match(_t,81);
+				AST tmp97_AST_in = (AST)_t;
+				match(_t,84);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -2563,323 +2615,323 @@ public T() {
 			switch ( _t.getType()) {
 			case LITERAL_abs:
 			{
-				AST tmp97_AST_in = (AST)_t;
+				AST tmp98_AST_in = (AST)_t;
 				match(_t,LITERAL_abs);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 83:
+			case 86:
 			{
-				AST tmp98_AST_in = (AST)_t;
-				match(_t,83);
+				AST tmp99_AST_in = (AST)_t;
+				match(_t,86);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_acos:
 			{
-				AST tmp99_AST_in = (AST)_t;
+				AST tmp100_AST_in = (AST)_t;
 				match(_t,LITERAL_acos);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 85:
+			case 88:
 			{
-				AST tmp100_AST_in = (AST)_t;
-				match(_t,85);
+				AST tmp101_AST_in = (AST)_t;
+				match(_t,88);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_asin:
 			{
-				AST tmp101_AST_in = (AST)_t;
-				match(_t,LITERAL_asin);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 87:
-			{
 				AST tmp102_AST_in = (AST)_t;
-				match(_t,87);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_atan:
-			{
-				AST tmp103_AST_in = (AST)_t;
-				match(_t,LITERAL_atan);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 89:
-			{
-				AST tmp104_AST_in = (AST)_t;
-				match(_t,89);
+				match(_t,LITERAL_asin);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 90:
 			{
-				AST tmp105_AST_in = (AST)_t;
+				AST tmp103_AST_in = (AST)_t;
 				match(_t,90);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 91:
+			case LITERAL_atan:
 			{
-				AST tmp106_AST_in = (AST)_t;
-				match(_t,91);
+				AST tmp104_AST_in = (AST)_t;
+				match(_t,LITERAL_atan);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_ceiling:
+			case 92:
 			{
-				AST tmp107_AST_in = (AST)_t;
-				match(_t,LITERAL_ceiling);
+				AST tmp105_AST_in = (AST)_t;
+				match(_t,92);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 93:
 			{
-				AST tmp108_AST_in = (AST)_t;
+				AST tmp106_AST_in = (AST)_t;
 				match(_t,93);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 94:
+			{
+				AST tmp107_AST_in = (AST)_t;
+				match(_t,94);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_ceiling:
+			{
+				AST tmp108_AST_in = (AST)_t;
+				match(_t,LITERAL_ceiling);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 96:
+			{
+				AST tmp109_AST_in = (AST)_t;
+				match(_t,96);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_cos:
 			{
-				AST tmp109_AST_in = (AST)_t;
+				AST tmp110_AST_in = (AST)_t;
 				match(_t,LITERAL_cos);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 95:
+			case 98:
 			{
-				AST tmp110_AST_in = (AST)_t;
-				match(_t,95);
+				AST tmp111_AST_in = (AST)_t;
+				match(_t,98);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_cot:
 			{
-				AST tmp111_AST_in = (AST)_t;
+				AST tmp112_AST_in = (AST)_t;
 				match(_t,LITERAL_cot);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 97:
+			case 100:
 			{
-				AST tmp112_AST_in = (AST)_t;
-				match(_t,97);
+				AST tmp113_AST_in = (AST)_t;
+				match(_t,100);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_degrees:
 			{
-				AST tmp113_AST_in = (AST)_t;
+				AST tmp114_AST_in = (AST)_t;
 				match(_t,LITERAL_degrees);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 99:
+			case 102:
 			{
-				AST tmp114_AST_in = (AST)_t;
-				match(_t,99);
+				AST tmp115_AST_in = (AST)_t;
+				match(_t,102);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_exp:
 			{
-				AST tmp115_AST_in = (AST)_t;
+				AST tmp116_AST_in = (AST)_t;
 				match(_t,LITERAL_exp);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 101:
+			case 104:
 			{
-				AST tmp116_AST_in = (AST)_t;
-				match(_t,101);
+				AST tmp117_AST_in = (AST)_t;
+				match(_t,104);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_floor:
 			{
-				AST tmp117_AST_in = (AST)_t;
-				match(_t,LITERAL_floor);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 103:
-			{
 				AST tmp118_AST_in = (AST)_t;
-				match(_t,103);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_log:
-			{
-				AST tmp119_AST_in = (AST)_t;
-				match(_t,LITERAL_log);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 105:
-			{
-				AST tmp120_AST_in = (AST)_t;
-				match(_t,105);
+				match(_t,LITERAL_floor);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 106:
 			{
-				AST tmp121_AST_in = (AST)_t;
+				AST tmp119_AST_in = (AST)_t;
 				match(_t,106);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 107:
+			case LITERAL_log:
 			{
-				AST tmp122_AST_in = (AST)_t;
-				match(_t,107);
+				AST tmp120_AST_in = (AST)_t;
+				match(_t,LITERAL_log);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_mod:
+			case 108:
 			{
-				AST tmp123_AST_in = (AST)_t;
-				match(_t,LITERAL_mod);
+				AST tmp121_AST_in = (AST)_t;
+				match(_t,108);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 109:
 			{
-				AST tmp124_AST_in = (AST)_t;
+				AST tmp122_AST_in = (AST)_t;
 				match(_t,109);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 110:
+			{
+				AST tmp123_AST_in = (AST)_t;
+				match(_t,110);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_mod:
+			{
+				AST tmp124_AST_in = (AST)_t;
+				match(_t,LITERAL_mod);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 112:
+			{
+				AST tmp125_AST_in = (AST)_t;
+				match(_t,112);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_pi:
 			{
-				AST tmp125_AST_in = (AST)_t;
+				AST tmp126_AST_in = (AST)_t;
 				match(_t,LITERAL_pi);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 111:
+			case 114:
 			{
-				AST tmp126_AST_in = (AST)_t;
-				match(_t,111);
+				AST tmp127_AST_in = (AST)_t;
+				match(_t,114);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_power:
 			{
-				AST tmp127_AST_in = (AST)_t;
+				AST tmp128_AST_in = (AST)_t;
 				match(_t,LITERAL_power);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 113:
+			case 116:
 			{
-				AST tmp128_AST_in = (AST)_t;
-				match(_t,113);
+				AST tmp129_AST_in = (AST)_t;
+				match(_t,116);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_radians:
 			{
-				AST tmp129_AST_in = (AST)_t;
+				AST tmp130_AST_in = (AST)_t;
 				match(_t,LITERAL_radians);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 115:
+			case 118:
 			{
-				AST tmp130_AST_in = (AST)_t;
-				match(_t,115);
+				AST tmp131_AST_in = (AST)_t;
+				match(_t,118);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_rand:
 			{
-				AST tmp131_AST_in = (AST)_t;
+				AST tmp132_AST_in = (AST)_t;
 				match(_t,LITERAL_rand);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 117:
+			case 120:
 			{
-				AST tmp132_AST_in = (AST)_t;
-				match(_t,117);
+				AST tmp133_AST_in = (AST)_t;
+				match(_t,120);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_round:
 			{
-				AST tmp133_AST_in = (AST)_t;
+				AST tmp134_AST_in = (AST)_t;
 				match(_t,LITERAL_round);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 119:
+			case 122:
 			{
-				AST tmp134_AST_in = (AST)_t;
-				match(_t,119);
+				AST tmp135_AST_in = (AST)_t;
+				match(_t,122);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_sign:
 			{
-				AST tmp135_AST_in = (AST)_t;
+				AST tmp136_AST_in = (AST)_t;
 				match(_t,LITERAL_sign);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 121:
+			case 124:
 			{
-				AST tmp136_AST_in = (AST)_t;
-				match(_t,121);
+				AST tmp137_AST_in = (AST)_t;
+				match(_t,124);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_sin:
 			{
-				AST tmp137_AST_in = (AST)_t;
+				AST tmp138_AST_in = (AST)_t;
 				match(_t,LITERAL_sin);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 123:
+			case 126:
 			{
-				AST tmp138_AST_in = (AST)_t;
-				match(_t,123);
+				AST tmp139_AST_in = (AST)_t;
+				match(_t,126);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_sqrt:
 			{
-				AST tmp139_AST_in = (AST)_t;
+				AST tmp140_AST_in = (AST)_t;
 				match(_t,LITERAL_sqrt);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 125:
+			case 128:
 			{
-				AST tmp140_AST_in = (AST)_t;
-				match(_t,125);
+				AST tmp141_AST_in = (AST)_t;
+				match(_t,128);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_tan:
 			{
-				AST tmp141_AST_in = (AST)_t;
+				AST tmp142_AST_in = (AST)_t;
 				match(_t,LITERAL_tan);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 127:
+			case 130:
 			{
-				AST tmp142_AST_in = (AST)_t;
-				match(_t,127);
+				AST tmp143_AST_in = (AST)_t;
+				match(_t,130);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -2905,231 +2957,231 @@ public T() {
 			switch ( _t.getType()) {
 			case LITERAL_ascii:
 			{
-				AST tmp143_AST_in = (AST)_t;
+				AST tmp144_AST_in = (AST)_t;
 				match(_t,LITERAL_ascii);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 129:
+			case 132:
 			{
-				AST tmp144_AST_in = (AST)_t;
-				match(_t,129);
+				AST tmp145_AST_in = (AST)_t;
+				match(_t,132);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_char:
 			{
-				AST tmp145_AST_in = (AST)_t;
+				AST tmp146_AST_in = (AST)_t;
 				match(_t,LITERAL_char);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 131:
+			case 134:
 			{
-				AST tmp146_AST_in = (AST)_t;
-				match(_t,131);
+				AST tmp147_AST_in = (AST)_t;
+				match(_t,134);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_char_length:
 			{
-				AST tmp147_AST_in = (AST)_t;
+				AST tmp148_AST_in = (AST)_t;
 				match(_t,LITERAL_char_length);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 133:
+			case 136:
 			{
-				AST tmp148_AST_in = (AST)_t;
-				match(_t,133);
+				AST tmp149_AST_in = (AST)_t;
+				match(_t,136);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_charindex:
 			{
-				AST tmp149_AST_in = (AST)_t;
+				AST tmp150_AST_in = (AST)_t;
 				match(_t,LITERAL_charindex);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 135:
+			case 138:
 			{
-				AST tmp150_AST_in = (AST)_t;
-				match(_t,135);
+				AST tmp151_AST_in = (AST)_t;
+				match(_t,138);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_difference:
 			{
-				AST tmp151_AST_in = (AST)_t;
+				AST tmp152_AST_in = (AST)_t;
 				match(_t,LITERAL_difference);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 137:
+			case 140:
 			{
-				AST tmp152_AST_in = (AST)_t;
-				match(_t,137);
+				AST tmp153_AST_in = (AST)_t;
+				match(_t,140);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_lcase:
 			{
-				AST tmp153_AST_in = (AST)_t;
+				AST tmp154_AST_in = (AST)_t;
 				match(_t,LITERAL_lcase);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_left:
 			{
-				AST tmp154_AST_in = (AST)_t;
+				AST tmp155_AST_in = (AST)_t;
 				match(_t,LITERAL_left);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_length:
 			{
-				AST tmp155_AST_in = (AST)_t;
-				match(_t,LITERAL_length);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 142:
-			{
 				AST tmp156_AST_in = (AST)_t;
-				match(_t,142);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_lower:
-			{
-				AST tmp157_AST_in = (AST)_t;
-				match(_t,LITERAL_lower);
+				match(_t,LITERAL_length);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 144:
 			{
-				AST tmp158_AST_in = (AST)_t;
+				AST tmp157_AST_in = (AST)_t;
 				match(_t,144);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_ltrim:
+			case LITERAL_lower:
 			{
-				AST tmp159_AST_in = (AST)_t;
-				match(_t,LITERAL_ltrim);
+				AST tmp158_AST_in = (AST)_t;
+				match(_t,LITERAL_lower);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 146:
 			{
-				AST tmp160_AST_in = (AST)_t;
+				AST tmp159_AST_in = (AST)_t;
 				match(_t,146);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_patindex:
+			case LITERAL_ltrim:
 			{
-				AST tmp161_AST_in = (AST)_t;
-				match(_t,LITERAL_patindex);
+				AST tmp160_AST_in = (AST)_t;
+				match(_t,LITERAL_ltrim);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 148:
 			{
-				AST tmp162_AST_in = (AST)_t;
+				AST tmp161_AST_in = (AST)_t;
 				match(_t,148);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_replace:
+			case LITERAL_patindex:
 			{
-				AST tmp163_AST_in = (AST)_t;
-				match(_t,LITERAL_replace);
+				AST tmp162_AST_in = (AST)_t;
+				match(_t,LITERAL_patindex);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 150:
 			{
-				AST tmp164_AST_in = (AST)_t;
+				AST tmp163_AST_in = (AST)_t;
 				match(_t,150);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_replace:
+			{
+				AST tmp164_AST_in = (AST)_t;
+				match(_t,LITERAL_replace);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 152:
+			{
+				AST tmp165_AST_in = (AST)_t;
+				match(_t,152);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_right:
 			{
-				AST tmp165_AST_in = (AST)_t;
+				AST tmp166_AST_in = (AST)_t;
 				match(_t,LITERAL_right);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_rtrim:
 			{
-				AST tmp166_AST_in = (AST)_t;
-				match(_t,LITERAL_rtrim);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 153:
-			{
 				AST tmp167_AST_in = (AST)_t;
-				match(_t,153);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_str:
-			{
-				AST tmp168_AST_in = (AST)_t;
-				match(_t,LITERAL_str);
+				match(_t,LITERAL_rtrim);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 155:
 			{
-				AST tmp169_AST_in = (AST)_t;
+				AST tmp168_AST_in = (AST)_t;
 				match(_t,155);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_substring:
+			case LITERAL_str:
 			{
-				AST tmp170_AST_in = (AST)_t;
-				match(_t,LITERAL_substring);
+				AST tmp169_AST_in = (AST)_t;
+				match(_t,LITERAL_str);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 157:
 			{
-				AST tmp171_AST_in = (AST)_t;
+				AST tmp170_AST_in = (AST)_t;
 				match(_t,157);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_upper:
+			case LITERAL_substring:
 			{
-				AST tmp172_AST_in = (AST)_t;
-				match(_t,LITERAL_upper);
+				AST tmp171_AST_in = (AST)_t;
+				match(_t,LITERAL_substring);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 159:
 			{
-				AST tmp173_AST_in = (AST)_t;
+				AST tmp172_AST_in = (AST)_t;
 				match(_t,159);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_upper:
+			{
+				AST tmp173_AST_in = (AST)_t;
+				match(_t,LITERAL_upper);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 161:
+			{
+				AST tmp174_AST_in = (AST)_t;
+				match(_t,161);
 				_t = _t.getNextSibling();
 				break;
 			}
 			default:
 				if (_t==null) _t=ASTNULL;
-				if ((_t.getType()==140)) {
-					AST tmp174_AST_in = (AST)_t;
-					match(_t,140);
+				if ((_t.getType()==142)) {
+					AST tmp175_AST_in = (AST)_t;
+					match(_t,142);
 					_t = _t.getNextSibling();
 				}
-				else if ((_t.getType()==140)) {
-					AST tmp175_AST_in = (AST)_t;
-					match(_t,140);
+				else if ((_t.getType()==142)) {
+					AST tmp176_AST_in = (AST)_t;
+					match(_t,142);
 					_t = _t.getNextSibling();
 				}
 			else {
@@ -3153,260 +3205,260 @@ public T() {
 			switch ( _t.getType()) {
 			case LITERAL_dateformat:
 			{
-				AST tmp176_AST_in = (AST)_t;
-				match(_t,LITERAL_dateformat);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 161:
-			{
 				AST tmp177_AST_in = (AST)_t;
-				match(_t,161);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_datename:
-			{
-				AST tmp178_AST_in = (AST)_t;
-				match(_t,LITERAL_datename);
+				match(_t,LITERAL_dateformat);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 163:
 			{
-				AST tmp179_AST_in = (AST)_t;
+				AST tmp178_AST_in = (AST)_t;
 				match(_t,163);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_datepart:
+			case LITERAL_datename:
 			{
-				AST tmp180_AST_in = (AST)_t;
-				match(_t,LITERAL_datepart);
+				AST tmp179_AST_in = (AST)_t;
+				match(_t,LITERAL_datename);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 165:
 			{
-				AST tmp181_AST_in = (AST)_t;
+				AST tmp180_AST_in = (AST)_t;
 				match(_t,165);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_datetime:
+			case LITERAL_datepart:
 			{
-				AST tmp182_AST_in = (AST)_t;
-				match(_t,LITERAL_datetime);
+				AST tmp181_AST_in = (AST)_t;
+				match(_t,LITERAL_datepart);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 167:
 			{
-				AST tmp183_AST_in = (AST)_t;
+				AST tmp182_AST_in = (AST)_t;
 				match(_t,167);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_datetime:
+			{
+				AST tmp183_AST_in = (AST)_t;
+				match(_t,LITERAL_datetime);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 169:
+			{
+				AST tmp184_AST_in = (AST)_t;
+				match(_t,169);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_date:
 			{
-				AST tmp184_AST_in = (AST)_t;
+				AST tmp185_AST_in = (AST)_t;
 				match(_t,LITERAL_date);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_dayname:
 			{
-				AST tmp185_AST_in = (AST)_t;
+				AST tmp186_AST_in = (AST)_t;
 				match(_t,LITERAL_dayname);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_days:
 			{
-				AST tmp186_AST_in = (AST)_t;
+				AST tmp187_AST_in = (AST)_t;
 				match(_t,LITERAL_days);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_day:
 			{
-				AST tmp187_AST_in = (AST)_t;
+				AST tmp188_AST_in = (AST)_t;
 				match(_t,LITERAL_day);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_dow:
 			{
-				AST tmp188_AST_in = (AST)_t;
+				AST tmp189_AST_in = (AST)_t;
 				match(_t,LITERAL_dow);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_hours:
 			{
-				AST tmp189_AST_in = (AST)_t;
+				AST tmp190_AST_in = (AST)_t;
 				match(_t,LITERAL_hours);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_hour:
 			{
-				AST tmp190_AST_in = (AST)_t;
+				AST tmp191_AST_in = (AST)_t;
 				match(_t,LITERAL_hour);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_minutes:
 			{
-				AST tmp191_AST_in = (AST)_t;
+				AST tmp192_AST_in = (AST)_t;
 				match(_t,LITERAL_minutes);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_minute:
 			{
-				AST tmp192_AST_in = (AST)_t;
+				AST tmp193_AST_in = (AST)_t;
 				match(_t,LITERAL_minute);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_monthname:
 			{
-				AST tmp193_AST_in = (AST)_t;
+				AST tmp194_AST_in = (AST)_t;
 				match(_t,LITERAL_monthname);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_months:
 			{
-				AST tmp194_AST_in = (AST)_t;
+				AST tmp195_AST_in = (AST)_t;
 				match(_t,LITERAL_months);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_month:
 			{
-				AST tmp195_AST_in = (AST)_t;
+				AST tmp196_AST_in = (AST)_t;
 				match(_t,LITERAL_month);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_now:
 			{
-				AST tmp196_AST_in = (AST)_t;
+				AST tmp197_AST_in = (AST)_t;
 				match(_t,LITERAL_now);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 181:
+			case 183:
 			{
-				AST tmp197_AST_in = (AST)_t;
-				match(_t,181);
+				AST tmp198_AST_in = (AST)_t;
+				match(_t,183);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_quarter:
 			{
-				AST tmp198_AST_in = (AST)_t;
+				AST tmp199_AST_in = (AST)_t;
 				match(_t,LITERAL_quarter);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_seconds:
 			{
-				AST tmp199_AST_in = (AST)_t;
+				AST tmp200_AST_in = (AST)_t;
 				match(_t,LITERAL_seconds);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_second:
 			{
-				AST tmp200_AST_in = (AST)_t;
+				AST tmp201_AST_in = (AST)_t;
 				match(_t,LITERAL_second);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_today:
 			{
-				AST tmp201_AST_in = (AST)_t;
+				AST tmp202_AST_in = (AST)_t;
 				match(_t,LITERAL_today);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 186:
+			case 188:
 			{
-				AST tmp202_AST_in = (AST)_t;
-				match(_t,186);
+				AST tmp203_AST_in = (AST)_t;
+				match(_t,188);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_weeks:
 			{
-				AST tmp203_AST_in = (AST)_t;
+				AST tmp204_AST_in = (AST)_t;
 				match(_t,LITERAL_weeks);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_week:
 			{
-				AST tmp204_AST_in = (AST)_t;
+				AST tmp205_AST_in = (AST)_t;
 				match(_t,LITERAL_week);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_years:
 			{
-				AST tmp205_AST_in = (AST)_t;
+				AST tmp206_AST_in = (AST)_t;
 				match(_t,LITERAL_years);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_year:
 			{
-				AST tmp206_AST_in = (AST)_t;
+				AST tmp207_AST_in = (AST)_t;
 				match(_t,LITERAL_year);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_getdate:
 			{
-				AST tmp207_AST_in = (AST)_t;
-				match(_t,LITERAL_getdate);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 192:
-			{
 				AST tmp208_AST_in = (AST)_t;
-				match(_t,192);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_dateadd:
-			{
-				AST tmp209_AST_in = (AST)_t;
-				match(_t,LITERAL_dateadd);
+				match(_t,LITERAL_getdate);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 194:
 			{
-				AST tmp210_AST_in = (AST)_t;
+				AST tmp209_AST_in = (AST)_t;
 				match(_t,194);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_datediff:
+			case LITERAL_dateadd:
 			{
-				AST tmp211_AST_in = (AST)_t;
-				match(_t,LITERAL_datediff);
+				AST tmp210_AST_in = (AST)_t;
+				match(_t,LITERAL_dateadd);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 196:
 			{
-				AST tmp212_AST_in = (AST)_t;
+				AST tmp211_AST_in = (AST)_t;
 				match(_t,196);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_datediff:
+			{
+				AST tmp212_AST_in = (AST)_t;
+				match(_t,LITERAL_datediff);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 198:
+			{
+				AST tmp213_AST_in = (AST)_t;
+				match(_t,198);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -3432,71 +3484,71 @@ public T() {
 			switch ( _t.getType()) {
 			case LITERAL_convert:
 			{
-				AST tmp213_AST_in = (AST)_t;
-				match(_t,LITERAL_convert);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 198:
-			{
 				AST tmp214_AST_in = (AST)_t;
-				match(_t,198);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_hextoint:
-			{
-				AST tmp215_AST_in = (AST)_t;
-				match(_t,LITERAL_hextoint);
+				match(_t,LITERAL_convert);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 200:
 			{
-				AST tmp216_AST_in = (AST)_t;
+				AST tmp215_AST_in = (AST)_t;
 				match(_t,200);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_inttohex:
+			case LITERAL_hextoint:
 			{
-				AST tmp217_AST_in = (AST)_t;
-				match(_t,LITERAL_inttohex);
+				AST tmp216_AST_in = (AST)_t;
+				match(_t,LITERAL_hextoint);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 202:
 			{
-				AST tmp218_AST_in = (AST)_t;
+				AST tmp217_AST_in = (AST)_t;
 				match(_t,202);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_isdate:
+			case LITERAL_inttohex:
 			{
-				AST tmp219_AST_in = (AST)_t;
-				match(_t,LITERAL_isdate);
+				AST tmp218_AST_in = (AST)_t;
+				match(_t,LITERAL_inttohex);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 204:
 			{
-				AST tmp220_AST_in = (AST)_t;
+				AST tmp219_AST_in = (AST)_t;
 				match(_t,204);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_isnumeric:
+			case LITERAL_isdate:
 			{
-				AST tmp221_AST_in = (AST)_t;
-				match(_t,LITERAL_isnumeric);
+				AST tmp220_AST_in = (AST)_t;
+				match(_t,LITERAL_isdate);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 206:
 			{
-				AST tmp222_AST_in = (AST)_t;
+				AST tmp221_AST_in = (AST)_t;
 				match(_t,206);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_isnumeric:
+			{
+				AST tmp222_AST_in = (AST)_t;
+				match(_t,LITERAL_isnumeric);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 208:
+			{
+				AST tmp223_AST_in = (AST)_t;
+				match(_t,208);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -3522,28 +3574,28 @@ public T() {
 			switch ( _t.getType()) {
 			case LITERAL_suser_id:
 			{
-				AST tmp223_AST_in = (AST)_t;
+				AST tmp224_AST_in = (AST)_t;
 				match(_t,LITERAL_suser_id);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_suser_name:
 			{
-				AST tmp224_AST_in = (AST)_t;
+				AST tmp225_AST_in = (AST)_t;
 				match(_t,LITERAL_suser_name);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_user_id:
 			{
-				AST tmp225_AST_in = (AST)_t;
+				AST tmp226_AST_in = (AST)_t;
 				match(_t,LITERAL_user_id);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_user_name:
 			{
-				AST tmp226_AST_in = (AST)_t;
+				AST tmp227_AST_in = (AST)_t;
 				match(_t,LITERAL_user_name);
 				_t = _t.getNextSibling();
 				break;
@@ -3570,42 +3622,42 @@ public T() {
 			switch ( _t.getType()) {
 			case LITERAL_decode:
 			{
-				AST tmp227_AST_in = (AST)_t;
+				AST tmp228_AST_in = (AST)_t;
 				match(_t,LITERAL_decode);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_dump:
 			{
-				AST tmp228_AST_in = (AST)_t;
+				AST tmp229_AST_in = (AST)_t;
 				match(_t,LITERAL_dump);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_greatest:
 			{
-				AST tmp229_AST_in = (AST)_t;
+				AST tmp230_AST_in = (AST)_t;
 				match(_t,LITERAL_greatest);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_least:
 			{
-				AST tmp230_AST_in = (AST)_t;
+				AST tmp231_AST_in = (AST)_t;
 				match(_t,LITERAL_least);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_nvl:
 			{
-				AST tmp231_AST_in = (AST)_t;
+				AST tmp232_AST_in = (AST)_t;
 				match(_t,LITERAL_nvl);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_vsize:
 			{
-				AST tmp232_AST_in = (AST)_t;
+				AST tmp233_AST_in = (AST)_t;
 				match(_t,LITERAL_vsize);
 				_t = _t.getNextSibling();
 				break;
@@ -3656,6 +3708,9 @@ public T() {
 		"\"\\u552f\\u4e00\"",
 		"\"from\"",
 		"\"\\u6765\\u81ea\"",
+		"\"left\"",
+		"\"join\"",
+		"\"\\u5de6\\u8fde\\u63a5\"",
 		"\"group\"",
 		"\"by\"",
 		"\"\\u5206\\u7ec4\"",
@@ -3764,7 +3819,6 @@ public T() {
 		"\"difference\"",
 		"\"\\u6c42\\u4e24\\u4e2a\\u4e32\\u7684\\u5dee\\u503c\"",
 		"\"lcase\"",
-		"\"left\"",
 		"\"\\u5b57\\u7b26\\u4e32\\u5de6\\u622a\"",
 		"\"length\"",
 		"\"\\u6c42\\u5b57\\u7b26\\u4e32\\u603b\\u957f\\u5ea6\"",
@@ -3882,53 +3936,65 @@ public T() {
 	
 	private static final long[] mk_tokenSet_0() {
 		long[] data = new long[8];
-		data[0]=4398449172480L;
-		for (int i = 1; i<=2; i++) { data[i]=-1L; }
-		data[3]=134217727L;
+		data[0]=35186922233856L;
+		data[1]=-8L;
+		data[2]=-1L;
+		data[3]=536870911L;
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
 	private static final long[] mk_tokenSet_1() {
 		long[] data = new long[8];
-		data[0]=-36028728299487232L;
-		data[3]=34359738368L;
+		data[0]=-288229826395897856L;
+		data[1]=7L;
+		data[3]=137438953472L;
 		return data;
 	}
 	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
 	private static final long[] mk_tokenSet_2() {
 		long[] data = new long[8];
-		data[0]=57175007305984L;
-		for (int i = 1; i<=2; i++) { data[i]=-1L; }
-		data[3]=134217727L;
+		data[0]=457399387300096L;
+		data[1]=-8L;
+		data[2]=-1L;
+		data[3]=536870911L;
 		return data;
 	}
 	public static final BitSet _tokenSet_2 = new BitSet(mk_tokenSet_2());
 	private static final long[] mk_tokenSet_3() {
 		long[] data = new long[8];
-		data[0]=402653184L;
-		data[1]=-54L;
+		data[0]=2550136832L;
+		data[1]=-432L;
 		data[2]=-1L;
-		data[3]=100663295L;
+		data[3]=402653183L;
 		return data;
 	}
 	public static final BitSet _tokenSet_3 = new BitSet(mk_tokenSet_3());
 	private static final long[] mk_tokenSet_4() {
 		long[] data = new long[8];
-		data[0]=16888499005292544L;
-		data[1]=-50L;
+		data[0]=135107991371251712L;
+		data[1]=-400L;
 		data[2]=-1L;
-		data[3]=33554431L;
+		data[3]=134217727L;
 		return data;
 	}
 	public static final BitSet _tokenSet_4 = new BitSet(mk_tokenSet_4());
 	private static final long[] mk_tokenSet_5() {
 		long[] data = new long[8];
-		data[0]=402653184L;
-		data[1]=-64L;
+		data[0]=2550136832L;
+		data[1]=-512L;
 		data[2]=-1L;
-		data[3]=33554431L;
+		data[3]=134217727L;
 		return data;
 	}
 	public static final BitSet _tokenSet_5 = new BitSet(mk_tokenSet_5());
+	private static final long[] mk_tokenSet_6() {
+		long[] data = new long[8];
+		data[0]=2147483648L;
+		data[1]=-2048L;
+		data[2]=-1L;
+		data[3]=134217727L;
+		return data;
+	}
+	public static final BitSet _tokenSet_6 = new BitSet(mk_tokenSet_6());
 	}
 	
