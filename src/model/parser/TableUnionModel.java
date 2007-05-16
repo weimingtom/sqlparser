@@ -3,24 +3,27 @@ package model.parser;
 import util.StringUtil;
 
 public class TableUnionModel extends QueryModel {
-  private int TABLE_NUMBER = 2;
-  private static final String unionStr1 = "INSERT INTO _INTO_TABLE_NAME_ (_FIELDS1_) ";
-  private static final String unionStr2 = "SELECT _FIELDS1_ FROM _TABLE1_" +
-                                          " UNION ALL " +
-                                          "SELECT _FIELDS2_ FROM _TABLE2_";
-  private static final String unionStr3 = "SELECT _FIELDS1_ INTO _INTO_TABLE_NAME_ FROM _TABLE1_ WHERE 1 = 0";
+	private static final String UNION_CN_NAME = "表合并 ";
+  private static final String unionStr = "SELECT _FIELDS_ FROM _FROM_TABLE_NAME_";
+  private static final String unionAll = " UNION ALL ";
+  private static final String unionIntoStr = "INSERT INTO _INTO_TABLE_NAME_ (_FIELDS_) ";
+  private static final String unionEmptyStr = "SELECT _FIELDS_ INTO _INTO_TABLE_NAME_ FROM _FROM_TABLE_NAME_ WHERE 1 = 0";
   
-  public void addTableModel1(TableModel tableModel){
-    addChild(tableModel);
+  /**
+   * 增加表模型对象列表
+   * @param tableListModel
+   */
+  public void addTableListModel(TableListModel tableListModel){
+  	addChild(tableListModel);
   }
   
-  public void addTableModel2(TableModel tableModel){
-    addChild(tableModel);
-  }
-  
+  /**
+   * 获取格式化后的中文SQL语句
+   */
   public String getChString() {
     QueryModel[] tableModelArr = getModelsFromAllChildrenByClass(TableModel.class);
-    String ret = "表合并 ";
+    
+    String ret = UNION_CN_NAME;
     for (int i = 0; i < tableModelArr.length; i++){
       ret += ((TableModel) tableModelArr[i]).getTableName();
       if (i < tableModelArr.length - 1)
@@ -29,45 +32,76 @@ public class TableUnionModel extends QueryModel {
     return ret;
   }
   
+  /**
+   * 获取标准的英文SQL语句
+   */
   public String getEnString() {
     return getExecuteEnString("");
   }
   
+  /**
+   * 获取可执行的英文SQL语句（如果要插入的表名不为空，则可进行插入记录操作）
+   * @param intoTableName 要插入的表名
+   * @return String 可执行的英文SQL语句
+   */
   public String getExecuteEnString(String intoTableName) {
     String rValue = "";
     QueryModel[] tableModelArr = getModelsFromAllChildrenByClass(TableModel.class);
-    if (tableModelArr.length == TABLE_NUMBER){
+    for (int i = 0; i < tableModelArr.length; i++){
       DbTableModel _dbTableModel = getDbTableModel();
-      TableModel tableModel1 = (TableModel) tableModelArr[0];
-      TableModel tableModel2 = (TableModel) tableModelArr[1];
-      String enFieldStr1 = _dbTableModel.getFieldsEnStr(tableModel1.getChString());
-      String enFieldStr2 = _dbTableModel.getFieldsEnStr(tableModel2.getChString());
+      TableModel tableModel = (TableModel) tableModelArr[i];
+      String enFieldStr = _dbTableModel.getFieldsEnStr(tableModel.getChString());
       if (intoTableName == null || intoTableName.equals("") || intoTableName.length() == 0){
-        rValue = StringUtil.replace(unionStr2,
-            new String[]{"_FIELDS1_", "_FIELDS2_", "_TABLE1_", "_TABLE2_"},
-            new String[]{enFieldStr1, enFieldStr2, tableModel1.getEnString(), tableModel2.getEnString()}
-          );
+      	//如果合并的表名为第二张及之后，则需增加"UNION ALL"
+      	if (i > 0)
+      		rValue += unionAll;
+      	
+      	//将SQL语句替换成当前的表名/字段名
+        rValue += StringUtil.replace(unionStr,
+        		new String[]{"_FIELDS_", "_FROM_TABLE_NAME_"},
+        		new String[]{enFieldStr, tableModel.getEnString()}
+        	);
       }else{
-        rValue = StringUtil.replace(unionStr1 + unionStr2,
-            new String[]{"_INTO_TABLE_NAME_", "_FIELDS1_", "_FIELDS2_", "_TABLE1_", "_TABLE2_"},
-            new String[]{intoTableName, enFieldStr1, enFieldStr2, tableModel1.getEnString(), tableModel2.getEnString()}
-          );
+      	//获取要插入的临时表英文SQL语句
+      	if (i == 0){
+      		rValue = StringUtil.replace(unionIntoStr,
+      				new String[]{"_INTO_TABLE_NAME_", "_FIELDS_"},
+      				new String[]{intoTableName, enFieldStr}
+      			);
+      	}
+      	
+      	//如果合并的表名为第二张及之后，则需增加"UNION ALL"
+      	if (i > 0)
+      		rValue += unionAll;
+      	
+      	//将SQL语句替换成当前的表名/字段名
+        rValue += StringUtil.replace(unionStr,
+        		new String[]{"_FIELDS_", "_FROM_TABLE_NAME_"},
+        		new String[]{enFieldStr, tableModel.getEnString()}
+        	);
+        
       }
     }
     return rValue;
   }
   
+  /**
+   * 获取空的可执行的英文SQL语句（通过此方法可进行表结构的创建）
+   * @param intoTableName 要创建的表名
+   * @return String 空的可执行的英文SQL语句
+   */
   public String getEmptyExecuteEnString(String intoTableName) {
     String rValue = "";
     QueryModel[] tableModelArr = getModelsFromAllChildrenByClass(TableModel.class);
-    if (tableModelArr.length == TABLE_NUMBER){
-      DbTableModel _dbTableModel = getDbTableModel();
-      TableModel tableModel1 = (TableModel) tableModelArr[0];
-      String enFieldStr1 = _dbTableModel.getFieldsEnStr(tableModel1.getChString());
-      rValue = StringUtil.replace(unionStr3,
-          new String[]{"_FIELDS1_", "_TABLE1_", "_INTO_TABLE_NAME_"},
-          new String[]{enFieldStr1, tableModel1.getEnString(), intoTableName}
+    if (tableModelArr.length > 0){
+    	DbTableModel _dbTableModel = getDbTableModel();
+    	TableModel tableModel = (TableModel) tableModelArr[0];
+    	String enFieldStr = _dbTableModel.getFieldsEnStr(tableModel.getChString());
+    	rValue = StringUtil.replace(unionEmptyStr,
+          new String[]{"_FIELDS_", "_FROM_TABLE_NAME_", "_INTO_TABLE_NAME_"},
+          new String[]{enFieldStr, tableModel.getEnString(), intoTableName}
         );
+    	
     }
     return rValue;
   }
