@@ -99,7 +99,6 @@ public class DbTableInfo {
       _appDbTable.setTableParam(t.tableParam);
       
       Map fieldsMap = t.fields;
-      AppDbField[] appDbFieldArr = new AppDbField[fieldsMap.size()]; 
       for (Iterator it1 = fieldsMap.keySet().iterator(); it1.hasNext();){
         AppDbField _appDbField = new AppDbField();
         String cnFieldName = (String) it1.next();
@@ -138,27 +137,27 @@ public class DbTableInfo {
       
     }
     
-//    Iterator it = tables.keySet().iterator();
-//    while (it.hasNext()){
-//      Element elem = parent.addElement("db_info");
-//      String cnTableName = (String) it.next();
-//      Table t = (Table) tables.get(cnTableName);
-//      elem.addAttribute("ch_name", cnTableName);
-//      elem.addAttribute("en_name", t.enName);
-//      elem.addAttribute("flag", t.flag);
-//      elem.addAttribute("tableParam", t.tableParam);
-//      
-//      Map _fields = t.fields;
-//      Iterator it1 = _fields.keySet().iterator();
-//      while (it1.hasNext()){
-//        Element e = elem.addElement("db_field");
-//        String fieldChName = (String) it1.next();
-//        Field field = (Field) _fields.get(fieldChName);
-//        e.addAttribute("ch_name", fieldChName);
-//        e.addAttribute("en_name", field.enName);
-//        e.addAttribute("fieldParam", field.fieldParam);
-//      }
-//    }
+    /*Iterator it = tables.keySet().iterator();
+    while (it.hasNext()){
+      Element elem = parent.addElement("db_info");
+      String cnTableName = (String) it.next();
+      Table t = (Table) tables.get(cnTableName);
+      elem.addAttribute("ch_name", cnTableName);
+      elem.addAttribute("en_name", t.enName);
+      elem.addAttribute("flag", t.flag);
+      elem.addAttribute("tableParam", t.tableParam);
+      
+      Map _fields = t.fields;
+      Iterator it1 = _fields.keySet().iterator();
+      while (it1.hasNext()){
+        Element e = elem.addElement("db_field");
+        String fieldChName = (String) it1.next();
+        Field field = (Field) _fields.get(fieldChName);
+        e.addAttribute("ch_name", fieldChName);
+        e.addAttribute("en_name", field.enName);
+        e.addAttribute("fieldParam", field.fieldParam);
+      }
+    }*/
   }
   
   public void initDbTableInfoElement(Element dbElem) {
