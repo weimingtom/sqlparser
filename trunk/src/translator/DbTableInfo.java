@@ -1,16 +1,14 @@
 package translator;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Iterator;
 import model.parser.DbTableModel;
-
 import org.dom4j.Element;
 
 public class DbTableInfo {
-  private Map tables = new HashMap();
+  private Map tables = new LinkedHashMap();
   class Table {
     String enName;
     String flag;
