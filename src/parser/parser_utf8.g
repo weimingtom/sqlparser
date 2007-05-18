@@ -1,5 +1,19 @@
+/*==========================================================//
+//	LongtopParser Of Sybase									//
+// 	Sybase 12.5.3/Sybase IQ 12.6 SQL Grammar				//
+//															//
+//	http://www.longtop.com									//
+//															//
+//  Recent updates by jiandeh@sina.com						//
+//															//
+//	修改日志:													//
+//	05/18/2007：												//
+//		- 修改了逻辑非整个条件，用SEARCH_NOT_CONDITION TOKEN	//
+//		- 修改了IS NULL/IS NOT NULL TOKEN，可以用英文			//
+//==========================================================*/
+
 header {
-package parser;
+	package parser;
 }
 
 class P extends Parser;
@@ -12,16 +26,30 @@ options {
 
 tokens {
 	SELECT_STATEMENT;
-	SUBQUERY;
-	GROUP_BY;
-	ORDER_BY;
-	ALIAS_EQU;
-	FUNCTION;
-	LOGIC_OP;
-	CONTAIN_OP;
-	SUBCONTAIN_OP;
-	ALL_FIELDS;
-	LOGIC_BLOCK;
+	SEARCH_NOT_CONDITION;	//非整个条件TOKEN
+	SUBQUERY;				//子查询TOKEN
+	GROUP_BY;				//GROUP BY TOKEN
+	ORDER_BY;				//ORDER BY TOKEN
+	ALIAS_EQU;				//别名TOKEN
+	
+	FUNCTION;				//函数TOKEN
+	FUNCTION_EMPTY_PARAM;	//空函数TOKEN
+	FUNCTION_COUNT;			//函数COUNT TOKEN
+	
+	LOGIC_OP;				//逻辑操作符TOKEN
+	LOGICAL_NULL;			//逻辑IS NULL TOKEN
+	LOGICAL_NOT_NULL;		//逻辑IS NOT NULL TOKEN
+	LOGICAL_IN;				//逻辑IN TOKEN
+	LOGICAL_NOT_IN;			//逻辑NOT IN TOKEN
+	LOGICAL_LIKE;			//逻辑LIKE TOKEN
+	LOGICAL_NOT_LIKE;		//逻辑LIKE TOKEN
+	LOGICAL_EXISTS;			//逻辑EXISTS TOKEN
+	LOGICAL_NOT_EXISTS;		//逻辑NOT EXISTS TOKEN
+	LOGICAL_BETWEEN;		//逻辑BETWEEN AND TOKEN
+	
+	SUBCONTAIN_OP;			//关系IN/NOT IN TOKEN
+	ALL_FIELDS;				//字段所有(*) TOKEN
+	LOGIC_BLOCK;			//WHERE条件逻辑块 TOKEN
 }
 
 segment
@@ -49,15 +77,13 @@ table_lists
 	;
 
 tableCompare
-	:	("t_compare"^|"表比较"^) table_name COMMA! table_name ("where"!|"条件"!) comparemethod_name search_condition
+	:	("t_compare"^|"表比较"^) table_name COMMA! table_name ("where"!|"条件"!) compare_method search_condition
 	;
 
-left_join_statement
-	:	("select"^|"查询"^) ("distinct"^|"唯一"^)? select_list
-		("from"^|"来自"^) table_name (("left" "join") | "左连接") table_name
-		(("where"^|"条件"^) search_condition)?
-		(("group"^ "by"!|"分组"^) aggregate_expression_list)?
-		(("order"^ "by"!|"排序"^) order_expression_list)?
+compare_method
+	:	comparemethod_name
+	|	"not" "exists"
+		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], compare_method);}
 	;
 
 select_statement
@@ -83,9 +109,12 @@ table_list
 
 search_condition
 	:	bool_exp
-	|	("not"^ | "非"^) search_condition
+	|	( "not"
+		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], search_condition);}
+		| "非"^
+		) search_condition
 	;
-		
+
 bool_exp
 	:	bool_term 
 		(("and"^ | "or"^ | "并且"^ | "或者"^) bool_term)*
@@ -142,11 +171,33 @@ expression_with_aggr_func
 
 equation
 	:	expression (
-		("="|compare_op) expression
-	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
-	|	("is"! "null"^|"is"! "not"^ "null"!|"为空"^|"非空"^)
-	| 	("between"^|"范围"^) expression ("and"!)? expression
-	| 	("not in"^|"in"^|"在于"^|"不在于"^) exp_set
+		
+		//逻辑运算符(+ - * /) 表达式
+		("=" | compare_op) expression
+	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);}
+	  	
+		//逻辑NOT LIKE 表达式
+	|	("not" "like") expression
+		{#equation=#([LOGICAL_NOT_LIKE, "logic_not_like"], #equation);}	
+
+		//逻辑IS NULL/IS NOT NULL
+	|	( "is" "null"
+		  {#equation = #([LOGICAL_NULL, "logic_null"], #equation);}
+		| "is" "not" "null"
+		  {#equation = #([LOGICAL_NOT_NULL, "logic_not_null"], #equation);}
+		| "为空"^ | "非空"^
+		)
+	
+		//逻辑BETWEEN AND
+	| 	("between"^ | "范围"^) expression ("and"!)? expression
+	
+		//逻辑IN/NOT IN
+	|	( "in"
+		  {#equation = #([LOGICAL_IN, "logic_in"], #equation);}
+		| "not" "in"
+		  {#equation = #([LOGICAL_NOT_IN, "logic_not_in"], #equation);}
+		| "在于"^ | "不在于"^
+		) exp_set
 	)
 	;
 
@@ -180,11 +231,18 @@ constant
 	|	"null"
 	;
 
+
 function
 	:	function_name LPAREN! parameters RPAREN!
+//	{#function = #([FUNCTION, "function_block"], #function);}
+	|	function_name LPAREN! RPAREN!
+	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
 	;
+
 aggregate_func
-	:	aggregate_func_name LPAREN! ("all"^|"全部"^|"distinct"^|"唯一"^)? parameters RPAREN!
+	:	("求记录总数"^ | "count"^) LPAREN! STAR! RPAREN!
+		{#aggregate_func = #([FUNCTION_COUNT, "function_count"], #aggregate_func);}
+	|	aggregate_func_name LPAREN! ("all"^|"全部"^|"distinct"^|"唯一"^)? parameters RPAREN!
 	;
 
 parameters
@@ -199,7 +257,9 @@ aggregate_func_name
 	|	"avg" 	| "求平均数"
 	|	"max" 	| "求最大值"
 	|	"min" 	| "求最小值"
-	|	"count" | "求记录数"
+	|	"count" | "求记录总数"
+	|	"stddev"
+	|	"variance"
 	;
 
 //function_name
@@ -243,35 +303,52 @@ number_function
 	|	"floor"		|	"求四舍后的整数"
 	|	"log"		|	"求自然对数"
 	|	"log10"		|	"求10为底的对数"
-	|	"mod"		|	"求模"
+	|	"mod"		|	"求余"
 	|	"pi"		|	"求PI"
 	|	"power"		|	"求数字的次幂值"
 	|	"radians"	|	"求度数角的弧度"
 	|	"rand"		|	"求0和1间的随机数"
+	|	"remaiindex"
 	|	"round"		|	"格式化数值"
 	|	"sign"		|	"求值的符号"
 	|	"sin"		|	"求角的正弦值"
 	|	"sqrt" 		| 	"求平方根"
 	|	"tan"		|	"求角的正切值"
+	|	"truncnum"
 	;
 
 string_function
 	:	"ascii"		|	"求第一个字符的ASCII码"
+	|	"bit_length"
+	|	"byte_length"
 	|	"char"		|	"求等值的字符"
 	|	"char_length" | "求字符串的长度"
 	|	"charindex"	|	"存在于"
 	|	"difference"  |	"求两个串的差值"
+	|	"insertstr"
 	|	"lcase"
 	|	"left"		|	"字符串左截"
 	|	"length"	|	"求字符串总长度"
+	|	"locate"
 	|	"lower" 	| 	"将字符串转为小写"
 	|	"ltrim"		|	"去掉左空格"
+	|	"octet_length"
 	|	"patindex"	|	"求第一次出现位置"
+	|	"repeat"
 	|	"replace"	|	"字符串替换"
-	|	"right"		|	"字符串左截"
+	|	"replicate"
+	|	"right"		|	"字符串右截"
 	|	"rtrim"		|	"去掉右空格"
+	|	"similar"
+	|	"sortkey"
+	|	"soundex"
+	|	"space"
 	|	"str"		|	"数值转字符串"
+	|	"string"
+	|	"stuff"
 	|	"substring"	|	"字符串截取"
+	|	"trim"
+	|	"ucase"
 	|	"upper"		|	"将字符串转为大写"
 	;
 
@@ -301,6 +378,7 @@ datetime_function
 	|	"week"
 	|	"years"
 	|	"year"
+	|	"ymd"
 	|	"getdate"	|	"求当前日期时间"
 	|	"dateadd"	|	"日期相加"
 	|	"datediff"	|	"日期相减"
@@ -308,10 +386,11 @@ datetime_function
 
 conversion_function
 	:	"convert"	|	"字符转为日期"
+	|	"cast"
 	|	"hextoint"	|	"十六进制转为整数"
 	|	"inttohex"	|	"整数转为十六进制"
-	|	"isdate"	|	"是日期型"
-	|	"isnumeric"	|	"是数值型"
+	|	"isdate"	|	"为日期型"
+	|	"isnumeric"	|	"为数值型"
 	;
 
 system_function
@@ -331,11 +410,6 @@ other_function
 	|	"vsize"
 	;
 
-//包含运算符
-contain_op
-	:	"在于" | "不在于" | "in" | "not in"
-	;
-
 one_arg_op
 	:	ONE_ARG_OP;
 
@@ -344,20 +418,18 @@ two_arg_op
 	|	"与" | "或" | "异或" | "加" | "减" | "乘" | "除" | "求模";
 
 compare_op
-	:	COMPARE_OP | "等于" | "like"
-	|	"大于等于" | "小于等于" | "大于" | "小于" | "不等于"
-	|	"包含" | "不包含"
+	:	COMPARE_OP
+	|	"等于" | "大于等于" | "小于等于" | "大于" | "小于" | "不等于"
+	|	"包含" | "不包含" | "like"
+	|	"左连接"	| LEFT_JOIN
 	;
-
-logic_onearg_op
-	:	"not" | "非";
 
 logic_op
 	:	"and" | "or" | "并且" | "或者";
 
 comparemethod_name
-	:	"not exists" | "不存在"
-	|	"exists" | "存在";
+	:	"exists" | "存在" | "不存在";
+
 
 class L extends Lexer;
 
@@ -371,25 +443,32 @@ options {
 
 ONE_ARG_OP
 	:	'~';
+
 TWO_ARG_OP
 	:	'&' | '|' | '^' | '+' | '/' | '%';
+
 MINUS 
 	: 	'-' ;
+
 STAR
 	:	'*';
+
 COMPARE_OP
 	:	'>' | '<' | ">=" | "<=" | "!=" | "<>" | "=";
-NOT_EXIST:
-	"not exist";
-EXIST:
-	"exist";
+LEFT_JOIN
+	: "*=";
+
 COMMA
 	:	',';
+
 SEMI:	';';
+
 POINT
 	:	'.';
+
 LPAREN
 	:	'(';
+
 RPAREN
 	:	')';
 
@@ -399,9 +478,9 @@ PARAM_LPAREN
 PARAM_RPAREN
 	:	'}';
 
-
 COLUMN
 	:	"column";
+
 WHERE
 	:	"where";
 
@@ -411,6 +490,7 @@ WS	:	(' '|'\n'|'\r'|'\t')+ {$setType(Token.SKIP);}
 QUOTED_STRING
 	:	('"'|'\'') (ESC|~('\''|'"'|'\\'|'\n'|'\r'))* ('"'|'\'')
 	;
+
 protected
 ESC
 	:	'\\'
@@ -586,15 +666,15 @@ statement returns [QueryModel model]
 	TableListModel t1;
 	SearchConditionModel cond;
 }
-	:	#("表合并" t1 = tableUnionList)
-		//#("表合并" tableModel1 = table_name tableModel2 = table_name)
+		//表合并语句
+	:	#("表合并" t1=tableUnionList)
 		{
 			union.addTableListModel(t1);
-			//union.addTableModel1(tableModel1);
-			//union.addTableModel2(tableModel2);
 			model = union;
 		}
-	|	#("表比较" tableModel1 = table_name tableModel2 = table_name method = compare_method cond = search_condition)
+
+		//表比较语句
+	|	#("表比较" tableModel1=table_name tableModel2=table_name method=compare_method cond=search_condition)
 		{	
 			tableCompare.addTableModel1(tableModel1);
 			tableCompare.addTableModel2(tableModel2);
@@ -602,6 +682,7 @@ statement returns [QueryModel model]
 			tableCompare.setSearchCondition(cond);
 			model = tableCompare;
 		}
+		//自定义查询语句
 	|	#(SELECT_STATEMENT model=select_statement)
 	;
 
@@ -620,9 +701,11 @@ tableUnionList returns [TableListModel model]
 
 
 compare_method returns [String rValue]
-	{rValue = "";}
+{rValue = "";}
 	:	v1: comparemethod_name
-	{rValue = v1.getText();}
+		{rValue = v1.getText();}
+	|	#(LOGICAL_NOT_EXISTS "not" "exists")
+		{rValue = "not exists";}
 	;
 
 select_statement returns [SelectStatementModel model]
@@ -698,12 +781,19 @@ search_condition returns [SearchConditionModel model]
 	{model.addChild(m1); model.addOperator(o3.getText()); model.addChild(m2);}
 	|	#(o4:"或者" m1=search_condition m2=search_condition)
 	{model.addChild(m1); model.addOperator(o4.getText()); model.addChild(m2);}
+
 	|	#(LOGIC_BLOCK m3=search_condition)
 	{model.addOperator("("); model.addChild(m3); model.addOperator(")");}
-	|	#(o11:"not" m4=search_condition)
+
+	|	#(SEARCH_NOT_CONDITION o11:"not" m4=search_condition)
 	{model.addOperator(o11.getText()); model.addChild(m4);}
 	|	#(o12:"非" m5=search_condition)
 	{model.addOperator(o12.getText()); model.addChild(m5);}
+//	|	#(o11:"not" m4=search_condition)
+//	{model.addOperator(o11.getText()); model.addChild(m4);}
+//	|	#(o12:"非" m5=search_condition)
+//	{model.addOperator(o12.getText()); model.addChild(m5);}
+
 	|	equ=equation
 	{model.addEquation(equ);}
 	;
@@ -741,31 +831,58 @@ equation returns [EquationModel model]
 	ExpressionModel e1, e2, e3;
 	EquationModel equation;
 	model=new EquationModel();
+	String nullStr = "";
 }
 	:	#(COMPARE_OP e1=expression op:compare_op e2=expression)
 	{model.addExpression(e1); model.addOperator(op.getText()); model.addExpression(e2);}
+	
+	|	#(LOGICAL_NOT_LIKE e1=expression "not" "like" e2=expression)
+	{model.addExpression(e1); model.addOperator("not like"); model.addExpression(e2);}
+	
+	|	#(LOGICAL_NULL e1=expression "is" "null")
+	{model.addExpression(e1); model.addOperator("is null");}
 	|	#(n:"为空" e1=expression)
 	{model.addExpression(e1); model.addOperator(n.getText());}
-	|	#("null" e1=expression)
-	{model.addExpression(e1); model.addOperator("is null");}
+	|	#(LOGICAL_NOT_NULL e1=expression "is" "not" "null")
+	{model.addExpression(e1); model.addOperator("is not null");}
 	|	#(nn:"非空" e1=expression)
 	{model.addExpression(e1); model.addOperator(nn.getText());}
-	|	#(nn_en:"not" e1=expression)
-	{model.addExpression(e1); model.addOperator("is not null");}
+
+//	|	#(n:"为空" e1=expression)
+//	{model.addExpression(e1); model.addOperator(n.getText());}
+//	|	#("null" e1=expression)
+//	{model.addExpression(e1); model.addOperator("is null");}
+//	|	#(nn:"非空" e1=expression)
+//	{model.addExpression(e1); model.addOperator(nn.getText());}
+//	|	#(nn_en:"not" e1=expression)
+//	{model.addExpression(e1); model.addOperator("is not null");}
+
 	|	#("between" e1=expression e2=expression e3=expression)
 	{model.addExpression(e1); model.addOperator("between");
 	 model.addExpression(e2); model.addExpression(e3);}
 	|	#(btw:"范围" e1=expression e2=expression e3=expression)
 	{model.addExpression(e1); model.addOperator(btw.getText());
-	 model.addExpression(e2); model.addExpression(e3);}
-	|	#("in" e1=expression e2=exp_set)
+	 model.addExpression(e2); model.addExpression(e3);
+	}
+	
+	|	#(LOGICAL_IN e1=expression "in" e2=exp_set)
 	{model.addExpression(e1); model.addOperator("in"); model.addExpression(e2);}
 	|	#(ct1:"在于" e1=expression e2=exp_set)
 	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
-	|	#("not in" e1=expression e2=exp_set)
+	|	#(LOGICAL_NOT_IN e1=expression "not" "in" e2=exp_set)
 	{model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);}
 	|	#(ct2:"不在于" e1=expression e2=exp_set)
 	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
+
+//	|	#("in" e1=expression e2=exp_set)
+//	{model.addExpression(e1); model.addOperator("in"); model.addExpression(e2);}
+//	|	#(ct1:"在于" e1=expression e2=exp_set)
+//	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
+//	|	#("not in" e1=expression e2=exp_set)
+//	{model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);}
+//	|	#(ct2:"不在于" e1=expression e2=exp_set)
+//	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
+
 	;
 
 exp_set returns [ExpressionModel model]
@@ -880,13 +997,30 @@ field_name returns [FieldModel model]
 	}
 	;
 function returns [FunctionModel model]
-{ParametersModel p; model=null;}
+{
+	model=null;
+	ParametersModel p; 
+	ExpressionModel express1 = new ExpressionModel();
+}
 	:	f:function_name p=parameters
 	{model=new FunctionModel(f.getText()); model.setParameters(p);}
+
+	|	#(FUNCTION_EMPTY_PARAM fun1:function_name)
+	{model=new FunctionModel(fun1.getText());}
+
+	|	#(FUNCTION_COUNT fun2:function_name)
+	{	model=new FunctionModel(fun2.getText());
+		express1.addOperator("*");
+		p = new ParametersModel();
+		p.addParameter(express1);
+		model.setParameters(p);
+	}
+
 	|	#(all:"全部" af11:function_name p=parameters)
 	{model=new FunctionModel(af11.getText()); model.setFilter(FunctionModel.ALL); model.setParameters(p);}
 	|	#("all" af12:function_name p=parameters)
 	{model=new FunctionModel(af12.getText()); model.setFilter(FunctionModel.ALL); model.setParameters(p);}
+
 	|	#(dist:"唯一" af21:function_name p=parameters)
 	{model=new FunctionModel(af21.getText()); model.setFilter(FunctionModel.DISTINCT); model.setParameters(p);}
 	|	#("distinct" af22:function_name p=parameters)
@@ -921,27 +1055,34 @@ tableAlias returns [TableAliasModel model]
 	{model = new TableAliasModel(a1.getText());}
 	|	a2:ID
 	{model = new TableAliasModel(a2.getText());}
-	;	
+	;
+
 //////////////////////////////////////////////////////////////
 // 常量
 select : "查询" | "select";
+
 distinct : "唯一" | "distinct";
+
 logic_op : "and" | "or" | "并且" | "或者";
+
 compare_op
-	:	COMPARE_OP | "等于" | "like"
-	|	"大于等于" | "小于等于" | "大于" | "小于" | "不等于"
-	|	"包含" | "不包含"
+	:	COMPARE_OP
+	| "等于" | "大于等于" | "小于等于" | "大于" | "小于" | "不等于"
+	| "包含" | "不包含" | "like"
+	| "左连接" | LEFT_JOIN
 	;
 
-//包含运算符
-contain_op
-	:	"在于" | "不在于" | "in" | "not in"
-	;
 one_arg_op
 	:	ONE_ARG_OP;
+
 two_arg_op
 	:	TWO_ARG_OP | STAR | MINUS
 	|	"与" | "或" | "异或" | "加" | "减" | "乘" | "除" | "求模";
+
+//比较运算符
+comparemethod_name
+	:	"exists" | "存在" | "不存在"
+	;
 
 //function_name
 //	:	"sqrt" 		| 	"求平方根"
@@ -963,7 +1104,7 @@ two_arg_op
 //	|	"avg" 		| 	"求平均数"
 //	|	"max" 		| 	"求最大值"
 //	|	"min" 		| 	"求最小值"
-//	|	"count" 	| 	"求记录数"
+//	|	"count" 	| 	"求记录总数"
 //	;
 
 function_name
@@ -981,7 +1122,7 @@ aggregate_func_name
 	|	"avg" 	| "求平均数"
 	|	"max" 	| "求最大值"
 	|	"min" 	| "求最小值"
-	|	"count" | "求记录数"
+	|	"count" | "求记录总数"
 	;
 
 number_function
@@ -998,7 +1139,7 @@ number_function
 	|	"floor"		|	"求四舍后的整数"
 	|	"log"		|	"求自然对数"
 	|	"log10"		|	"求10为底的对数"
-	|	"mod"		|	"求模"
+	|	"mod"		|	"求余"
 	|	"pi"		|	"求PI"
 	|	"power"		|	"求数字的次幂值"
 	|	"radians"	|	"求度数角的弧度"
@@ -1085,10 +1226,3 @@ other_function
 	| 	"nvl"
 	|	"vsize"
 	;
-
-
-//比较运算符
-comparemethod_name
-	:	"not exists" | "不存在"
-	|	"exists" 	| "存在"
-;
