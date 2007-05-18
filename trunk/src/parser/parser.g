@@ -1,5 +1,19 @@
+/*==========================================================//
+//	LongtopParser Of Sybase									//
+// 	Sybase 12.5.3/Sybase IQ 12.6 SQL Grammar				//
+//															//
+//	http://www.longtop.com									//
+//															//
+//  Recent updates by jiandeh@sina.com						//
+//															//
+//	\u4fee\u6539\u65e5\u5fd7:													//
+//	05/18/2007\uff1a												//
+//		- \u4fee\u6539\u4e86\u903b\u8f91\u975e\u6574\u4e2a\u6761\u4ef6\uff0c\u7528SEARCH_NOT_CONDITION TOKEN	//
+//		- \u4fee\u6539\u4e86IS NULL/IS NOT NULL TOKEN\uff0c\u53ef\u4ee5\u7528\u82f1\u6587			//
+//==========================================================*/
+
 header {
-package parser;
+	package parser;
 }
 
 class P extends Parser;
@@ -12,16 +26,30 @@ options {
 
 tokens {
 	SELECT_STATEMENT;
-	SUBQUERY;
-	GROUP_BY;
-	ORDER_BY;
-	ALIAS_EQU;
-	FUNCTION;
-	LOGIC_OP;
-	CONTAIN_OP;
-	SUBCONTAIN_OP;
-	ALL_FIELDS;
-	LOGIC_BLOCK;
+	SEARCH_NOT_CONDITION;	//\u975e\u6574\u4e2a\u6761\u4ef6TOKEN
+	SUBQUERY;				//\u5b50\u67e5\u8be2TOKEN
+	GROUP_BY;				//GROUP BY TOKEN
+	ORDER_BY;				//ORDER BY TOKEN
+	ALIAS_EQU;				//\u522b\u540dTOKEN
+	
+	FUNCTION;				//\u51fd\u6570TOKEN
+	FUNCTION_EMPTY_PARAM;	//\u7a7a\u51fd\u6570TOKEN
+	FUNCTION_COUNT;			//\u51fd\u6570COUNT TOKEN
+	
+	LOGIC_OP;				//\u903b\u8f91\u64cd\u4f5c\u7b26TOKEN
+	LOGICAL_NULL;			//\u903b\u8f91IS NULL TOKEN
+	LOGICAL_NOT_NULL;		//\u903b\u8f91IS NOT NULL TOKEN
+	LOGICAL_IN;				//\u903b\u8f91IN TOKEN
+	LOGICAL_NOT_IN;			//\u903b\u8f91NOT IN TOKEN
+	LOGICAL_LIKE;			//\u903b\u8f91LIKE TOKEN
+	LOGICAL_NOT_LIKE;		//\u903b\u8f91LIKE TOKEN
+	LOGICAL_EXISTS;			//\u903b\u8f91EXISTS TOKEN
+	LOGICAL_NOT_EXISTS;		//\u903b\u8f91NOT EXISTS TOKEN
+	LOGICAL_BETWEEN;		//\u903b\u8f91BETWEEN AND TOKEN
+	
+	SUBCONTAIN_OP;			//\u5173\u7cfbIN/NOT IN TOKEN
+	ALL_FIELDS;				//\u5b57\u6bb5\u6240\u6709(*) TOKEN
+	LOGIC_BLOCK;			//WHERE\u6761\u4ef6\u903b\u8f91\u5757 TOKEN
 }
 
 segment
@@ -49,15 +77,13 @@ table_lists
 	;
 
 tableCompare
-	:	("t_compare"^|"\u8868\u6bd4\u8f83"^) table_name COMMA! table_name ("where"!|"\u6761\u4ef6"!) comparemethod_name search_condition
+	:	("t_compare"^|"\u8868\u6bd4\u8f83"^) table_name COMMA! table_name ("where"!|"\u6761\u4ef6"!) compare_method search_condition
 	;
 
-left_join_statement
-	:	("select"^|"\u67e5\u8be2"^) ("distinct"^|"\u552f\u4e00"^)? select_list
-		("from"^|"\u6765\u81ea"^) table_name (("left" "join") | "\u5de6\u8fde\u63a5") table_name
-		(("where"^|"\u6761\u4ef6"^) search_condition)?
-		(("group"^ "by"!|"\u5206\u7ec4"^) aggregate_expression_list)?
-		(("order"^ "by"!|"\u6392\u5e8f"^) order_expression_list)?
+compare_method
+	:	comparemethod_name
+	|	"not" "exists"
+		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], compare_method);}
 	;
 
 select_statement
@@ -83,9 +109,12 @@ table_list
 
 search_condition
 	:	bool_exp
-	|	("not"^ | "\u975e"^) search_condition
+	|	( "not"
+		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], search_condition);}
+		| "\u975e"^
+		) search_condition
 	;
-		
+
 bool_exp
 	:	bool_term 
 		(("and"^ | "or"^ | "\u5e76\u4e14"^ | "\u6216\u8005"^) bool_term)*
@@ -142,11 +171,33 @@ expression_with_aggr_func
 
 equation
 	:	expression (
-		("="|compare_op) expression
-	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);} 
-	|	("is"! "null"^|"is"! "not"^ "null"!|"\u4e3a\u7a7a"^|"\u975e\u7a7a"^)
-	| 	("between"^|"\u8303\u56f4"^) expression ("and"!)? expression
-	| 	("not in"^|"in"^|"\u5728\u4e8e"^|"\u4e0d\u5728\u4e8e"^) exp_set
+		
+		//\u903b\u8f91\u8fd0\u7b97\u7b26(+ - * /) \u8868\u8fbe\u5f0f
+		("=" | compare_op) expression
+	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);}
+	  	
+		//\u903b\u8f91NOT LIKE \u8868\u8fbe\u5f0f
+	|	("not" "like") expression
+		{#equation=#([LOGICAL_NOT_LIKE, "logic_not_like"], #equation);}	
+
+		//\u903b\u8f91IS NULL/IS NOT NULL
+	|	( "is" "null"
+		  {#equation = #([LOGICAL_NULL, "logic_null"], #equation);}
+		| "is" "not" "null"
+		  {#equation = #([LOGICAL_NOT_NULL, "logic_not_null"], #equation);}
+		| "\u4e3a\u7a7a"^ | "\u975e\u7a7a"^
+		)
+	
+		//\u903b\u8f91BETWEEN AND
+	| 	("between"^ | "\u8303\u56f4"^) expression ("and"!)? expression
+	
+		//\u903b\u8f91IN/NOT IN
+	|	( "in"
+		  {#equation = #([LOGICAL_IN, "logic_in"], #equation);}
+		| "not" "in"
+		  {#equation = #([LOGICAL_NOT_IN, "logic_not_in"], #equation);}
+		| "\u5728\u4e8e"^ | "\u4e0d\u5728\u4e8e"^
+		) exp_set
 	)
 	;
 
@@ -180,11 +231,18 @@ constant
 	|	"null"
 	;
 
+
 function
 	:	function_name LPAREN! parameters RPAREN!
+//	{#function = #([FUNCTION, "function_block"], #function);}
+	|	function_name LPAREN! RPAREN!
+	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
 	;
+
 aggregate_func
-	:	aggregate_func_name LPAREN! ("all"^|"\u5168\u90e8"^|"distinct"^|"\u552f\u4e00"^)? parameters RPAREN!
+	:	("\u6c42\u8bb0\u5f55\u603b\u6570"^ | "count"^) LPAREN! STAR! RPAREN!
+		{#aggregate_func = #([FUNCTION_COUNT, "function_count"], #aggregate_func);}
+	|	aggregate_func_name LPAREN! ("all"^|"\u5168\u90e8"^|"distinct"^|"\u552f\u4e00"^)? parameters RPAREN!
 	;
 
 parameters
@@ -199,7 +257,9 @@ aggregate_func_name
 	|	"avg" 	| "\u6c42\u5e73\u5747\u6570"
 	|	"max" 	| "\u6c42\u6700\u5927\u503c"
 	|	"min" 	| "\u6c42\u6700\u5c0f\u503c"
-	|	"count" | "\u6c42\u8bb0\u5f55\u6570"
+	|	"count" | "\u6c42\u8bb0\u5f55\u603b\u6570"
+	|	"stddev"
+	|	"variance"
 	;
 
 //function_name
@@ -243,35 +303,52 @@ number_function
 	|	"floor"		|	"\u6c42\u56db\u820d\u540e\u7684\u6574\u6570"
 	|	"log"		|	"\u6c42\u81ea\u7136\u5bf9\u6570"
 	|	"log10"		|	"\u6c4210\u4e3a\u5e95\u7684\u5bf9\u6570"
-	|	"mod"		|	"\u6c42\u6a21"
+	|	"mod"		|	"\u6c42\u4f59"
 	|	"pi"		|	"\u6c42PI"
 	|	"power"		|	"\u6c42\u6570\u5b57\u7684\u6b21\u5e42\u503c"
 	|	"radians"	|	"\u6c42\u5ea6\u6570\u89d2\u7684\u5f27\u5ea6"
 	|	"rand"		|	"\u6c420\u548c1\u95f4\u7684\u968f\u673a\u6570"
+	|	"remaiindex"
 	|	"round"		|	"\u683c\u5f0f\u5316\u6570\u503c"
 	|	"sign"		|	"\u6c42\u503c\u7684\u7b26\u53f7"
 	|	"sin"		|	"\u6c42\u89d2\u7684\u6b63\u5f26\u503c"
 	|	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
 	|	"tan"		|	"\u6c42\u89d2\u7684\u6b63\u5207\u503c"
+	|	"truncnum"
 	;
 
 string_function
 	:	"ascii"		|	"\u6c42\u7b2c\u4e00\u4e2a\u5b57\u7b26\u7684ASCII\u7801"
+	|	"bit_length"
+	|	"byte_length"
 	|	"char"		|	"\u6c42\u7b49\u503c\u7684\u5b57\u7b26"
 	|	"char_length" | "\u6c42\u5b57\u7b26\u4e32\u7684\u957f\u5ea6"
 	|	"charindex"	|	"\u5b58\u5728\u4e8e"
 	|	"difference"  |	"\u6c42\u4e24\u4e2a\u4e32\u7684\u5dee\u503c"
+	|	"insertstr"
 	|	"lcase"
 	|	"left"		|	"\u5b57\u7b26\u4e32\u5de6\u622a"
 	|	"length"	|	"\u6c42\u5b57\u7b26\u4e32\u603b\u957f\u5ea6"
+	|	"locate"
 	|	"lower" 	| 	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5c0f\u5199"
 	|	"ltrim"		|	"\u53bb\u6389\u5de6\u7a7a\u683c"
+	|	"octet_length"
 	|	"patindex"	|	"\u6c42\u7b2c\u4e00\u6b21\u51fa\u73b0\u4f4d\u7f6e"
+	|	"repeat"
 	|	"replace"	|	"\u5b57\u7b26\u4e32\u66ff\u6362"
-	|	"right"		|	"\u5b57\u7b26\u4e32\u5de6\u622a"
+	|	"replicate"
+	|	"right"		|	"\u5b57\u7b26\u4e32\u53f3\u622a"
 	|	"rtrim"		|	"\u53bb\u6389\u53f3\u7a7a\u683c"
+	|	"similar"
+	|	"sortkey"
+	|	"soundex"
+	|	"space"
 	|	"str"		|	"\u6570\u503c\u8f6c\u5b57\u7b26\u4e32"
+	|	"string"
+	|	"stuff"
 	|	"substring"	|	"\u5b57\u7b26\u4e32\u622a\u53d6"
+	|	"trim"
+	|	"ucase"
 	|	"upper"		|	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5927\u5199"
 	;
 
@@ -301,6 +378,7 @@ datetime_function
 	|	"week"
 	|	"years"
 	|	"year"
+	|	"ymd"
 	|	"getdate"	|	"\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
 	|	"dateadd"	|	"\u65e5\u671f\u76f8\u52a0"
 	|	"datediff"	|	"\u65e5\u671f\u76f8\u51cf"
@@ -308,10 +386,11 @@ datetime_function
 
 conversion_function
 	:	"convert"	|	"\u5b57\u7b26\u8f6c\u4e3a\u65e5\u671f"
+	|	"cast"
 	|	"hextoint"	|	"\u5341\u516d\u8fdb\u5236\u8f6c\u4e3a\u6574\u6570"
 	|	"inttohex"	|	"\u6574\u6570\u8f6c\u4e3a\u5341\u516d\u8fdb\u5236"
-	|	"isdate"	|	"\u662f\u65e5\u671f\u578b"
-	|	"isnumeric"	|	"\u662f\u6570\u503c\u578b"
+	|	"isdate"	|	"\u4e3a\u65e5\u671f\u578b"
+	|	"isnumeric"	|	"\u4e3a\u6570\u503c\u578b"
 	;
 
 system_function
@@ -331,11 +410,6 @@ other_function
 	|	"vsize"
 	;
 
-//\u5305\u542b\u8fd0\u7b97\u7b26
-contain_op
-	:	"\u5728\u4e8e" | "\u4e0d\u5728\u4e8e" | "in" | "not in"
-	;
-
 one_arg_op
 	:	ONE_ARG_OP;
 
@@ -344,20 +418,18 @@ two_arg_op
 	|	"\u4e0e" | "\u6216" | "\u5f02\u6216" | "\u52a0" | "\u51cf" | "\u4e58" | "\u9664" | "\u6c42\u6a21";
 
 compare_op
-	:	COMPARE_OP | "\u7b49\u4e8e" | "like"
-	|	"\u5927\u4e8e\u7b49\u4e8e" | "\u5c0f\u4e8e\u7b49\u4e8e" | "\u5927\u4e8e" | "\u5c0f\u4e8e" | "\u4e0d\u7b49\u4e8e"
-	|	"\u5305\u542b" | "\u4e0d\u5305\u542b"
+	:	COMPARE_OP
+	|	"\u7b49\u4e8e" | "\u5927\u4e8e\u7b49\u4e8e" | "\u5c0f\u4e8e\u7b49\u4e8e" | "\u5927\u4e8e" | "\u5c0f\u4e8e" | "\u4e0d\u7b49\u4e8e"
+	|	"\u5305\u542b" | "\u4e0d\u5305\u542b" | "like"
+	|	"\u5de6\u8fde\u63a5"	| LEFT_JOIN
 	;
-
-logic_onearg_op
-	:	"not" | "\u975e";
 
 logic_op
 	:	"and" | "or" | "\u5e76\u4e14" | "\u6216\u8005";
 
 comparemethod_name
-	:	"not exists" | "\u4e0d\u5b58\u5728"
-	|	"exists" | "\u5b58\u5728";
+	:	"exists" | "\u5b58\u5728" | "\u4e0d\u5b58\u5728";
+
 
 class L extends Lexer;
 
@@ -371,25 +443,32 @@ options {
 
 ONE_ARG_OP
 	:	'~';
+
 TWO_ARG_OP
 	:	'&' | '|' | '^' | '+' | '/' | '%';
+
 MINUS 
 	: 	'-' ;
+
 STAR
 	:	'*';
+
 COMPARE_OP
 	:	'>' | '<' | ">=" | "<=" | "!=" | "<>" | "=";
-NOT_EXIST:
-	"not exist";
-EXIST:
-	"exist";
+LEFT_JOIN
+	: "*=";
+
 COMMA
 	:	',';
+
 SEMI:	';';
+
 POINT
 	:	'.';
+
 LPAREN
 	:	'(';
+
 RPAREN
 	:	')';
 
@@ -399,9 +478,9 @@ PARAM_LPAREN
 PARAM_RPAREN
 	:	'}';
 
-
 COLUMN
 	:	"column";
+
 WHERE
 	:	"where";
 
@@ -411,6 +490,7 @@ WS	:	(' '|'\n'|'\r'|'\t')+ {$setType(Token.SKIP);}
 QUOTED_STRING
 	:	('"'|'\'') (ESC|~('\''|'"'|'\\'|'\n'|'\r'))* ('"'|'\'')
 	;
+
 protected
 ESC
 	:	'\\'
@@ -586,15 +666,15 @@ statement returns [QueryModel model]
 	TableListModel t1;
 	SearchConditionModel cond;
 }
-	:	#("\u8868\u5408\u5e76" t1 = tableUnionList)
-		//#("\u8868\u5408\u5e76" tableModel1 = table_name tableModel2 = table_name)
+		//\u8868\u5408\u5e76\u8bed\u53e5
+	:	#("\u8868\u5408\u5e76" t1=tableUnionList)
 		{
 			union.addTableListModel(t1);
-			//union.addTableModel1(tableModel1);
-			//union.addTableModel2(tableModel2);
 			model = union;
 		}
-	|	#("\u8868\u6bd4\u8f83" tableModel1 = table_name tableModel2 = table_name method = compare_method cond = search_condition)
+
+		//\u8868\u6bd4\u8f83\u8bed\u53e5
+	|	#("\u8868\u6bd4\u8f83" tableModel1=table_name tableModel2=table_name method=compare_method cond=search_condition)
 		{	
 			tableCompare.addTableModel1(tableModel1);
 			tableCompare.addTableModel2(tableModel2);
@@ -602,6 +682,7 @@ statement returns [QueryModel model]
 			tableCompare.setSearchCondition(cond);
 			model = tableCompare;
 		}
+		//\u81ea\u5b9a\u4e49\u67e5\u8be2\u8bed\u53e5
 	|	#(SELECT_STATEMENT model=select_statement)
 	;
 
@@ -620,9 +701,11 @@ tableUnionList returns [TableListModel model]
 
 
 compare_method returns [String rValue]
-	{rValue = "";}
+{rValue = "";}
 	:	v1: comparemethod_name
-	{rValue = v1.getText();}
+		{rValue = v1.getText();}
+	|	#(LOGICAL_NOT_EXISTS "not" "exists")
+		{rValue = "not exists";}
 	;
 
 select_statement returns [SelectStatementModel model]
@@ -698,12 +781,19 @@ search_condition returns [SearchConditionModel model]
 	{model.addChild(m1); model.addOperator(o3.getText()); model.addChild(m2);}
 	|	#(o4:"\u6216\u8005" m1=search_condition m2=search_condition)
 	{model.addChild(m1); model.addOperator(o4.getText()); model.addChild(m2);}
+
 	|	#(LOGIC_BLOCK m3=search_condition)
 	{model.addOperator("("); model.addChild(m3); model.addOperator(")");}
-	|	#(o11:"not" m4=search_condition)
+
+	|	#(SEARCH_NOT_CONDITION o11:"not" m4=search_condition)
 	{model.addOperator(o11.getText()); model.addChild(m4);}
 	|	#(o12:"\u975e" m5=search_condition)
 	{model.addOperator(o12.getText()); model.addChild(m5);}
+//	|	#(o11:"not" m4=search_condition)
+//	{model.addOperator(o11.getText()); model.addChild(m4);}
+//	|	#(o12:"\u975e" m5=search_condition)
+//	{model.addOperator(o12.getText()); model.addChild(m5);}
+
 	|	equ=equation
 	{model.addEquation(equ);}
 	;
@@ -741,31 +831,58 @@ equation returns [EquationModel model]
 	ExpressionModel e1, e2, e3;
 	EquationModel equation;
 	model=new EquationModel();
+	String nullStr = "";
 }
 	:	#(COMPARE_OP e1=expression op:compare_op e2=expression)
 	{model.addExpression(e1); model.addOperator(op.getText()); model.addExpression(e2);}
+	
+	|	#(LOGICAL_NOT_LIKE e1=expression "not" "like" e2=expression)
+	{model.addExpression(e1); model.addOperator("not like"); model.addExpression(e2);}
+	
+	|	#(LOGICAL_NULL e1=expression "is" "null")
+	{model.addExpression(e1); model.addOperator("is null");}
 	|	#(n:"\u4e3a\u7a7a" e1=expression)
 	{model.addExpression(e1); model.addOperator(n.getText());}
-	|	#("null" e1=expression)
-	{model.addExpression(e1); model.addOperator("is null");}
+	|	#(LOGICAL_NOT_NULL e1=expression "is" "not" "null")
+	{model.addExpression(e1); model.addOperator("is not null");}
 	|	#(nn:"\u975e\u7a7a" e1=expression)
 	{model.addExpression(e1); model.addOperator(nn.getText());}
-	|	#(nn_en:"not" e1=expression)
-	{model.addExpression(e1); model.addOperator("is not null");}
+
+//	|	#(n:"\u4e3a\u7a7a" e1=expression)
+//	{model.addExpression(e1); model.addOperator(n.getText());}
+//	|	#("null" e1=expression)
+//	{model.addExpression(e1); model.addOperator("is null");}
+//	|	#(nn:"\u975e\u7a7a" e1=expression)
+//	{model.addExpression(e1); model.addOperator(nn.getText());}
+//	|	#(nn_en:"not" e1=expression)
+//	{model.addExpression(e1); model.addOperator("is not null");}
+
 	|	#("between" e1=expression e2=expression e3=expression)
 	{model.addExpression(e1); model.addOperator("between");
 	 model.addExpression(e2); model.addExpression(e3);}
 	|	#(btw:"\u8303\u56f4" e1=expression e2=expression e3=expression)
 	{model.addExpression(e1); model.addOperator(btw.getText());
-	 model.addExpression(e2); model.addExpression(e3);}
-	|	#("in" e1=expression e2=exp_set)
+	 model.addExpression(e2); model.addExpression(e3);
+	}
+	
+	|	#(LOGICAL_IN e1=expression "in" e2=exp_set)
 	{model.addExpression(e1); model.addOperator("in"); model.addExpression(e2);}
 	|	#(ct1:"\u5728\u4e8e" e1=expression e2=exp_set)
 	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
-	|	#("not in" e1=expression e2=exp_set)
+	|	#(LOGICAL_NOT_IN e1=expression "not" "in" e2=exp_set)
 	{model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);}
 	|	#(ct2:"\u4e0d\u5728\u4e8e" e1=expression e2=exp_set)
 	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
+
+//	|	#("in" e1=expression e2=exp_set)
+//	{model.addExpression(e1); model.addOperator("in"); model.addExpression(e2);}
+//	|	#(ct1:"\u5728\u4e8e" e1=expression e2=exp_set)
+//	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
+//	|	#("not in" e1=expression e2=exp_set)
+//	{model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);}
+//	|	#(ct2:"\u4e0d\u5728\u4e8e" e1=expression e2=exp_set)
+//	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
+
 	;
 
 exp_set returns [ExpressionModel model]
@@ -880,13 +997,30 @@ field_name returns [FieldModel model]
 	}
 	;
 function returns [FunctionModel model]
-{ParametersModel p; model=null;}
+{
+	model=null;
+	ParametersModel p; 
+	ExpressionModel express1 = new ExpressionModel();
+}
 	:	f:function_name p=parameters
 	{model=new FunctionModel(f.getText()); model.setParameters(p);}
+
+	|	#(FUNCTION_EMPTY_PARAM fun1:function_name)
+	{model=new FunctionModel(fun1.getText());}
+
+	|	#(FUNCTION_COUNT fun2:function_name)
+	{	model=new FunctionModel(fun2.getText());
+		express1.addOperator("*");
+		p = new ParametersModel();
+		p.addParameter(express1);
+		model.setParameters(p);
+	}
+
 	|	#(all:"\u5168\u90e8" af11:function_name p=parameters)
 	{model=new FunctionModel(af11.getText()); model.setFilter(FunctionModel.ALL); model.setParameters(p);}
 	|	#("all" af12:function_name p=parameters)
 	{model=new FunctionModel(af12.getText()); model.setFilter(FunctionModel.ALL); model.setParameters(p);}
+
 	|	#(dist:"\u552f\u4e00" af21:function_name p=parameters)
 	{model=new FunctionModel(af21.getText()); model.setFilter(FunctionModel.DISTINCT); model.setParameters(p);}
 	|	#("distinct" af22:function_name p=parameters)
@@ -921,27 +1055,34 @@ tableAlias returns [TableAliasModel model]
 	{model = new TableAliasModel(a1.getText());}
 	|	a2:ID
 	{model = new TableAliasModel(a2.getText());}
-	;	
+	;
+
 //////////////////////////////////////////////////////////////
 // \u5e38\u91cf
 select : "\u67e5\u8be2" | "select";
+
 distinct : "\u552f\u4e00" | "distinct";
+
 logic_op : "and" | "or" | "\u5e76\u4e14" | "\u6216\u8005";
+
 compare_op
-	:	COMPARE_OP | "\u7b49\u4e8e" | "like"
-	|	"\u5927\u4e8e\u7b49\u4e8e" | "\u5c0f\u4e8e\u7b49\u4e8e" | "\u5927\u4e8e" | "\u5c0f\u4e8e" | "\u4e0d\u7b49\u4e8e"
-	|	"\u5305\u542b" | "\u4e0d\u5305\u542b"
+	:	COMPARE_OP
+	| "\u7b49\u4e8e" | "\u5927\u4e8e\u7b49\u4e8e" | "\u5c0f\u4e8e\u7b49\u4e8e" | "\u5927\u4e8e" | "\u5c0f\u4e8e" | "\u4e0d\u7b49\u4e8e"
+	| "\u5305\u542b" | "\u4e0d\u5305\u542b" | "like"
+	| "\u5de6\u8fde\u63a5" | LEFT_JOIN
 	;
 
-//\u5305\u542b\u8fd0\u7b97\u7b26
-contain_op
-	:	"\u5728\u4e8e" | "\u4e0d\u5728\u4e8e" | "in" | "not in"
-	;
 one_arg_op
 	:	ONE_ARG_OP;
+
 two_arg_op
 	:	TWO_ARG_OP | STAR | MINUS
 	|	"\u4e0e" | "\u6216" | "\u5f02\u6216" | "\u52a0" | "\u51cf" | "\u4e58" | "\u9664" | "\u6c42\u6a21";
+
+//\u6bd4\u8f83\u8fd0\u7b97\u7b26
+comparemethod_name
+	:	"exists" | "\u5b58\u5728" | "\u4e0d\u5b58\u5728"
+	;
 
 //function_name
 //	:	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
@@ -963,7 +1104,7 @@ two_arg_op
 //	|	"avg" 		| 	"\u6c42\u5e73\u5747\u6570"
 //	|	"max" 		| 	"\u6c42\u6700\u5927\u503c"
 //	|	"min" 		| 	"\u6c42\u6700\u5c0f\u503c"
-//	|	"count" 	| 	"\u6c42\u8bb0\u5f55\u6570"
+//	|	"count" 	| 	"\u6c42\u8bb0\u5f55\u603b\u6570"
 //	;
 
 function_name
@@ -981,7 +1122,7 @@ aggregate_func_name
 	|	"avg" 	| "\u6c42\u5e73\u5747\u6570"
 	|	"max" 	| "\u6c42\u6700\u5927\u503c"
 	|	"min" 	| "\u6c42\u6700\u5c0f\u503c"
-	|	"count" | "\u6c42\u8bb0\u5f55\u6570"
+	|	"count" | "\u6c42\u8bb0\u5f55\u603b\u6570"
 	;
 
 number_function
@@ -998,7 +1139,7 @@ number_function
 	|	"floor"		|	"\u6c42\u56db\u820d\u540e\u7684\u6574\u6570"
 	|	"log"		|	"\u6c42\u81ea\u7136\u5bf9\u6570"
 	|	"log10"		|	"\u6c4210\u4e3a\u5e95\u7684\u5bf9\u6570"
-	|	"mod"		|	"\u6c42\u6a21"
+	|	"mod"		|	"\u6c42\u4f59"
 	|	"pi"		|	"\u6c42PI"
 	|	"power"		|	"\u6c42\u6570\u5b57\u7684\u6b21\u5e42\u503c"
 	|	"radians"	|	"\u6c42\u5ea6\u6570\u89d2\u7684\u5f27\u5ea6"
@@ -1085,10 +1226,3 @@ other_function
 	| 	"nvl"
 	|	"vsize"
 	;
-
-
-//\u6bd4\u8f83\u8fd0\u7b97\u7b26
-comparemethod_name
-	:	"not exists" | "\u4e0d\u5b58\u5728"
-	|	"exists" 	| "\u5b58\u5728"
-;
