@@ -20,22 +20,32 @@ public class FunctionModel extends QueryModel {
   }
 
   public String getChString() {
+  	String rValue = "";
     String f = "";
     if (filter == ALL)
       f = "ËùÓÐ";
     else if (filter == DISTINCT)
       f = "Î¨Ò»";
     ParametersModel para=(ParametersModel)getFirstModelByClass(ParametersModel.class);
-    return functionName + "(" + f + para.getChString() + ")";
+    if (para != null)
+    	rValue = functionName + "(" + f + para.getChString() + ")";
+    else
+    	rValue = functionName + "(" + ")";
+    return rValue;
   }
   
   public String getEnString() {
+  	String rValue = "";
     String f = "";
     if (filter == ALL)
       f = "all ";
     else if (filter == DISTINCT)
       f = "distinct ";
     ParametersModel para=(ParametersModel)getFirstModelByClass(ParametersModel.class);
-    return translateStringCh2En(functionName)+"("+f+para.getEnString()+")";
+    if (para != null)
+    	rValue = translateStringCh2En(functionName) + "(" + f + para.getEnString() + ")";
+    else
+    	rValue = translateStringCh2En(functionName) + "(" + f + ")";
+    return rValue;
   }
 }
