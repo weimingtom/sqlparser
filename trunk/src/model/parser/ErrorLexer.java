@@ -9,6 +9,9 @@ public class ErrorLexer {
   public static final String COMMA_LEXER_NAME  = "COMMA";
   public static final String COMMA_LEXER_VALUE = ",";
   
+  public static final String STAR_LEXER_NAME  = "STAR";
+  public static final String STAR_LEXER_VALUE = "*";
+  
   public static final String POINT_LEXER_NAME  = "POINT";
   public static final String POINT_LEXER_VALUE = ".";
   
@@ -37,6 +40,7 @@ public class ErrorLexer {
   
   public void setlexersMap(){
     lexersMap.put(COMMA_LEXER_NAME, COMMA_LEXER_VALUE);
+    lexersMap.put(STAR_LEXER_NAME, STAR_LEXER_VALUE);
     lexersMap.put(POINT_LEXER_NAME, POINT_LEXER_VALUE);
     lexersMap.put(LPAREN_LEXER_NAME, LPAREN_LEXER_VALUE);
     lexersMap.put(RPAREN_LEXER_NAME, RPAREN_LEXER_VALUE);
