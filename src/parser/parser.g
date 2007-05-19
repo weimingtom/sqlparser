@@ -19,7 +19,7 @@
 //		- \u589e\u52a0\u4e86\u65e5\u671fdate-part\u4fdd\u7559\u5b57\u7684\u5904\u7406\uff0c\u53ef\u4ee5\u4f7f\u7528dateadd(day, 	//
 //		  10, getdate())\u51fd\u6570\u53caday\u4fdd\u7559\u5b57						//
 //		- \u589e\u52a0empty_function\u3001star_function\uff0c\u7528\u6765\u5bf9getdate();	//
-//		  pi(*);now(*);today(*)\u7684\u9a8c\u8bc1						//
+//		  pi(*)\u3001now(*)\u3001today(*)\u7684\u9a8c\u8bc1						//
 //		  													//
 //==========================================================*/
 
@@ -184,15 +184,15 @@ expression_with_aggr_func
 equation
 	:	expression (
 		
-		//\u903b\u8f91\u8fd0\u7b97\u7b26(+ - * /) \u8868\u8fbe\u5f0f
+		//\u5173\u7cfb\u8fd0\u7b97\u7b26(+ - * /) \u8868\u8fbe\u5f0f
 		("=" | compare_op) expression
 	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);}
 	  	
-		//\u903b\u8f91NOT LIKE \u8868\u8fbe\u5f0f
+		//\u5173\u7cfb\u8fd0\u7b97\u7b26NOT LIKE \u8868\u8fbe\u5f0f
 	|	("not" "like") expression
 		{#equation=#([LOGICAL_NOT_LIKE, "logic_not_like"], #equation);}	
 
-		//\u903b\u8f91IS NULL/IS NOT NULL
+		//\u5173\u7cfb\u8fd0\u7b97\u7b26IS NULL/IS NOT NULL
 	|	( "is" "null"
 		  {#equation = #([LOGICAL_NULL, "logic_null"], #equation);}
 		| "is" "not" "null"
@@ -200,10 +200,10 @@ equation
 		| "\u4e3a\u7a7a"^ | "\u975e\u7a7a"^
 		)
 	
-		//\u903b\u8f91BETWEEN AND
+		//\u5173\u7cfb\u8fd0\u7b97\u7b26BETWEEN AND
 	| 	("between"^ | "\u8303\u56f4"^) expression ("and"!)? expression
 	
-		//\u903b\u8f91IN/NOT IN
+		//\u5173\u7cfb\u8fd0\u7b97\u7b26IN/NOT IN
 	|	( "in"
 		  {#equation = #([LOGICAL_IN, "logic_in"], #equation);}
 		| "not" "in"
