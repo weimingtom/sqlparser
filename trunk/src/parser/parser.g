@@ -7,9 +7,18 @@
 //  Recent updates by jiandeh@sina.com						//
 //															//
 //	\u4fee\u6539\u65e5\u5fd7:													//
+//	======================================================	//
 //	05/18/2007\uff1a												//
 //		- \u4fee\u6539\u4e86\u903b\u8f91\u975e\u6574\u4e2a\u6761\u4ef6\uff0c\u7528SEARCH_NOT_CONDITION TOKEN	//
-//		- \u4fee\u6539\u4e86IS NULL/IS NOT NULL TOKEN\uff0c\u53ef\u4ee5\u7528\u82f1\u6587			//
+//		- \u4fee\u6539\u4e86IS NULL/IS NOT NULL; NOT EXISTS;				//
+//        NOT LIKE; IN/NOT IN TOKEN\u53ca\u8bed\u6cd5\u6811\u904d\u5386\uff0c\u53ef\u4ee5\u7528\u9a8c\u8bc1\u82f1\u6587	//
+//		- \u589e\u52a0FUNCTION_EMPTY_PARAM TOKEN\uff0c\u53ef\u4ee5\u5bf9\u7a7a\u51fd\u6570\u9a8c\u8bc1		//
+//		- \u589e\u52a0FUNCTION_COUNT TOKEN\uff0c\u5141\u8bb8\u5bf9\u805a\u5408\u51fd\u6570COUNT(*)\u9a8c\u8bc1	//
+//		- \u589e\u52a0\u5de6\u8fde\u63a5(*=)\u8bed\u6cd5\u9a8c\u8bc1								//
+//	05/19/2007:												//
+//		- \u589e\u52a0\u4e86\u65e5\u671fdate-part\u4fdd\u7559\u5b57\u7684\u5904\u7406,\u53ef\u4ee5\u4f7f\u7528dateadd(day, 	//
+//		  10, getdate())\u51fd\u6570\u53caday\u4fdd\u7559\u5b57						//
+//		  													//
 //==========================================================*/
 
 header {
@@ -228,6 +237,7 @@ constant
 	:	REAL_NUM
 	|	NEGATIVE_DIGIT_ELEMENT
 	|	QUOTED_STRING
+	|	date_key_word
 	|	"null"
 	;
 
@@ -430,6 +440,13 @@ logic_op
 comparemethod_name
 	:	"exists" | "\u5b58\u5728" | "\u4e0d\u5b58\u5728";
 
+//\u65e5\u671fdate-part\u4fdd\u7559\u5b57
+date_key_word
+	: "year" | "yy" | "month" | "mm" | "day" | "dd"
+	| "quarter" | "qq" | "week" | "wk" | "dayofyear" | "dy"
+	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
+	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
+	;
 
 class L extends Lexer;
 
@@ -490,7 +507,6 @@ WS	:	(' '|'\n'|'\r'|'\t')+ {$setType(Token.SKIP);}
 QUOTED_STRING
 	:	('"'|'\'') (ESC|~('\''|'"'|'\\'|'\n'|'\r'))* ('"'|'\'')
 	;
-
 protected
 ESC
 	:	'\\'
@@ -531,7 +547,6 @@ PARAM_ID
 
 ID	options {testLiterals=true;}
 	:	ID_START_LETTER ( ID_LETTER )*;
-
 protected
 ID_START_LETTER
     :    'a'..'z'
@@ -962,6 +977,8 @@ expression returns [ExpressionModel model]
 	{model.addOperator(op1.getText()); model.addChild(e1);}
 	|	lp:LPAREN e1=expression rp:RPAREN
 	{model.addOperator(lp.getText()); model.addChild(e1); model.addOperator(rp.getText());}
+	|	dkw:date_key_word
+	{model.addConstant(dkw.getText());}
 	|	param=param_equ
 	{model.addParam(param);}
 	|	f=field_name
@@ -1084,6 +1101,14 @@ comparemethod_name
 	:	"exists" | "\u5b58\u5728" | "\u4e0d\u5b58\u5728"
 	;
 
+//\u65e5\u671fdate-part\u4fdd\u7559\u5b57
+date_key_word
+	: "year" | "yy" | "month" | "mm" | "day" | "dd"
+	| "quarter" | "qq" | "week" | "wk" | "dayofyear" | "dy"
+	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
+	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
+	;
+
 //function_name
 //	:	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
 //	|	"getdate" 	| 	"\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
@@ -1203,11 +1228,12 @@ datetime_function
 	;
 
 conversion_function
-	:	"convert"	|	"\u5b57\u7b26\u8f6c\u4e3a\u65e5\u671f"
+	:	"cast"
+	|	"convert"	|	"\u5b57\u7b26\u8f6c\u4e3a\u65e5\u671f"
 	|	"hextoint"	|	"\u5341\u516d\u8fdb\u5236\u8f6c\u4e3a\u6574\u6570"
 	|	"inttohex"	|	"\u6574\u6570\u8f6c\u4e3a\u5341\u516d\u8fdb\u5236"
-	|	"isdate"	|	"\u662f\u65e5\u671f\u578b"
-	|	"isnumeric"	|	"\u662f\u6570\u503c\u578b"
+	|	"isdate"	|	"\u4e3a\u65e5\u671f\u578b"
+	|	"isnumeric"	|	"\u4e3a\u6570\u503c\u578b"
 	;
 
 system_function
