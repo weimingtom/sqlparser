@@ -184,15 +184,15 @@ expression_with_aggr_func
 equation
 	:	expression (
 		
-		//逻辑运算符(+ - * /) 表达式
+		//关系运算符(+ - * /) 表达式
 		("=" | compare_op) expression
 	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);}
 	  	
-		//逻辑NOT LIKE 表达式
+		//关系运算符NOT LIKE 表达式
 	|	("not" "like") expression
 		{#equation=#([LOGICAL_NOT_LIKE, "logic_not_like"], #equation);}	
 
-		//逻辑IS NULL/IS NOT NULL
+		//关系运算符IS NULL/IS NOT NULL
 	|	( "is" "null"
 		  {#equation = #([LOGICAL_NULL, "logic_null"], #equation);}
 		| "is" "not" "null"
@@ -200,10 +200,10 @@ equation
 		| "为空"^ | "非空"^
 		)
 	
-		//逻辑BETWEEN AND
+		//关系运算符BETWEEN AND
 	| 	("between"^ | "范围"^) expression ("and"!)? expression
 	
-		//逻辑IN/NOT IN
+		//关系运算符IN/NOT IN
 	|	( "in"
 		  {#equation = #([LOGICAL_IN, "logic_in"], #equation);}
 		| "not" "in"
