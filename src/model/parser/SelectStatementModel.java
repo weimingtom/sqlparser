@@ -144,12 +144,19 @@ public class SelectStatementModel extends QueryModel {
   public String getEmptyExecuteEnString(String intoTableName){
     SelectListModel sl = (SelectListModel) getFirstModelByClass(SelectListModel.class);
     TableListModel tl = (TableListModel) getFirstModelByClass(TableListModel.class);
+    AggregateExprListModel aggr = (AggregateExprListModel) getFirstModelByClass(AggregateExprListModel.class);
+    OrderExpressionListModel order = (OrderExpressionListModel) getFirstModelByClass(OrderExpressionListModel.class);
+    
     String ret = "SELECT " + sl.getEnString();
     if (intoTableName != null && !intoTableName.equals(""))
       ret += " INTO " + intoTableName;
     if (tl != null)
       ret += " FROM " + tl.getEnString();
     ret += " WHERE 1 = 0";
+    if (aggr != null)
+      ret += " GROUP BY " + aggr.getEnString();
+    if (order != null)
+      ret += " ORDER BY " + order.getEnString();
     return ret;
   }
 }
