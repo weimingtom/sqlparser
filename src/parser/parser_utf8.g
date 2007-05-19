@@ -7,9 +7,18 @@
 //  Recent updates by jiandeh@sina.com						//
 //															//
 //	修改日志:													//
+//	======================================================	//
 //	05/18/2007：												//
 //		- 修改了逻辑非整个条件，用SEARCH_NOT_CONDITION TOKEN	//
-//		- 修改了IS NULL/IS NOT NULL TOKEN，可以用英文			//
+//		- 修改了IS NULL/IS NOT NULL; NOT EXISTS;				//
+//        NOT LIKE; IN/NOT IN TOKEN及语法树遍历，可以用验证英文	//
+//		- 增加FUNCTION_EMPTY_PARAM TOKEN，可以对空函数验证		//
+//		- 增加FUNCTION_COUNT TOKEN，允许对聚合函数COUNT(*)验证	//
+//		- 增加左连接(*=)语法验证								//
+//	05/19/2007:												//
+//		- 增加了日期date-part保留字的处理,可以使用dateadd(day, 	//
+//		  10, getdate())函数及day保留字						//
+//		  													//
 //==========================================================*/
 
 header {
@@ -228,6 +237,7 @@ constant
 	:	REAL_NUM
 	|	NEGATIVE_DIGIT_ELEMENT
 	|	QUOTED_STRING
+	|	date_key_word
 	|	"null"
 	;
 
@@ -430,6 +440,13 @@ logic_op
 comparemethod_name
 	:	"exists" | "存在" | "不存在";
 
+//日期date-part保留字
+date_key_word
+	: "year" | "yy" | "month" | "mm" | "day" | "dd"
+	| "quarter" | "qq" | "week" | "wk" | "dayofyear" | "dy"
+	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
+	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
+	;
 
 class L extends Lexer;
 
@@ -490,7 +507,6 @@ WS	:	(' '|'\n'|'\r'|'\t')+ {$setType(Token.SKIP);}
 QUOTED_STRING
 	:	('"'|'\'') (ESC|~('\''|'"'|'\\'|'\n'|'\r'))* ('"'|'\'')
 	;
-
 protected
 ESC
 	:	'\\'
@@ -531,7 +547,6 @@ PARAM_ID
 
 ID	options {testLiterals=true;}
 	:	ID_START_LETTER ( ID_LETTER )*;
-
 protected
 ID_START_LETTER
     :    'a'..'z'
@@ -962,6 +977,8 @@ expression returns [ExpressionModel model]
 	{model.addOperator(op1.getText()); model.addChild(e1);}
 	|	lp:LPAREN e1=expression rp:RPAREN
 	{model.addOperator(lp.getText()); model.addChild(e1); model.addOperator(rp.getText());}
+	|	dkw:date_key_word
+	{model.addConstant(dkw.getText());}
 	|	param=param_equ
 	{model.addParam(param);}
 	|	f=field_name
@@ -1084,6 +1101,14 @@ comparemethod_name
 	:	"exists" | "存在" | "不存在"
 	;
 
+//日期date-part保留字
+date_key_word
+	: "year" | "yy" | "month" | "mm" | "day" | "dd"
+	| "quarter" | "qq" | "week" | "wk" | "dayofyear" | "dy"
+	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
+	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
+	;
+
 //function_name
 //	:	"sqrt" 		| 	"求平方根"
 //	|	"getdate" 	| 	"求当前日期时间"
@@ -1203,11 +1228,12 @@ datetime_function
 	;
 
 conversion_function
-	:	"convert"	|	"字符转为日期"
+	:	"cast"
+	|	"convert"	|	"字符转为日期"
 	|	"hextoint"	|	"十六进制转为整数"
 	|	"inttohex"	|	"整数转为十六进制"
-	|	"isdate"	|	"是日期型"
-	|	"isnumeric"	|	"是数值型"
+	|	"isdate"	|	"为日期型"
+	|	"isnumeric"	|	"为数值型"
 	;
 
 system_function
