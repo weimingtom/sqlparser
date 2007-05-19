@@ -16,8 +16,10 @@
 //		- \u589e\u52a0FUNCTION_COUNT TOKEN\uff0c\u5141\u8bb8\u5bf9\u805a\u5408\u51fd\u6570COUNT(*)\u9a8c\u8bc1	//
 //		- \u589e\u52a0\u5de6\u8fde\u63a5(*=)\u8bed\u6cd5\u9a8c\u8bc1								//
 //	05/19/2007:												//
-//		- \u589e\u52a0\u4e86\u65e5\u671fdate-part\u4fdd\u7559\u5b57\u7684\u5904\u7406,\u53ef\u4ee5\u4f7f\u7528dateadd(day, 	//
+//		- \u589e\u52a0\u4e86\u65e5\u671fdate-part\u4fdd\u7559\u5b57\u7684\u5904\u7406\uff0c\u53ef\u4ee5\u4f7f\u7528dateadd(day, 	//
 //		  10, getdate())\u51fd\u6570\u53caday\u4fdd\u7559\u5b57						//
+//		- \u589e\u52a0empty_function\u3001star_function\uff0c\u7528\u6765\u5bf9getdate();	//
+//		  pi(*);now(*);today(*)\u7684\u9a8c\u8bc1						//
 //		  													//
 //==========================================================*/
 
@@ -42,7 +44,8 @@ tokens {
 	ALIAS_EQU;				//\u522b\u540dTOKEN
 	
 	FUNCTION;				//\u51fd\u6570TOKEN
-	FUNCTION_EMPTY_PARAM;	//\u7a7a\u51fd\u6570TOKEN
+	FUNCTION_EMPTY_PARAM;	//\u7a7a\u53c2\u6570\u51fd\u6570TOKEN[getdate()]
+	FUNCTION_STAR_PARAM;	//\u53c2\u6570\u4e3a*\u51fd\u6570TOKEN[now(*);today(*)]
 	FUNCTION_COUNT;			//\u51fd\u6570COUNT TOKEN
 	
 	LOGIC_OP;				//\u903b\u8f91\u64cd\u4f5c\u7b26TOKEN
@@ -245,8 +248,10 @@ constant
 function
 	:	function_name LPAREN! parameters RPAREN!
 //	{#function = #([FUNCTION, "function_block"], #function);}
-	|	function_name LPAREN! RPAREN!
+	|	empty_function LPAREN! RPAREN!
 	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
+	|	star_function LPAREN! STAR! RPAREN!
+	{#function = #([FUNCTION_STAR_PARAM, "function_star_param"], #function);}
 	;
 
 aggregate_func
@@ -291,12 +296,23 @@ aggregate_func_name
 //	;
 
 function_name
-	:	number_function
+	:
+	|	number_function
 	|	string_function
 	|	datetime_function
 	|	conversion_function
 	|	system_function
 	|	other_function
+	;
+
+empty_function
+	: "getdate" | "\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
+	;
+
+star_function
+	:  	"pi"	|	"\u6c42PI"
+	|	"now"	|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
+	|	"today"	|	"\u53d6\u5f53\u524d\u65e5\u671f"	
 	;
 
 number_function
@@ -314,7 +330,7 @@ number_function
 	|	"log"		|	"\u6c42\u81ea\u7136\u5bf9\u6570"
 	|	"log10"		|	"\u6c4210\u4e3a\u5e95\u7684\u5bf9\u6570"
 	|	"mod"		|	"\u6c42\u4f59"
-	|	"pi"		|	"\u6c42PI"
+//	|	"pi"		|	"\u6c42PI"
 	|	"power"		|	"\u6c42\u6570\u5b57\u7684\u6b21\u5e42\u503c"
 	|	"radians"	|	"\u6c42\u5ea6\u6570\u89d2\u7684\u5f27\u5ea6"
 	|	"rand"		|	"\u6c420\u548c1\u95f4\u7684\u968f\u673a\u6570"
@@ -379,17 +395,17 @@ datetime_function
 	|	"monthname"
 	|	"months"
 	|	"month"
-	|	"now"		|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
+//	|	"now"		|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
 	|	"quarter"
 	|	"seconds"
 	|	"second"
-	|	"today"		|	"\u53d6\u5f53\u524d\u65e5\u671f"
+//	|	"today"		|	"\u53d6\u5f53\u524d\u65e5\u671f"
 	|	"weeks"
 	|	"week"
 	|	"years"
 	|	"year"
 	|	"ymd"
-	|	"getdate"	|	"\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
+//	|	"getdate"	|	"\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
 	|	"dateadd"	|	"\u65e5\u671f\u76f8\u52a0"
 	|	"datediff"	|	"\u65e5\u671f\u76f8\u51cf"
 	;
@@ -1021,9 +1037,18 @@ function returns [FunctionModel model]
 }
 	:	f:function_name p=parameters
 	{model=new FunctionModel(f.getText()); model.setParameters(p);}
-
+	
 	|	#(FUNCTION_EMPTY_PARAM fun1:function_name)
 	{model=new FunctionModel(fun1.getText());}
+	
+	|	#(FUNCTION_STAR_PARAM funStar:function_name)
+	{
+		model=new FunctionModel(funStar.getText());
+		express1.addOperator("*");
+		p = new ParametersModel();
+		p.addParameter(express1);
+		model.setParameters(p);
+	}
 
 	|	#(FUNCTION_COUNT fun2:function_name)
 	{	model=new FunctionModel(fun2.getText());
