@@ -16,8 +16,10 @@
 //		- 增加FUNCTION_COUNT TOKEN，允许对聚合函数COUNT(*)验证	//
 //		- 增加左连接(*=)语法验证								//
 //	05/19/2007:												//
-//		- 增加了日期date-part保留字的处理,可以使用dateadd(day, 	//
+//		- 增加了日期date-part保留字的处理，可以使用dateadd(day, 	//
 //		  10, getdate())函数及day保留字						//
+//		- 增加empty_function、star_function，用来对getdate();	//
+//		  pi(*)、now(*)、today(*)的验证						//
 //		  													//
 //==========================================================*/
 
@@ -42,7 +44,8 @@ tokens {
 	ALIAS_EQU;				//别名TOKEN
 	
 	FUNCTION;				//函数TOKEN
-	FUNCTION_EMPTY_PARAM;	//空函数TOKEN
+	FUNCTION_EMPTY_PARAM;	//空参数函数TOKEN[getdate()]
+	FUNCTION_STAR_PARAM;	//参数为*函数TOKEN[now(*);today(*)]
 	FUNCTION_COUNT;			//函数COUNT TOKEN
 	
 	LOGIC_OP;				//逻辑操作符TOKEN
@@ -245,8 +248,10 @@ constant
 function
 	:	function_name LPAREN! parameters RPAREN!
 //	{#function = #([FUNCTION, "function_block"], #function);}
-	|	function_name LPAREN! RPAREN!
+	|	empty_function LPAREN! RPAREN!
 	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
+	|	star_function LPAREN! STAR! RPAREN!
+	{#function = #([FUNCTION_STAR_PARAM, "function_star_param"], #function);}
 	;
 
 aggregate_func
@@ -291,12 +296,23 @@ aggregate_func_name
 //	;
 
 function_name
-	:	number_function
+	:
+	|	number_function
 	|	string_function
 	|	datetime_function
 	|	conversion_function
 	|	system_function
 	|	other_function
+	;
+
+empty_function
+	: "getdate" | "求当前日期时间"
+	;
+
+star_function
+	:  	"pi"	|	"求PI"
+	|	"now"	|	"取当前日期时间"
+	|	"today"	|	"取当前日期"	
 	;
 
 number_function
@@ -314,7 +330,7 @@ number_function
 	|	"log"		|	"求自然对数"
 	|	"log10"		|	"求10为底的对数"
 	|	"mod"		|	"求余"
-	|	"pi"		|	"求PI"
+//	|	"pi"		|	"求PI"
 	|	"power"		|	"求数字的次幂值"
 	|	"radians"	|	"求度数角的弧度"
 	|	"rand"		|	"求0和1间的随机数"
@@ -379,17 +395,17 @@ datetime_function
 	|	"monthname"
 	|	"months"
 	|	"month"
-	|	"now"		|	"取当前日期时间"
+//	|	"now"		|	"取当前日期时间"
 	|	"quarter"
 	|	"seconds"
 	|	"second"
-	|	"today"		|	"取当前日期"
+//	|	"today"		|	"取当前日期"
 	|	"weeks"
 	|	"week"
 	|	"years"
 	|	"year"
 	|	"ymd"
-	|	"getdate"	|	"求当前日期时间"
+//	|	"getdate"	|	"求当前日期时间"
 	|	"dateadd"	|	"日期相加"
 	|	"datediff"	|	"日期相减"
 	;
@@ -1021,9 +1037,18 @@ function returns [FunctionModel model]
 }
 	:	f:function_name p=parameters
 	{model=new FunctionModel(f.getText()); model.setParameters(p);}
-
+	
 	|	#(FUNCTION_EMPTY_PARAM fun1:function_name)
 	{model=new FunctionModel(fun1.getText());}
+	
+	|	#(FUNCTION_STAR_PARAM funStar:function_name)
+	{
+		model=new FunctionModel(funStar.getText());
+		express1.addOperator("*");
+		p = new ParametersModel();
+		p.addParameter(express1);
+		model.setParameters(p);
+	}
 
 	|	#(FUNCTION_COUNT fun2:function_name)
 	{	model=new FunctionModel(fun2.getText());
