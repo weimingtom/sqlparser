@@ -15,7 +15,7 @@ public class FunctionModel extends QueryModel {
     addChild(model);
   }
 
-  public void setFilter(int filter) {
+  protected void setFilter(int filter) {
     this.filter = filter;
   }
 
