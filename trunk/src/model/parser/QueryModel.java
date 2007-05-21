@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -85,8 +86,8 @@ public class QueryModel {
       CommonAST ast = (CommonAST)p.getAST();
       T t = new T();
       //TODO Visible ASTFrame
-//      ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
-//      _ASTFrame.setVisible(true);
+      ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+      _ASTFrame.setVisible(true);
       model = t.statement(ast);
     } catch (ANTLRException e) {
       exs.add(e);
@@ -102,6 +103,64 @@ public class QueryModel {
     QueryModel[] _paramModelArr = model.getModelsFromAllChildrenByClass(ParamModel.class);
     if (_paramModelArr.length > 0)
       model.setCircleType(((ParamModel) _paramModelArr[0]).getCircleType());
+    
+    //===SELECT子句中非聚合函数表达式必须在GROUP BY子句中出现===//
+    Map aFunMap = new LinkedHashMap();	//聚合函数Map
+    //获取所有聚合函数Model数组
+    QueryModel[] _aggregateFunModelArr = model.getModelsFromAllChildrenByClass(AggregateFuncModel.class);
+    // 循环获取所有聚合函数Model数组相关信息
+		for (int i = 0; i < _aggregateFunModelArr.length; i++) {
+			System.out.println(_aggregateFunModelArr[i].getChString());
+			aFunMap.put(_aggregateFunModelArr[i].getChString(), "0");
+			QueryModel apm = _aggregateFunModelArr[i].getFirstModelByClass(ParametersModel.class);
+			// 得到每个集合函数的所有参数表达式模型
+			QueryModel expm = apm.getFirstModelByClass(ExpressionModel.class);
+			QueryModel[] expms = apm.getModelByClass(ExpressionModel.class);
+			// 得到每个集合函数的所有字段模型
+			QueryModel[] fdms = apm.getModelsFromAllChildrenByClass(FieldModel.class);
+		}
+    
+		Map nGroupExprMap = new LinkedHashMap();	//需要分组的表达式Map
+		//获取SELECT子句下的所有表达式
+		QueryModel[] _columnModelArr = model.getModelsFromAllChildrenByClass(ColumnModel.class); 
+		for (int i = 0; i < _columnModelArr.length; i++){
+			ColumnModel _columnModel = (ColumnModel) _columnModelArr[i];
+			QueryModel expm =  _columnModel.getFirstModelByClass(ExpressionModel.class);
+			System.out.println(expm.getChString());
+			if (aFunMap.containsKey(expm.getChString())){
+				aFunMap.put(expm.getChString(), "1");
+			}else{
+				nGroupExprMap.put(expm.getChString(), "0");
+			}
+    }
+		
+		 //GROUP BY列表
+    QueryModel _groupByListModel = model.getFirstModelByClass(AggregateExprListModel.class);
+    QueryModel[] _groupByExprModelArr;
+    if (_groupByListModel == null){
+    	_groupByExprModelArr = new QueryModel[0];
+    }else{
+    	_groupByExprModelArr = _groupByListModel.getModelByClass(AggregateExprModel.class);
+    }
+    
+    for (int i = 0; i < _groupByExprModelArr.length; i++){
+    	if (nGroupExprMap.containsKey(_groupByExprModelArr[i].getChString())){
+    		nGroupExprMap.put(_groupByExprModelArr[i].getChString(), "1");
+    	}
+    }
+    
+    for (Iterator it = nGroupExprMap.keySet().iterator(); it.hasNext();){
+    	String selectExpr = (String) it.next();
+    	if (((String)nGroupExprMap.get(selectExpr)).equals("0")){
+    		NoGroupExistsException _exception = new NoGroupExistsException(selectExpr);
+    		exs.add(_exception);
+    	}
+    }
+    
+    // 得到所有函数模型(包括一般函数和聚合函数)
+    //QueryModel[] _allFunctionModelArr = model.getModelsFromAllChildrenByClass(FunctionModel.class);
+    //===SELECT子句中非聚合函数表达式必须在GROUP BY子句中出现===//
+    
     return model;
   }
   
@@ -511,6 +570,8 @@ public class QueryModel {
       ret = translateException((NoSuchFieldException)exception);
     else if (exception instanceof TableNotInFromClause)
       ret = translateException((TableNotInFromClause)exception);
+    else if (exception instanceof NoGroupExistsException)
+    	ret = translateException((NoGroupExistsException)exception);
     else
       ret = translateException((Exception)exception);
     return ret;
@@ -702,6 +763,17 @@ public class QueryModel {
     ChWrongMessage msg=new ChWrongMessage();
     msg.setMessage(
         "表 \""+exception.getTableName()+"\" 没有在 [来自] 段出现。");
+    return msg;
+  }
+  
+  /**
+   * 翻译ANTLR异常信息到业务化错误信息对象ChWrongMessage
+   * @param exception ANTLR异常信息（表的个数不存在）
+   * @return ChWrongMessage 错误信息对象
+   */
+  private ChWrongMessage translateException(NoGroupExistsException exception) {
+  	ChWrongMessage msg = new ChWrongMessage();
+    msg.setMessage("[查询]子句 \""+ exception.getSelectExpr() + "\" 没有在[分组]子句中出现。");
     return msg;
   }
   
