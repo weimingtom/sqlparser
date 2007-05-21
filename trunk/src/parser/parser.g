@@ -46,7 +46,7 @@ tokens {
 	FUNCTION;				//\u51fd\u6570TOKEN
 	FUNCTION_EMPTY_PARAM;	//\u7a7a\u53c2\u6570\u51fd\u6570TOKEN[getdate()]
 	FUNCTION_STAR_PARAM;	//\u53c2\u6570\u4e3a*\u51fd\u6570TOKEN[now(*);today(*)]
-	FUNCTION_COUNT;			//\u51fd\u6570COUNT TOKEN
+	FUNCTION_STAR_COUNT;	//\u51fd\u6570COUNT(*) TOKEN
 	
 	LOGIC_OP;				//\u903b\u8f91\u64cd\u4f5c\u7b26TOKEN
 	LOGICAL_NULL;			//\u903b\u8f91IS NULL TOKEN
@@ -256,8 +256,8 @@ function
 
 aggregate_func
 	:	("\u6c42\u8bb0\u5f55\u603b\u6570"^ | "count"^) LPAREN! STAR! RPAREN!
-		{#aggregate_func = #([FUNCTION_COUNT, "function_count"], #aggregate_func);}
-	|	aggregate_func_name LPAREN! ("all"^|"\u5168\u90e8"^|"distinct"^|"\u552f\u4e00"^)? parameters RPAREN!
+		{#aggregate_func = #([FUNCTION_STAR_COUNT, "function_star_count"], #aggregate_func);}
+	|	aggregate_func_name LPAREN! ("all"^ | "\u5168\u90e8"^ | "distinct"^ |"\u552f\u4e00"^)? parameters RPAREN!
 	;
 
 parameters
@@ -1050,7 +1050,7 @@ function returns [FunctionModel model]
 		model.setParameters(p);
 	}
 
-	|	#(FUNCTION_COUNT fun2:function_name)
+	|	#(FUNCTION_STAR_COUNT fun2:function_name)
 	{	model=new FunctionModel(fun2.getText());
 		express1.addOperator("*");
 		p = new ParametersModel();

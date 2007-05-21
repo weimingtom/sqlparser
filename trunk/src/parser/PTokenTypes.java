@@ -14,7 +14,7 @@ public interface PTokenTypes {
 	int FUNCTION = 10;
 	int FUNCTION_EMPTY_PARAM = 11;
 	int FUNCTION_STAR_PARAM = 12;
-	int FUNCTION_COUNT = 13;
+	int FUNCTION_STAR_COUNT = 13;
 	int LOGIC_OP = 14;
 	int LOGICAL_NULL = 15;
 	int LOGICAL_NOT_NULL = 16;

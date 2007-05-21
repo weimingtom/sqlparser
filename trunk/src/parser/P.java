@@ -2024,7 +2024,7 @@ inputState.guessing--;
 			match(RPAREN);
 			if ( inputState.guessing==0 ) {
 				aggregate_func_AST = (AST)currentAST.root;
-				aggregate_func_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(FUNCTION_COUNT,"function_count")).add(aggregate_func_AST));
+				aggregate_func_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(FUNCTION_STAR_COUNT,"function_star_count")).add(aggregate_func_AST));
 				currentAST.root = aggregate_func_AST;
 				currentAST.child = aggregate_func_AST!=null &&aggregate_func_AST.getFirstChild()!=null ?
 					aggregate_func_AST.getFirstChild() : aggregate_func_AST;
@@ -4730,7 +4730,7 @@ inputState.guessing--;
 		"FUNCTION",
 		"FUNCTION_EMPTY_PARAM",
 		"FUNCTION_STAR_PARAM",
-		"FUNCTION_COUNT",
+		"FUNCTION_STAR_COUNT",
 		"LOGIC_OP",
 		"LOGICAL_NULL",
 		"LOGICAL_NOT_NULL",
