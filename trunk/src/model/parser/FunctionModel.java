@@ -23,9 +23,9 @@ public class FunctionModel extends QueryModel {
   	String rValue = "";
     String f = "";
     if (filter == ALL)
-      f = "所有";
+      f = "全部 ";
     else if (filter == DISTINCT)
-      f = "唯一";
+      f = "唯一 ";
     ParametersModel para=(ParametersModel)getFirstModelByClass(ParametersModel.class);
     if (para != null)
     	rValue = functionName + "(" + f + para.getChString() + ")";
