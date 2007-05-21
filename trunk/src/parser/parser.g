@@ -1051,44 +1051,76 @@ field_name returns [FieldModel model]
 		addTableByChName(t.getText());
 	}
 	;
+
 function returns [FunctionModel model]
 {
 	model=null;
 	ParametersModel p; 
 	ExpressionModel express1 = new ExpressionModel();
 }
-	:	f:function_name p=parameters
-	{model=new FunctionModel(f.getText()); model.setParameters(p);}
-	
+	:	//Aggregate functions\u805a\u5408\u51fd\u6570
+		af:aggregate_func_name p=parameters
+		{
+			model = new AggregateFuncModel(af.getText(), AggregateFuncModel.NO_FILTER); 
+			model.setParameters(p);
+		}
+		
+		//Normal functions\u666e\u901a\u51fd\u6570
+	|	f:function_name p=parameters	
+		{
+			model = new FunctionModel(f.getText());
+			model.setParameters(p);
+		}
+		
+		//Normal functions\u53c2\u6570\u4e3a\u7a7a\u7684\u666e\u901a\u51fd\u6570[getdate()]
 	|	#(FUNCTION_EMPTY_PARAM fun1:function_name)
-	{model=new FunctionModel(fun1.getText());}
-	
+		{
+			model = new FunctionModel(fun1.getText());
+		}
+		
+		//Normal functions\u53c2\u6570\u4e3a*\u7684\u666e\u901a\u51fd\u6570[now(*)...]
 	|	#(FUNCTION_STAR_PARAM funStar:function_name)
-	{
-		model=new FunctionModel(funStar.getText());
-		express1.addOperator("*");
-		p = new ParametersModel();
-		p.addParameter(express1);
-		model.setParameters(p);
-	}
-
+		{
+			model = new FunctionModel(funStar.getText());
+			express1.addOperator("*");
+			p = new ParametersModel();
+			p.addParameter(express1);
+			model.setParameters(p);
+		}
+		
+		//Aggregate functions\u53c2\u6570\u4e3a*\u7684COUNT\u51fd\u6570\uff0c\u805a\u5408\u51fd\u6570[count(*)]
 	|	#(FUNCTION_STAR_COUNT fun2:function_name)
-	{	model=new FunctionModel(fun2.getText());
-		express1.addOperator("*");
-		p = new ParametersModel();
-		p.addParameter(express1);
-		model.setParameters(p);
-	}
-
+		{	
+			model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
+			express1.addOperator("*");
+			p = new ParametersModel();
+			p.addParameter(express1);
+			model.setParameters(p);
+		}
+		
+		//Aggregate functions\u53c2\u6570\u4e3a\u5168\u90e8\u3001all\u7684\u805a\u5408\u51fd\u6570
 	|	#(all:"\u5168\u90e8" af11:function_name p=parameters)
-	{model=new FunctionModel(af11.getText()); model.setFilter(FunctionModel.ALL); model.setParameters(p);}
+		{
+			model = new AggregateFuncModel(af11.getText(), AggregateFuncModel.ALL);
+			model.setParameters(p);
+		}
 	|	#("all" af12:function_name p=parameters)
-	{model=new FunctionModel(af12.getText()); model.setFilter(FunctionModel.ALL); model.setParameters(p);}
-
+		{
+			model = new AggregateFuncModel(af12.getText(), AggregateFuncModel.ALL);
+			model.setParameters(p);
+		}
+		
+		//Aggregate functions\u53c2\u6570\u4e3a\u552f\u4e00\u3001distinct\u7684\u805a\u5408\u51fd\u6570
 	|	#(dist:"\u552f\u4e00" af21:function_name p=parameters)
-	{model=new FunctionModel(af21.getText()); model.setFilter(FunctionModel.DISTINCT); model.setParameters(p);}
+		{
+			model = new AggregateFuncModel(af21.getText(), AggregateFuncModel.DISTINCT);
+			model.setParameters(p);
+		}
 	|	#("distinct" af22:function_name p=parameters)
-	{model=new FunctionModel(af22.getText()); model.setFilter(FunctionModel.DISTINCT); model.setParameters(p);}
+		{
+			model=new AggregateFuncModel(af22.getText(), AggregateFuncModel.DISTINCT);
+			model.setParameters(p);
+		}
 	;
 	
 parameters returns [ParametersModel model]
@@ -1156,32 +1188,8 @@ date_key_word
 	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
 	;
 
-//function_name
-//	:	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
-//	|	"getdate" 	| 	"\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
-//	|	"abs" 		| 	"\u6c42\u7edd\u5bf9\u503c"
-//	|	"acos"		|	"\u6c42\u4f59\u5f26\u503c"
-//	|	"substring" | 	"\u5b57\u7b26\u4e32\u622a\u53d6"
-//	|	"round"		|	"\u683c\u5f0f\u5316\u6570\u503c"
-//	|	"right" 	| 	"\u5b57\u7b26\u4e32\u53f3\u622a"
-//	|	"ltrim"		|	"\u53bb\u6389\u5de6\u7a7a\u683c"
-//	|	"rtrim"		|	"\u53bb\u6389\u53f3\u7a7a\u683c"
-//	|	"char_length" | "\u6c42\u5b57\u7b26\u4e32\u7684\u957f\u5ea6"
-//	|	"floor"		|	"\u6c42\u56db\u820d\u540e\u7684\u6574\u6570"
-//	|	"ceiling"	|	"\u6c42\u4e94\u5165\u540e\u7684\u6574\u6570"
-//	|	"lower" 	| 	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5c0f\u5199"
-//	|	"charindex"	|	"\u5b58\u5728\u4e8e"
-//	|	"str" 		| 	"\u6570\u503c\u8f6c\u5b57\u7b26\u4e32"
-//	|	"sum" 		| 	"\u6c42\u548c"
-//	|	"avg" 		| 	"\u6c42\u5e73\u5747\u6570"
-//	|	"max" 		| 	"\u6c42\u6700\u5927\u503c"
-//	|	"min" 		| 	"\u6c42\u6700\u5c0f\u503c"
-//	|	"count" 	| 	"\u6c42\u8bb0\u5f55\u603b\u6570"
-//	;
-
 function_name
-	:	aggregate_func_name
-	|	number_function
+	:	number_function
 	|	string_function
 	|	datetime_function
 	|	conversion_function
@@ -1195,6 +1203,8 @@ aggregate_func_name
 	|	"max" 	| "\u6c42\u6700\u5927\u503c"
 	|	"min" 	| "\u6c42\u6700\u5c0f\u503c"
 	|	"count" | "\u6c42\u8bb0\u5f55\u603b\u6570"
+	|	"stddev"
+	|	"variance"
 	;
 
 number_function

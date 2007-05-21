@@ -1051,44 +1051,76 @@ field_name returns [FieldModel model]
 		addTableByChName(t.getText());
 	}
 	;
+
 function returns [FunctionModel model]
 {
 	model=null;
 	ParametersModel p; 
 	ExpressionModel express1 = new ExpressionModel();
 }
-	:	f:function_name p=parameters
-	{model=new FunctionModel(f.getText()); model.setParameters(p);}
-	
+	:	//Aggregate functions聚合函数
+		af:aggregate_func_name p=parameters
+		{
+			model = new AggregateFuncModel(af.getText(), AggregateFuncModel.NO_FILTER); 
+			model.setParameters(p);
+		}
+		
+		//Normal functions普通函数
+	|	f:function_name p=parameters	
+		{
+			model = new FunctionModel(f.getText());
+			model.setParameters(p);
+		}
+		
+		//Normal functions参数为空的普通函数[getdate()]
 	|	#(FUNCTION_EMPTY_PARAM fun1:function_name)
-	{model=new FunctionModel(fun1.getText());}
-	
+		{
+			model = new FunctionModel(fun1.getText());
+		}
+		
+		//Normal functions参数为*的普通函数[now(*)...]
 	|	#(FUNCTION_STAR_PARAM funStar:function_name)
-	{
-		model=new FunctionModel(funStar.getText());
-		express1.addOperator("*");
-		p = new ParametersModel();
-		p.addParameter(express1);
-		model.setParameters(p);
-	}
-
+		{
+			model = new FunctionModel(funStar.getText());
+			express1.addOperator("*");
+			p = new ParametersModel();
+			p.addParameter(express1);
+			model.setParameters(p);
+		}
+		
+		//Aggregate functions参数为*的COUNT函数，聚合函数[count(*)]
 	|	#(FUNCTION_STAR_COUNT fun2:function_name)
-	{	model=new FunctionModel(fun2.getText());
-		express1.addOperator("*");
-		p = new ParametersModel();
-		p.addParameter(express1);
-		model.setParameters(p);
-	}
-
+		{	
+			model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
+			express1.addOperator("*");
+			p = new ParametersModel();
+			p.addParameter(express1);
+			model.setParameters(p);
+		}
+		
+		//Aggregate functions参数为全部、all的聚合函数
 	|	#(all:"全部" af11:function_name p=parameters)
-	{model=new FunctionModel(af11.getText()); model.setFilter(FunctionModel.ALL); model.setParameters(p);}
+		{
+			model = new AggregateFuncModel(af11.getText(), AggregateFuncModel.ALL);
+			model.setParameters(p);
+		}
 	|	#("all" af12:function_name p=parameters)
-	{model=new FunctionModel(af12.getText()); model.setFilter(FunctionModel.ALL); model.setParameters(p);}
-
+		{
+			model = new AggregateFuncModel(af12.getText(), AggregateFuncModel.ALL);
+			model.setParameters(p);
+		}
+		
+		//Aggregate functions参数为唯一、distinct的聚合函数
 	|	#(dist:"唯一" af21:function_name p=parameters)
-	{model=new FunctionModel(af21.getText()); model.setFilter(FunctionModel.DISTINCT); model.setParameters(p);}
+		{
+			model = new AggregateFuncModel(af21.getText(), AggregateFuncModel.DISTINCT);
+			model.setParameters(p);
+		}
 	|	#("distinct" af22:function_name p=parameters)
-	{model=new FunctionModel(af22.getText()); model.setFilter(FunctionModel.DISTINCT); model.setParameters(p);}
+		{
+			model=new AggregateFuncModel(af22.getText(), AggregateFuncModel.DISTINCT);
+			model.setParameters(p);
+		}
 	;
 	
 parameters returns [ParametersModel model]
@@ -1156,32 +1188,8 @@ date_key_word
 	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
 	;
 
-//function_name
-//	:	"sqrt" 		| 	"求平方根"
-//	|	"getdate" 	| 	"求当前日期时间"
-//	|	"abs" 		| 	"求绝对值"
-//	|	"acos"		|	"求余弦值"
-//	|	"substring" | 	"字符串截取"
-//	|	"round"		|	"格式化数值"
-//	|	"right" 	| 	"字符串右截"
-//	|	"ltrim"		|	"去掉左空格"
-//	|	"rtrim"		|	"去掉右空格"
-//	|	"char_length" | "求字符串的长度"
-//	|	"floor"		|	"求四舍后的整数"
-//	|	"ceiling"	|	"求五入后的整数"
-//	|	"lower" 	| 	"将字符串转为小写"
-//	|	"charindex"	|	"存在于"
-//	|	"str" 		| 	"数值转字符串"
-//	|	"sum" 		| 	"求和"
-//	|	"avg" 		| 	"求平均数"
-//	|	"max" 		| 	"求最大值"
-//	|	"min" 		| 	"求最小值"
-//	|	"count" 	| 	"求记录总数"
-//	;
-
 function_name
-	:	aggregate_func_name
-	|	number_function
+	:	number_function
 	|	string_function
 	|	datetime_function
 	|	conversion_function
@@ -1195,6 +1203,8 @@ aggregate_func_name
 	|	"max" 	| "求最大值"
 	|	"min" 	| "求最小值"
 	|	"count" | "求记录总数"
+	|	"stddev"
+	|	"variance"
 	;
 
 number_function
