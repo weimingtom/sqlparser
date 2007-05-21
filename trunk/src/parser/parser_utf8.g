@@ -27,6 +27,12 @@ header {
 	package parser;
 }
 
+
+/*==========================================================//
+//															//
+//						Parser Define						//
+//															//
+//==========================================================*/
 class P extends Parser;
 
 options {
@@ -99,9 +105,11 @@ compare_method
 	;
 
 select_statement
-	:	("select"^|"查询"^) ("distinct"^|"唯一"^)? select_list
-		(("from"^|"来自"^) table_list)?
-		(("where"^|"条件"^) search_condition)?
+	:	
+		//CUSTOM SQL Sentence
+		("select"^ | "查询"^) ("distinct"^ | "唯一"^)? select_list
+		(("from"^ | "来自"^) table_list)?
+		(("where"^ | "条件"^) search_condition)?
 		(("group"^ "by"!|"分组"^) aggregate_expression_list)?
 		(("order"^ "by"!|"排序"^) order_expression_list)?
 	;
@@ -464,6 +472,12 @@ date_key_word
 	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
 	;
 
+
+/*==========================================================//
+//															//
+//						Lexer Define						//
+//															//
+//==========================================================*/
 class L extends Lexer;
 
 options {
@@ -624,7 +638,15 @@ ML_COMMENT
 		"*/"
 		{$setType(Token.SKIP);}
 	;
-	
+
+
+
+
+/*==========================================================//
+//															//
+//					TreeParser Define						//
+//															//
+//==========================================================*/	
 {
 	import java.util.*;
 
