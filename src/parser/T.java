@@ -2087,11 +2087,11 @@ public T() {
 					
 				break;
 			}
-			case FUNCTION_COUNT:
+			case FUNCTION_STAR_COUNT:
 			{
 				AST __t240 = _t;
 				AST tmp93_AST_in = (AST)_t;
-				match(_t,FUNCTION_COUNT);
+				match(_t,FUNCTION_STAR_COUNT);
 				_t = _t.getFirstChild();
 				fun2 = _t==ASTNULL ? null : (AST)_t;
 				function_name(_t);
@@ -4031,7 +4031,7 @@ public T() {
 		"FUNCTION",
 		"FUNCTION_EMPTY_PARAM",
 		"FUNCTION_STAR_PARAM",
-		"FUNCTION_COUNT",
+		"FUNCTION_STAR_COUNT",
 		"LOGIC_OP",
 		"LOGICAL_NULL",
 		"LOGICAL_NOT_NULL",

@@ -46,7 +46,7 @@ tokens {
 	FUNCTION;				//函数TOKEN
 	FUNCTION_EMPTY_PARAM;	//空参数函数TOKEN[getdate()]
 	FUNCTION_STAR_PARAM;	//参数为*函数TOKEN[now(*);today(*)]
-	FUNCTION_COUNT;			//函数COUNT TOKEN
+	FUNCTION_STAR_COUNT;	//函数COUNT(*) TOKEN
 	
 	LOGIC_OP;				//逻辑操作符TOKEN
 	LOGICAL_NULL;			//逻辑IS NULL TOKEN
@@ -256,8 +256,8 @@ function
 
 aggregate_func
 	:	("求记录总数"^ | "count"^) LPAREN! STAR! RPAREN!
-		{#aggregate_func = #([FUNCTION_COUNT, "function_count"], #aggregate_func);}
-	|	aggregate_func_name LPAREN! ("all"^|"全部"^|"distinct"^|"唯一"^)? parameters RPAREN!
+		{#aggregate_func = #([FUNCTION_STAR_COUNT, "function_star_count"], #aggregate_func);}
+	|	aggregate_func_name LPAREN! ("all"^ | "全部"^ | "distinct"^ |"唯一"^)? parameters RPAREN!
 	;
 
 parameters
@@ -1050,7 +1050,7 @@ function returns [FunctionModel model]
 		model.setParameters(p);
 	}
 
-	|	#(FUNCTION_COUNT fun2:function_name)
+	|	#(FUNCTION_STAR_COUNT fun2:function_name)
 	{	model=new FunctionModel(fun2.getText());
 		express1.addOperator("*");
 		p = new ParametersModel();
