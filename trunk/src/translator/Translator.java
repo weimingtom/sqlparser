@@ -21,8 +21,6 @@ import model.parser.EquationModel;
 import model.parser.ExpressionModel;
 import model.parser.FieldModel;
 import model.parser.FunctionModel;
-import model.parser.NoSuchFieldException;
-import model.parser.NoSuchTableException;
 import model.parser.OrderAliasModel;
 import model.parser.OrderExpressionListModel;
 import model.parser.OrderExpressionModel;
@@ -35,9 +33,15 @@ import model.parser.TableAliasModel;
 import model.parser.TableCompareModel;
 import model.parser.TableListModel;
 import model.parser.TableModel;
-import model.parser.TableNotInFromClause;
-import model.parser.TableNumberException;
 import model.parser.TableUnionModel;
+
+import model.parser.exceptions.NoGroupExistsException;
+import model.parser.exceptions.NoSuchFieldException;
+import model.parser.exceptions.NoSuchTableException;
+import model.parser.exceptions.TableNotInFromClause;
+import model.parser.exceptions.TableNumberException;
+import model.parser.exceptions.common.ErrorLexer;
+
 
 /**
  * 编译器与翻译器基本功能的实现类V1.0
