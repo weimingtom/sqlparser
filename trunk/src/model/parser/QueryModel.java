@@ -128,7 +128,7 @@ public class QueryModel {
 				//QueryModel[] fdms = apm.getModelsFromAllChildrenByClass(FieldModel.class);
 			}
 			
-			Map nGroupExprMap = new LinkedHashMap();				//需要分组的表达式Map
+			Map nGroupExprMap = new LinkedHashMap();				//需要在分组出现的表达式Map
 			Map mGroupSingleExprMap = new LinkedHashMap();	//可分组出现的单个表达式Map
 			//获取SELECT子句下的所有表达式
 			QueryModel[] _columnModelArr = model.getModelsFromAllChildrenByClass(ColumnModel.class); 
