@@ -140,8 +140,6 @@ public class QueryModel {
 					if (aFunMap.containsKey(expm.getChString())){
 						aFunMap.put(expm.getChString(), IS_EXISTS);						//表示此聚合函数已在SELECT子句中找到
 					}else{
-						nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY需要在分组中出现
-						
 						//获取此表达式的单个字段，如果为1个，则放入mGroupSingleExprMap中
 						QueryModel[] fmArr = expm.getModelsFromAllChildrenByClass(FieldModel.class);
 						if (fmArr.length == 1){
@@ -150,8 +148,15 @@ public class QueryModel {
 							unAggregateExpVO.setSingleExp(fmArr[0].getChString());
 							unAggregateExpVO.setExistsFlag(IS_NOT_EXISTS);
 							mGroupSingleExprMap.put(fmArr[0].getChString(), unAggregateExpVO);
+							nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY需要在分组中出现
+						}else if (fmArr.length == 0){
+							QueryModel[] smArr = expm.getModelsFromAllChildrenByClass(StringModel.class);
+							if (smArr.length != 1){	//如果表达式不存在单个常量（如: abs(-9000))
+								nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY需要在分组中出现
+							}
+						}else{
+							nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY需要在分组中出现
 						}
-						
 					}
 				}
 				
