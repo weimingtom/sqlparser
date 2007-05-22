@@ -1,4 +1,4 @@
-package model.parser;
+package model.parser.exceptions.common;
 
 import java.util.HashMap;
 import java.util.Map;

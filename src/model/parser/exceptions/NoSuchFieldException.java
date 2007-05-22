@@ -1,4 +1,4 @@
-package model.parser;
+package model.parser.exceptions;
 
 import antlr.ANTLRException;
 
