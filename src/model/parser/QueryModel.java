@@ -112,63 +112,66 @@ public class QueryModel {
     
     //==== SELECT子句中非聚合函数表达式必须在GROUP BY子句中出现 BEGIN ====//
     Map aFunMap = new LinkedHashMap();	//聚合函数Map
+    
     //获取所有聚合函数Model数组
     QueryModel[] _aggregateFunModelArr = model.getModelsFromAllChildrenByClass(AggregateFuncModel.class);
-    // 循环获取所有聚合函数Model数组相关信息
-		for (int i = 0; i < _aggregateFunModelArr.length; i++) {
-			aFunMap.put(_aggregateFunModelArr[i].getChString(), IS_NOT_EXISTS);	//将聚合函数放入Map中，标识为IS_NOT_EXISTS
-			//QueryModel apm = _aggregateFunModelArr[i].getFirstModelByClass(ParametersModel.class);
-			// 得到每个集合函数的所有参数表达式模型
-			//QueryModel expm = apm.getFirstModelByClass(ExpressionModel.class);
-			//QueryModel[] expms = apm.getModelByClass(ExpressionModel.class);
-			// 得到每个集合函数的所有字段模型
-			//QueryModel[] fdms = apm.getModelsFromAllChildrenByClass(FieldModel.class);
-		}
     
-		Map nGroupExprMap = new LinkedHashMap();	//需要分组的表达式Map
-		//获取SELECT子句下的所有表达式
-		QueryModel[] _columnModelArr = model.getModelsFromAllChildrenByClass(ColumnModel.class); 
-		for (int i = 0; i < _columnModelArr.length; i++){
-			ColumnModel _columnModel = (ColumnModel) _columnModelArr[i];
-			QueryModel expm =  _columnModel.getFirstModelByClass(ExpressionModel.class);	//获取ColumnModel的表达式
-			if (!((ExpressionModel)expm).hasConstant()){	//如果不是常量则与带有聚合函数的表达式进行比较（目前abc(-900)认为不是常量）
-				if (aFunMap.containsKey(expm.getChString())){
-					aFunMap.put(expm.getChString(), IS_EXISTS);						//表示此KEY需要在分组中出现
-				}else{
-					nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY不需要在分组中出现
-				}
+    if (_aggregateFunModelArr.length > 0){	//如果存在聚合函数
+	    // 循环获取所有聚合函数Model数组相关信息
+			for (int i = 0; i < _aggregateFunModelArr.length; i++) {
+				aFunMap.put(_aggregateFunModelArr[i].getChString(), IS_NOT_EXISTS);	//将聚合函数放入Map中，标识为IS_NOT_EXISTS
+				//QueryModel apm = _aggregateFunModelArr[i].getFirstModelByClass(ParametersModel.class);
+				// 得到每个集合函数的所有参数表达式模型
+				//QueryModel expm = apm.getFirstModelByClass(ExpressionModel.class);
+				//QueryModel[] expms = apm.getModelByClass(ExpressionModel.class);
+				// 得到每个集合函数的所有字段模型
+				//QueryModel[] fdms = apm.getModelsFromAllChildrenByClass(FieldModel.class);
 			}
+			
+			Map nGroupExprMap = new LinkedHashMap();	//需要分组的表达式Map
+			//获取SELECT子句下的所有表达式
+			QueryModel[] _columnModelArr = model.getModelsFromAllChildrenByClass(ColumnModel.class); 
+			for (int i = 0; i < _columnModelArr.length; i++){
+				ColumnModel _columnModel = (ColumnModel) _columnModelArr[i];
+				QueryModel expm =  _columnModel.getFirstModelByClass(ExpressionModel.class);	//获取ColumnModel的表达式
+				if (!((ExpressionModel)expm).hasConstant()){	//如果不是常量则与带有聚合函数的表达式进行比较（目前abc(-900)认为不是常量）
+					if (aFunMap.containsKey(expm.getChString())){
+						aFunMap.put(expm.getChString(), IS_EXISTS);						//表示此KEY需要在分组中出现
+					}else{
+						nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY不需要在分组中出现
+					}
+				}
+	    }
+			
+			//获取GROUP BY列表模型对象
+	    QueryModel _groupByListModel = model.getFirstModelByClass(AggregateExprListModel.class);
+	    //获取GROUP BY列表中所有表达式数组
+	    QueryModel[] _groupByExprModelArr;
+	    if (_groupByListModel == null){
+	    	_groupByExprModelArr = new QueryModel[0];
+	    }else{
+	    	_groupByExprModelArr = _groupByListModel.getModelByClass(AggregateExprModel.class);
+	    }
+	    
+	    //如果GROUP BY列表中的表达式在SELECT字句的需分组的Map(nGroupExprMap)中存在，则设置存在标识
+	    for (int i = 0; i < _groupByExprModelArr.length; i++){
+	    	if (nGroupExprMap.containsKey(_groupByExprModelArr[i].getChString())){
+	    		nGroupExprMap.put(_groupByExprModelArr[i].getChString(), IS_EXISTS);
+	    	}
+	    }
+	    
+	    //循环获取需分组的Map(nGroupExprMap)中，在GROUP BY没出现的SELECT表达式则放入编译器异常集合中
+	    for (Iterator it = nGroupExprMap.keySet().iterator(); it.hasNext();){
+	    	String selectExpr = (String) it.next();
+	    	if (((String)nGroupExprMap.get(selectExpr)).equals(IS_NOT_EXISTS)){
+	    		NoGroupExistsException _exception = new NoGroupExistsException(selectExpr);
+	    		exs.add(_exception);
+	    	}
+	    }
+	    
+	    // 得到所有函数模型(包括一般函数和聚合函数)--此函数会带有GROUP BY中的函数
+	    //QueryModel[] _allFunctionModelArr = model.getModelsFromAllChildrenByClass(FunctionModel.class);
     }
-		
-		//获取GROUP BY列表模型对象
-    QueryModel _groupByListModel = model.getFirstModelByClass(AggregateExprListModel.class);
-    //获取GROUP BY列表中所有表达式数组
-    QueryModel[] _groupByExprModelArr;
-    if (_groupByListModel == null){
-    	_groupByExprModelArr = new QueryModel[0];
-    }else{
-    	_groupByExprModelArr = _groupByListModel.getModelByClass(AggregateExprModel.class);
-    }
-    
-    //如果GROUP BY列表中的表达式在SELECT字句的需分组的Map(nGroupExprMap)中存在，则设置存在标识
-    for (int i = 0; i < _groupByExprModelArr.length; i++){
-    	if (nGroupExprMap.containsKey(_groupByExprModelArr[i].getChString())){
-    		nGroupExprMap.put(_groupByExprModelArr[i].getChString(), IS_EXISTS);
-    	}
-    }
-    
-    //循环获取需分组的Map(nGroupExprMap)中，在GROUP BY没出现的SELECT表达式则放入编译器异常集合中
-    for (Iterator it = nGroupExprMap.keySet().iterator(); it.hasNext();){
-    	String selectExpr = (String) it.next();
-    	if (((String)nGroupExprMap.get(selectExpr)).equals(IS_NOT_EXISTS)){
-    		NoGroupExistsException _exception = new NoGroupExistsException(selectExpr);
-    		exs.add(_exception);
-    	}
-    }
-    
-    // 得到所有函数模型(包括一般函数和聚合函数)--此函数会带有GROUP BY中的函数
-    //QueryModel[] _allFunctionModelArr = model.getModelsFromAllChildrenByClass(FunctionModel.class);
-    
     //====SELECT子句中非聚合函数表达式必须在GROUP BY子句中出现 END ===//
     
     return model;
