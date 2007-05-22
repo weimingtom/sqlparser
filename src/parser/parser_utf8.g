@@ -8,6 +8,9 @@
 //															//
 //	修改日志:													//
 //	======================================================	//
+//	05/01/2007:												//
+//		- 修改了WHERE条件多个逻辑关系AND/OR	之间括号的嵌套问题		//
+//		- 修改了整个WHERE条件逻辑非(NOT)的问题					//
 //	05/18/2007：												//
 //		- 修改了逻辑非整个条件，用SEARCH_NOT_CONDITION TOKEN	//
 //		- 修改了IS NULL/IS NOT NULL; NOT EXISTS;				//
@@ -20,9 +23,10 @@
 //		  10, getdate())函数及day保留字						//
 //		- 增加empty_function、star_function，用来对getdate();	//
 //		  pi(*)、now(*)、today(*)的验证						//
+//	05/22/2007：												//
+//		- 修改了SELECT子句非聚合函数表达式必须在GROUP BY出现问题	//
 //		  													//
 //==========================================================*/
-
 header {
 	package parser;
 }
@@ -41,7 +45,7 @@ options {
 	defaultErrorHandler = false;
 }
 
-tokens {
+tokens {	
 	SELECT_STATEMENT;
 	SEARCH_NOT_CONDITION;	//非整个条件TOKEN
 	SUBQUERY;				//子查询TOKEN
@@ -251,7 +255,6 @@ constant
 	|	date_key_word
 	|	"null"
 	;
-
 
 function
 	:	function_name LPAREN! parameters RPAREN!
