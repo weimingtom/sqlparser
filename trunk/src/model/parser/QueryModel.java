@@ -136,7 +136,7 @@ public class QueryModel {
 				ColumnModel _columnModel = (ColumnModel) _columnModelArr[i];
 				QueryModel expm =  _columnModel.getFirstModelByClass(ExpressionModel.class);	//获取ColumnModel的表达式
 				
-				if (!((ExpressionModel)expm).hasConstant()){	//如果不是常量则与带有聚合函数的表达式进行比较（目前abc(-900)认为不是常量）
+				if (!((ExpressionModel)expm).hasConstant()){	//如果不是常量则与带有聚合函数的表达式进行比较（目前abs(-900)认为不是常量）
 					if (aFunMap.containsKey(expm.getChString())){
 						aFunMap.put(expm.getChString(), IS_EXISTS);						//表示此聚合函数已在SELECT子句中找到
 					}else{
