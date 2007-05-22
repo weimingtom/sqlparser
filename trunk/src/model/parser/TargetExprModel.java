@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import model.parser.exceptions.common.ErrorLexer;
+
 import antlr.ANTLRException;
 import antlr.CharStreamIOException;
 import antlr.CommonAST;
