@@ -128,19 +128,33 @@ public class QueryModel {
 				//QueryModel[] fdms = apm.getModelsFromAllChildrenByClass(FieldModel.class);
 			}
 			
-			Map nGroupExprMap = new LinkedHashMap();	//需要分组的表达式Map
+			Map nGroupExprMap = new LinkedHashMap();				//需要分组的表达式Map
+			Map mGroupSingleExprMap = new LinkedHashMap();	//可分组出现的单个表达式Map
 			//获取SELECT子句下的所有表达式
 			QueryModel[] _columnModelArr = model.getModelsFromAllChildrenByClass(ColumnModel.class); 
 			for (int i = 0; i < _columnModelArr.length; i++){
 				ColumnModel _columnModel = (ColumnModel) _columnModelArr[i];
 				QueryModel expm =  _columnModel.getFirstModelByClass(ExpressionModel.class);	//获取ColumnModel的表达式
+				
 				if (!((ExpressionModel)expm).hasConstant()){	//如果不是常量则与带有聚合函数的表达式进行比较（目前abc(-900)认为不是常量）
 					if (aFunMap.containsKey(expm.getChString())){
-						aFunMap.put(expm.getChString(), IS_EXISTS);						//表示此KEY需要在分组中出现
+						aFunMap.put(expm.getChString(), IS_EXISTS);						//表示此聚合函数已在SELECT子句中找到
 					}else{
-						nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY不需要在分组中出现
+						nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY需要在分组中出现
+						
+						//获取此表达式的单个字段，如果为1个，则放入mGroupSingleExprMap中
+						QueryModel[] fmArr = expm.getModelsFromAllChildrenByClass(FieldModel.class);
+						if (fmArr.length == 1){
+							UnAggregateExpVO unAggregateExpVO = new UnAggregateExpVO();
+							unAggregateExpVO.setUnAggregateExp(expm.getChString());
+							unAggregateExpVO.setSingleExp(fmArr[0].getChString());
+							unAggregateExpVO.setExistsFlag(IS_NOT_EXISTS);
+							mGroupSingleExprMap.put(fmArr[0].getChString(), unAggregateExpVO);
+						}
+						
 					}
 				}
+				
 	    }
 			
 			//获取GROUP BY列表模型对象
@@ -157,6 +171,10 @@ public class QueryModel {
 	    for (int i = 0; i < _groupByExprModelArr.length; i++){
 	    	if (nGroupExprMap.containsKey(_groupByExprModelArr[i].getChString())){
 	    		nGroupExprMap.put(_groupByExprModelArr[i].getChString(), IS_EXISTS);
+	    	}else if (mGroupSingleExprMap.containsKey(_groupByExprModelArr[i].getChString())){
+	    		//判断此表达式的单个字段是否出现，如果在分组中出现，则设置存在标识
+	    		UnAggregateExpVO unAggregateExpVO = (UnAggregateExpVO) mGroupSingleExprMap.get(_groupByExprModelArr[i].getChString());
+	    		nGroupExprMap.put(unAggregateExpVO.getUnAggregateExp(), IS_EXISTS);
 	    	}
 	    }
 	    
