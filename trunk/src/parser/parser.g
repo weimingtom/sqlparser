@@ -8,6 +8,9 @@
 //															//
 //	\u4fee\u6539\u65e5\u5fd7:													//
 //	======================================================	//
+//	05/01/2007:												//
+//		- \u4fee\u6539\u4e86WHERE\u6761\u4ef6\u591a\u4e2a\u903b\u8f91\u5173\u7cfbAND/OR	\u4e4b\u95f4\u62ec\u53f7\u7684\u5d4c\u5957\u95ee\u9898		//
+//		- \u4fee\u6539\u4e86\u6574\u4e2aWHERE\u6761\u4ef6\u903b\u8f91\u975e(NOT)\u7684\u95ee\u9898					//
 //	05/18/2007\uff1a												//
 //		- \u4fee\u6539\u4e86\u903b\u8f91\u975e\u6574\u4e2a\u6761\u4ef6\uff0c\u7528SEARCH_NOT_CONDITION TOKEN	//
 //		- \u4fee\u6539\u4e86IS NULL/IS NOT NULL; NOT EXISTS;				//
@@ -20,9 +23,10 @@
 //		  10, getdate())\u51fd\u6570\u53caday\u4fdd\u7559\u5b57						//
 //		- \u589e\u52a0empty_function\u3001star_function\uff0c\u7528\u6765\u5bf9getdate();	//
 //		  pi(*)\u3001now(*)\u3001today(*)\u7684\u9a8c\u8bc1						//
+//	05/22/2007\uff1a												//
+//		- \u4fee\u6539\u4e86SELECT\u5b50\u53e5\u975e\u805a\u5408\u51fd\u6570\u8868\u8fbe\u5f0f\u5fc5\u987b\u5728GROUP BY\u51fa\u73b0\u95ee\u9898	//
 //		  													//
 //==========================================================*/
-
 header {
 	package parser;
 }
@@ -41,7 +45,7 @@ options {
 	defaultErrorHandler = false;
 }
 
-tokens {
+tokens {	
 	SELECT_STATEMENT;
 	SEARCH_NOT_CONDITION;	//\u975e\u6574\u4e2a\u6761\u4ef6TOKEN
 	SUBQUERY;				//\u5b50\u67e5\u8be2TOKEN
@@ -251,7 +255,6 @@ constant
 	|	date_key_word
 	|	"null"
 	;
-
 
 function
 	:	function_name LPAREN! parameters RPAREN!
