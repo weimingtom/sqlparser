@@ -22,6 +22,7 @@ import antlr.SemanticException;
 import antlr.TokenStreamIOException;
 import antlr.TokenStreamRecognitionException;
 import antlr.TokenStreamRetryException;
+import antlr.debug.misc.ASTFrame;
 
 import util.StringUtil;
 import parser.L;
@@ -91,10 +92,10 @@ public class QueryModel {
     try {
       p.statements();
       CommonAST ast = (CommonAST)p.getAST();
-      T t = new T();
       //TODO Visible ASTFrame
 //      ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
 //      _ASTFrame.setVisible(true);
+      T t = new T();
       model = t.statement(ast);
     } catch (ANTLRException e) {
       exs.add(e);
