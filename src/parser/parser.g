@@ -258,7 +258,7 @@ constant
 
 function
 	:	function_name LPAREN! parameters RPAREN!
-//	{#function = #([FUNCTION, "function_block"], #function);}
+	{#function = #([FUNCTION, "function_block"], #function);}
 	|	empty_function LPAREN! RPAREN!
 	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
 	|	star_function LPAREN! STAR! RPAREN!
@@ -1066,7 +1066,8 @@ function returns [FunctionModel model]
 		}
 		
 		//Normal functions\u666e\u901a\u51fd\u6570
-	|	f:function_name p=parameters	
+//	|	f:function_name p=parameters
+	|	#(FUNCTION f:function_name p=parameters)
 		{
 			model = new FunctionModel(f.getText());
 			model.setParameters(p);
@@ -1246,7 +1247,7 @@ string_function
 	|	"ltrim"		|	"\u53bb\u6389\u5de6\u7a7a\u683c"
 	|	"patindex"	|	"\u6c42\u7b2c\u4e00\u6b21\u51fa\u73b0\u4f4d\u7f6e"
 	|	"replace"	|	"\u5b57\u7b26\u4e32\u66ff\u6362"
-	|	"right"		|	"\u5b57\u7b26\u4e32\u5de6\u622a"
+	|	"right"		|	"\u5b57\u7b26\u4e32\u53f3\u622a"
 	|	"rtrim"		|	"\u53bb\u6389\u53f3\u7a7a\u683c"
 	|	"str"		|	"\u6570\u503c\u8f6c\u5b57\u7b26\u4e32"
 	|	"substring"	|	"\u5b57\u7b26\u4e32\u622a\u53d6"

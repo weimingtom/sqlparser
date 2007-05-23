@@ -258,7 +258,7 @@ constant
 
 function
 	:	function_name LPAREN! parameters RPAREN!
-//	{#function = #([FUNCTION, "function_block"], #function);}
+	{#function = #([FUNCTION, "function_block"], #function);}
 	|	empty_function LPAREN! RPAREN!
 	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
 	|	star_function LPAREN! STAR! RPAREN!
@@ -1066,7 +1066,8 @@ function returns [FunctionModel model]
 		}
 		
 		//Normal functions普通函数
-	|	f:function_name p=parameters	
+//	|	f:function_name p=parameters
+	|	#(FUNCTION f:function_name p=parameters)
 		{
 			model = new FunctionModel(f.getText());
 			model.setParameters(p);
@@ -1246,7 +1247,7 @@ string_function
 	|	"ltrim"		|	"去掉左空格"
 	|	"patindex"	|	"求第一次出现位置"
 	|	"replace"	|	"字符串替换"
-	|	"right"		|	"字符串左截"
+	|	"right"		|	"字符串右截"
 	|	"rtrim"		|	"去掉右空格"
 	|	"str"		|	"数值转字符串"
 	|	"substring"	|	"字符串截取"
