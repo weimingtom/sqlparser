@@ -79,8 +79,9 @@ public class QueryModel {
    * @return QueryModel 编译器QueryModel对象
    */
   public static QueryModel parseQuery(String chQuery) {
-    String IS_EXISTS = "1";
-    String IS_NOT_EXISTS = "0";
+  	String IS_NOT_EXISTS = "0";
+  	String IS_EXISTS = "1";
+    String IS_EXISTS_ERROR = "2";
     
   	QueryModel model = null;
     List exs = new ArrayList();
@@ -130,6 +131,7 @@ public class QueryModel {
 			
 			Map nGroupExprMap = new LinkedHashMap();				//需要在分组出现的表达式Map
 			Map mGroupSingleExprMap = new LinkedHashMap();	//可分组出现的单个表达式Map
+			
 			//获取SELECT子句下的所有表达式
 			QueryModel[] _columnModelArr = model.getModelsFromAllChildrenByClass(ColumnModel.class); 
 			for (int i = 0; i < _columnModelArr.length; i++){
@@ -180,6 +182,9 @@ public class QueryModel {
 	    		//判断此表达式的单个字段是否出现，如果在分组中出现，则设置存在标识
 	    		UnAggregateExpVO unAggregateExpVO = (UnAggregateExpVO) mGroupSingleExprMap.get(_groupByExprModelArr[i].getChString());
 	    		nGroupExprMap.put(unAggregateExpVO.getUnAggregateExp(), IS_EXISTS);
+	    	}else if (aFunMap.containsKey(_groupByExprModelArr[i].getChString())){
+	    		NoGroupExistsException _exception = new NoGroupExistsException(_groupByExprModelArr[i].getChString(), NoGroupExistsException.EXPR_EXISTS_ERROR);
+	    		exs.add(_exception);
 	    	}
 	    }
 	    
@@ -191,6 +196,7 @@ public class QueryModel {
 	    		exs.add(_exception);
 	    	}
 	    }
+	    
 	    
 	    // 得到所有函数模型(包括一般函数和聚合函数)--此函数会带有GROUP BY中的函数
 	    //QueryModel[] _allFunctionModelArr = model.getModelsFromAllChildrenByClass(FunctionModel.class);
@@ -809,7 +815,10 @@ public class QueryModel {
    */
   private ChWrongMessage translateException(NoGroupExistsException exception) {
   	ChWrongMessage msg = new ChWrongMessage();
-    msg.setMessage("[查询]子句 \""+ exception.getSelectExpr() + "\" 没有在[分组]子句中出现。");
+  	if (exception.getExType().equals(exception.EXPR_EXISTS_ERROR))
+  		msg.setMessage("在用于[分组]子句依据列表的表达式中，不能使用聚合或子查询。\""+ exception.getSelectExpr() + "\" 不能出现。");
+  	else
+  		msg.setMessage("[查询]子句 \""+ exception.getSelectExpr() + "\" 在选择列表中无效，因为未包含在聚合函数中，并且没有在[分组]子句中出现。");
     return msg;
   }
   
