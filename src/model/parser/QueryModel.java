@@ -815,7 +815,8 @@ public class QueryModel {
    */
   private ChWrongMessage translateException(NoGroupExistsException exception) {
   	ChWrongMessage msg = new ChWrongMessage();
-  	if (exception.getExType().equals(exception.EXPR_EXISTS_ERROR))
+  	if (exception.getExType() != null && !exception.getExType().equals("") && 
+  			exception.getExType().equals(exception.EXPR_EXISTS_ERROR))
   		msg.setMessage("在用于[分组]子句依据列表的表达式中，不能使用聚合或子查询。\""+ exception.getSelectExpr() + "\" 不能出现。");
   	else
   		msg.setMessage("[查询]子句 \""+ exception.getSelectExpr() + "\" 在选择列表中无效，因为未包含在聚合函数中，并且没有在[分组]子句中出现。");

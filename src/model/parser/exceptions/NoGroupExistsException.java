@@ -24,7 +24,12 @@ public class NoGroupExistsException extends ANTLRException {
 	}
 	
 	public String toString() {
-		return "错误输入：[查询]子句 \"" + selectExpr + "\" 必须在[分组]子句中出现。";
+		String rValue = "";
+		if (exType != null && !exType.equals("") && exType.equals(EXPR_EXISTS_ERROR))
+			rValue = "在用于[分组]子句依据列表的表达式中，不能使用聚合或子查询。\""+ selectExpr + "\" 不能出现。";
+  	else
+  		rValue = "[查询]子句 \""+ selectExpr + "\" 在选择列表中无效，因为未包含在聚合函数中，并且没有在[分组]子句中出现。";
+		return rValue;
 	}
 
 	public String getSelectExpr() {
