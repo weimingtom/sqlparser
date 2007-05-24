@@ -56,8 +56,10 @@ tokens {
 	FUNCTION;				//函数TOKEN
 	FUNCTION_EMPTY_PARAM;	//空参数函数TOKEN[getdate()]
 	FUNCTION_STAR_PARAM;	//参数为*函数TOKEN[now(*);today(*)]
+	FUNCTION_CONVERSION_AS;	//转化函数必须带AS TOKEN
 	FUNCTION_STAR_COUNT;	//函数COUNT(*) TOKEN
-	
+	AS_PARAMETERS;			//转化函数AS所有参数
+
 	LOGIC_OP;				//逻辑操作符TOKEN
 	LOGICAL_NULL;			//逻辑IS NULL TOKEN
 	LOGICAL_NOT_NULL;		//逻辑IS NOT NULL TOKEN
@@ -257,16 +259,18 @@ constant
 	;
 
 function
-	:	function_name LPAREN! parameters RPAREN!
-	{#function = #([FUNCTION, "function_block"], #function);}
-	|	empty_function LPAREN! RPAREN!
+	:	empty_function LPAREN! RPAREN!
 	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
 	|	star_function LPAREN! STAR! RPAREN!
 	{#function = #([FUNCTION_STAR_PARAM, "function_star_param"], #function);}
+//	|	conversion_as_function LPAREN! as_parameters RPAREN!
+//	{#function = #([FUNCTION_CONVERSION_AS, "function_conversion_as"], #function);}
+	|	function_name LPAREN! parameters RPAREN!
+	{#function = #([FUNCTION, "function_block"], #function);}
 	;
 
 aggregate_func
-	:	("求记录总数"^ | "count"^) LPAREN! STAR! RPAREN!
+	:	("求记录总数" | "count") LPAREN! STAR! RPAREN!
 		{#aggregate_func = #([FUNCTION_STAR_COUNT, "function_star_count"], #aggregate_func);}
 	|	aggregate_func_name LPAREN! ("all"^ | "全部"^ | "distinct"^ |"唯一"^)? parameters RPAREN!
 	;
@@ -274,18 +278,28 @@ aggregate_func
 parameters
 	:	expression (COMMA^ expression)*
 	;
+//as_parameters
+//	:	expression ("as"! | "作为"!) data_type_define
+//		{#as_parameters = #([AS_PARAMETERS, "conversion_as_parameters"], #as_parameters);}
+//	;
+//data_type_define
+//	:	CONVERSION_DATA_TYPE
+//	;
+
 table_name
 	:	ID (("as"^|"作为"^) alias)?
 	;
 
+
+//聚合函数
 aggregate_func_name
-	:	"sum" 	| "求和"
-	|	"avg" 	| "求平均数"
-	|	"max" 	| "求最大值"
-	|	"min" 	| "求最小值"
-	|	"count" | "求记录总数"
-	|	"stddev"
-	|	"variance"
+	:	"avg" 		| 	"求平均数"
+	|	"count" 	| 	"求记录总数"
+	|	"max" 		| 	"求最大值"
+	|	"min" 		| 	"求最小值"
+	|	"stddev" 	| 	"求方差"
+	|	"sum" 		|	"求和"
+	|	"variance" 	| 	"求统计方差"
 	;
 
 //function_name
@@ -306,6 +320,24 @@ aggregate_func_name
 //	|	"str" 		| 	"数值转字符串"
 //	;
 
+//空参数函数
+empty_function
+	: 	"getdate"	| 	"求当前日期时间"
+	|	"rand"		|	"求0和1间的随机数"
+	;
+
+//参数为*函数、
+star_function
+	:  	"pi"	|	"求圆周率"
+	|	"now"	|	"取当前日期时间"
+	|	"today"	|	"求当前日期"
+	;
+
+conversion_as_function
+	:	"cast"	|	"数据类型转化"
+	;
+
+//普通函数(数学函数、字符串函数、日期时间函数、系统函数、数据类型转化函数、其他函数)
 function_name
 	:
 	|	number_function
@@ -316,120 +348,115 @@ function_name
 	|	other_function
 	;
 
-empty_function
-	: "getdate" | "求当前日期时间"
-	;
-
-star_function
-	:  	"pi"	|	"求PI"
-	|	"now"	|	"取当前日期时间"
-	|	"today"	|	"取当前日期"	
-	;
-
+//数学函数
 number_function
 	:	"abs" 		| 	"取绝对值"
-	|	"acos"		|	"求值的余弦角"
-	|	"asin"		|	"求值的正弦角"
-	|	"atan"		|	"求值的正切角"
-	|	"atin2"		|	"求值的正弦和余弦角"
+	|	"acos"		|	"求反余弦值"
+	|	"asin"		|	"求反正弦值"
+	|	"atan"		|	"求反正切值"
+	|	"atin2"		|	"求二个数的反正切值"
 	|	"ceiling"	|	"求五入后的整数"
-	|	"cos"		|	"求角的余弦值"
-	|	"cot"		|	"求角的余切值"
-	|	"degrees"	|	"求弧度数的角大小"
+	|	"cos"		|	"求余弦值"
+	|	"cot"		|	"求余切值"
+	|	"degrees"	|	"将弧度转为度数"
 	|	"exp"		|	"求幂值"
 	|	"floor"		|	"求四舍后的整数"
 	|	"log"		|	"求自然对数"
 	|	"log10"		|	"求10为底的对数"
 	|	"mod"		|	"求余"
-//	|	"pi"		|	"求PI"
+//	|	"pi"		|	"求圆周率"
 	|	"power"		|	"求数字的次幂值"
-	|	"radians"	|	"求度数角的弧度"
+	|	"radians"	|	"将度数转为弧度"
 	|	"rand"		|	"求0和1间的随机数"
-	|	"remaiindex"
+	|	"remainder"	|	"取余"
 	|	"round"		|	"格式化数值"
 	|	"sign"		|	"求值的符号"
-	|	"sin"		|	"求角的正弦值"
+	|	"sin"		|	"求正弦值"
 	|	"sqrt" 		| 	"求平方根"
-	|	"tan"		|	"求角的正切值"
-	|	"truncnum"
+	|	"tan"		|	"求正切值"
+	|	"将数值格式化"	//"\"truncate\""
+	|	"truncnum"	|	"取格式化数值"
 	;
 
+//字符串函数
 string_function
-	:	"ascii"		|	"求第一个字符的ASCII码"
-	|	"bit_length"
-	|	"byte_length"
-	|	"char"		|	"求等值的字符"
-	|	"char_length" | "求字符串的长度"
-	|	"charindex"	|	"存在于"
-	|	"difference"  |	"求两个串的差值"
-	|	"insertstr"
-	|	"lcase"
-	|	"left"		|	"字符串左截"
-	|	"length"	|	"求字符串总长度"
-	|	"locate"
-	|	"lower" 	| 	"将字符串转为小写"
-	|	"ltrim"		|	"去掉左空格"
-	|	"octet_length"
-	|	"patindex"	|	"求第一次出现位置"
-	|	"repeat"
-	|	"replace"	|	"字符串替换"
-	|	"replicate"
-	|	"right"		|	"字符串右截"
-	|	"rtrim"		|	"去掉右空格"
-	|	"similar"
-	|	"sortkey"
-	|	"soundex"
-	|	"space"
-	|	"str"		|	"数值转字符串"
-	|	"string"
-	|	"stuff"
-	|	"substring"	|	"字符串截取"
-	|	"trim"
-	|	"ucase"
-	|	"upper"		|	"将字符串转为大写"
+	:	"ascii"			|	"求ASCII码"
+	|	"bit_length"	|	"求字符串的二进制长度"
+	|	"byte_length" 	| 	"求字符串的字节数"
+	|	"char"			|	"求等值的字符"
+	|	"char_length" 	| 	"求字符串的长度"
+	|	"charindex" 	|	"存在于"
+	|	"difference" 	|	"求两个串的声音差值"
+	|	"insertstr"		|	"字符串插入"
+	|	"lcase"			|	"字符串转为小写"
+	|	"left"			|	"字符串左截"
+	|	"length"		|	"取字符串的长度"
+	|	"locate"		|	"求串出现位置"
+	|	"lower" 		| 	"将字符串转为小写"
+	|	"ltrim"			|	"去掉左空格"
+	|	"octet_length"	|	"求字符串的存储长度"
+	|	"patindex"		|	"求第一次出现位置"
+	|	"repeat"		|	"将字符串连接"
+	|	"replace"		|	"字符串替换"
+	|	"replicate"		|	"字符串连接"
+	|	"right"			|	"字符串右截"
+	|	"rtrim"			|	"去掉右空格"
+	|	"similar"		|	"求字符串相似度"
+	|	"sortkey"		|	"字符串排序"
+	|	"soundex"		|	"求字符串声音值"
+	|	"space"			|	"求空格"
+	|	"str"			|	"数值转字符串"
+	|	"string"		|	"字符串合并"
+	|	"stuff"			|	"字符串删除替换"
+	|	"substring"		|	"字符串截取"
+	|	"trim"			|	"去掉空格"
+	|	"ucase"			|	"字符串转为大写"
+	|	"upper"			|	"将字符串转为大写"
 	;
 
+//日期时间函数
 datetime_function
-	:	"dateformat" |	"格式化日期"
-	|	"datename"	|	"求日期的分量值"
-	|	"datepart"	|	"求日期的分量整数值"
-	|	"datetime"	|	"转为日期时间"
-	|	"date"
-	|	"dayname"
-	|	"days"
-	|	"day"
-	|	"dow"
-	|	"hours"
-	|	"hour"
-	|	"minutes"
-	|	"minute"
-	|	"monthname"
-	|	"months"
-	|	"month"
-//	|	"now"		|	"取当前日期时间"
-	|	"quarter"
-	|	"seconds"
-	|	"second"
-//	|	"today"		|	"取当前日期"
-	|	"weeks"
-	|	"week"
-	|	"years"
-	|	"year"
-	|	"ymd"
-//	|	"getdate"	|	"求当前日期时间"
-	|	"dateadd"	|	"日期相加"
-	|	"datediff"	|	"日期相减"
+	:	"dateformat" 	|	"格式化日期"
+	|	"datename"		|	"求日期的分量名称"
+	|	"datepart"		|	"求日期的分量值"
+	|	"datetime"		|	"转为日期时间"
+	|	"date"			|	"转为日期"
+	|	"dayname"		|	"求对应星期名称"
+	|	"days"			|	"求天数"
+	|	"day"			|	"求对应天"
+	|	"dow"			|	"求对应星期值"
+	|	"hours"			|	"求小时数"
+	|	"hour"			|	"求对应小时"
+	|	"minutes"		|	"求分钟数"
+	|	"minute"		|	"求对应分钟"
+	|	"monthname"		|	"求月份名称"
+	|	"months"		|	"求月数"
+	|	"month"			|	"求对应月"
+//	|	"now"			|	"取当前日期时间"
+	|	"quarter"		|	"求对应季度"
+	|	"seconds"		|	"求秒数"
+	|	"second"		|	"求对应秒"
+//	|	"today"			|	"求当前日期"
+	|	"weeks"			|	"求周数"
+	|	"years"			|	"求年数"
+	|	"year"			|	"求对应年"
+	|	"ymd"			|	"求日期"
+	|	"dateadd"		|	"日期相加"
+	|	"datediff"		|	"日期相减"
+//	|	"getdate"		|	"求当前日期时间"
 	;
 
+//数据类型转化函数
 conversion_function
-	:	"convert"	|	"字符转为日期"
-	|	"cast"
-	|	"hextoint"	|	"十六进制转为整数"
+	:	"hextoint"	|	"十六进制转为整数"
 	|	"inttohex"	|	"整数转为十六进制"
 	|	"isdate"	|	"为日期型"
 	|	"isnumeric"	|	"为数值型"
+	|	"cast"		|	"数据类型转化"
+	|	"convert"	|	"字符转为日期"
 	;
 
+//系统函数
 system_function
 	:	"suser_id"
 	|	"suser_name"
@@ -437,14 +464,10 @@ system_function
 	|	"user_name"
 	;
 
-// This is not being used currently (eg. Oracle), but might be useful at some point.
+//其他函数
 other_function
-	:	"decode"
-	| 	"dump"
-	| 	"greatest"
-	| 	"least"
-	| 	"nvl"
-	|	"vsize"
+	:	"argn"
+	| 	"rowid"
 	;
 
 one_arg_op
@@ -474,8 +497,6 @@ date_key_word
 	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
 	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
 	;
-
-
 /*==========================================================//
 //															//
 //						Lexer Define						//
@@ -537,9 +558,19 @@ WHERE
 WS	:	(' '|'\n'|'\r'|'\t')+ {$setType(Token.SKIP);}
     ;
 
+
+//CONVERSION_DATA_TYPE options {testLiterals=true;}
+//	:	(DATA_TYPE_LETTER)+
+//	;
+//
+//protected DATA_TYPE_LETTER
+//    :    'a'..'z'
+//    ;
+
 QUOTED_STRING
 	:	('"'|'\'') (ESC|~('\''|'"'|'\\'|'\n'|'\r'))* ('"'|'\'')
 	;
+
 protected
 ESC
 	:	'\\'
@@ -1090,15 +1121,26 @@ function returns [FunctionModel model]
 		}
 		
 		//Aggregate functions参数为*的COUNT函数，聚合函数[count(*)]
-	|	#(FUNCTION_STAR_COUNT fun2:function_name)
+//	|	#(FUNCTION_STAR_COUNT fun2:function_name)
+	|	#(FUNCTION_STAR_COUNT countStr:"求记录总数")
 		{	
-			model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
+			//model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
+			model = new AggregateFuncModel(countStr.getText(), AggregateFuncModel.NO_FILTER);
 			express1.addOperator("*");
 			p = new ParametersModel();
 			p.addParameter(express1);
 			model.setParameters(p);
 		}
-		
+	|	#(FUNCTION_STAR_COUNT "count")
+		{	
+			//model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
+			model = new AggregateFuncModel("count", AggregateFuncModel.NO_FILTER);
+			express1.addOperator("*");
+			p = new ParametersModel();
+			p.addParameter(express1);
+			model.setParameters(p);
+		}
+
 		//Aggregate functions参数为全部、all的聚合函数
 	|	#(all:"全部" af11:function_name p=parameters)
 		{
@@ -1189,6 +1231,18 @@ date_key_word
 	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
 	;
 
+//聚合函数
+aggregate_func_name
+	:	"avg" 		| 	"求平均数"
+	|	"count" 	| 	"求记录总数"
+	|	"max" 		| 	"求最大值"
+	|	"min" 		| 	"求最小值"
+	|	"stddev" 	| 	"求方差"
+	|	"sum" 		|	"求和"
+	|	"variance" 	| 	"求统计方差"
+	;
+
+//普通函数(数学函数、字符串函数、日期时间函数、系统函数、数据类型转化函数、其他函数)
 function_name
 	:	number_function
 	|	string_function
@@ -1198,95 +1252,107 @@ function_name
 	|	other_function
 	;
 
-aggregate_func_name
-	:	"sum" 	| "求和"
-	|	"avg" 	| "求平均数"
-	|	"max" 	| "求最大值"
-	|	"min" 	| "求最小值"
-	|	"count" | "求记录总数"
-	|	"stddev"
-	|	"variance"
-	;
-
+//数学函数
 number_function
 	:	"abs" 		| 	"取绝对值"
-	|	"acos"		|	"求值的余弦角"
-	|	"asin"		|	"求值的正弦角"
-	|	"atan"		|	"求值的正切角"
-	|	"atin2"		|	"求值的正弦和余弦角"
+	|	"acos"		|	"求反余弦值"
+	|	"asin"		|	"求反正弦值"
+	|	"atan"		|	"求反正切值"
+	|	"atin2"		|	"求二个数的反正切值"
 	|	"ceiling"	|	"求五入后的整数"
-	|	"cos"		|	"求角的余弦值"
-	|	"cot"		|	"求角的余切值"
-	|	"degrees"	|	"求弧度数的角大小"
+	|	"cos"		|	"求余弦值"
+	|	"cot"		|	"求余切值"
+	|	"degrees"	|	"将弧度转为度数"
 	|	"exp"		|	"求幂值"
 	|	"floor"		|	"求四舍后的整数"
 	|	"log"		|	"求自然对数"
 	|	"log10"		|	"求10为底的对数"
 	|	"mod"		|	"求余"
-	|	"pi"		|	"求PI"
+	|	"pi"		|	"求圆周率"
 	|	"power"		|	"求数字的次幂值"
-	|	"radians"	|	"求度数角的弧度"
+	|	"radians"	|	"将度数转为弧度"
 	|	"rand"		|	"求0和1间的随机数"
+	|	"remainder"	|	"取余"
 	|	"round"		|	"格式化数值"
 	|	"sign"		|	"求值的符号"
-	|	"sin"		|	"求角的正弦值"
+	|	"sin"		|	"求正弦值"
 	|	"sqrt" 		| 	"求平方根"
-	|	"tan"		|	"求角的正切值"
+	|	"tan"		|	"求正切值"
+	|	"将数值格式化"	//"\"truncate\""
+	|	"truncnum"	|	"取格式化数值"
 	;
 
+//字符串函数
 string_function
-	:	"ascii"		|	"求第一个字符的ASCII码"
-	|	"char"		|	"求等值的字符"
-	|	"char_length" | "求字符串的长度"
-	|	"charindex"	|	"存在于"
-	|	"difference"  |	"求两个串的差值"
-	|	"lcase"
-	|	"left"		|	"字符串左截"
-	|	"length"	|	"求字符串总长度"
-	|	"lower" 	| 	"将字符串转为小写"
-	|	"ltrim"		|	"去掉左空格"
-	|	"patindex"	|	"求第一次出现位置"
-	|	"replace"	|	"字符串替换"
-	|	"right"		|	"字符串右截"
-	|	"rtrim"		|	"去掉右空格"
-	|	"str"		|	"数值转字符串"
-	|	"substring"	|	"字符串截取"
-	|	"upper"		|	"将字符串转为大写"
+	:	"ascii"			|	"求ASCII码"
+	|	"bit_length"	|	"求字符串的二进制长度"
+	|	"byte_length" 	| 	"求字符串的字节数"
+	|	"char"			|	"求等值的字符"
+	|	"char_length" 	| 	"求字符串的长度"
+	|	"charindex" 	|	"存在于"
+	|	"difference" 	|	"求两个串的声音差值"
+	|	"insertstr"		|	"字符串插入"
+	|	"lcase"			|	"字符串转为小写"
+	|	"left"			|	"字符串左截"
+	|	"length"		|	"取字符串的长度"
+	|	"locate"		|	"求串出现位置"
+	|	"lower" 		| 	"将字符串转为小写"
+	|	"ltrim"			|	"去掉左空格"
+	|	"octet_length"	|	"求字符串的存储长度"
+	|	"patindex"		|	"求第一次出现位置"
+	|	"repeat"		|	"将字符串连接"
+	|	"replace"		|	"字符串替换"
+	|	"replicate"		|	"字符串连接"
+	|	"right"			|	"字符串右截"
+	|	"rtrim"			|	"去掉右空格"
+	|	"similar"		|	"求字符串相似度"
+	|	"sortkey"		|	"字符串排序"
+	|	"soundex"		|	"求字符串声音值"
+	|	"space"			|	"求空格"
+	|	"str"			|	"数值转字符串"
+	|	"string"		|	"字符串合并"
+	|	"stuff"			|	"字符串删除替换"
+	|	"substring"		|	"字符串截取"
+	|	"trim"			|	"去掉空格"
+	|	"ucase"			|	"字符串转为大写"
+	|	"upper"			|	"将字符串转为大写"
 	;
 
+//日期时间函数
 datetime_function
-	:	"dateformat" |	"格式化日期"
-	|	"datename"	|	"求日期的分量值"
-	|	"datepart"	|	"求日期的分量整数值"
-	|	"datetime"	|	"转为日期时间"
-	|	"date"
-	|	"dayname"
-	|	"days"
-	|	"day"
-	|	"dow"
-	|	"hours"
-	|	"hour"
-	|	"minutes"
-	|	"minute"
-	|	"monthname"
-	|	"months"
-	|	"month"
-	|	"now"		|	"取当前日期时间"
-	|	"quarter"
-	|	"seconds"
-	|	"second"
-	|	"today"		|	"取当前日期"
-	|	"weeks"
-	|	"week"
-	|	"years"
-	|	"year"
-	|	"getdate"	|	"求当前日期时间"
-	|	"dateadd"	|	"日期相加"
-	|	"datediff"	|	"日期相减"
+	:	"dateformat" 	|	"格式化日期"
+	|	"datename"		|	"求日期的分量名称"
+	|	"datepart"		|	"求日期的分量值"
+	|	"datetime"		|	"转为日期时间"
+	|	"date"			|	"转为日期"
+	|	"dayname"		|	"求对应星期名称"
+	|	"days"			|	"求天数"
+	|	"day"			|	"求对应天"
+	|	"dow"			|	"求对应星期值"
+	|	"hours"			|	"求小时数"
+	|	"hour"			|	"求对应小时"
+	|	"minutes"		|	"求分钟数"
+	|	"minute"		|	"求对应分钟"
+	|	"monthname"		|	"求月份名称"
+	|	"months"		|	"求月数"
+	|	"month"			|	"求对应月"
+	|	"now"			|	"取当前日期时间"
+	|	"quarter"		|	"求对应季度"
+	|	"seconds"		|	"求秒数"
+	|	"second"		|	"求对应秒"
+	|	"today"			|	"求当前日期"
+	|	"weeks"			|	"求周数"
+	|	"years"			|	"求年数"
+	|	"year"			|	"求对应年"
+	|	"ymd"			|	"求日期"
+	|	"dateadd"		|	"日期相加"
+	|	"datediff"		|	"日期相减"
+	|	"getdate"		|	"求当前日期时间"
 	;
 
+//数据类型转化函数
 conversion_function
-	:	"cast"
+	:	"cast"		|	"数据类型转化"
 	|	"convert"	|	"字符转为日期"
 	|	"hextoint"	|	"十六进制转为整数"
 	|	"inttohex"	|	"整数转为十六进制"
@@ -1294,6 +1360,7 @@ conversion_function
 	|	"isnumeric"	|	"为数值型"
 	;
 
+//系统函数
 system_function
 	:	"suser_id"
 	|	"suser_name"
@@ -1301,12 +1368,8 @@ system_function
 	|	"user_name"
 	;
 
-// This is not being used currently (eg. Oracle), but might be useful at some point.
+//其他函数
 other_function
-	:	"decode"
-	| 	"dump"
-	| 	"greatest"
-	| 	"least"
-	| 	"nvl"
-	|	"vsize"
+	:	"argn"
+	| 	"rowid"
 	;

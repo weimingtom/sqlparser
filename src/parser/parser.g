@@ -56,8 +56,10 @@ tokens {
 	FUNCTION;				//\u51fd\u6570TOKEN
 	FUNCTION_EMPTY_PARAM;	//\u7a7a\u53c2\u6570\u51fd\u6570TOKEN[getdate()]
 	FUNCTION_STAR_PARAM;	//\u53c2\u6570\u4e3a*\u51fd\u6570TOKEN[now(*);today(*)]
+	FUNCTION_CONVERSION_AS;	//\u8f6c\u5316\u51fd\u6570\u5fc5\u987b\u5e26AS TOKEN
 	FUNCTION_STAR_COUNT;	//\u51fd\u6570COUNT(*) TOKEN
-	
+	AS_PARAMETERS;			//\u8f6c\u5316\u51fd\u6570AS\u6240\u6709\u53c2\u6570
+
 	LOGIC_OP;				//\u903b\u8f91\u64cd\u4f5c\u7b26TOKEN
 	LOGICAL_NULL;			//\u903b\u8f91IS NULL TOKEN
 	LOGICAL_NOT_NULL;		//\u903b\u8f91IS NOT NULL TOKEN
@@ -257,16 +259,18 @@ constant
 	;
 
 function
-	:	function_name LPAREN! parameters RPAREN!
-	{#function = #([FUNCTION, "function_block"], #function);}
-	|	empty_function LPAREN! RPAREN!
+	:	empty_function LPAREN! RPAREN!
 	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
 	|	star_function LPAREN! STAR! RPAREN!
 	{#function = #([FUNCTION_STAR_PARAM, "function_star_param"], #function);}
+//	|	conversion_as_function LPAREN! as_parameters RPAREN!
+//	{#function = #([FUNCTION_CONVERSION_AS, "function_conversion_as"], #function);}
+	|	function_name LPAREN! parameters RPAREN!
+	{#function = #([FUNCTION, "function_block"], #function);}
 	;
 
 aggregate_func
-	:	("\u6c42\u8bb0\u5f55\u603b\u6570"^ | "count"^) LPAREN! STAR! RPAREN!
+	:	("\u6c42\u8bb0\u5f55\u603b\u6570" | "count") LPAREN! STAR! RPAREN!
 		{#aggregate_func = #([FUNCTION_STAR_COUNT, "function_star_count"], #aggregate_func);}
 	|	aggregate_func_name LPAREN! ("all"^ | "\u5168\u90e8"^ | "distinct"^ |"\u552f\u4e00"^)? parameters RPAREN!
 	;
@@ -274,18 +278,28 @@ aggregate_func
 parameters
 	:	expression (COMMA^ expression)*
 	;
+//as_parameters
+//	:	expression ("as"! | "\u4f5c\u4e3a"!) data_type_define
+//		{#as_parameters = #([AS_PARAMETERS, "conversion_as_parameters"], #as_parameters);}
+//	;
+//data_type_define
+//	:	CONVERSION_DATA_TYPE
+//	;
+
 table_name
 	:	ID (("as"^|"\u4f5c\u4e3a"^) alias)?
 	;
 
+
+//\u805a\u5408\u51fd\u6570
 aggregate_func_name
-	:	"sum" 	| "\u6c42\u548c"
-	|	"avg" 	| "\u6c42\u5e73\u5747\u6570"
-	|	"max" 	| "\u6c42\u6700\u5927\u503c"
-	|	"min" 	| "\u6c42\u6700\u5c0f\u503c"
-	|	"count" | "\u6c42\u8bb0\u5f55\u603b\u6570"
-	|	"stddev"
-	|	"variance"
+	:	"avg" 		| 	"\u6c42\u5e73\u5747\u6570"
+	|	"count" 	| 	"\u6c42\u8bb0\u5f55\u603b\u6570"
+	|	"max" 		| 	"\u6c42\u6700\u5927\u503c"
+	|	"min" 		| 	"\u6c42\u6700\u5c0f\u503c"
+	|	"stddev" 	| 	"\u6c42\u65b9\u5dee"
+	|	"sum" 		|	"\u6c42\u548c"
+	|	"variance" 	| 	"\u6c42\u7edf\u8ba1\u65b9\u5dee"
 	;
 
 //function_name
@@ -306,6 +320,24 @@ aggregate_func_name
 //	|	"str" 		| 	"\u6570\u503c\u8f6c\u5b57\u7b26\u4e32"
 //	;
 
+//\u7a7a\u53c2\u6570\u51fd\u6570
+empty_function
+	: 	"getdate"	| 	"\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
+	|	"rand"		|	"\u6c420\u548c1\u95f4\u7684\u968f\u673a\u6570"
+	;
+
+//\u53c2\u6570\u4e3a*\u51fd\u6570\u3001
+star_function
+	:  	"pi"	|	"\u6c42\u5706\u5468\u7387"
+	|	"now"	|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
+	|	"today"	|	"\u6c42\u5f53\u524d\u65e5\u671f"
+	;
+
+conversion_as_function
+	:	"cast"	|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
+	;
+
+//\u666e\u901a\u51fd\u6570(\u6570\u5b66\u51fd\u6570\u3001\u5b57\u7b26\u4e32\u51fd\u6570\u3001\u65e5\u671f\u65f6\u95f4\u51fd\u6570\u3001\u7cfb\u7edf\u51fd\u6570\u3001\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u51fd\u6570\u3001\u5176\u4ed6\u51fd\u6570)
 function_name
 	:
 	|	number_function
@@ -316,120 +348,115 @@ function_name
 	|	other_function
 	;
 
-empty_function
-	: "getdate" | "\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
-	;
-
-star_function
-	:  	"pi"	|	"\u6c42PI"
-	|	"now"	|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
-	|	"today"	|	"\u53d6\u5f53\u524d\u65e5\u671f"	
-	;
-
+//\u6570\u5b66\u51fd\u6570
 number_function
 	:	"abs" 		| 	"\u53d6\u7edd\u5bf9\u503c"
-	|	"acos"		|	"\u6c42\u503c\u7684\u4f59\u5f26\u89d2"
-	|	"asin"		|	"\u6c42\u503c\u7684\u6b63\u5f26\u89d2"
-	|	"atan"		|	"\u6c42\u503c\u7684\u6b63\u5207\u89d2"
-	|	"atin2"		|	"\u6c42\u503c\u7684\u6b63\u5f26\u548c\u4f59\u5f26\u89d2"
+	|	"acos"		|	"\u6c42\u53cd\u4f59\u5f26\u503c"
+	|	"asin"		|	"\u6c42\u53cd\u6b63\u5f26\u503c"
+	|	"atan"		|	"\u6c42\u53cd\u6b63\u5207\u503c"
+	|	"atin2"		|	"\u6c42\u4e8c\u4e2a\u6570\u7684\u53cd\u6b63\u5207\u503c"
 	|	"ceiling"	|	"\u6c42\u4e94\u5165\u540e\u7684\u6574\u6570"
-	|	"cos"		|	"\u6c42\u89d2\u7684\u4f59\u5f26\u503c"
-	|	"cot"		|	"\u6c42\u89d2\u7684\u4f59\u5207\u503c"
-	|	"degrees"	|	"\u6c42\u5f27\u5ea6\u6570\u7684\u89d2\u5927\u5c0f"
+	|	"cos"		|	"\u6c42\u4f59\u5f26\u503c"
+	|	"cot"		|	"\u6c42\u4f59\u5207\u503c"
+	|	"degrees"	|	"\u5c06\u5f27\u5ea6\u8f6c\u4e3a\u5ea6\u6570"
 	|	"exp"		|	"\u6c42\u5e42\u503c"
 	|	"floor"		|	"\u6c42\u56db\u820d\u540e\u7684\u6574\u6570"
 	|	"log"		|	"\u6c42\u81ea\u7136\u5bf9\u6570"
 	|	"log10"		|	"\u6c4210\u4e3a\u5e95\u7684\u5bf9\u6570"
 	|	"mod"		|	"\u6c42\u4f59"
-//	|	"pi"		|	"\u6c42PI"
+//	|	"pi"		|	"\u6c42\u5706\u5468\u7387"
 	|	"power"		|	"\u6c42\u6570\u5b57\u7684\u6b21\u5e42\u503c"
-	|	"radians"	|	"\u6c42\u5ea6\u6570\u89d2\u7684\u5f27\u5ea6"
+	|	"radians"	|	"\u5c06\u5ea6\u6570\u8f6c\u4e3a\u5f27\u5ea6"
 	|	"rand"		|	"\u6c420\u548c1\u95f4\u7684\u968f\u673a\u6570"
-	|	"remaiindex"
+	|	"remainder"	|	"\u53d6\u4f59"
 	|	"round"		|	"\u683c\u5f0f\u5316\u6570\u503c"
 	|	"sign"		|	"\u6c42\u503c\u7684\u7b26\u53f7"
-	|	"sin"		|	"\u6c42\u89d2\u7684\u6b63\u5f26\u503c"
+	|	"sin"		|	"\u6c42\u6b63\u5f26\u503c"
 	|	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
-	|	"tan"		|	"\u6c42\u89d2\u7684\u6b63\u5207\u503c"
-	|	"truncnum"
+	|	"tan"		|	"\u6c42\u6b63\u5207\u503c"
+	|	"\u5c06\u6570\u503c\u683c\u5f0f\u5316"	//"\"truncate\""
+	|	"truncnum"	|	"\u53d6\u683c\u5f0f\u5316\u6570\u503c"
 	;
 
+//\u5b57\u7b26\u4e32\u51fd\u6570
 string_function
-	:	"ascii"		|	"\u6c42\u7b2c\u4e00\u4e2a\u5b57\u7b26\u7684ASCII\u7801"
-	|	"bit_length"
-	|	"byte_length"
-	|	"char"		|	"\u6c42\u7b49\u503c\u7684\u5b57\u7b26"
-	|	"char_length" | "\u6c42\u5b57\u7b26\u4e32\u7684\u957f\u5ea6"
-	|	"charindex"	|	"\u5b58\u5728\u4e8e"
-	|	"difference"  |	"\u6c42\u4e24\u4e2a\u4e32\u7684\u5dee\u503c"
-	|	"insertstr"
-	|	"lcase"
-	|	"left"		|	"\u5b57\u7b26\u4e32\u5de6\u622a"
-	|	"length"	|	"\u6c42\u5b57\u7b26\u4e32\u603b\u957f\u5ea6"
-	|	"locate"
-	|	"lower" 	| 	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5c0f\u5199"
-	|	"ltrim"		|	"\u53bb\u6389\u5de6\u7a7a\u683c"
-	|	"octet_length"
-	|	"patindex"	|	"\u6c42\u7b2c\u4e00\u6b21\u51fa\u73b0\u4f4d\u7f6e"
-	|	"repeat"
-	|	"replace"	|	"\u5b57\u7b26\u4e32\u66ff\u6362"
-	|	"replicate"
-	|	"right"		|	"\u5b57\u7b26\u4e32\u53f3\u622a"
-	|	"rtrim"		|	"\u53bb\u6389\u53f3\u7a7a\u683c"
-	|	"similar"
-	|	"sortkey"
-	|	"soundex"
-	|	"space"
-	|	"str"		|	"\u6570\u503c\u8f6c\u5b57\u7b26\u4e32"
-	|	"string"
-	|	"stuff"
-	|	"substring"	|	"\u5b57\u7b26\u4e32\u622a\u53d6"
-	|	"trim"
-	|	"ucase"
-	|	"upper"		|	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5927\u5199"
+	:	"ascii"			|	"\u6c42ASCII\u7801"
+	|	"bit_length"	|	"\u6c42\u5b57\u7b26\u4e32\u7684\u4e8c\u8fdb\u5236\u957f\u5ea6"
+	|	"byte_length" 	| 	"\u6c42\u5b57\u7b26\u4e32\u7684\u5b57\u8282\u6570"
+	|	"char"			|	"\u6c42\u7b49\u503c\u7684\u5b57\u7b26"
+	|	"char_length" 	| 	"\u6c42\u5b57\u7b26\u4e32\u7684\u957f\u5ea6"
+	|	"charindex" 	|	"\u5b58\u5728\u4e8e"
+	|	"difference" 	|	"\u6c42\u4e24\u4e2a\u4e32\u7684\u58f0\u97f3\u5dee\u503c"
+	|	"insertstr"		|	"\u5b57\u7b26\u4e32\u63d2\u5165"
+	|	"lcase"			|	"\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5c0f\u5199"
+	|	"left"			|	"\u5b57\u7b26\u4e32\u5de6\u622a"
+	|	"length"		|	"\u53d6\u5b57\u7b26\u4e32\u7684\u957f\u5ea6"
+	|	"locate"		|	"\u6c42\u4e32\u51fa\u73b0\u4f4d\u7f6e"
+	|	"lower" 		| 	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5c0f\u5199"
+	|	"ltrim"			|	"\u53bb\u6389\u5de6\u7a7a\u683c"
+	|	"octet_length"	|	"\u6c42\u5b57\u7b26\u4e32\u7684\u5b58\u50a8\u957f\u5ea6"
+	|	"patindex"		|	"\u6c42\u7b2c\u4e00\u6b21\u51fa\u73b0\u4f4d\u7f6e"
+	|	"repeat"		|	"\u5c06\u5b57\u7b26\u4e32\u8fde\u63a5"
+	|	"replace"		|	"\u5b57\u7b26\u4e32\u66ff\u6362"
+	|	"replicate"		|	"\u5b57\u7b26\u4e32\u8fde\u63a5"
+	|	"right"			|	"\u5b57\u7b26\u4e32\u53f3\u622a"
+	|	"rtrim"			|	"\u53bb\u6389\u53f3\u7a7a\u683c"
+	|	"similar"		|	"\u6c42\u5b57\u7b26\u4e32\u76f8\u4f3c\u5ea6"
+	|	"sortkey"		|	"\u5b57\u7b26\u4e32\u6392\u5e8f"
+	|	"soundex"		|	"\u6c42\u5b57\u7b26\u4e32\u58f0\u97f3\u503c"
+	|	"space"			|	"\u6c42\u7a7a\u683c"
+	|	"str"			|	"\u6570\u503c\u8f6c\u5b57\u7b26\u4e32"
+	|	"string"		|	"\u5b57\u7b26\u4e32\u5408\u5e76"
+	|	"stuff"			|	"\u5b57\u7b26\u4e32\u5220\u9664\u66ff\u6362"
+	|	"substring"		|	"\u5b57\u7b26\u4e32\u622a\u53d6"
+	|	"trim"			|	"\u53bb\u6389\u7a7a\u683c"
+	|	"ucase"			|	"\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5927\u5199"
+	|	"upper"			|	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5927\u5199"
 	;
 
+//\u65e5\u671f\u65f6\u95f4\u51fd\u6570
 datetime_function
-	:	"dateformat" |	"\u683c\u5f0f\u5316\u65e5\u671f"
-	|	"datename"	|	"\u6c42\u65e5\u671f\u7684\u5206\u91cf\u503c"
-	|	"datepart"	|	"\u6c42\u65e5\u671f\u7684\u5206\u91cf\u6574\u6570\u503c"
-	|	"datetime"	|	"\u8f6c\u4e3a\u65e5\u671f\u65f6\u95f4"
-	|	"date"
-	|	"dayname"
-	|	"days"
-	|	"day"
-	|	"dow"
-	|	"hours"
-	|	"hour"
-	|	"minutes"
-	|	"minute"
-	|	"monthname"
-	|	"months"
-	|	"month"
-//	|	"now"		|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
-	|	"quarter"
-	|	"seconds"
-	|	"second"
-//	|	"today"		|	"\u53d6\u5f53\u524d\u65e5\u671f"
-	|	"weeks"
-	|	"week"
-	|	"years"
-	|	"year"
-	|	"ymd"
-//	|	"getdate"	|	"\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
-	|	"dateadd"	|	"\u65e5\u671f\u76f8\u52a0"
-	|	"datediff"	|	"\u65e5\u671f\u76f8\u51cf"
+	:	"dateformat" 	|	"\u683c\u5f0f\u5316\u65e5\u671f"
+	|	"datename"		|	"\u6c42\u65e5\u671f\u7684\u5206\u91cf\u540d\u79f0"
+	|	"datepart"		|	"\u6c42\u65e5\u671f\u7684\u5206\u91cf\u503c"
+	|	"datetime"		|	"\u8f6c\u4e3a\u65e5\u671f\u65f6\u95f4"
+	|	"date"			|	"\u8f6c\u4e3a\u65e5\u671f"
+	|	"dayname"		|	"\u6c42\u5bf9\u5e94\u661f\u671f\u540d\u79f0"
+	|	"days"			|	"\u6c42\u5929\u6570"
+	|	"day"			|	"\u6c42\u5bf9\u5e94\u5929"
+	|	"dow"			|	"\u6c42\u5bf9\u5e94\u661f\u671f\u503c"
+	|	"hours"			|	"\u6c42\u5c0f\u65f6\u6570"
+	|	"hour"			|	"\u6c42\u5bf9\u5e94\u5c0f\u65f6"
+	|	"minutes"		|	"\u6c42\u5206\u949f\u6570"
+	|	"minute"		|	"\u6c42\u5bf9\u5e94\u5206\u949f"
+	|	"monthname"		|	"\u6c42\u6708\u4efd\u540d\u79f0"
+	|	"months"		|	"\u6c42\u6708\u6570"
+	|	"month"			|	"\u6c42\u5bf9\u5e94\u6708"
+//	|	"now"			|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
+	|	"quarter"		|	"\u6c42\u5bf9\u5e94\u5b63\u5ea6"
+	|	"seconds"		|	"\u6c42\u79d2\u6570"
+	|	"second"		|	"\u6c42\u5bf9\u5e94\u79d2"
+//	|	"today"			|	"\u6c42\u5f53\u524d\u65e5\u671f"
+	|	"weeks"			|	"\u6c42\u5468\u6570"
+	|	"years"			|	"\u6c42\u5e74\u6570"
+	|	"year"			|	"\u6c42\u5bf9\u5e94\u5e74"
+	|	"ymd"			|	"\u6c42\u65e5\u671f"
+	|	"dateadd"		|	"\u65e5\u671f\u76f8\u52a0"
+	|	"datediff"		|	"\u65e5\u671f\u76f8\u51cf"
+//	|	"getdate"		|	"\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
 	;
 
+//\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u51fd\u6570
 conversion_function
-	:	"convert"	|	"\u5b57\u7b26\u8f6c\u4e3a\u65e5\u671f"
-	|	"cast"
-	|	"hextoint"	|	"\u5341\u516d\u8fdb\u5236\u8f6c\u4e3a\u6574\u6570"
+	:	"hextoint"	|	"\u5341\u516d\u8fdb\u5236\u8f6c\u4e3a\u6574\u6570"
 	|	"inttohex"	|	"\u6574\u6570\u8f6c\u4e3a\u5341\u516d\u8fdb\u5236"
 	|	"isdate"	|	"\u4e3a\u65e5\u671f\u578b"
 	|	"isnumeric"	|	"\u4e3a\u6570\u503c\u578b"
+	|	"cast"		|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
+	|	"convert"	|	"\u5b57\u7b26\u8f6c\u4e3a\u65e5\u671f"
 	;
 
+//\u7cfb\u7edf\u51fd\u6570
 system_function
 	:	"suser_id"
 	|	"suser_name"
@@ -437,14 +464,10 @@ system_function
 	|	"user_name"
 	;
 
-// This is not being used currently (eg. Oracle), but might be useful at some point.
+//\u5176\u4ed6\u51fd\u6570
 other_function
-	:	"decode"
-	| 	"dump"
-	| 	"greatest"
-	| 	"least"
-	| 	"nvl"
-	|	"vsize"
+	:	"argn"
+	| 	"rowid"
 	;
 
 one_arg_op
@@ -474,8 +497,6 @@ date_key_word
 	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
 	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
 	;
-
-
 /*==========================================================//
 //															//
 //						Lexer Define						//
@@ -537,9 +558,19 @@ WHERE
 WS	:	(' '|'\n'|'\r'|'\t')+ {$setType(Token.SKIP);}
     ;
 
+
+//CONVERSION_DATA_TYPE options {testLiterals=true;}
+//	:	(DATA_TYPE_LETTER)+
+//	;
+//
+//protected DATA_TYPE_LETTER
+//    :    'a'..'z'
+//    ;
+
 QUOTED_STRING
 	:	('"'|'\'') (ESC|~('\''|'"'|'\\'|'\n'|'\r'))* ('"'|'\'')
 	;
+
 protected
 ESC
 	:	'\\'
@@ -1090,15 +1121,26 @@ function returns [FunctionModel model]
 		}
 		
 		//Aggregate functions\u53c2\u6570\u4e3a*\u7684COUNT\u51fd\u6570\uff0c\u805a\u5408\u51fd\u6570[count(*)]
-	|	#(FUNCTION_STAR_COUNT fun2:function_name)
+//	|	#(FUNCTION_STAR_COUNT fun2:function_name)
+	|	#(FUNCTION_STAR_COUNT countStr:"\u6c42\u8bb0\u5f55\u603b\u6570")
 		{	
-			model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
+			//model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
+			model = new AggregateFuncModel(countStr.getText(), AggregateFuncModel.NO_FILTER);
 			express1.addOperator("*");
 			p = new ParametersModel();
 			p.addParameter(express1);
 			model.setParameters(p);
 		}
-		
+	|	#(FUNCTION_STAR_COUNT "count")
+		{	
+			//model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
+			model = new AggregateFuncModel("count", AggregateFuncModel.NO_FILTER);
+			express1.addOperator("*");
+			p = new ParametersModel();
+			p.addParameter(express1);
+			model.setParameters(p);
+		}
+
 		//Aggregate functions\u53c2\u6570\u4e3a\u5168\u90e8\u3001all\u7684\u805a\u5408\u51fd\u6570
 	|	#(all:"\u5168\u90e8" af11:function_name p=parameters)
 		{
@@ -1189,6 +1231,18 @@ date_key_word
 	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
 	;
 
+//\u805a\u5408\u51fd\u6570
+aggregate_func_name
+	:	"avg" 		| 	"\u6c42\u5e73\u5747\u6570"
+	|	"count" 	| 	"\u6c42\u8bb0\u5f55\u603b\u6570"
+	|	"max" 		| 	"\u6c42\u6700\u5927\u503c"
+	|	"min" 		| 	"\u6c42\u6700\u5c0f\u503c"
+	|	"stddev" 	| 	"\u6c42\u65b9\u5dee"
+	|	"sum" 		|	"\u6c42\u548c"
+	|	"variance" 	| 	"\u6c42\u7edf\u8ba1\u65b9\u5dee"
+	;
+
+//\u666e\u901a\u51fd\u6570(\u6570\u5b66\u51fd\u6570\u3001\u5b57\u7b26\u4e32\u51fd\u6570\u3001\u65e5\u671f\u65f6\u95f4\u51fd\u6570\u3001\u7cfb\u7edf\u51fd\u6570\u3001\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u51fd\u6570\u3001\u5176\u4ed6\u51fd\u6570)
 function_name
 	:	number_function
 	|	string_function
@@ -1198,95 +1252,107 @@ function_name
 	|	other_function
 	;
 
-aggregate_func_name
-	:	"sum" 	| "\u6c42\u548c"
-	|	"avg" 	| "\u6c42\u5e73\u5747\u6570"
-	|	"max" 	| "\u6c42\u6700\u5927\u503c"
-	|	"min" 	| "\u6c42\u6700\u5c0f\u503c"
-	|	"count" | "\u6c42\u8bb0\u5f55\u603b\u6570"
-	|	"stddev"
-	|	"variance"
-	;
-
+//\u6570\u5b66\u51fd\u6570
 number_function
 	:	"abs" 		| 	"\u53d6\u7edd\u5bf9\u503c"
-	|	"acos"		|	"\u6c42\u503c\u7684\u4f59\u5f26\u89d2"
-	|	"asin"		|	"\u6c42\u503c\u7684\u6b63\u5f26\u89d2"
-	|	"atan"		|	"\u6c42\u503c\u7684\u6b63\u5207\u89d2"
-	|	"atin2"		|	"\u6c42\u503c\u7684\u6b63\u5f26\u548c\u4f59\u5f26\u89d2"
+	|	"acos"		|	"\u6c42\u53cd\u4f59\u5f26\u503c"
+	|	"asin"		|	"\u6c42\u53cd\u6b63\u5f26\u503c"
+	|	"atan"		|	"\u6c42\u53cd\u6b63\u5207\u503c"
+	|	"atin2"		|	"\u6c42\u4e8c\u4e2a\u6570\u7684\u53cd\u6b63\u5207\u503c"
 	|	"ceiling"	|	"\u6c42\u4e94\u5165\u540e\u7684\u6574\u6570"
-	|	"cos"		|	"\u6c42\u89d2\u7684\u4f59\u5f26\u503c"
-	|	"cot"		|	"\u6c42\u89d2\u7684\u4f59\u5207\u503c"
-	|	"degrees"	|	"\u6c42\u5f27\u5ea6\u6570\u7684\u89d2\u5927\u5c0f"
+	|	"cos"		|	"\u6c42\u4f59\u5f26\u503c"
+	|	"cot"		|	"\u6c42\u4f59\u5207\u503c"
+	|	"degrees"	|	"\u5c06\u5f27\u5ea6\u8f6c\u4e3a\u5ea6\u6570"
 	|	"exp"		|	"\u6c42\u5e42\u503c"
 	|	"floor"		|	"\u6c42\u56db\u820d\u540e\u7684\u6574\u6570"
 	|	"log"		|	"\u6c42\u81ea\u7136\u5bf9\u6570"
 	|	"log10"		|	"\u6c4210\u4e3a\u5e95\u7684\u5bf9\u6570"
 	|	"mod"		|	"\u6c42\u4f59"
-	|	"pi"		|	"\u6c42PI"
+	|	"pi"		|	"\u6c42\u5706\u5468\u7387"
 	|	"power"		|	"\u6c42\u6570\u5b57\u7684\u6b21\u5e42\u503c"
-	|	"radians"	|	"\u6c42\u5ea6\u6570\u89d2\u7684\u5f27\u5ea6"
+	|	"radians"	|	"\u5c06\u5ea6\u6570\u8f6c\u4e3a\u5f27\u5ea6"
 	|	"rand"		|	"\u6c420\u548c1\u95f4\u7684\u968f\u673a\u6570"
+	|	"remainder"	|	"\u53d6\u4f59"
 	|	"round"		|	"\u683c\u5f0f\u5316\u6570\u503c"
 	|	"sign"		|	"\u6c42\u503c\u7684\u7b26\u53f7"
-	|	"sin"		|	"\u6c42\u89d2\u7684\u6b63\u5f26\u503c"
+	|	"sin"		|	"\u6c42\u6b63\u5f26\u503c"
 	|	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
-	|	"tan"		|	"\u6c42\u89d2\u7684\u6b63\u5207\u503c"
+	|	"tan"		|	"\u6c42\u6b63\u5207\u503c"
+	|	"\u5c06\u6570\u503c\u683c\u5f0f\u5316"	//"\"truncate\""
+	|	"truncnum"	|	"\u53d6\u683c\u5f0f\u5316\u6570\u503c"
 	;
 
+//\u5b57\u7b26\u4e32\u51fd\u6570
 string_function
-	:	"ascii"		|	"\u6c42\u7b2c\u4e00\u4e2a\u5b57\u7b26\u7684ASCII\u7801"
-	|	"char"		|	"\u6c42\u7b49\u503c\u7684\u5b57\u7b26"
-	|	"char_length" | "\u6c42\u5b57\u7b26\u4e32\u7684\u957f\u5ea6"
-	|	"charindex"	|	"\u5b58\u5728\u4e8e"
-	|	"difference"  |	"\u6c42\u4e24\u4e2a\u4e32\u7684\u5dee\u503c"
-	|	"lcase"
-	|	"left"		|	"\u5b57\u7b26\u4e32\u5de6\u622a"
-	|	"length"	|	"\u6c42\u5b57\u7b26\u4e32\u603b\u957f\u5ea6"
-	|	"lower" 	| 	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5c0f\u5199"
-	|	"ltrim"		|	"\u53bb\u6389\u5de6\u7a7a\u683c"
-	|	"patindex"	|	"\u6c42\u7b2c\u4e00\u6b21\u51fa\u73b0\u4f4d\u7f6e"
-	|	"replace"	|	"\u5b57\u7b26\u4e32\u66ff\u6362"
-	|	"right"		|	"\u5b57\u7b26\u4e32\u53f3\u622a"
-	|	"rtrim"		|	"\u53bb\u6389\u53f3\u7a7a\u683c"
-	|	"str"		|	"\u6570\u503c\u8f6c\u5b57\u7b26\u4e32"
-	|	"substring"	|	"\u5b57\u7b26\u4e32\u622a\u53d6"
-	|	"upper"		|	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5927\u5199"
+	:	"ascii"			|	"\u6c42ASCII\u7801"
+	|	"bit_length"	|	"\u6c42\u5b57\u7b26\u4e32\u7684\u4e8c\u8fdb\u5236\u957f\u5ea6"
+	|	"byte_length" 	| 	"\u6c42\u5b57\u7b26\u4e32\u7684\u5b57\u8282\u6570"
+	|	"char"			|	"\u6c42\u7b49\u503c\u7684\u5b57\u7b26"
+	|	"char_length" 	| 	"\u6c42\u5b57\u7b26\u4e32\u7684\u957f\u5ea6"
+	|	"charindex" 	|	"\u5b58\u5728\u4e8e"
+	|	"difference" 	|	"\u6c42\u4e24\u4e2a\u4e32\u7684\u58f0\u97f3\u5dee\u503c"
+	|	"insertstr"		|	"\u5b57\u7b26\u4e32\u63d2\u5165"
+	|	"lcase"			|	"\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5c0f\u5199"
+	|	"left"			|	"\u5b57\u7b26\u4e32\u5de6\u622a"
+	|	"length"		|	"\u53d6\u5b57\u7b26\u4e32\u7684\u957f\u5ea6"
+	|	"locate"		|	"\u6c42\u4e32\u51fa\u73b0\u4f4d\u7f6e"
+	|	"lower" 		| 	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5c0f\u5199"
+	|	"ltrim"			|	"\u53bb\u6389\u5de6\u7a7a\u683c"
+	|	"octet_length"	|	"\u6c42\u5b57\u7b26\u4e32\u7684\u5b58\u50a8\u957f\u5ea6"
+	|	"patindex"		|	"\u6c42\u7b2c\u4e00\u6b21\u51fa\u73b0\u4f4d\u7f6e"
+	|	"repeat"		|	"\u5c06\u5b57\u7b26\u4e32\u8fde\u63a5"
+	|	"replace"		|	"\u5b57\u7b26\u4e32\u66ff\u6362"
+	|	"replicate"		|	"\u5b57\u7b26\u4e32\u8fde\u63a5"
+	|	"right"			|	"\u5b57\u7b26\u4e32\u53f3\u622a"
+	|	"rtrim"			|	"\u53bb\u6389\u53f3\u7a7a\u683c"
+	|	"similar"		|	"\u6c42\u5b57\u7b26\u4e32\u76f8\u4f3c\u5ea6"
+	|	"sortkey"		|	"\u5b57\u7b26\u4e32\u6392\u5e8f"
+	|	"soundex"		|	"\u6c42\u5b57\u7b26\u4e32\u58f0\u97f3\u503c"
+	|	"space"			|	"\u6c42\u7a7a\u683c"
+	|	"str"			|	"\u6570\u503c\u8f6c\u5b57\u7b26\u4e32"
+	|	"string"		|	"\u5b57\u7b26\u4e32\u5408\u5e76"
+	|	"stuff"			|	"\u5b57\u7b26\u4e32\u5220\u9664\u66ff\u6362"
+	|	"substring"		|	"\u5b57\u7b26\u4e32\u622a\u53d6"
+	|	"trim"			|	"\u53bb\u6389\u7a7a\u683c"
+	|	"ucase"			|	"\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5927\u5199"
+	|	"upper"			|	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5927\u5199"
 	;
 
+//\u65e5\u671f\u65f6\u95f4\u51fd\u6570
 datetime_function
-	:	"dateformat" |	"\u683c\u5f0f\u5316\u65e5\u671f"
-	|	"datename"	|	"\u6c42\u65e5\u671f\u7684\u5206\u91cf\u503c"
-	|	"datepart"	|	"\u6c42\u65e5\u671f\u7684\u5206\u91cf\u6574\u6570\u503c"
-	|	"datetime"	|	"\u8f6c\u4e3a\u65e5\u671f\u65f6\u95f4"
-	|	"date"
-	|	"dayname"
-	|	"days"
-	|	"day"
-	|	"dow"
-	|	"hours"
-	|	"hour"
-	|	"minutes"
-	|	"minute"
-	|	"monthname"
-	|	"months"
-	|	"month"
-	|	"now"		|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
-	|	"quarter"
-	|	"seconds"
-	|	"second"
-	|	"today"		|	"\u53d6\u5f53\u524d\u65e5\u671f"
-	|	"weeks"
-	|	"week"
-	|	"years"
-	|	"year"
-	|	"getdate"	|	"\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
-	|	"dateadd"	|	"\u65e5\u671f\u76f8\u52a0"
-	|	"datediff"	|	"\u65e5\u671f\u76f8\u51cf"
+	:	"dateformat" 	|	"\u683c\u5f0f\u5316\u65e5\u671f"
+	|	"datename"		|	"\u6c42\u65e5\u671f\u7684\u5206\u91cf\u540d\u79f0"
+	|	"datepart"		|	"\u6c42\u65e5\u671f\u7684\u5206\u91cf\u503c"
+	|	"datetime"		|	"\u8f6c\u4e3a\u65e5\u671f\u65f6\u95f4"
+	|	"date"			|	"\u8f6c\u4e3a\u65e5\u671f"
+	|	"dayname"		|	"\u6c42\u5bf9\u5e94\u661f\u671f\u540d\u79f0"
+	|	"days"			|	"\u6c42\u5929\u6570"
+	|	"day"			|	"\u6c42\u5bf9\u5e94\u5929"
+	|	"dow"			|	"\u6c42\u5bf9\u5e94\u661f\u671f\u503c"
+	|	"hours"			|	"\u6c42\u5c0f\u65f6\u6570"
+	|	"hour"			|	"\u6c42\u5bf9\u5e94\u5c0f\u65f6"
+	|	"minutes"		|	"\u6c42\u5206\u949f\u6570"
+	|	"minute"		|	"\u6c42\u5bf9\u5e94\u5206\u949f"
+	|	"monthname"		|	"\u6c42\u6708\u4efd\u540d\u79f0"
+	|	"months"		|	"\u6c42\u6708\u6570"
+	|	"month"			|	"\u6c42\u5bf9\u5e94\u6708"
+	|	"now"			|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
+	|	"quarter"		|	"\u6c42\u5bf9\u5e94\u5b63\u5ea6"
+	|	"seconds"		|	"\u6c42\u79d2\u6570"
+	|	"second"		|	"\u6c42\u5bf9\u5e94\u79d2"
+	|	"today"			|	"\u6c42\u5f53\u524d\u65e5\u671f"
+	|	"weeks"			|	"\u6c42\u5468\u6570"
+	|	"years"			|	"\u6c42\u5e74\u6570"
+	|	"year"			|	"\u6c42\u5bf9\u5e94\u5e74"
+	|	"ymd"			|	"\u6c42\u65e5\u671f"
+	|	"dateadd"		|	"\u65e5\u671f\u76f8\u52a0"
+	|	"datediff"		|	"\u65e5\u671f\u76f8\u51cf"
+	|	"getdate"		|	"\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
 	;
 
+//\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u51fd\u6570
 conversion_function
-	:	"cast"
+	:	"cast"		|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
 	|	"convert"	|	"\u5b57\u7b26\u8f6c\u4e3a\u65e5\u671f"
 	|	"hextoint"	|	"\u5341\u516d\u8fdb\u5236\u8f6c\u4e3a\u6574\u6570"
 	|	"inttohex"	|	"\u6574\u6570\u8f6c\u4e3a\u5341\u516d\u8fdb\u5236"
@@ -1294,6 +1360,7 @@ conversion_function
 	|	"isnumeric"	|	"\u4e3a\u6570\u503c\u578b"
 	;
 
+//\u7cfb\u7edf\u51fd\u6570
 system_function
 	:	"suser_id"
 	|	"suser_name"
@@ -1301,12 +1368,8 @@ system_function
 	|	"user_name"
 	;
 
-// This is not being used currently (eg. Oracle), but might be useful at some point.
+//\u5176\u4ed6\u51fd\u6570
 other_function
-	:	"decode"
-	| 	"dump"
-	| 	"greatest"
-	| 	"least"
-	| 	"nvl"
-	|	"vsize"
+	:	"argn"
+	| 	"rowid"
 	;
