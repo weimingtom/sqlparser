@@ -663,7 +663,7 @@ public class QueryModel {
     }
     
     String message=
-      "错误输入，需要 \""+expecting+"\" "+
+      "需要 \""+expecting+"\" "+
       " 实际输入 \""+input+"\"。";
     msg.setMessage(message);
     if (input != null && input.equals("") && input.length() > 0)
