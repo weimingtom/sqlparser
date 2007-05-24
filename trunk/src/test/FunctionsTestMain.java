@@ -280,7 +280,7 @@ public class FunctionsTestMain extends TestCase {
   	String strEnd = " 来自 AI_94传票对照表";
   	Translator t = new Translator();
   	for (int i = 0; i < functionsArr.length; i++){
-  		System.out.println("日期时间函数测试" + (i + 1) + "：");
+  		System.out.println("数据类型转化函数测试" + (i + 1) + "：");
 	  	t.setChQuery(strHead + functionsArr[i] + strEnd);
 	    if (t.hasError()){
 	      ChWrongMessage[] msgs = t.showWrongMsgs();
