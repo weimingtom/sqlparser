@@ -56,9 +56,10 @@ tokens {
 	FUNCTION;				//\u51fd\u6570TOKEN
 	FUNCTION_EMPTY_PARAM;	//\u7a7a\u53c2\u6570\u51fd\u6570TOKEN[getdate()]
 	FUNCTION_STAR_PARAM;	//\u53c2\u6570\u4e3a*\u51fd\u6570TOKEN[now(*);today(*)]
-	FUNCTION_CONVERSION_AS;	//\u8f6c\u5316\u51fd\u6570\u5fc5\u987b\u5e26AS TOKEN
 	FUNCTION_STAR_COUNT;	//\u51fd\u6570COUNT(*) TOKEN
-	AS_PARAMETERS;			//\u8f6c\u5316\u51fd\u6570AS\u6240\u6709\u53c2\u6570
+	
+	FUNCTION_DATA_TYPE;		//\u5e26\u6570\u636e\u7c7b\u578b\u7684\u51fd\u6570TOKEN
+	FUNCTION_AS_DATA_TYPE;	//\u5e26AS\u53ca\u6570\u636e\u7c7b\u578b\u7684\u51fd\u6570TOKEN
 
 	LOGIC_OP;				//\u903b\u8f91\u64cd\u4f5c\u7b26TOKEN
 	LOGICAL_NULL;			//\u903b\u8f91IS NULL TOKEN
@@ -74,6 +75,7 @@ tokens {
 	SUBCONTAIN_OP;			//\u5173\u7cfbIN/NOT IN TOKEN
 	ALL_FIELDS;				//\u5b57\u6bb5\u6240\u6709(*) TOKEN
 	PAREN_FIELD;			//\u5e26\u62ec\u53f7\u7684\u5b57\u6bb5[\u5229\u7387(\u767e\u5206\u6bd4%)] TOKEN
+	PAREN_DATA_TYPE;		//\u5e26\u62ec\u53f7\u7684\u6570\u636e\u7c7b\u578b TOKEN
 	LOGIC_BLOCK;			//WHERE\u6761\u4ef6\u903b\u8f91\u5757 TOKEN
 }
 
@@ -228,6 +230,57 @@ equation
 	)
 	;
 
+function
+	:	empty_function LPAREN! RPAREN!
+	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
+	|	star_function LPAREN! STAR! RPAREN!
+	{#function = #([FUNCTION_STAR_PARAM, "function_star_param"], #function);}
+	|	datatype_function LPAREN! data_type_parameter RPAREN!
+	{#function = #([FUNCTION_DATA_TYPE, "function_data_type"], #function);}
+	|	asdatatype_function LPAREN! as_data_type_parameter RPAREN!
+	{#function = #([FUNCTION_AS_DATA_TYPE, "function_as_data_type"], #function);}
+	|	function_name LPAREN! parameters RPAREN!
+	{#function = #([FUNCTION, "function_block"], #function);}
+	;
+
+aggregate_func
+	:	("\u6c42\u8bb0\u5f55\u603b\u6570" | "count") LPAREN! STAR! RPAREN!
+		{#aggregate_func = #([FUNCTION_STAR_COUNT, "function_star_count"], #aggregate_func);}
+	|	aggregate_func_name LPAREN! ("all"^ | "\u5168\u90e8"^ | "distinct"^ |"\u552f\u4e00"^)? parameters RPAREN!
+	;
+
+parameters
+	:	expression (COMMA^ expression)*
+	;
+
+//==========\u6570\u636e\u7c7b\u578b\u53c2\u6570 BEGIN==========//
+as_data_type_parameter
+	: expression ("as"! | "\u4e3a"!) (datatype_constant)
+	;
+
+data_type_parameter
+	:	datatype_constant (COMMA^ expression)+
+	;
+
+datatype_constant
+	:	//"character" "varying"
+		data_type_word
+	|	DATA_TYPE_STRING LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
+		{#datatype_constant = #([PAREN_DATA_TYPE, "paren_data_type"], #datatype_constant);}
+	;
+
+datatype_precision_or_scale_or_maxlength
+	:	REAL_NUM COMMA^ REAL_NUM
+	|	REAL_NUM
+	;
+
+//==========\u6570\u636e\u7c7b\u578b\u53c2\u6570  END===========//
+
+
+table_name
+	:	ID (("as"^|"\u4f5c\u4e3a"^) alias)?
+	;
+
 exp_set
 	: 	LPAREN constexpset RPAREN
 	{#exp_set = #([SUBCONTAIN_OP, "subcontain_op"], #exp_set);}
@@ -274,39 +327,7 @@ constant
 	|	"null"
 	;
 
-function
-	:	empty_function LPAREN! RPAREN!
-	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
-	|	star_function LPAREN! STAR! RPAREN!
-	{#function = #([FUNCTION_STAR_PARAM, "function_star_param"], #function);}
-//	|	conversion_as_function LPAREN! as_parameters RPAREN!
-//	{#function = #([FUNCTION_CONVERSION_AS, "function_conversion_as"], #function);}
-	|	function_name LPAREN! parameters RPAREN!
-	{#function = #([FUNCTION, "function_block"], #function);}
-	;
-
-aggregate_func
-	:	("\u6c42\u8bb0\u5f55\u603b\u6570" | "count") LPAREN! STAR! RPAREN!
-		{#aggregate_func = #([FUNCTION_STAR_COUNT, "function_star_count"], #aggregate_func);}
-	|	aggregate_func_name LPAREN! ("all"^ | "\u5168\u90e8"^ | "distinct"^ |"\u552f\u4e00"^)? parameters RPAREN!
-	;
-
-parameters
-	:	expression (COMMA^ expression)*
-	;
-//as_parameters
-//	:	expression ("as"! | "\u4f5c\u4e3a"!) data_type_define
-//		{#as_parameters = #([AS_PARAMETERS, "conversion_as_parameters"], #as_parameters);}
-//	;
-//data_type_define
-//	:	CONVERSION_DATA_TYPE
-//	;
-
-table_name
-	:	ID (("as"^|"\u4f5c\u4e3a"^) alias)?
-	;
-
-
+//=======================================//
 //\u805a\u5408\u51fd\u6570
 aggregate_func_name
 	:	"avg" 		| 	"\u6c42\u5e73\u5747\u6570"
@@ -349,8 +370,14 @@ star_function
 	|	"today"	|	"\u6c42\u5f53\u524d\u65e5\u671f"
 	;
 
-conversion_as_function
-	:	"cast"	|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
+//\u5e26\u6570\u636e\u7c7b\u578b\u51fd\u6570
+datatype_function
+	:	"convert"	|	"\u5c06\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u4e3a"
+	;
+
+//\u5e26\u6570\u636e\u7c7b\u578b\u51fd\u6570
+asdatatype_function
+	:	"cast"		|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
 	;
 
 //\u666e\u901a\u51fd\u6570(\u6570\u5b66\u51fd\u6570\u3001\u5b57\u7b26\u4e32\u51fd\u6570\u3001\u65e5\u671f\u65f6\u95f4\u51fd\u6570\u3001\u7cfb\u7edf\u51fd\u6570\u3001\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u51fd\u6570\u3001\u5176\u4ed6\u51fd\u6570)
@@ -468,8 +495,8 @@ conversion_function
 	|	"inttohex"	|	"\u6574\u6570\u8f6c\u4e3a\u5341\u516d\u8fdb\u5236"
 	|	"isdate"	|	"\u4e3a\u65e5\u671f\u578b"
 	|	"isnumeric"	|	"\u4e3a\u6570\u503c\u578b"
-	|	"cast"		|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
-	|	"convert"	|	"\u5b57\u7b26\u8f6c\u4e3a\u65e5\u671f"
+//	|	"cast"		|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
+//	|	"convert"	|	"\u5c06\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u4e3a"
 	;
 
 //\u7cfb\u7edf\u51fd\u6570
@@ -513,6 +540,15 @@ date_key_word
 	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
 	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
 	;
+
+//\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57
+data_type_word
+	: "uniqueidentifierstr" 
+	| "bigint" | "int" | "integer" | "smallint" | "tinyint" | "double" | "real"
+	| "date" | "datetime" | "smalldatetime" | "time" | "timestamp"
+	| "bit"
+	;
+
 /*==========================================================//
 //															//
 //						Lexer Define						//
@@ -577,14 +613,6 @@ WHERE
 WS	:	(' '|'\n'|'\r'|'\t')+ {$setType(Token.SKIP);}
     ;
 
-
-//CONVERSION_DATA_TYPE options {testLiterals=true;}
-//	:	(DATA_TYPE_LETTER)+
-//	;
-//
-//protected DATA_TYPE_LETTER
-//    :    'a'..'z'
-//    ;
 
 QUOTED_STRING
 	:	('"'|'\'') (ESC|~('\''|'"'|'\\'|'\n'|'\r'))* ('"'|'\'')
@@ -671,6 +699,19 @@ protected
 NUM_LETTER
 	:	'0'..'9'
 	;
+
+DATA_TYPE_STRING options {testLiterals=true;}
+    : "character" | "varchar" | "char"
+    | "decimal" | "numeric" | "float"
+    | "binary" | "varbinary"
+    ;
+
+//DATA_TYPE_STRING options {testLiterals=true;}
+//	: "character" | "varchar" | "char" | "uniqueidentifierstr"
+//	| "bigint" | "int" | "integer" | "smallint" | "tinyint" | "double" | "float" | "real" | "decimal" | "numeric"
+//	| "date" | "datetime" | "smalldatetime" | "time" | "timestamp"
+//	| "bit" | "binary" | "varbinary"
+//	;
 
 ML_COMMENT
 	:	"/*"
@@ -1133,7 +1174,7 @@ sfield_name returns [String rValue]
 function returns [FunctionModel model]
 {
 	model=null;
-	ParametersModel p; 
+	ParametersModel p, dtp1, dtp2; 
 	ExpressionModel express1 = new ExpressionModel();
 }
 	:	//Aggregate functions\u805a\u5408\u51fd\u6570
@@ -1165,6 +1206,20 @@ function returns [FunctionModel model]
 			p = new ParametersModel();
 			p.addParameter(express1);
 			model.setParameters(p);
+		}
+	
+		//Normal functions\u53c2\u6570\u4e3aDATA TYPE\u7684\u666e\u901a\u51fd\u6570[convert(char(10), '2007-01-01', 120)]
+	|	#(FUNCTION_DATA_TYPE dtf1:function_name dtp1=data_type_parameters)
+		{
+			model = new FunctionModel(dtf1.getText());
+			model.setParameters(dtp1);
+		}
+	
+		//Normal functions\u53c2\u6570\u4e3aAS\u53caDATA TYPE\u7684\u666e\u901a\u51fd\u6570[cast('2007-01-01' as char(10))]
+	|	#(FUNCTION_AS_DATA_TYPE dtf2:function_name dtp2=as_data_type_parameters)
+		{
+			model = new FunctionModel(dtf2.getText());
+			model.setParameters(dtp2);
 		}
 		
 		//Aggregate functions\u53c2\u6570\u4e3a*\u7684COUNT\u51fd\u6570\uff0c\u805a\u5408\u51fd\u6570[count(*)]
@@ -1212,13 +1267,61 @@ function returns [FunctionModel model]
 			model.setParameters(p);
 		}
 	;
-	
+
+//\u666e\u901a\u53c2\u6570\u8bed\u6cd5\u6811\u904d\u5386	
 parameters returns [ParametersModel model]
 {ParametersModel p1, p2; ExpressionModel e; model=new ParametersModel();}
 	:	#(COMMA p1=parameters p2=parameters)
 	{model.addChild(p1); model.addChild(p2);}
 	|	e=expression
 	{model.addParameter(e);}
+	;
+
+//\u6570\u636e\u7c7b\u578b\u53c2\u6570\u8bed\u6cd5\u6811\u904d\u5386	
+data_type_parameters returns [ParametersModel model]
+{ParametersModel p1, p2; ExpressionModel dtc, e; model=new ParametersModel();}
+	: 	#(COMMA p1=data_type_parameters p2=data_type_parameters)
+		{model.addChild(p1);model.addChild(p2);}
+	|	dtc=datatype_constant
+		{model.addParameter(dtc);}
+	|	e=expression
+		{model.addParameter(e);}
+	;
+
+//\u5e26AS\u6570\u636e\u7c7b\u578b\u53c2\u6570\u8bed\u6cd5\u6811\u904d\u5386
+as_data_type_parameters returns [ParametersModel model]
+{ParametersModel p1, p2; ExpressionModel adtc, e, re; model=new ParametersModel();}
+	:	e=expression adtc=datatype_constant
+	   	{
+	   		model.addParameter(e);
+	   		model.addParameter(adtc);
+	   		model.addFilter(" AS ");
+	   	}
+	;
+
+//\u6570\u636e\u7c7b\u578b\u5e38\u91cf\u904d\u5386
+datatype_constant returns [ExpressionModel model]
+{model=new ExpressionModel(); String rValue = ""; String rp = "";}
+	:	dtw:data_type_word
+		{
+			//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57(date\u3001datetime...)
+			rValue = dtw.getText();
+			model.addConstant(rValue);
+		}
+	|	#(PAREN_DATA_TYPE dts:DATA_TYPE_STRING rp=datatype_precision_or_scale_or_maxlength)
+		{
+			//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u52a0\u5176\u53c2\u6570,\u5982char(10)\u3001numeric(20, 2)]
+			rValue = dts.getText() + "(" + rp + ")";
+			model.addConstant(rValue);
+		}
+	;
+
+datatype_precision_or_scale_or_maxlength returns [String rValue]
+{rValue = "";}
+	:	#(COMMA rn1:REAL_NUM rn2:REAL_NUM)
+		{rValue = rn1.getText() + ", " + rn2.getText();}
+	|	rn:REAL_NUM
+		{rValue = rn.getText();}
 	;
 
 table_name returns [TableModel model]
@@ -1400,7 +1503,7 @@ datetime_function
 //\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u51fd\u6570
 conversion_function
 	:	"cast"		|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
-	|	"convert"	|	"\u5b57\u7b26\u8f6c\u4e3a\u65e5\u671f"
+	|	"convert"	|	"\u5c06\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u4e3a"
 	|	"hextoint"	|	"\u5341\u516d\u8fdb\u5236\u8f6c\u4e3a\u6574\u6570"
 	|	"inttohex"	|	"\u6574\u6570\u8f6c\u4e3a\u5341\u516d\u8fdb\u5236"
 	|	"isdate"	|	"\u4e3a\u65e5\u671f\u578b"
@@ -1420,3 +1523,12 @@ other_function
 	:	"argn"
 	| 	"rowid"
 	;
+
+//\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57
+data_type_word
+	: "uniqueidentifierstr" 
+	| "bigint" | "int" | "integer" | "smallint" | "tinyint" | "double" | "real"
+	| "date" | "datetime" | "smalldatetime" | "time" | "timestamp"
+	| "bit"
+	;
+

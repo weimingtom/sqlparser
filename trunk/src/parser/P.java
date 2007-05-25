@@ -63,9 +63,9 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case COLUMN:
 		{
-			AST tmp339_AST = null;
-			tmp339_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp339_AST);
+			AST tmp358_AST = null;
+			tmp358_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp358_AST);
 			match(COLUMN);
 			column();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -73,9 +73,9 @@ public P(ParserSharedInputState state) {
 		}
 		case WHERE:
 		{
-			AST tmp340_AST = null;
-			tmp340_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp340_AST);
+			AST tmp359_AST = null;
+			tmp359_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp359_AST);
 			match(WHERE);
 			search_condition();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -101,12 +101,12 @@ public P(ParserSharedInputState state) {
 		AST all_AST = null;
 		
 		switch ( LA(1)) {
-		case 64:
+		case 65:
 		{
 			all = LT(1);
 			all_AST = astFactory.create(all);
 			astFactory.addASTChild(currentAST, all_AST);
-			match(64);
+			match(65);
 			if ( inputState.guessing==0 ) {
 				column_AST = (AST)currentAST.root;
 				column_AST=(AST)astFactory.make( (new ASTArray(1)).add(astFactory.create(ALL_FIELDS,all.getText())));
@@ -120,9 +120,9 @@ public P(ParserSharedInputState state) {
 		}
 		case STAR:
 		{
-			AST tmp342_AST = null;
-			tmp342_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp342_AST);
+			AST tmp361_AST = null;
+			tmp361_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp361_AST);
 			match(STAR);
 			if ( inputState.guessing==0 ) {
 				column_AST = (AST)currentAST.root;
@@ -142,24 +142,24 @@ public P(ParserSharedInputState state) {
 				{
 				switch ( LA(1)) {
 				case LITERAL_as:
-				case 61:
+				case 62:
 				{
 					{
 					switch ( LA(1)) {
 					case LITERAL_as:
 					{
-						AST tmp343_AST = null;
-						tmp343_AST = astFactory.create(LT(1));
-						astFactory.makeASTRoot(currentAST, tmp343_AST);
+						AST tmp362_AST = null;
+						tmp362_AST = astFactory.create(LT(1));
+						astFactory.makeASTRoot(currentAST, tmp362_AST);
 						match(LITERAL_as);
 						break;
 					}
-					case 61:
+					case 62:
 					{
-						AST tmp344_AST = null;
-						tmp344_AST = astFactory.create(LT(1));
-						astFactory.makeASTRoot(currentAST, tmp344_AST);
-						match(61);
+						AST tmp363_AST = null;
+						tmp363_AST = astFactory.create(LT(1));
+						astFactory.makeASTRoot(currentAST, tmp363_AST);
+						match(62);
 						break;
 					}
 					default:
@@ -176,13 +176,13 @@ public P(ParserSharedInputState state) {
 				case SEMI:
 				case COMMA:
 				case LITERAL_where:
-				case 39:
+				case 40:
 				case LITERAL_from:
-				case 47:
+				case 48:
 				case LITERAL_group:
-				case 50:
+				case 51:
 				case LITERAL_order:
-				case 52:
+				case 53:
 				case RPAREN:
 				{
 					break;
@@ -195,25 +195,25 @@ public P(ParserSharedInputState state) {
 				}
 				column_AST = (AST)currentAST.root;
 			}
-			else if ((LA(1)==ID||LA(1)==QUOTED_STRING) && (LA(2)==62||LA(2)==63)) {
+			else if ((LA(1)==ID||LA(1)==QUOTED_STRING) && (LA(2)==63||LA(2)==64)) {
 				alias();
 				astFactory.addASTChild(currentAST, returnAST);
 				{
 				switch ( LA(1)) {
-				case 62:
-				{
-					AST tmp345_AST = null;
-					tmp345_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp345_AST);
-					match(62);
-					break;
-				}
 				case 63:
 				{
-					AST tmp346_AST = null;
-					tmp346_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp346_AST);
+					AST tmp364_AST = null;
+					tmp364_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp364_AST);
 					match(63);
+					break;
+				}
+				case 64:
+				{
+					AST tmp365_AST = null;
+					tmp365_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp365_AST);
+					match(64);
 					break;
 				}
 				default:
@@ -252,14 +252,14 @@ public P(ParserSharedInputState state) {
 			astFactory.addASTChild(currentAST, returnAST);
 			search_condition_AST = (AST)currentAST.root;
 		}
-		else if ((LA(1)==LITERAL_not||LA(1)==53)) {
+		else if ((LA(1)==LITERAL_not||LA(1)==54)) {
 			{
 			switch ( LA(1)) {
 			case LITERAL_not:
 			{
-				AST tmp347_AST = null;
-				tmp347_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp347_AST);
+				AST tmp366_AST = null;
+				tmp366_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp366_AST);
 				match(LITERAL_not);
 				if ( inputState.guessing==0 ) {
 					search_condition_AST = (AST)currentAST.root;
@@ -271,12 +271,12 @@ public P(ParserSharedInputState state) {
 				}
 				break;
 			}
-			case 53:
+			case 54:
 			{
-				AST tmp348_AST = null;
-				tmp348_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp348_AST);
-				match(53);
+				AST tmp367_AST = null;
+				tmp367_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp367_AST);
+				match(54);
 				break;
 			}
 			default:
@@ -308,9 +308,9 @@ public P(ParserSharedInputState state) {
 		_loop5:
 		do {
 			if ((LA(1)==SEMI)) {
-				AST tmp349_AST = null;
-				tmp349_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp349_AST);
+				AST tmp368_AST = null;
+				tmp368_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp368_AST);
 				match(SEMI);
 				statement();
 				astFactory.addASTChild(currentAST, returnAST);
@@ -334,7 +334,7 @@ public P(ParserSharedInputState state) {
 		
 		switch ( LA(1)) {
 		case LITERAL_t_union:
-		case 34:
+		case 35:
 		{
 			tableUnion();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -342,7 +342,7 @@ public P(ParserSharedInputState state) {
 			break;
 		}
 		case LITERAL_t_compare:
-		case 37:
+		case 38:
 		{
 			tableCompare();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -350,7 +350,7 @@ public P(ParserSharedInputState state) {
 			break;
 		}
 		case LITERAL_select:
-		case 43:
+		case 44:
 		{
 			select_statement();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -383,18 +383,18 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case LITERAL_t_union:
 		{
-			AST tmp351_AST = null;
-			tmp351_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp351_AST);
+			AST tmp370_AST = null;
+			tmp370_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp370_AST);
 			match(LITERAL_t_union);
 			break;
 		}
-		case 34:
+		case 35:
 		{
-			AST tmp352_AST = null;
-			tmp352_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp352_AST);
-			match(34);
+			AST tmp371_AST = null;
+			tmp371_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp371_AST);
+			match(35);
 			break;
 		}
 		default:
@@ -419,18 +419,18 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case LITERAL_t_compare:
 		{
-			AST tmp353_AST = null;
-			tmp353_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp353_AST);
+			AST tmp372_AST = null;
+			tmp372_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp372_AST);
 			match(LITERAL_t_compare);
 			break;
 		}
-		case 37:
+		case 38:
 		{
-			AST tmp354_AST = null;
-			tmp354_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp354_AST);
-			match(37);
+			AST tmp373_AST = null;
+			tmp373_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp373_AST);
+			match(38);
 			break;
 		}
 		default:
@@ -451,9 +451,9 @@ public P(ParserSharedInputState state) {
 			match(LITERAL_where);
 			break;
 		}
-		case 39:
+		case 40:
 		{
-			match(39);
+			match(40);
 			break;
 		}
 		default:
@@ -480,18 +480,18 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case LITERAL_select:
 		{
-			AST tmp358_AST = null;
-			tmp358_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp358_AST);
+			AST tmp377_AST = null;
+			tmp377_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp377_AST);
 			match(LITERAL_select);
 			break;
 		}
-		case 43:
+		case 44:
 		{
-			AST tmp359_AST = null;
-			tmp359_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp359_AST);
-			match(43);
+			AST tmp378_AST = null;
+			tmp378_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp378_AST);
+			match(44);
 			break;
 		}
 		default:
@@ -504,18 +504,18 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case LITERAL_distinct:
 		{
-			AST tmp360_AST = null;
-			tmp360_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp360_AST);
+			AST tmp379_AST = null;
+			tmp379_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp379_AST);
 			match(LITERAL_distinct);
 			break;
 		}
-		case 45:
+		case 46:
 		{
-			AST tmp361_AST = null;
-			tmp361_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp361_AST);
-			match(45);
+			AST tmp380_AST = null;
+			tmp380_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp380_AST);
+			match(46);
 			break;
 		}
 		default:
@@ -531,24 +531,24 @@ public P(ParserSharedInputState state) {
 		{
 		switch ( LA(1)) {
 		case LITERAL_from:
-		case 47:
+		case 48:
 		{
 			{
 			switch ( LA(1)) {
 			case LITERAL_from:
 			{
-				AST tmp362_AST = null;
-				tmp362_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp362_AST);
+				AST tmp381_AST = null;
+				tmp381_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp381_AST);
 				match(LITERAL_from);
 				break;
 			}
-			case 47:
+			case 48:
 			{
-				AST tmp363_AST = null;
-				tmp363_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp363_AST);
-				match(47);
+				AST tmp382_AST = null;
+				tmp382_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp382_AST);
+				match(48);
 				break;
 			}
 			default:
@@ -564,11 +564,11 @@ public P(ParserSharedInputState state) {
 		case EOF:
 		case SEMI:
 		case LITERAL_where:
-		case 39:
+		case 40:
 		case LITERAL_group:
-		case 50:
+		case 51:
 		case LITERAL_order:
-		case 52:
+		case 53:
 		case RPAREN:
 		{
 			break;
@@ -582,24 +582,24 @@ public P(ParserSharedInputState state) {
 		{
 		switch ( LA(1)) {
 		case LITERAL_where:
-		case 39:
+		case 40:
 		{
 			{
 			switch ( LA(1)) {
 			case LITERAL_where:
 			{
-				AST tmp364_AST = null;
-				tmp364_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp364_AST);
+				AST tmp383_AST = null;
+				tmp383_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp383_AST);
 				match(LITERAL_where);
 				break;
 			}
-			case 39:
+			case 40:
 			{
-				AST tmp365_AST = null;
-				tmp365_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp365_AST);
-				match(39);
+				AST tmp384_AST = null;
+				tmp384_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp384_AST);
+				match(40);
 				break;
 			}
 			default:
@@ -615,9 +615,9 @@ public P(ParserSharedInputState state) {
 		case EOF:
 		case SEMI:
 		case LITERAL_group:
-		case 50:
+		case 51:
 		case LITERAL_order:
-		case 52:
+		case 53:
 		case RPAREN:
 		{
 			break;
@@ -631,25 +631,25 @@ public P(ParserSharedInputState state) {
 		{
 		switch ( LA(1)) {
 		case LITERAL_group:
-		case 50:
+		case 51:
 		{
 			{
 			switch ( LA(1)) {
 			case LITERAL_group:
 			{
-				AST tmp366_AST = null;
-				tmp366_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp366_AST);
+				AST tmp385_AST = null;
+				tmp385_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp385_AST);
 				match(LITERAL_group);
 				match(LITERAL_by);
 				break;
 			}
-			case 50:
+			case 51:
 			{
-				AST tmp368_AST = null;
-				tmp368_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp368_AST);
-				match(50);
+				AST tmp387_AST = null;
+				tmp387_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp387_AST);
+				match(51);
 				break;
 			}
 			default:
@@ -665,7 +665,7 @@ public P(ParserSharedInputState state) {
 		case EOF:
 		case SEMI:
 		case LITERAL_order:
-		case 52:
+		case 53:
 		case RPAREN:
 		{
 			break;
@@ -679,25 +679,25 @@ public P(ParserSharedInputState state) {
 		{
 		switch ( LA(1)) {
 		case LITERAL_order:
-		case 52:
+		case 53:
 		{
 			{
 			switch ( LA(1)) {
 			case LITERAL_order:
 			{
-				AST tmp369_AST = null;
-				tmp369_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp369_AST);
+				AST tmp388_AST = null;
+				tmp388_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp388_AST);
 				match(LITERAL_order);
 				match(LITERAL_by);
 				break;
 			}
-			case 52:
+			case 53:
 			{
-				AST tmp371_AST = null;
-				tmp371_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp371_AST);
-				match(52);
+				AST tmp390_AST = null;
+				tmp390_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp390_AST);
+				match(53);
 				break;
 			}
 			default:
@@ -739,9 +739,9 @@ public P(ParserSharedInputState state) {
 		_loop11:
 		do {
 			if ((LA(1)==COMMA)) {
-				AST tmp372_AST = null;
-				tmp372_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp372_AST);
+				AST tmp391_AST = null;
+				tmp391_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp391_AST);
 				match(COMMA);
 				table_name();
 				astFactory.addASTChild(currentAST, returnAST);
@@ -763,31 +763,31 @@ public P(ParserSharedInputState state) {
 		ASTPair currentAST = new ASTPair();
 		AST table_name_AST = null;
 		
-		AST tmp373_AST = null;
-		tmp373_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp373_AST);
+		AST tmp392_AST = null;
+		tmp392_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp392_AST);
 		match(ID);
 		{
 		switch ( LA(1)) {
 		case LITERAL_as:
-		case 61:
+		case 62:
 		{
 			{
 			switch ( LA(1)) {
 			case LITERAL_as:
 			{
-				AST tmp374_AST = null;
-				tmp374_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp374_AST);
+				AST tmp393_AST = null;
+				tmp393_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp393_AST);
 				match(LITERAL_as);
 				break;
 			}
-			case 61:
+			case 62:
 			{
-				AST tmp375_AST = null;
-				tmp375_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp375_AST);
-				match(61);
+				AST tmp394_AST = null;
+				tmp394_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp394_AST);
+				match(62);
 				break;
 			}
 			default:
@@ -804,11 +804,11 @@ public P(ParserSharedInputState state) {
 		case SEMI:
 		case COMMA:
 		case LITERAL_where:
-		case 39:
+		case 40:
 		case LITERAL_group:
-		case 50:
+		case 51:
 		case LITERAL_order:
-		case 52:
+		case 53:
 		case RPAREN:
 		{
 			break;
@@ -831,8 +831,8 @@ public P(ParserSharedInputState state) {
 		
 		switch ( LA(1)) {
 		case LITERAL_exists:
-		case 312:
-		case 313:
+		case 315:
+		case 316:
 		{
 			comparemethod_name();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -841,13 +841,13 @@ public P(ParserSharedInputState state) {
 		}
 		case LITERAL_not:
 		{
-			AST tmp376_AST = null;
-			tmp376_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp376_AST);
+			AST tmp395_AST = null;
+			tmp395_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp395_AST);
 			match(LITERAL_not);
-			AST tmp377_AST = null;
-			tmp377_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp377_AST);
+			AST tmp396_AST = null;
+			tmp396_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp396_AST);
 			match(LITERAL_exists);
 			if ( inputState.guessing==0 ) {
 				compare_method_AST = (AST)currentAST.root;
@@ -877,28 +877,28 @@ public P(ParserSharedInputState state) {
 		switch ( LA(1)) {
 		case LITERAL_exists:
 		{
-			AST tmp378_AST = null;
-			tmp378_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp378_AST);
+			AST tmp397_AST = null;
+			tmp397_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp397_AST);
 			match(LITERAL_exists);
 			comparemethod_name_AST = (AST)currentAST.root;
 			break;
 		}
-		case 312:
+		case 315:
 		{
-			AST tmp379_AST = null;
-			tmp379_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp379_AST);
-			match(312);
+			AST tmp398_AST = null;
+			tmp398_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp398_AST);
+			match(315);
 			comparemethod_name_AST = (AST)currentAST.root;
 			break;
 		}
-		case 313:
+		case 316:
 		{
-			AST tmp380_AST = null;
-			tmp380_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp380_AST);
-			match(313);
+			AST tmp399_AST = null;
+			tmp399_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp399_AST);
+			match(316);
 			comparemethod_name_AST = (AST)currentAST.root;
 			break;
 		}
@@ -922,9 +922,9 @@ public P(ParserSharedInputState state) {
 		_loop29:
 		do {
 			if ((LA(1)==COMMA)) {
-				AST tmp381_AST = null;
-				tmp381_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp381_AST);
+				AST tmp400_AST = null;
+				tmp400_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp400_AST);
 				match(COMMA);
 				column();
 				astFactory.addASTChild(currentAST, returnAST);
@@ -951,9 +951,9 @@ public P(ParserSharedInputState state) {
 		_loop32:
 		do {
 			if ((LA(1)==COMMA)) {
-				AST tmp382_AST = null;
-				tmp382_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp382_AST);
+				AST tmp401_AST = null;
+				tmp401_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp401_AST);
 				match(COMMA);
 				table_name();
 				astFactory.addASTChild(currentAST, returnAST);
@@ -980,9 +980,9 @@ public P(ParserSharedInputState state) {
 		_loop44:
 		do {
 			if ((LA(1)==COMMA)) {
-				AST tmp383_AST = null;
-				tmp383_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp383_AST);
+				AST tmp402_AST = null;
+				tmp402_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp402_AST);
 				match(COMMA);
 				aggregate_expr();
 				astFactory.addASTChild(currentAST, returnAST);
@@ -1009,9 +1009,9 @@ public P(ParserSharedInputState state) {
 		_loop47:
 		do {
 			if ((LA(1)==COMMA)) {
-				AST tmp384_AST = null;
-				tmp384_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp384_AST);
+				AST tmp403_AST = null;
+				tmp403_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp403_AST);
 				match(COMMA);
 				order_expression();
 				astFactory.addASTChild(currentAST, returnAST);
@@ -1037,39 +1037,39 @@ public P(ParserSharedInputState state) {
 		{
 		_loop38:
 		do {
-			if (((LA(1) >= LITERAL_and && LA(1) <= 57))) {
+			if (((LA(1) >= LITERAL_and && LA(1) <= 58))) {
 				{
 				switch ( LA(1)) {
 				case LITERAL_and:
 				{
-					AST tmp385_AST = null;
-					tmp385_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp385_AST);
+					AST tmp404_AST = null;
+					tmp404_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp404_AST);
 					match(LITERAL_and);
 					break;
 				}
 				case LITERAL_or:
 				{
-					AST tmp386_AST = null;
-					tmp386_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp386_AST);
+					AST tmp405_AST = null;
+					tmp405_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp405_AST);
 					match(LITERAL_or);
-					break;
-				}
-				case 56:
-				{
-					AST tmp387_AST = null;
-					tmp387_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp387_AST);
-					match(56);
 					break;
 				}
 				case 57:
 				{
-					AST tmp388_AST = null;
-					tmp388_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp388_AST);
+					AST tmp406_AST = null;
+					tmp406_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp406_AST);
 					match(57);
+					break;
+				}
+				case 58:
+				{
+					AST tmp407_AST = null;
+					tmp407_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp407_AST);
+					match(58);
 					break;
 				}
 				default:
@@ -1132,7 +1132,7 @@ inputState.guessing--;
 			}
 			bool_term_AST = (AST)currentAST.root;
 		}
-		else if ((_tokenSet_2.member(LA(1))) && (_tokenSet_4.member(LA(2))) && (_tokenSet_6.member(LA(3))) && (_tokenSet_7.member(LA(4))) && (_tokenSet_8.member(LA(5)))) {
+		else if ((_tokenSet_2.member(LA(1))) && (_tokenSet_4.member(LA(2))) && (_tokenSet_7.member(LA(3))) && (_tokenSet_8.member(LA(4))) && (_tokenSet_9.member(LA(5)))) {
 			equation();
 			astFactory.addASTChild(currentAST, returnAST);
 			bool_term_AST = (AST)currentAST.root;
@@ -1154,41 +1154,41 @@ inputState.guessing--;
 		astFactory.addASTChild(currentAST, returnAST);
 		{
 		switch ( LA(1)) {
-		case 62:
 		case 63:
+		case 64:
 		case LITERAL_like:
 		case COMPARE_OP:
-		case 303:
-		case 304:
-		case 305:
 		case 306:
 		case 307:
 		case 308:
 		case 309:
 		case 310:
+		case 311:
+		case 312:
+		case 313:
 		case LEFT_JOIN:
 		{
 			{
 			switch ( LA(1)) {
-			case 62:
+			case 63:
 			{
-				AST tmp391_AST = null;
-				tmp391_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp391_AST);
-				match(62);
+				AST tmp410_AST = null;
+				tmp410_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp410_AST);
+				match(63);
 				break;
 			}
-			case 63:
+			case 64:
 			case LITERAL_like:
 			case COMPARE_OP:
-			case 303:
-			case 304:
-			case 305:
 			case 306:
 			case 307:
 			case 308:
 			case 309:
 			case 310:
+			case 311:
+			case 312:
+			case 313:
 			case LEFT_JOIN:
 			{
 				compare_op();
@@ -1214,36 +1214,36 @@ inputState.guessing--;
 			break;
 		}
 		case LITERAL_is:
-		case 73:
 		case 74:
+		case 75:
 		{
 			{
 			switch ( LA(1)) {
-			case 73:
-			{
-				AST tmp392_AST = null;
-				tmp392_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp392_AST);
-				match(73);
-				break;
-			}
 			case 74:
 			{
-				AST tmp393_AST = null;
-				tmp393_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp393_AST);
+				AST tmp411_AST = null;
+				tmp411_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp411_AST);
 				match(74);
+				break;
+			}
+			case 75:
+			{
+				AST tmp412_AST = null;
+				tmp412_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp412_AST);
+				match(75);
 				break;
 			}
 			default:
 				if ((LA(1)==LITERAL_is) && (LA(2)==LITERAL_null)) {
-					AST tmp394_AST = null;
-					tmp394_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp394_AST);
+					AST tmp413_AST = null;
+					tmp413_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp413_AST);
 					match(LITERAL_is);
-					AST tmp395_AST = null;
-					tmp395_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp395_AST);
+					AST tmp414_AST = null;
+					tmp414_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp414_AST);
 					match(LITERAL_null);
 					if ( inputState.guessing==0 ) {
 						equation_AST = (AST)currentAST.root;
@@ -1255,17 +1255,17 @@ inputState.guessing--;
 					}
 				}
 				else if ((LA(1)==LITERAL_is) && (LA(2)==LITERAL_not)) {
-					AST tmp396_AST = null;
-					tmp396_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp396_AST);
+					AST tmp415_AST = null;
+					tmp415_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp415_AST);
 					match(LITERAL_is);
-					AST tmp397_AST = null;
-					tmp397_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp397_AST);
+					AST tmp416_AST = null;
+					tmp416_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp416_AST);
 					match(LITERAL_not);
-					AST tmp398_AST = null;
-					tmp398_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp398_AST);
+					AST tmp417_AST = null;
+					tmp417_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp417_AST);
 					match(LITERAL_null);
 					if ( inputState.guessing==0 ) {
 						equation_AST = (AST)currentAST.root;
@@ -1284,24 +1284,24 @@ inputState.guessing--;
 			break;
 		}
 		case LITERAL_between:
-		case 76:
+		case 77:
 		{
 			{
 			switch ( LA(1)) {
 			case LITERAL_between:
 			{
-				AST tmp399_AST = null;
-				tmp399_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp399_AST);
+				AST tmp418_AST = null;
+				tmp418_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp418_AST);
 				match(LITERAL_between);
 				break;
 			}
-			case 76:
+			case 77:
 			{
-				AST tmp400_AST = null;
-				tmp400_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp400_AST);
-				match(76);
+				AST tmp419_AST = null;
+				tmp419_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp419_AST);
+				match(77);
 				break;
 			}
 			default:
@@ -1330,13 +1330,13 @@ inputState.guessing--;
 		default:
 			if ((LA(1)==LITERAL_not) && (LA(2)==LITERAL_like)) {
 				{
-				AST tmp402_AST = null;
-				tmp402_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp402_AST);
+				AST tmp421_AST = null;
+				tmp421_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp421_AST);
 				match(LITERAL_not);
-				AST tmp403_AST = null;
-				tmp403_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp403_AST);
+				AST tmp422_AST = null;
+				tmp422_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp422_AST);
 				match(LITERAL_like);
 				}
 				expression();
@@ -1350,14 +1350,14 @@ inputState.guessing--;
 					currentAST.advanceChildToEnd();
 				}
 			}
-			else if ((_tokenSet_9.member(LA(1))) && (LA(2)==LPAREN||LA(2)==LITERAL_in)) {
+			else if ((_tokenSet_10.member(LA(1))) && (LA(2)==LPAREN||LA(2)==LITERAL_in)) {
 				{
 				switch ( LA(1)) {
 				case LITERAL_in:
 				{
-					AST tmp404_AST = null;
-					tmp404_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp404_AST);
+					AST tmp423_AST = null;
+					tmp423_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp423_AST);
 					match(LITERAL_in);
 					if ( inputState.guessing==0 ) {
 						equation_AST = (AST)currentAST.root;
@@ -1371,13 +1371,13 @@ inputState.guessing--;
 				}
 				case LITERAL_not:
 				{
-					AST tmp405_AST = null;
-					tmp405_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp405_AST);
+					AST tmp424_AST = null;
+					tmp424_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp424_AST);
 					match(LITERAL_not);
-					AST tmp406_AST = null;
-					tmp406_AST = astFactory.create(LT(1));
-					astFactory.addASTChild(currentAST, tmp406_AST);
+					AST tmp425_AST = null;
+					tmp425_AST = astFactory.create(LT(1));
+					astFactory.addASTChild(currentAST, tmp425_AST);
 					match(LITERAL_in);
 					if ( inputState.guessing==0 ) {
 						equation_AST = (AST)currentAST.root;
@@ -1389,20 +1389,20 @@ inputState.guessing--;
 					}
 					break;
 				}
-				case 78:
-				{
-					AST tmp407_AST = null;
-					tmp407_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp407_AST);
-					match(78);
-					break;
-				}
 				case 79:
 				{
-					AST tmp408_AST = null;
-					tmp408_AST = astFactory.create(LT(1));
-					astFactory.makeASTRoot(currentAST, tmp408_AST);
+					AST tmp426_AST = null;
+					tmp426_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp426_AST);
 					match(79);
+					break;
+				}
+				case 80:
+				{
+					AST tmp427_AST = null;
+					tmp427_AST = astFactory.create(LT(1));
+					astFactory.makeASTRoot(currentAST, tmp427_AST);
+					match(80);
 					break;
 				}
 				default:
@@ -1434,7 +1434,7 @@ inputState.guessing--;
 			field_name();
 			astFactory.addASTChild(currentAST, returnAST);
 		}
-		else if ((_tokenSet_10.member(LA(1)))) {
+		else if ((_tokenSet_11.member(LA(1)))) {
 			function();
 			astFactory.addASTChild(currentAST, returnAST);
 		}
@@ -1448,14 +1448,14 @@ inputState.guessing--;
 		case STAR:
 		case TWO_ARG_OP:
 		case MINUS:
-		case 294:
-		case 295:
-		case 296:
 		case 297:
 		case 298:
 		case 299:
 		case 300:
 		case 301:
+		case 302:
+		case 303:
+		case 304:
 		{
 			two_arg_op();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -1475,7 +1475,7 @@ inputState.guessing--;
 		case SEMI:
 		case COMMA:
 		case LITERAL_order:
-		case 52:
+		case 53:
 		case RPAREN:
 		{
 			break;
@@ -1497,7 +1497,7 @@ inputState.guessing--;
 		AST order_expression_AST = null;
 		
 		{
-		if ((LA(1)==ID||LA(1)==QUOTED_STRING) && (_tokenSet_11.member(LA(2)))) {
+		if ((LA(1)==ID||LA(1)==QUOTED_STRING) && (_tokenSet_12.member(LA(2)))) {
 			alias();
 			astFactory.addASTChild(currentAST, returnAST);
 		}
@@ -1505,11 +1505,11 @@ inputState.guessing--;
 			field_name();
 			astFactory.addASTChild(currentAST, returnAST);
 		}
-		else if ((_tokenSet_12.member(LA(1)))) {
+		else if ((_tokenSet_13.member(LA(1)))) {
 			aggregate_func();
 			astFactory.addASTChild(currentAST, returnAST);
 		}
-		else if ((_tokenSet_10.member(LA(1)))) {
+		else if ((_tokenSet_11.member(LA(1)))) {
 			function();
 			astFactory.addASTChild(currentAST, returnAST);
 		}
@@ -1520,35 +1520,35 @@ inputState.guessing--;
 		}
 		{
 		switch ( LA(1)) {
-		case 66:
-		{
-			AST tmp409_AST = null;
-			tmp409_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp409_AST);
-			match(66);
-			break;
-		}
 		case 67:
 		{
-			AST tmp410_AST = null;
-			tmp410_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp410_AST);
+			AST tmp428_AST = null;
+			tmp428_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp428_AST);
 			match(67);
+			break;
+		}
+		case 68:
+		{
+			AST tmp429_AST = null;
+			tmp429_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp429_AST);
+			match(68);
 			break;
 		}
 		case LITERAL_asc:
 		{
-			AST tmp411_AST = null;
-			tmp411_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp411_AST);
+			AST tmp430_AST = null;
+			tmp430_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp430_AST);
 			match(LITERAL_asc);
 			break;
 		}
 		case LITERAL_desc:
 		{
-			AST tmp412_AST = null;
-			tmp412_AST = astFactory.create(LT(1));
-			astFactory.makeASTRoot(currentAST, tmp412_AST);
+			AST tmp431_AST = null;
+			tmp431_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp431_AST);
 			match(LITERAL_desc);
 			break;
 		}
@@ -1575,7 +1575,7 @@ inputState.guessing--;
 		ASTPair currentAST = new ASTPair();
 		AST expression_with_aggr_func_AST = null;
 		
-		if ((_tokenSet_13.member(LA(1))) && (_tokenSet_14.member(LA(2))) && (_tokenSet_15.member(LA(3))) && (_tokenSet_16.member(LA(4))) && (_tokenSet_17.member(LA(5)))) {
+		if ((_tokenSet_14.member(LA(1))) && (_tokenSet_15.member(LA(2))) && (_tokenSet_16.member(LA(3))) && (_tokenSet_17.member(LA(4))) && (_tokenSet_18.member(LA(5)))) {
 			{
 			switch ( LA(1)) {
 			case ID:
@@ -1584,31 +1584,31 @@ inputState.guessing--;
 				astFactory.addASTChild(currentAST, returnAST);
 				break;
 			}
-			case 86:
+			case 81:
 			case LITERAL_count:
 			case LITERAL_avg:
-			case 91:
+			case 94:
 			case LITERAL_max:
-			case 93:
+			case 96:
 			case LITERAL_min:
-			case 95:
+			case 98:
 			case LITERAL_stddev:
-			case 97:
+			case 100:
 			case LITERAL_sum:
-			case 99:
+			case 102:
 			case LITERAL_variance:
-			case 101:
+			case 104:
 			{
 				aggregate_func();
 				astFactory.addASTChild(currentAST, returnAST);
 				break;
 			}
 			default:
-				if ((_tokenSet_18.member(LA(1))) && (_tokenSet_19.member(LA(2)))) {
+				if ((_tokenSet_19.member(LA(1))) && (_tokenSet_20.member(LA(2)))) {
 					constant();
 					astFactory.addASTChild(currentAST, returnAST);
 				}
-				else if ((_tokenSet_10.member(LA(1))) && (_tokenSet_2.member(LA(2)))) {
+				else if ((_tokenSet_11.member(LA(1))) && (_tokenSet_2.member(LA(2)))) {
 					function();
 					astFactory.addASTChild(currentAST, returnAST);
 				}
@@ -1622,14 +1622,14 @@ inputState.guessing--;
 			case STAR:
 			case TWO_ARG_OP:
 			case MINUS:
-			case 294:
-			case 295:
-			case 296:
 			case 297:
 			case 298:
 			case 299:
 			case 300:
 			case 301:
+			case 302:
+			case 303:
+			case 304:
 			{
 				two_arg_op();
 				astFactory.addASTChild(currentAST, returnAST);
@@ -1649,16 +1649,16 @@ inputState.guessing--;
 			case SEMI:
 			case COMMA:
 			case LITERAL_where:
-			case 39:
+			case 40:
 			case LITERAL_from:
-			case 47:
+			case 48:
 			case LITERAL_group:
-			case 50:
+			case 51:
 			case LITERAL_order:
-			case 52:
+			case 53:
 			case RPAREN:
 			case LITERAL_as:
-			case 61:
+			case 62:
 			{
 				break;
 			}
@@ -1670,30 +1670,30 @@ inputState.guessing--;
 			}
 			expression_with_aggr_func_AST = (AST)currentAST.root;
 		}
-		else if ((LA(1)==LPAREN) && (_tokenSet_0.member(LA(2))) && (_tokenSet_20.member(LA(3))) && (_tokenSet_21.member(LA(4))) && (_tokenSet_15.member(LA(5)))) {
-			AST tmp413_AST = null;
-			tmp413_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp413_AST);
+		else if ((LA(1)==LPAREN) && (_tokenSet_0.member(LA(2))) && (_tokenSet_21.member(LA(3))) && (_tokenSet_22.member(LA(4))) && (_tokenSet_23.member(LA(5)))) {
+			AST tmp432_AST = null;
+			tmp432_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp432_AST);
 			match(LPAREN);
 			expression_with_aggr_func();
 			astFactory.addASTChild(currentAST, returnAST);
-			AST tmp414_AST = null;
-			tmp414_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp414_AST);
+			AST tmp433_AST = null;
+			tmp433_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp433_AST);
 			match(RPAREN);
 			{
 			switch ( LA(1)) {
 			case STAR:
 			case TWO_ARG_OP:
 			case MINUS:
-			case 294:
-			case 295:
-			case 296:
 			case 297:
 			case 298:
 			case 299:
 			case 300:
 			case 301:
+			case 302:
+			case 303:
+			case 304:
 			{
 				two_arg_op();
 				astFactory.addASTChild(currentAST, returnAST);
@@ -1713,16 +1713,16 @@ inputState.guessing--;
 			case SEMI:
 			case COMMA:
 			case LITERAL_where:
-			case 39:
+			case 40:
 			case LITERAL_from:
-			case 47:
+			case 48:
 			case LITERAL_group:
-			case 50:
+			case 51:
 			case LITERAL_order:
-			case 52:
+			case 53:
 			case RPAREN:
 			case LITERAL_as:
-			case 61:
+			case 62:
 			{
 				break;
 			}
@@ -1765,18 +1765,18 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case ID:
 		{
-			AST tmp415_AST = null;
-			tmp415_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp415_AST);
+			AST tmp434_AST = null;
+			tmp434_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp434_AST);
 			match(ID);
 			alias_AST = (AST)currentAST.root;
 			break;
 		}
 		case QUOTED_STRING:
 		{
-			AST tmp416_AST = null;
-			tmp416_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp416_AST);
+			AST tmp435_AST = null;
+			tmp435_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp435_AST);
 			match(QUOTED_STRING);
 			alias_AST = (AST)currentAST.root;
 			break;
@@ -1797,9 +1797,9 @@ inputState.guessing--;
 		
 		sfield_name();
 		astFactory.addASTChild(currentAST, returnAST);
-		AST tmp417_AST = null;
-		tmp417_AST = astFactory.create(LT(1));
-		astFactory.makeASTRoot(currentAST, tmp417_AST);
+		AST tmp436_AST = null;
+		tmp436_AST = astFactory.create(LT(1));
+		astFactory.makeASTRoot(currentAST, tmp436_AST);
 		match(POINT);
 		sfield_name();
 		astFactory.addASTChild(currentAST, returnAST);
@@ -1813,22 +1813,14 @@ inputState.guessing--;
 		ASTPair currentAST = new ASTPair();
 		AST function_AST = null;
 		
-		if (((LA(1) >= LITERAL_getdate && LA(1) <= 105)) && (LA(2)==LPAREN) && (LA(3)==RPAREN) && (_tokenSet_22.member(LA(4))) && (_tokenSet_23.member(LA(5)))) {
-			empty_function();
-			astFactory.addASTChild(currentAST, returnAST);
-			match(LPAREN);
-			match(RPAREN);
-			if ( inputState.guessing==0 ) {
-				function_AST = (AST)currentAST.root;
-				function_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(FUNCTION_EMPTY_PARAM,"function_empty_param")).add(function_AST));
-				currentAST.root = function_AST;
-				currentAST.child = function_AST!=null &&function_AST.getFirstChild()!=null ?
-					function_AST.getFirstChild() : function_AST;
-				currentAST.advanceChildToEnd();
-			}
-			function_AST = (AST)currentAST.root;
-		}
-		else if (((LA(1) >= LITERAL_pi && LA(1) <= 111))) {
+		switch ( LA(1)) {
+		case LITERAL_pi:
+		case 110:
+		case LITERAL_now:
+		case 112:
+		case LITERAL_today:
+		case 114:
+		{
 			star_function();
 			astFactory.addASTChild(currentAST, returnAST);
 			match(LPAREN);
@@ -1843,28 +1835,85 @@ inputState.guessing--;
 				currentAST.advanceChildToEnd();
 			}
 			function_AST = (AST)currentAST.root;
+			break;
 		}
-		else if ((_tokenSet_24.member(LA(1))) && (_tokenSet_2.member(LA(2))) && (_tokenSet_25.member(LA(3))) && (_tokenSet_26.member(LA(4))) && (_tokenSet_23.member(LA(5)))) {
-			function_name();
+		case LITERAL_convert:
+		case 116:
+		{
+			datatype_function();
 			astFactory.addASTChild(currentAST, returnAST);
 			match(LPAREN);
-			parameters();
+			data_type_parameter();
 			astFactory.addASTChild(currentAST, returnAST);
 			match(RPAREN);
 			if ( inputState.guessing==0 ) {
 				function_AST = (AST)currentAST.root;
-				function_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(FUNCTION,"function_block")).add(function_AST));
+				function_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(FUNCTION_DATA_TYPE,"function_data_type")).add(function_AST));
 				currentAST.root = function_AST;
 				currentAST.child = function_AST!=null &&function_AST.getFirstChild()!=null ?
 					function_AST.getFirstChild() : function_AST;
 				currentAST.advanceChildToEnd();
 			}
 			function_AST = (AST)currentAST.root;
+			break;
 		}
+		case LITERAL_cast:
+		case 118:
+		{
+			asdatatype_function();
+			astFactory.addASTChild(currentAST, returnAST);
+			match(LPAREN);
+			as_data_type_parameter();
+			astFactory.addASTChild(currentAST, returnAST);
+			match(RPAREN);
+			if ( inputState.guessing==0 ) {
+				function_AST = (AST)currentAST.root;
+				function_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(FUNCTION_AS_DATA_TYPE,"function_as_data_type")).add(function_AST));
+				currentAST.root = function_AST;
+				currentAST.child = function_AST!=null &&function_AST.getFirstChild()!=null ?
+					function_AST.getFirstChild() : function_AST;
+				currentAST.advanceChildToEnd();
+			}
+			function_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+			if (((LA(1) >= LITERAL_getdate && LA(1) <= 108)) && (LA(2)==LPAREN) && (LA(3)==RPAREN) && (_tokenSet_24.member(LA(4))) && (_tokenSet_25.member(LA(5)))) {
+				empty_function();
+				astFactory.addASTChild(currentAST, returnAST);
+				match(LPAREN);
+				match(RPAREN);
+				if ( inputState.guessing==0 ) {
+					function_AST = (AST)currentAST.root;
+					function_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(FUNCTION_EMPTY_PARAM,"function_empty_param")).add(function_AST));
+					currentAST.root = function_AST;
+					currentAST.child = function_AST!=null &&function_AST.getFirstChild()!=null ?
+						function_AST.getFirstChild() : function_AST;
+					currentAST.advanceChildToEnd();
+				}
+				function_AST = (AST)currentAST.root;
+			}
+			else if ((_tokenSet_26.member(LA(1))) && (_tokenSet_2.member(LA(2))) && (_tokenSet_27.member(LA(3))) && (_tokenSet_28.member(LA(4))) && (_tokenSet_25.member(LA(5)))) {
+				function_name();
+				astFactory.addASTChild(currentAST, returnAST);
+				match(LPAREN);
+				parameters();
+				astFactory.addASTChild(currentAST, returnAST);
+				match(RPAREN);
+				if ( inputState.guessing==0 ) {
+					function_AST = (AST)currentAST.root;
+					function_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(FUNCTION,"function_block")).add(function_AST));
+					currentAST.root = function_AST;
+					currentAST.child = function_AST!=null &&function_AST.getFirstChild()!=null ?
+						function_AST.getFirstChild() : function_AST;
+					currentAST.advanceChildToEnd();
+				}
+				function_AST = (AST)currentAST.root;
+			}
 		else {
 			throw new NoViableAltException(LT(1), getFilename());
 		}
-		
+		}
 		returnAST = function_AST;
 	}
 	
@@ -1877,100 +1926,100 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case TWO_ARG_OP:
 		{
-			AST tmp425_AST = null;
-			tmp425_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp425_AST);
+			AST tmp448_AST = null;
+			tmp448_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp448_AST);
 			match(TWO_ARG_OP);
 			two_arg_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case STAR:
 		{
-			AST tmp426_AST = null;
-			tmp426_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp426_AST);
+			AST tmp449_AST = null;
+			tmp449_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp449_AST);
 			match(STAR);
 			two_arg_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case MINUS:
 		{
-			AST tmp427_AST = null;
-			tmp427_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp427_AST);
+			AST tmp450_AST = null;
+			tmp450_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp450_AST);
 			match(MINUS);
-			two_arg_op_AST = (AST)currentAST.root;
-			break;
-		}
-		case 294:
-		{
-			AST tmp428_AST = null;
-			tmp428_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp428_AST);
-			match(294);
-			two_arg_op_AST = (AST)currentAST.root;
-			break;
-		}
-		case 295:
-		{
-			AST tmp429_AST = null;
-			tmp429_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp429_AST);
-			match(295);
-			two_arg_op_AST = (AST)currentAST.root;
-			break;
-		}
-		case 296:
-		{
-			AST tmp430_AST = null;
-			tmp430_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp430_AST);
-			match(296);
 			two_arg_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case 297:
 		{
-			AST tmp431_AST = null;
-			tmp431_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp431_AST);
+			AST tmp451_AST = null;
+			tmp451_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp451_AST);
 			match(297);
 			two_arg_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case 298:
 		{
-			AST tmp432_AST = null;
-			tmp432_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp432_AST);
+			AST tmp452_AST = null;
+			tmp452_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp452_AST);
 			match(298);
 			two_arg_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case 299:
 		{
-			AST tmp433_AST = null;
-			tmp433_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp433_AST);
+			AST tmp453_AST = null;
+			tmp453_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp453_AST);
 			match(299);
 			two_arg_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case 300:
 		{
-			AST tmp434_AST = null;
-			tmp434_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp434_AST);
+			AST tmp454_AST = null;
+			tmp454_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp454_AST);
 			match(300);
 			two_arg_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case 301:
 		{
-			AST tmp435_AST = null;
-			tmp435_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp435_AST);
+			AST tmp455_AST = null;
+			tmp455_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp455_AST);
 			match(301);
+			two_arg_op_AST = (AST)currentAST.root;
+			break;
+		}
+		case 302:
+		{
+			AST tmp456_AST = null;
+			tmp456_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp456_AST);
+			match(302);
+			two_arg_op_AST = (AST)currentAST.root;
+			break;
+		}
+		case 303:
+		{
+			AST tmp457_AST = null;
+			tmp457_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp457_AST);
+			match(303);
+			two_arg_op_AST = (AST)currentAST.root;
+			break;
+		}
+		case 304:
+		{
+			AST tmp458_AST = null;
+			tmp458_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp458_AST);
+			match(304);
 			two_arg_op_AST = (AST)currentAST.root;
 			break;
 		}
@@ -1988,22 +2037,22 @@ inputState.guessing--;
 		ASTPair currentAST = new ASTPair();
 		AST aggregate_func_AST = null;
 		
-		if ((LA(1)==86||LA(1)==LITERAL_count) && (LA(2)==LPAREN) && (LA(3)==STAR)) {
+		if ((LA(1)==81||LA(1)==LITERAL_count) && (LA(2)==LPAREN) && (LA(3)==STAR)) {
 			{
 			switch ( LA(1)) {
-			case 86:
+			case 81:
 			{
-				AST tmp436_AST = null;
-				tmp436_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp436_AST);
-				match(86);
+				AST tmp459_AST = null;
+				tmp459_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp459_AST);
+				match(81);
 				break;
 			}
 			case LITERAL_count:
 			{
-				AST tmp437_AST = null;
-				tmp437_AST = astFactory.create(LT(1));
-				astFactory.addASTChild(currentAST, tmp437_AST);
+				AST tmp460_AST = null;
+				tmp460_AST = astFactory.create(LT(1));
+				astFactory.addASTChild(currentAST, tmp460_AST);
 				match(LITERAL_count);
 				break;
 			}
@@ -2026,7 +2075,7 @@ inputState.guessing--;
 			}
 			aggregate_func_AST = (AST)currentAST.root;
 		}
-		else if ((_tokenSet_12.member(LA(1))) && (LA(2)==LPAREN) && (_tokenSet_27.member(LA(3)))) {
+		else if ((_tokenSet_13.member(LA(1))) && (LA(2)==LPAREN) && (_tokenSet_29.member(LA(3)))) {
 			aggregate_func_name();
 			astFactory.addASTChild(currentAST, returnAST);
 			match(LPAREN);
@@ -2034,34 +2083,34 @@ inputState.guessing--;
 			switch ( LA(1)) {
 			case LITERAL_all:
 			{
-				AST tmp442_AST = null;
-				tmp442_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp442_AST);
+				AST tmp465_AST = null;
+				tmp465_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp465_AST);
 				match(LITERAL_all);
 				break;
 			}
-			case 89:
+			case 84:
 			{
-				AST tmp443_AST = null;
-				tmp443_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp443_AST);
-				match(89);
+				AST tmp466_AST = null;
+				tmp466_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp466_AST);
+				match(84);
 				break;
 			}
 			case LITERAL_distinct:
 			{
-				AST tmp444_AST = null;
-				tmp444_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp444_AST);
+				AST tmp467_AST = null;
+				tmp467_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp467_AST);
 				match(LITERAL_distinct);
 				break;
 			}
-			case 45:
+			case 46:
 			{
-				AST tmp445_AST = null;
-				tmp445_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp445_AST);
-				match(45);
+				AST tmp468_AST = null;
+				tmp468_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp468_AST);
+				match(46);
 				break;
 			}
 			default:
@@ -2090,7 +2139,7 @@ inputState.guessing--;
 		ASTPair currentAST = new ASTPair();
 		AST expression_AST = null;
 		
-		if ((_tokenSet_28.member(LA(1))) && (_tokenSet_6.member(LA(2))) && (_tokenSet_29.member(LA(3))) && (_tokenSet_30.member(LA(4))) && (_tokenSet_17.member(LA(5)))) {
+		if ((_tokenSet_30.member(LA(1))) && (_tokenSet_31.member(LA(2))) && (_tokenSet_32.member(LA(3))) && (_tokenSet_33.member(LA(4))) && (_tokenSet_18.member(LA(5)))) {
 			{
 			switch ( LA(1)) {
 			case ID:
@@ -2106,11 +2155,11 @@ inputState.guessing--;
 				break;
 			}
 			default:
-				if ((_tokenSet_18.member(LA(1))) && (_tokenSet_31.member(LA(2))) && (_tokenSet_29.member(LA(3))) && (_tokenSet_30.member(LA(4))) && (_tokenSet_17.member(LA(5)))) {
+				if ((_tokenSet_19.member(LA(1))) && (_tokenSet_34.member(LA(2))) && (_tokenSet_32.member(LA(3))) && (_tokenSet_33.member(LA(4))) && (_tokenSet_18.member(LA(5)))) {
 					constant();
 					astFactory.addASTChild(currentAST, returnAST);
 				}
-				else if ((_tokenSet_10.member(LA(1))) && (_tokenSet_2.member(LA(2))) && (_tokenSet_25.member(LA(3))) && (_tokenSet_6.member(LA(4))) && (_tokenSet_29.member(LA(5)))) {
+				else if ((_tokenSet_11.member(LA(1))) && (_tokenSet_2.member(LA(2))) && (_tokenSet_35.member(LA(3))) && (_tokenSet_6.member(LA(4))) && (_tokenSet_32.member(LA(5)))) {
 					function();
 					astFactory.addASTChild(currentAST, returnAST);
 				}
@@ -2120,7 +2169,7 @@ inputState.guessing--;
 			}
 			}
 			{
-			if ((_tokenSet_32.member(LA(1)))) {
+			if ((_tokenSet_36.member(LA(1)))) {
 				two_arg_op();
 				astFactory.addASTChild(currentAST, returnAST);
 				expression();
@@ -2134,7 +2183,7 @@ inputState.guessing--;
 					currentAST.advanceChildToEnd();
 				}
 			}
-			else if ((_tokenSet_33.member(LA(1)))) {
+			else if ((_tokenSet_37.member(LA(1)))) {
 			}
 			else {
 				throw new NoViableAltException(LT(1), getFilename());
@@ -2143,19 +2192,19 @@ inputState.guessing--;
 			}
 			expression_AST = (AST)currentAST.root;
 		}
-		else if ((LA(1)==LPAREN) && (_tokenSet_2.member(LA(2))) && (_tokenSet_34.member(LA(3))) && (_tokenSet_6.member(LA(4))) && (_tokenSet_29.member(LA(5)))) {
-			AST tmp447_AST = null;
-			tmp447_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp447_AST);
+		else if ((LA(1)==LPAREN) && (_tokenSet_2.member(LA(2))) && (_tokenSet_38.member(LA(3))) && (_tokenSet_6.member(LA(4))) && (_tokenSet_32.member(LA(5)))) {
+			AST tmp470_AST = null;
+			tmp470_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp470_AST);
 			match(LPAREN);
 			expression();
 			astFactory.addASTChild(currentAST, returnAST);
-			AST tmp448_AST = null;
-			tmp448_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp448_AST);
+			AST tmp471_AST = null;
+			tmp471_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp471_AST);
 			match(RPAREN);
 			{
-			if ((_tokenSet_32.member(LA(1)))) {
+			if ((_tokenSet_36.member(LA(1)))) {
 				two_arg_op();
 				astFactory.addASTChild(currentAST, returnAST);
 				expression();
@@ -2169,7 +2218,7 @@ inputState.guessing--;
 					currentAST.advanceChildToEnd();
 				}
 			}
-			else if ((_tokenSet_33.member(LA(1)))) {
+			else if ((_tokenSet_37.member(LA(1)))) {
 			}
 			else {
 				throw new NoViableAltException(LT(1), getFilename());
@@ -2209,27 +2258,27 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case REAL_NUM:
 		{
-			AST tmp449_AST = null;
-			tmp449_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp449_AST);
+			AST tmp472_AST = null;
+			tmp472_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp472_AST);
 			match(REAL_NUM);
 			constant_AST = (AST)currentAST.root;
 			break;
 		}
 		case NEGATIVE_DIGIT_ELEMENT:
 		{
-			AST tmp450_AST = null;
-			tmp450_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp450_AST);
+			AST tmp473_AST = null;
+			tmp473_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp473_AST);
 			match(NEGATIVE_DIGIT_ELEMENT);
 			constant_AST = (AST)currentAST.root;
 			break;
 		}
 		case QUOTED_STRING:
 		{
-			AST tmp451_AST = null;
-			tmp451_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp451_AST);
+			AST tmp474_AST = null;
+			tmp474_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp474_AST);
 			match(QUOTED_STRING);
 			constant_AST = (AST)currentAST.root;
 			break;
@@ -2270,9 +2319,9 @@ inputState.guessing--;
 		}
 		case LITERAL_null:
 		{
-			AST tmp452_AST = null;
-			tmp452_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp452_AST);
+			AST tmp475_AST = null;
+			tmp475_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp475_AST);
 			match(LITERAL_null);
 			constant_AST = (AST)currentAST.root;
 			break;
@@ -2291,9 +2340,9 @@ inputState.guessing--;
 		ASTPair currentAST = new ASTPair();
 		AST param_equ_AST = null;
 		
-		AST tmp453_AST = null;
-		tmp453_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp453_AST);
+		AST tmp476_AST = null;
+		tmp476_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp476_AST);
 		match(PARAM_ID);
 		param_equ_AST = (AST)currentAST.root;
 		returnAST = param_equ_AST;
@@ -2305,9 +2354,9 @@ inputState.guessing--;
 		ASTPair currentAST = new ASTPair();
 		AST one_arg_op_AST = null;
 		
-		AST tmp454_AST = null;
-		tmp454_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp454_AST);
+		AST tmp477_AST = null;
+		tmp477_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp477_AST);
 		match(ONE_ARG_OP);
 		one_arg_op_AST = (AST)currentAST.root;
 		returnAST = one_arg_op_AST;
@@ -2322,108 +2371,108 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case COMPARE_OP:
 		{
-			AST tmp455_AST = null;
-			tmp455_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp455_AST);
+			AST tmp478_AST = null;
+			tmp478_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp478_AST);
 			match(COMPARE_OP);
 			compare_op_AST = (AST)currentAST.root;
 			break;
 		}
-		case 63:
+		case 64:
 		{
-			AST tmp456_AST = null;
-			tmp456_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp456_AST);
-			match(63);
-			compare_op_AST = (AST)currentAST.root;
-			break;
-		}
-		case 303:
-		{
-			AST tmp457_AST = null;
-			tmp457_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp457_AST);
-			match(303);
-			compare_op_AST = (AST)currentAST.root;
-			break;
-		}
-		case 304:
-		{
-			AST tmp458_AST = null;
-			tmp458_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp458_AST);
-			match(304);
-			compare_op_AST = (AST)currentAST.root;
-			break;
-		}
-		case 305:
-		{
-			AST tmp459_AST = null;
-			tmp459_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp459_AST);
-			match(305);
+			AST tmp479_AST = null;
+			tmp479_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp479_AST);
+			match(64);
 			compare_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case 306:
 		{
-			AST tmp460_AST = null;
-			tmp460_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp460_AST);
+			AST tmp480_AST = null;
+			tmp480_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp480_AST);
 			match(306);
 			compare_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case 307:
 		{
-			AST tmp461_AST = null;
-			tmp461_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp461_AST);
+			AST tmp481_AST = null;
+			tmp481_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp481_AST);
 			match(307);
 			compare_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case 308:
 		{
-			AST tmp462_AST = null;
-			tmp462_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp462_AST);
+			AST tmp482_AST = null;
+			tmp482_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp482_AST);
 			match(308);
 			compare_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case 309:
 		{
-			AST tmp463_AST = null;
-			tmp463_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp463_AST);
+			AST tmp483_AST = null;
+			tmp483_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp483_AST);
 			match(309);
-			compare_op_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_like:
-		{
-			AST tmp464_AST = null;
-			tmp464_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp464_AST);
-			match(LITERAL_like);
 			compare_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case 310:
 		{
-			AST tmp465_AST = null;
-			tmp465_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp465_AST);
+			AST tmp484_AST = null;
+			tmp484_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp484_AST);
 			match(310);
+			compare_op_AST = (AST)currentAST.root;
+			break;
+		}
+		case 311:
+		{
+			AST tmp485_AST = null;
+			tmp485_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp485_AST);
+			match(311);
+			compare_op_AST = (AST)currentAST.root;
+			break;
+		}
+		case 312:
+		{
+			AST tmp486_AST = null;
+			tmp486_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp486_AST);
+			match(312);
+			compare_op_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_like:
+		{
+			AST tmp487_AST = null;
+			tmp487_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp487_AST);
+			match(LITERAL_like);
+			compare_op_AST = (AST)currentAST.root;
+			break;
+		}
+		case 313:
+		{
+			AST tmp488_AST = null;
+			tmp488_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp488_AST);
+			match(313);
 			compare_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case LEFT_JOIN:
 		{
-			AST tmp466_AST = null;
-			tmp466_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp466_AST);
+			AST tmp489_AST = null;
+			tmp489_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp489_AST);
 			match(LEFT_JOIN);
 			compare_op_AST = (AST)currentAST.root;
 			break;
@@ -2442,15 +2491,15 @@ inputState.guessing--;
 		ASTPair currentAST = new ASTPair();
 		AST exp_set_AST = null;
 		
-		AST tmp467_AST = null;
-		tmp467_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp467_AST);
+		AST tmp490_AST = null;
+		tmp490_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp490_AST);
 		match(LPAREN);
 		constexpset();
 		astFactory.addASTChild(currentAST, returnAST);
-		AST tmp468_AST = null;
-		tmp468_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp468_AST);
+		AST tmp491_AST = null;
+		tmp491_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp491_AST);
 		match(RPAREN);
 		if ( inputState.guessing==0 ) {
 			exp_set_AST = (AST)currentAST.root;
@@ -2464,371 +2513,6 @@ inputState.guessing--;
 		returnAST = exp_set_AST;
 	}
 	
-	public final void constexpset() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST constexpset_AST = null;
-		
-		constant();
-		astFactory.addASTChild(currentAST, returnAST);
-		{
-		_loop77:
-		do {
-			if ((LA(1)==COMMA)) {
-				AST tmp469_AST = null;
-				tmp469_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp469_AST);
-				match(COMMA);
-				constant();
-				astFactory.addASTChild(currentAST, returnAST);
-			}
-			else {
-				break _loop77;
-			}
-			
-		} while (true);
-		}
-		constexpset_AST = (AST)currentAST.root;
-		returnAST = constexpset_AST;
-	}
-	
-	public final void subquery() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST subquery_AST = null;
-		
-		AST tmp470_AST = null;
-		tmp470_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp470_AST);
-		match(LPAREN);
-		select_statement();
-		astFactory.addASTChild(currentAST, returnAST);
-		AST tmp471_AST = null;
-		tmp471_AST = astFactory.create(LT(1));
-		astFactory.addASTChild(currentAST, tmp471_AST);
-		match(RPAREN);
-		if ( inputState.guessing==0 ) {
-			subquery_AST = (AST)currentAST.root;
-			subquery_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(SUBQUERY,"subquery")).add(subquery_AST));
-			currentAST.root = subquery_AST;
-			currentAST.child = subquery_AST!=null &&subquery_AST.getFirstChild()!=null ?
-				subquery_AST.getFirstChild() : subquery_AST;
-			currentAST.advanceChildToEnd();
-		}
-		subquery_AST = (AST)currentAST.root;
-		returnAST = subquery_AST;
-	}
-	
-	public final void sfield_name() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST sfield_name_AST = null;
-		
-		if ((LA(1)==ID) && (LA(2)==LPAREN) && (LA(3)==ID) && (LA(4)==RPAREN) && (_tokenSet_26.member(LA(5)))) {
-			AST tmp472_AST = null;
-			tmp472_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp472_AST);
-			match(ID);
-			match(LPAREN);
-			AST tmp474_AST = null;
-			tmp474_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp474_AST);
-			match(ID);
-			match(RPAREN);
-			if ( inputState.guessing==0 ) {
-				sfield_name_AST = (AST)currentAST.root;
-				sfield_name_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(PAREN_FIELD,"paren_field")).add(sfield_name_AST));
-				currentAST.root = sfield_name_AST;
-				currentAST.child = sfield_name_AST!=null &&sfield_name_AST.getFirstChild()!=null ?
-					sfield_name_AST.getFirstChild() : sfield_name_AST;
-				currentAST.advanceChildToEnd();
-			}
-			sfield_name_AST = (AST)currentAST.root;
-		}
-		else if ((LA(1)==ID) && (_tokenSet_26.member(LA(2))) && (_tokenSet_23.member(LA(3))) && (_tokenSet_30.member(LA(4))) && (_tokenSet_17.member(LA(5)))) {
-			AST tmp476_AST = null;
-			tmp476_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp476_AST);
-			match(ID);
-			sfield_name_AST = (AST)currentAST.root;
-		}
-		else {
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		
-		returnAST = sfield_name_AST;
-	}
-	
-	public final void date_key_word() throws RecognitionException, TokenStreamException {
-		
-		returnAST = null;
-		ASTPair currentAST = new ASTPair();
-		AST date_key_word_AST = null;
-		
-		switch ( LA(1)) {
-		case LITERAL_year:
-		{
-			AST tmp477_AST = null;
-			tmp477_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp477_AST);
-			match(LITERAL_year);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_yy:
-		{
-			AST tmp478_AST = null;
-			tmp478_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp478_AST);
-			match(LITERAL_yy);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_month:
-		{
-			AST tmp479_AST = null;
-			tmp479_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp479_AST);
-			match(LITERAL_month);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_mm:
-		{
-			AST tmp480_AST = null;
-			tmp480_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp480_AST);
-			match(LITERAL_mm);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_day:
-		{
-			AST tmp481_AST = null;
-			tmp481_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp481_AST);
-			match(LITERAL_day);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_dd:
-		{
-			AST tmp482_AST = null;
-			tmp482_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp482_AST);
-			match(LITERAL_dd);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_quarter:
-		{
-			AST tmp483_AST = null;
-			tmp483_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp483_AST);
-			match(LITERAL_quarter);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_qq:
-		{
-			AST tmp484_AST = null;
-			tmp484_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp484_AST);
-			match(LITERAL_qq);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_week:
-		{
-			AST tmp485_AST = null;
-			tmp485_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp485_AST);
-			match(LITERAL_week);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_wk:
-		{
-			AST tmp486_AST = null;
-			tmp486_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp486_AST);
-			match(LITERAL_wk);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_dayofyear:
-		{
-			AST tmp487_AST = null;
-			tmp487_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp487_AST);
-			match(LITERAL_dayofyear);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_dy:
-		{
-			AST tmp488_AST = null;
-			tmp488_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp488_AST);
-			match(LITERAL_dy);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_weekday:
-		{
-			AST tmp489_AST = null;
-			tmp489_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp489_AST);
-			match(LITERAL_weekday);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_dw:
-		{
-			AST tmp490_AST = null;
-			tmp490_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp490_AST);
-			match(LITERAL_dw);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_hour:
-		{
-			AST tmp491_AST = null;
-			tmp491_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp491_AST);
-			match(LITERAL_hour);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_hh:
-		{
-			AST tmp492_AST = null;
-			tmp492_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp492_AST);
-			match(LITERAL_hh);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_minute:
-		{
-			AST tmp493_AST = null;
-			tmp493_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp493_AST);
-			match(LITERAL_minute);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_mi:
-		{
-			AST tmp494_AST = null;
-			tmp494_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp494_AST);
-			match(LITERAL_mi);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_second:
-		{
-			AST tmp495_AST = null;
-			tmp495_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp495_AST);
-			match(LITERAL_second);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_ss:
-		{
-			AST tmp496_AST = null;
-			tmp496_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp496_AST);
-			match(LITERAL_ss);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_millisecond:
-		{
-			AST tmp497_AST = null;
-			tmp497_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp497_AST);
-			match(LITERAL_millisecond);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_ms:
-		{
-			AST tmp498_AST = null;
-			tmp498_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp498_AST);
-			match(LITERAL_ms);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_calweekofyear:
-		{
-			AST tmp499_AST = null;
-			tmp499_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp499_AST);
-			match(LITERAL_calweekofyear);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_cwk:
-		{
-			AST tmp500_AST = null;
-			tmp500_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp500_AST);
-			match(LITERAL_cwk);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_calyearofweek:
-		{
-			AST tmp501_AST = null;
-			tmp501_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp501_AST);
-			match(LITERAL_calyearofweek);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_cyr:
-		{
-			AST tmp502_AST = null;
-			tmp502_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp502_AST);
-			match(LITERAL_cyr);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_caldayofweek:
-		{
-			AST tmp503_AST = null;
-			tmp503_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp503_AST);
-			match(LITERAL_caldayofweek);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_cdw:
-		{
-			AST tmp504_AST = null;
-			tmp504_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp504_AST);
-			match(LITERAL_cdw);
-			date_key_word_AST = (AST)currentAST.root;
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		}
-		returnAST = date_key_word_AST;
-	}
-	
 	public final void empty_function() throws RecognitionException, TokenStreamException {
 		
 		returnAST = null;
@@ -2838,37 +2522,37 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case LITERAL_getdate:
 		{
-			AST tmp505_AST = null;
-			tmp505_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp505_AST);
+			AST tmp492_AST = null;
+			tmp492_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp492_AST);
 			match(LITERAL_getdate);
 			empty_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 103:
+		case 106:
 		{
-			AST tmp506_AST = null;
-			tmp506_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp506_AST);
-			match(103);
+			AST tmp493_AST = null;
+			tmp493_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp493_AST);
+			match(106);
 			empty_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_rand:
 		{
-			AST tmp507_AST = null;
-			tmp507_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp507_AST);
+			AST tmp494_AST = null;
+			tmp494_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp494_AST);
 			match(LITERAL_rand);
 			empty_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 105:
+		case 108:
 		{
-			AST tmp508_AST = null;
-			tmp508_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp508_AST);
-			match(105);
+			AST tmp495_AST = null;
+			tmp495_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp495_AST);
+			match(108);
 			empty_function_AST = (AST)currentAST.root;
 			break;
 		}
@@ -2889,55 +2573,55 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case LITERAL_pi:
 		{
-			AST tmp509_AST = null;
-			tmp509_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp509_AST);
+			AST tmp496_AST = null;
+			tmp496_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp496_AST);
 			match(LITERAL_pi);
 			star_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 107:
+		case 110:
 		{
-			AST tmp510_AST = null;
-			tmp510_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp510_AST);
-			match(107);
+			AST tmp497_AST = null;
+			tmp497_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp497_AST);
+			match(110);
 			star_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_now:
 		{
-			AST tmp511_AST = null;
-			tmp511_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp511_AST);
+			AST tmp498_AST = null;
+			tmp498_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp498_AST);
 			match(LITERAL_now);
 			star_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 109:
+		case 112:
 		{
-			AST tmp512_AST = null;
-			tmp512_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp512_AST);
-			match(109);
+			AST tmp499_AST = null;
+			tmp499_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp499_AST);
+			match(112);
 			star_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_today:
 		{
-			AST tmp513_AST = null;
-			tmp513_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp513_AST);
+			AST tmp500_AST = null;
+			tmp500_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp500_AST);
 			match(LITERAL_today);
 			star_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 111:
+		case 114:
 		{
-			AST tmp514_AST = null;
-			tmp514_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp514_AST);
-			match(111);
+			AST tmp501_AST = null;
+			tmp501_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp501_AST);
+			match(114);
 			star_function_AST = (AST)currentAST.root;
 			break;
 		}
@@ -2947,6 +2631,137 @@ inputState.guessing--;
 		}
 		}
 		returnAST = star_function_AST;
+	}
+	
+	public final void datatype_function() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST datatype_function_AST = null;
+		
+		switch ( LA(1)) {
+		case LITERAL_convert:
+		{
+			AST tmp502_AST = null;
+			tmp502_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp502_AST);
+			match(LITERAL_convert);
+			datatype_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case 116:
+		{
+			AST tmp503_AST = null;
+			tmp503_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp503_AST);
+			match(116);
+			datatype_function_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = datatype_function_AST;
+	}
+	
+	public final void data_type_parameter() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST data_type_parameter_AST = null;
+		
+		datatype_constant();
+		astFactory.addASTChild(currentAST, returnAST);
+		{
+		int _cnt86=0;
+		_loop86:
+		do {
+			if ((LA(1)==COMMA)) {
+				AST tmp504_AST = null;
+				tmp504_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp504_AST);
+				match(COMMA);
+				expression();
+				astFactory.addASTChild(currentAST, returnAST);
+			}
+			else {
+				if ( _cnt86>=1 ) { break _loop86; } else {throw new NoViableAltException(LT(1), getFilename());}
+			}
+			
+			_cnt86++;
+		} while (true);
+		}
+		data_type_parameter_AST = (AST)currentAST.root;
+		returnAST = data_type_parameter_AST;
+	}
+	
+	public final void asdatatype_function() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST asdatatype_function_AST = null;
+		
+		switch ( LA(1)) {
+		case LITERAL_cast:
+		{
+			AST tmp505_AST = null;
+			tmp505_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp505_AST);
+			match(LITERAL_cast);
+			asdatatype_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case 118:
+		{
+			AST tmp506_AST = null;
+			tmp506_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp506_AST);
+			match(118);
+			asdatatype_function_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = asdatatype_function_AST;
+	}
+	
+	public final void as_data_type_parameter() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST as_data_type_parameter_AST = null;
+		
+		expression();
+		astFactory.addASTChild(currentAST, returnAST);
+		{
+		switch ( LA(1)) {
+		case LITERAL_as:
+		{
+			match(LITERAL_as);
+			break;
+		}
+		case 85:
+		{
+			match(85);
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		}
+		{
+		datatype_constant();
+		astFactory.addASTChild(currentAST, returnAST);
+		}
+		as_data_type_parameter_AST = (AST)currentAST.root;
+		returnAST = as_data_type_parameter_AST;
 	}
 	
 	public final void function_name() throws RecognitionException, TokenStreamException {
@@ -2962,54 +2777,54 @@ inputState.guessing--;
 			break;
 		}
 		case LITERAL_rand:
-		case 105:
+		case 108:
 		case LITERAL_abs:
-		case 115:
+		case 120:
 		case LITERAL_acos:
-		case 117:
-		case LITERAL_asin:
-		case 119:
-		case LITERAL_atan:
-		case 121:
 		case 122:
-		case 123:
-		case LITERAL_ceiling:
-		case 125:
-		case LITERAL_cos:
+		case LITERAL_asin:
+		case 124:
+		case LITERAL_atan:
+		case 126:
 		case 127:
+		case 128:
+		case LITERAL_ceiling:
+		case 130:
+		case LITERAL_cos:
+		case 132:
 		case LITERAL_cot:
-		case 129:
+		case 134:
 		case LITERAL_degrees:
-		case 131:
+		case 136:
 		case LITERAL_exp:
-		case 133:
-		case LITERAL_floor:
-		case 135:
-		case LITERAL_log:
-		case 137:
 		case 138:
-		case 139:
-		case LITERAL_mod:
-		case 141:
-		case LITERAL_power:
+		case LITERAL_floor:
+		case 140:
+		case LITERAL_log:
+		case 142:
 		case 143:
+		case 144:
+		case LITERAL_mod:
+		case 146:
+		case LITERAL_power:
+		case 148:
 		case LITERAL_radians:
-		case 145:
+		case 150:
 		case LITERAL_remainder:
-		case 147:
+		case 152:
 		case LITERAL_round:
-		case 149:
+		case 154:
 		case LITERAL_sign:
-		case 151:
+		case 156:
 		case LITERAL_sin:
-		case 153:
-		case LITERAL_sqrt:
-		case 155:
-		case LITERAL_tan:
-		case 157:
 		case 158:
-		case LITERAL_truncnum:
+		case LITERAL_sqrt:
 		case 160:
+		case LITERAL_tan:
+		case 162:
+		case 163:
+		case LITERAL_truncnum:
+		case 165:
 		{
 			number_function();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -3017,69 +2832,69 @@ inputState.guessing--;
 			break;
 		}
 		case LITERAL_ascii:
-		case 162:
+		case 167:
 		case LITERAL_bit_length:
-		case 164:
+		case 169:
 		case LITERAL_byte_length:
-		case 166:
+		case 171:
 		case LITERAL_char:
-		case 168:
+		case 173:
 		case LITERAL_char_length:
-		case 170:
+		case 175:
 		case LITERAL_charindex:
-		case 172:
+		case 177:
 		case LITERAL_difference:
-		case 174:
+		case 179:
 		case LITERAL_insertstr:
-		case 176:
+		case 181:
 		case LITERAL_lcase:
-		case 178:
+		case 183:
 		case LITERAL_left:
-		case 180:
+		case 185:
 		case LITERAL_length:
-		case 182:
+		case 187:
 		case LITERAL_locate:
-		case 184:
+		case 189:
 		case LITERAL_lower:
-		case 186:
+		case 191:
 		case LITERAL_ltrim:
-		case 188:
+		case 193:
 		case LITERAL_octet_length:
-		case 190:
+		case 195:
 		case LITERAL_patindex:
-		case 192:
+		case 197:
 		case LITERAL_repeat:
-		case 194:
+		case 199:
 		case LITERAL_replace:
-		case 196:
+		case 201:
 		case LITERAL_replicate:
-		case 198:
+		case 203:
 		case LITERAL_right:
-		case 200:
+		case 205:
 		case LITERAL_rtrim:
-		case 202:
+		case 207:
 		case LITERAL_similar:
-		case 204:
+		case 209:
 		case LITERAL_sortkey:
-		case 206:
+		case 211:
 		case LITERAL_soundex:
-		case 208:
+		case 213:
 		case LITERAL_space:
-		case 210:
+		case 215:
 		case LITERAL_str:
-		case 212:
+		case 217:
 		case LITERAL_string:
-		case 214:
+		case 219:
 		case LITERAL_stuff:
-		case 216:
+		case 221:
 		case LITERAL_substring:
-		case 218:
+		case 223:
 		case LITERAL_trim:
-		case 220:
+		case 225:
 		case LITERAL_ucase:
-		case 222:
+		case 227:
 		case LITERAL_upper:
-		case 224:
+		case 229:
 		{
 			string_function();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -3087,73 +2902,69 @@ inputState.guessing--;
 			break;
 		}
 		case LITERAL_dateformat:
-		case 226:
+		case 231:
 		case LITERAL_datename:
-		case 228:
+		case 233:
 		case LITERAL_datepart:
-		case 230:
+		case 235:
 		case LITERAL_datetime:
-		case 232:
+		case 237:
 		case LITERAL_date:
-		case 234:
+		case 239:
 		case LITERAL_dayname:
-		case 236:
+		case 241:
 		case LITERAL_days:
-		case 238:
+		case 243:
 		case LITERAL_day:
-		case 240:
+		case 245:
 		case LITERAL_dow:
-		case 242:
+		case 247:
 		case LITERAL_hours:
-		case 244:
+		case 249:
 		case LITERAL_hour:
-		case 246:
+		case 251:
 		case LITERAL_minutes:
-		case 248:
+		case 253:
 		case LITERAL_minute:
-		case 250:
+		case 255:
 		case LITERAL_monthname:
-		case 252:
+		case 257:
 		case LITERAL_months:
-		case 254:
+		case 259:
 		case LITERAL_month:
-		case 256:
+		case 261:
 		case LITERAL_quarter:
-		case 258:
+		case 263:
 		case LITERAL_seconds:
-		case 260:
+		case 265:
 		case LITERAL_second:
-		case 262:
+		case 267:
 		case LITERAL_weeks:
-		case 264:
+		case 269:
 		case LITERAL_years:
-		case 266:
+		case 271:
 		case LITERAL_year:
-		case 268:
+		case 273:
 		case LITERAL_ymd:
-		case 270:
+		case 275:
 		case LITERAL_dateadd:
-		case 272:
+		case 277:
 		case LITERAL_datediff:
-		case 274:
+		case 279:
 		{
 			datetime_function();
 			astFactory.addASTChild(currentAST, returnAST);
 			function_name_AST = (AST)currentAST.root;
 			break;
 		}
-		case LITERAL_cast:
-		case 113:
 		case LITERAL_hextoint:
-		case 276:
+		case 281:
 		case LITERAL_inttohex:
-		case 278:
+		case 283:
 		case LITERAL_isdate:
-		case 280:
+		case 285:
 		case LITERAL_isnumeric:
-		case 282:
-		case LITERAL_convert:
-		case 284:
+		case 287:
 		{
 			conversion_function();
 			astFactory.addASTChild(currentAST, returnAST);
@@ -3195,18 +3006,18 @@ inputState.guessing--;
 		expression();
 		astFactory.addASTChild(currentAST, returnAST);
 		{
-		_loop90:
+		_loop80:
 		do {
 			if ((LA(1)==COMMA)) {
-				AST tmp515_AST = null;
-				tmp515_AST = astFactory.create(LT(1));
-				astFactory.makeASTRoot(currentAST, tmp515_AST);
+				AST tmp509_AST = null;
+				tmp509_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp509_AST);
 				match(COMMA);
 				expression();
 				astFactory.addASTChild(currentAST, returnAST);
 			}
 			else {
-				break _loop90;
+				break _loop80;
 			}
 			
 		} while (true);
@@ -3224,127 +3035,127 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case LITERAL_avg:
 		{
-			AST tmp516_AST = null;
-			tmp516_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp516_AST);
+			AST tmp510_AST = null;
+			tmp510_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp510_AST);
 			match(LITERAL_avg);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
-		case 91:
+		case 94:
 		{
-			AST tmp517_AST = null;
-			tmp517_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp517_AST);
-			match(91);
+			AST tmp511_AST = null;
+			tmp511_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp511_AST);
+			match(94);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_count:
 		{
-			AST tmp518_AST = null;
-			tmp518_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp518_AST);
+			AST tmp512_AST = null;
+			tmp512_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp512_AST);
 			match(LITERAL_count);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
-		case 86:
+		case 81:
 		{
-			AST tmp519_AST = null;
-			tmp519_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp519_AST);
-			match(86);
+			AST tmp513_AST = null;
+			tmp513_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp513_AST);
+			match(81);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_max:
 		{
-			AST tmp520_AST = null;
-			tmp520_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp520_AST);
+			AST tmp514_AST = null;
+			tmp514_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp514_AST);
 			match(LITERAL_max);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
-		case 93:
+		case 96:
 		{
-			AST tmp521_AST = null;
-			tmp521_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp521_AST);
-			match(93);
+			AST tmp515_AST = null;
+			tmp515_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp515_AST);
+			match(96);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_min:
 		{
-			AST tmp522_AST = null;
-			tmp522_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp522_AST);
+			AST tmp516_AST = null;
+			tmp516_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp516_AST);
 			match(LITERAL_min);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
-		case 95:
+		case 98:
 		{
-			AST tmp523_AST = null;
-			tmp523_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp523_AST);
-			match(95);
+			AST tmp517_AST = null;
+			tmp517_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp517_AST);
+			match(98);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_stddev:
 		{
-			AST tmp524_AST = null;
-			tmp524_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp524_AST);
+			AST tmp518_AST = null;
+			tmp518_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp518_AST);
 			match(LITERAL_stddev);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
-		case 97:
+		case 100:
 		{
-			AST tmp525_AST = null;
-			tmp525_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp525_AST);
-			match(97);
+			AST tmp519_AST = null;
+			tmp519_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp519_AST);
+			match(100);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_sum:
 		{
-			AST tmp526_AST = null;
-			tmp526_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp526_AST);
+			AST tmp520_AST = null;
+			tmp520_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp520_AST);
 			match(LITERAL_sum);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
-		case 99:
+		case 102:
 		{
-			AST tmp527_AST = null;
-			tmp527_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp527_AST);
-			match(99);
+			AST tmp521_AST = null;
+			tmp521_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp521_AST);
+			match(102);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_variance:
 		{
-			AST tmp528_AST = null;
-			tmp528_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp528_AST);
+			AST tmp522_AST = null;
+			tmp522_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp522_AST);
 			match(LITERAL_variance);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
-		case 101:
+		case 104:
 		{
-			AST tmp529_AST = null;
-			tmp529_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp529_AST);
-			match(101);
+			AST tmp523_AST = null;
+			tmp523_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp523_AST);
+			match(104);
 			aggregate_func_name_AST = (AST)currentAST.root;
 			break;
 		}
@@ -3356,29 +3167,52 @@ inputState.guessing--;
 		returnAST = aggregate_func_name_AST;
 	}
 	
-	public final void conversion_as_function() throws RecognitionException, TokenStreamException {
+	public final void datatype_constant() throws RecognitionException, TokenStreamException {
 		
 		returnAST = null;
 		ASTPair currentAST = new ASTPair();
-		AST conversion_as_function_AST = null;
+		AST datatype_constant_AST = null;
 		
 		switch ( LA(1)) {
-		case LITERAL_cast:
+		case LITERAL_datetime:
+		case LITERAL_date:
+		case LITERAL_uniqueidentifierstr:
+		case LITERAL_bigint:
+		case LITERAL_int:
+		case LITERAL_integer:
+		case LITERAL_smallint:
+		case LITERAL_tinyint:
+		case LITERAL_double:
+		case LITERAL_real:
+		case LITERAL_smalldatetime:
+		case LITERAL_time:
+		case LITERAL_timestamp:
+		case LITERAL_bit:
 		{
-			AST tmp530_AST = null;
-			tmp530_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp530_AST);
-			match(LITERAL_cast);
-			conversion_as_function_AST = (AST)currentAST.root;
+			data_type_word();
+			astFactory.addASTChild(currentAST, returnAST);
+			datatype_constant_AST = (AST)currentAST.root;
 			break;
 		}
-		case 113:
+		case DATA_TYPE_STRING:
 		{
-			AST tmp531_AST = null;
-			tmp531_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp531_AST);
-			match(113);
-			conversion_as_function_AST = (AST)currentAST.root;
+			AST tmp524_AST = null;
+			tmp524_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp524_AST);
+			match(DATA_TYPE_STRING);
+			match(LPAREN);
+			datatype_precision_or_scale_or_maxlength();
+			astFactory.addASTChild(currentAST, returnAST);
+			match(RPAREN);
+			if ( inputState.guessing==0 ) {
+				datatype_constant_AST = (AST)currentAST.root;
+				datatype_constant_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(PAREN_DATA_TYPE,"paren_data_type")).add(datatype_constant_AST));
+				currentAST.root = datatype_constant_AST;
+				currentAST.child = datatype_constant_AST!=null &&datatype_constant_AST.getFirstChild()!=null ?
+					datatype_constant_AST.getFirstChild() : datatype_constant_AST;
+				currentAST.advanceChildToEnd();
+			}
+			datatype_constant_AST = (AST)currentAST.root;
 			break;
 		}
 		default:
@@ -3386,7 +3220,548 @@ inputState.guessing--;
 			throw new NoViableAltException(LT(1), getFilename());
 		}
 		}
-		returnAST = conversion_as_function_AST;
+		returnAST = datatype_constant_AST;
+	}
+	
+	public final void data_type_word() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST data_type_word_AST = null;
+		
+		switch ( LA(1)) {
+		case LITERAL_uniqueidentifierstr:
+		{
+			AST tmp527_AST = null;
+			tmp527_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp527_AST);
+			match(LITERAL_uniqueidentifierstr);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_bigint:
+		{
+			AST tmp528_AST = null;
+			tmp528_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp528_AST);
+			match(LITERAL_bigint);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_int:
+		{
+			AST tmp529_AST = null;
+			tmp529_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp529_AST);
+			match(LITERAL_int);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_integer:
+		{
+			AST tmp530_AST = null;
+			tmp530_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp530_AST);
+			match(LITERAL_integer);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_smallint:
+		{
+			AST tmp531_AST = null;
+			tmp531_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp531_AST);
+			match(LITERAL_smallint);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_tinyint:
+		{
+			AST tmp532_AST = null;
+			tmp532_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp532_AST);
+			match(LITERAL_tinyint);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_double:
+		{
+			AST tmp533_AST = null;
+			tmp533_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp533_AST);
+			match(LITERAL_double);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_real:
+		{
+			AST tmp534_AST = null;
+			tmp534_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp534_AST);
+			match(LITERAL_real);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_date:
+		{
+			AST tmp535_AST = null;
+			tmp535_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp535_AST);
+			match(LITERAL_date);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_datetime:
+		{
+			AST tmp536_AST = null;
+			tmp536_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp536_AST);
+			match(LITERAL_datetime);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_smalldatetime:
+		{
+			AST tmp537_AST = null;
+			tmp537_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp537_AST);
+			match(LITERAL_smalldatetime);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_time:
+		{
+			AST tmp538_AST = null;
+			tmp538_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp538_AST);
+			match(LITERAL_time);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_timestamp:
+		{
+			AST tmp539_AST = null;
+			tmp539_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp539_AST);
+			match(LITERAL_timestamp);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_bit:
+		{
+			AST tmp540_AST = null;
+			tmp540_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp540_AST);
+			match(LITERAL_bit);
+			data_type_word_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = data_type_word_AST;
+	}
+	
+	public final void datatype_precision_or_scale_or_maxlength() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST datatype_precision_or_scale_or_maxlength_AST = null;
+		
+		if ((LA(1)==REAL_NUM) && (LA(2)==COMMA)) {
+			AST tmp541_AST = null;
+			tmp541_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp541_AST);
+			match(REAL_NUM);
+			AST tmp542_AST = null;
+			tmp542_AST = astFactory.create(LT(1));
+			astFactory.makeASTRoot(currentAST, tmp542_AST);
+			match(COMMA);
+			AST tmp543_AST = null;
+			tmp543_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp543_AST);
+			match(REAL_NUM);
+			datatype_precision_or_scale_or_maxlength_AST = (AST)currentAST.root;
+		}
+		else if ((LA(1)==REAL_NUM) && (LA(2)==RPAREN)) {
+			AST tmp544_AST = null;
+			tmp544_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp544_AST);
+			match(REAL_NUM);
+			datatype_precision_or_scale_or_maxlength_AST = (AST)currentAST.root;
+		}
+		else {
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		
+		returnAST = datatype_precision_or_scale_or_maxlength_AST;
+	}
+	
+	public final void constexpset() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST constexpset_AST = null;
+		
+		constant();
+		astFactory.addASTChild(currentAST, returnAST);
+		{
+		_loop95:
+		do {
+			if ((LA(1)==COMMA)) {
+				AST tmp545_AST = null;
+				tmp545_AST = astFactory.create(LT(1));
+				astFactory.makeASTRoot(currentAST, tmp545_AST);
+				match(COMMA);
+				constant();
+				astFactory.addASTChild(currentAST, returnAST);
+			}
+			else {
+				break _loop95;
+			}
+			
+		} while (true);
+		}
+		constexpset_AST = (AST)currentAST.root;
+		returnAST = constexpset_AST;
+	}
+	
+	public final void subquery() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST subquery_AST = null;
+		
+		AST tmp546_AST = null;
+		tmp546_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp546_AST);
+		match(LPAREN);
+		select_statement();
+		astFactory.addASTChild(currentAST, returnAST);
+		AST tmp547_AST = null;
+		tmp547_AST = astFactory.create(LT(1));
+		astFactory.addASTChild(currentAST, tmp547_AST);
+		match(RPAREN);
+		if ( inputState.guessing==0 ) {
+			subquery_AST = (AST)currentAST.root;
+			subquery_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(SUBQUERY,"subquery")).add(subquery_AST));
+			currentAST.root = subquery_AST;
+			currentAST.child = subquery_AST!=null &&subquery_AST.getFirstChild()!=null ?
+				subquery_AST.getFirstChild() : subquery_AST;
+			currentAST.advanceChildToEnd();
+		}
+		subquery_AST = (AST)currentAST.root;
+		returnAST = subquery_AST;
+	}
+	
+	public final void sfield_name() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST sfield_name_AST = null;
+		
+		if ((LA(1)==ID) && (LA(2)==LPAREN) && (LA(3)==ID) && (LA(4)==RPAREN) && (_tokenSet_39.member(LA(5)))) {
+			AST tmp548_AST = null;
+			tmp548_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp548_AST);
+			match(ID);
+			match(LPAREN);
+			AST tmp550_AST = null;
+			tmp550_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp550_AST);
+			match(ID);
+			match(RPAREN);
+			if ( inputState.guessing==0 ) {
+				sfield_name_AST = (AST)currentAST.root;
+				sfield_name_AST = (AST)astFactory.make( (new ASTArray(2)).add(astFactory.create(PAREN_FIELD,"paren_field")).add(sfield_name_AST));
+				currentAST.root = sfield_name_AST;
+				currentAST.child = sfield_name_AST!=null &&sfield_name_AST.getFirstChild()!=null ?
+					sfield_name_AST.getFirstChild() : sfield_name_AST;
+				currentAST.advanceChildToEnd();
+			}
+			sfield_name_AST = (AST)currentAST.root;
+		}
+		else if ((LA(1)==ID) && (_tokenSet_39.member(LA(2))) && (_tokenSet_25.member(LA(3))) && (_tokenSet_33.member(LA(4))) && (_tokenSet_18.member(LA(5)))) {
+			AST tmp552_AST = null;
+			tmp552_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp552_AST);
+			match(ID);
+			sfield_name_AST = (AST)currentAST.root;
+		}
+		else {
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		
+		returnAST = sfield_name_AST;
+	}
+	
+	public final void date_key_word() throws RecognitionException, TokenStreamException {
+		
+		returnAST = null;
+		ASTPair currentAST = new ASTPair();
+		AST date_key_word_AST = null;
+		
+		switch ( LA(1)) {
+		case LITERAL_year:
+		{
+			AST tmp553_AST = null;
+			tmp553_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp553_AST);
+			match(LITERAL_year);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_yy:
+		{
+			AST tmp554_AST = null;
+			tmp554_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp554_AST);
+			match(LITERAL_yy);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_month:
+		{
+			AST tmp555_AST = null;
+			tmp555_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp555_AST);
+			match(LITERAL_month);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_mm:
+		{
+			AST tmp556_AST = null;
+			tmp556_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp556_AST);
+			match(LITERAL_mm);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_day:
+		{
+			AST tmp557_AST = null;
+			tmp557_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp557_AST);
+			match(LITERAL_day);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_dd:
+		{
+			AST tmp558_AST = null;
+			tmp558_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp558_AST);
+			match(LITERAL_dd);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_quarter:
+		{
+			AST tmp559_AST = null;
+			tmp559_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp559_AST);
+			match(LITERAL_quarter);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_qq:
+		{
+			AST tmp560_AST = null;
+			tmp560_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp560_AST);
+			match(LITERAL_qq);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_week:
+		{
+			AST tmp561_AST = null;
+			tmp561_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp561_AST);
+			match(LITERAL_week);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_wk:
+		{
+			AST tmp562_AST = null;
+			tmp562_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp562_AST);
+			match(LITERAL_wk);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_dayofyear:
+		{
+			AST tmp563_AST = null;
+			tmp563_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp563_AST);
+			match(LITERAL_dayofyear);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_dy:
+		{
+			AST tmp564_AST = null;
+			tmp564_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp564_AST);
+			match(LITERAL_dy);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_weekday:
+		{
+			AST tmp565_AST = null;
+			tmp565_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp565_AST);
+			match(LITERAL_weekday);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_dw:
+		{
+			AST tmp566_AST = null;
+			tmp566_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp566_AST);
+			match(LITERAL_dw);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_hour:
+		{
+			AST tmp567_AST = null;
+			tmp567_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp567_AST);
+			match(LITERAL_hour);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_hh:
+		{
+			AST tmp568_AST = null;
+			tmp568_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp568_AST);
+			match(LITERAL_hh);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_minute:
+		{
+			AST tmp569_AST = null;
+			tmp569_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp569_AST);
+			match(LITERAL_minute);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_mi:
+		{
+			AST tmp570_AST = null;
+			tmp570_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp570_AST);
+			match(LITERAL_mi);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_second:
+		{
+			AST tmp571_AST = null;
+			tmp571_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp571_AST);
+			match(LITERAL_second);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_ss:
+		{
+			AST tmp572_AST = null;
+			tmp572_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp572_AST);
+			match(LITERAL_ss);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_millisecond:
+		{
+			AST tmp573_AST = null;
+			tmp573_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp573_AST);
+			match(LITERAL_millisecond);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_ms:
+		{
+			AST tmp574_AST = null;
+			tmp574_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp574_AST);
+			match(LITERAL_ms);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_calweekofyear:
+		{
+			AST tmp575_AST = null;
+			tmp575_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp575_AST);
+			match(LITERAL_calweekofyear);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_cwk:
+		{
+			AST tmp576_AST = null;
+			tmp576_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp576_AST);
+			match(LITERAL_cwk);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_calyearofweek:
+		{
+			AST tmp577_AST = null;
+			tmp577_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp577_AST);
+			match(LITERAL_calyearofweek);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_cyr:
+		{
+			AST tmp578_AST = null;
+			tmp578_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp578_AST);
+			match(LITERAL_cyr);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_caldayofweek:
+		{
+			AST tmp579_AST = null;
+			tmp579_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp579_AST);
+			match(LITERAL_caldayofweek);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_cdw:
+		{
+			AST tmp580_AST = null;
+			tmp580_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp580_AST);
+			match(LITERAL_cdw);
+			date_key_word_AST = (AST)currentAST.root;
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		}
+		returnAST = date_key_word_AST;
 	}
 	
 	public final void number_function() throws RecognitionException, TokenStreamException {
@@ -3398,442 +3773,442 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case LITERAL_abs:
 		{
-			AST tmp532_AST = null;
-			tmp532_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp532_AST);
+			AST tmp581_AST = null;
+			tmp581_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp581_AST);
 			match(LITERAL_abs);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 115:
+		case 120:
 		{
-			AST tmp533_AST = null;
-			tmp533_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp533_AST);
-			match(115);
+			AST tmp582_AST = null;
+			tmp582_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp582_AST);
+			match(120);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_acos:
 		{
-			AST tmp534_AST = null;
-			tmp534_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp534_AST);
+			AST tmp583_AST = null;
+			tmp583_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp583_AST);
 			match(LITERAL_acos);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case 117:
-		{
-			AST tmp535_AST = null;
-			tmp535_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp535_AST);
-			match(117);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_asin:
-		{
-			AST tmp536_AST = null;
-			tmp536_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp536_AST);
-			match(LITERAL_asin);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case 119:
-		{
-			AST tmp537_AST = null;
-			tmp537_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp537_AST);
-			match(119);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_atan:
-		{
-			AST tmp538_AST = null;
-			tmp538_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp538_AST);
-			match(LITERAL_atan);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case 121:
-		{
-			AST tmp539_AST = null;
-			tmp539_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp539_AST);
-			match(121);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case 122:
 		{
-			AST tmp540_AST = null;
-			tmp540_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp540_AST);
+			AST tmp584_AST = null;
+			tmp584_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp584_AST);
 			match(122);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 123:
+		case LITERAL_asin:
 		{
-			AST tmp541_AST = null;
-			tmp541_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp541_AST);
-			match(123);
+			AST tmp585_AST = null;
+			tmp585_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp585_AST);
+			match(LITERAL_asin);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case LITERAL_ceiling:
+		case 124:
 		{
-			AST tmp542_AST = null;
-			tmp542_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp542_AST);
-			match(LITERAL_ceiling);
+			AST tmp586_AST = null;
+			tmp586_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp586_AST);
+			match(124);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 125:
+		case LITERAL_atan:
 		{
-			AST tmp543_AST = null;
-			tmp543_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp543_AST);
-			match(125);
+			AST tmp587_AST = null;
+			tmp587_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp587_AST);
+			match(LITERAL_atan);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case LITERAL_cos:
+		case 126:
 		{
-			AST tmp544_AST = null;
-			tmp544_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp544_AST);
-			match(LITERAL_cos);
+			AST tmp588_AST = null;
+			tmp588_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp588_AST);
+			match(126);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case 127:
 		{
-			AST tmp545_AST = null;
-			tmp545_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp545_AST);
+			AST tmp589_AST = null;
+			tmp589_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp589_AST);
 			match(127);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case 128:
+		{
+			AST tmp590_AST = null;
+			tmp590_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp590_AST);
+			match(128);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_ceiling:
+		{
+			AST tmp591_AST = null;
+			tmp591_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp591_AST);
+			match(LITERAL_ceiling);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case 130:
+		{
+			AST tmp592_AST = null;
+			tmp592_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp592_AST);
+			match(130);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_cos:
+		{
+			AST tmp593_AST = null;
+			tmp593_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp593_AST);
+			match(LITERAL_cos);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case 132:
+		{
+			AST tmp594_AST = null;
+			tmp594_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp594_AST);
+			match(132);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_cot:
 		{
-			AST tmp546_AST = null;
-			tmp546_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp546_AST);
+			AST tmp595_AST = null;
+			tmp595_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp595_AST);
 			match(LITERAL_cot);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 129:
+		case 134:
 		{
-			AST tmp547_AST = null;
-			tmp547_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp547_AST);
-			match(129);
+			AST tmp596_AST = null;
+			tmp596_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp596_AST);
+			match(134);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_degrees:
 		{
-			AST tmp548_AST = null;
-			tmp548_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp548_AST);
+			AST tmp597_AST = null;
+			tmp597_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp597_AST);
 			match(LITERAL_degrees);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 131:
+		case 136:
 		{
-			AST tmp549_AST = null;
-			tmp549_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp549_AST);
-			match(131);
+			AST tmp598_AST = null;
+			tmp598_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp598_AST);
+			match(136);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_exp:
 		{
-			AST tmp550_AST = null;
-			tmp550_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp550_AST);
+			AST tmp599_AST = null;
+			tmp599_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp599_AST);
 			match(LITERAL_exp);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case 133:
-		{
-			AST tmp551_AST = null;
-			tmp551_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp551_AST);
-			match(133);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_floor:
-		{
-			AST tmp552_AST = null;
-			tmp552_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp552_AST);
-			match(LITERAL_floor);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case 135:
-		{
-			AST tmp553_AST = null;
-			tmp553_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp553_AST);
-			match(135);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_log:
-		{
-			AST tmp554_AST = null;
-			tmp554_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp554_AST);
-			match(LITERAL_log);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case 137:
-		{
-			AST tmp555_AST = null;
-			tmp555_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp555_AST);
-			match(137);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case 138:
 		{
-			AST tmp556_AST = null;
-			tmp556_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp556_AST);
+			AST tmp600_AST = null;
+			tmp600_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp600_AST);
 			match(138);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 139:
+		case LITERAL_floor:
 		{
-			AST tmp557_AST = null;
-			tmp557_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp557_AST);
-			match(139);
+			AST tmp601_AST = null;
+			tmp601_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp601_AST);
+			match(LITERAL_floor);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case LITERAL_mod:
+		case 140:
 		{
-			AST tmp558_AST = null;
-			tmp558_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp558_AST);
-			match(LITERAL_mod);
+			AST tmp602_AST = null;
+			tmp602_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp602_AST);
+			match(140);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 141:
+		case LITERAL_log:
 		{
-			AST tmp559_AST = null;
-			tmp559_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp559_AST);
-			match(141);
+			AST tmp603_AST = null;
+			tmp603_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp603_AST);
+			match(LITERAL_log);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case LITERAL_power:
+		case 142:
 		{
-			AST tmp560_AST = null;
-			tmp560_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp560_AST);
-			match(LITERAL_power);
+			AST tmp604_AST = null;
+			tmp604_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp604_AST);
+			match(142);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case 143:
 		{
-			AST tmp561_AST = null;
-			tmp561_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp561_AST);
+			AST tmp605_AST = null;
+			tmp605_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp605_AST);
 			match(143);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case 144:
+		{
+			AST tmp606_AST = null;
+			tmp606_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp606_AST);
+			match(144);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_mod:
+		{
+			AST tmp607_AST = null;
+			tmp607_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp607_AST);
+			match(LITERAL_mod);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case 146:
+		{
+			AST tmp608_AST = null;
+			tmp608_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp608_AST);
+			match(146);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_power:
+		{
+			AST tmp609_AST = null;
+			tmp609_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp609_AST);
+			match(LITERAL_power);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case 148:
+		{
+			AST tmp610_AST = null;
+			tmp610_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp610_AST);
+			match(148);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_radians:
 		{
-			AST tmp562_AST = null;
-			tmp562_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp562_AST);
+			AST tmp611_AST = null;
+			tmp611_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp611_AST);
 			match(LITERAL_radians);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 145:
+		case 150:
 		{
-			AST tmp563_AST = null;
-			tmp563_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp563_AST);
-			match(145);
+			AST tmp612_AST = null;
+			tmp612_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp612_AST);
+			match(150);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_rand:
 		{
-			AST tmp564_AST = null;
-			tmp564_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp564_AST);
+			AST tmp613_AST = null;
+			tmp613_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp613_AST);
 			match(LITERAL_rand);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 105:
+		case 108:
 		{
-			AST tmp565_AST = null;
-			tmp565_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp565_AST);
-			match(105);
+			AST tmp614_AST = null;
+			tmp614_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp614_AST);
+			match(108);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_remainder:
 		{
-			AST tmp566_AST = null;
-			tmp566_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp566_AST);
+			AST tmp615_AST = null;
+			tmp615_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp615_AST);
 			match(LITERAL_remainder);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 147:
+		case 152:
 		{
-			AST tmp567_AST = null;
-			tmp567_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp567_AST);
-			match(147);
+			AST tmp616_AST = null;
+			tmp616_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp616_AST);
+			match(152);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_round:
 		{
-			AST tmp568_AST = null;
-			tmp568_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp568_AST);
+			AST tmp617_AST = null;
+			tmp617_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp617_AST);
 			match(LITERAL_round);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 149:
+		case 154:
 		{
-			AST tmp569_AST = null;
-			tmp569_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp569_AST);
-			match(149);
+			AST tmp618_AST = null;
+			tmp618_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp618_AST);
+			match(154);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_sign:
 		{
-			AST tmp570_AST = null;
-			tmp570_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp570_AST);
+			AST tmp619_AST = null;
+			tmp619_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp619_AST);
 			match(LITERAL_sign);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 151:
+		case 156:
 		{
-			AST tmp571_AST = null;
-			tmp571_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp571_AST);
-			match(151);
+			AST tmp620_AST = null;
+			tmp620_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp620_AST);
+			match(156);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_sin:
 		{
-			AST tmp572_AST = null;
-			tmp572_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp572_AST);
+			AST tmp621_AST = null;
+			tmp621_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp621_AST);
 			match(LITERAL_sin);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case 153:
-		{
-			AST tmp573_AST = null;
-			tmp573_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp573_AST);
-			match(153);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_sqrt:
-		{
-			AST tmp574_AST = null;
-			tmp574_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp574_AST);
-			match(LITERAL_sqrt);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case 155:
-		{
-			AST tmp575_AST = null;
-			tmp575_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp575_AST);
-			match(155);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_tan:
-		{
-			AST tmp576_AST = null;
-			tmp576_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp576_AST);
-			match(LITERAL_tan);
-			number_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case 157:
-		{
-			AST tmp577_AST = null;
-			tmp577_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp577_AST);
-			match(157);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case 158:
 		{
-			AST tmp578_AST = null;
-			tmp578_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp578_AST);
+			AST tmp622_AST = null;
+			tmp622_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp622_AST);
 			match(158);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case LITERAL_truncnum:
+		case LITERAL_sqrt:
 		{
-			AST tmp579_AST = null;
-			tmp579_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp579_AST);
-			match(LITERAL_truncnum);
+			AST tmp623_AST = null;
+			tmp623_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp623_AST);
+			match(LITERAL_sqrt);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case 160:
 		{
-			AST tmp580_AST = null;
-			tmp580_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp580_AST);
+			AST tmp624_AST = null;
+			tmp624_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp624_AST);
 			match(160);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_tan:
+		{
+			AST tmp625_AST = null;
+			tmp625_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp625_AST);
+			match(LITERAL_tan);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case 162:
+		{
+			AST tmp626_AST = null;
+			tmp626_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp626_AST);
+			match(162);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case 163:
+		{
+			AST tmp627_AST = null;
+			tmp627_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp627_AST);
+			match(163);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case LITERAL_truncnum:
+		{
+			AST tmp628_AST = null;
+			tmp628_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp628_AST);
+			match(LITERAL_truncnum);
+			number_function_AST = (AST)currentAST.root;
+			break;
+		}
+		case 165:
+		{
+			AST tmp629_AST = null;
+			tmp629_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp629_AST);
+			match(165);
 			number_function_AST = (AST)currentAST.root;
 			break;
 		}
@@ -3854,577 +4229,577 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case LITERAL_ascii:
 		{
-			AST tmp581_AST = null;
-			tmp581_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp581_AST);
+			AST tmp630_AST = null;
+			tmp630_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp630_AST);
 			match(LITERAL_ascii);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 162:
+		case 167:
 		{
-			AST tmp582_AST = null;
-			tmp582_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp582_AST);
-			match(162);
+			AST tmp631_AST = null;
+			tmp631_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp631_AST);
+			match(167);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_bit_length:
 		{
-			AST tmp583_AST = null;
-			tmp583_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp583_AST);
+			AST tmp632_AST = null;
+			tmp632_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp632_AST);
 			match(LITERAL_bit_length);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 164:
+		case 169:
 		{
-			AST tmp584_AST = null;
-			tmp584_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp584_AST);
-			match(164);
+			AST tmp633_AST = null;
+			tmp633_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp633_AST);
+			match(169);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_byte_length:
 		{
-			AST tmp585_AST = null;
-			tmp585_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp585_AST);
+			AST tmp634_AST = null;
+			tmp634_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp634_AST);
 			match(LITERAL_byte_length);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 166:
+		case 171:
 		{
-			AST tmp586_AST = null;
-			tmp586_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp586_AST);
-			match(166);
+			AST tmp635_AST = null;
+			tmp635_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp635_AST);
+			match(171);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_char:
 		{
-			AST tmp587_AST = null;
-			tmp587_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp587_AST);
+			AST tmp636_AST = null;
+			tmp636_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp636_AST);
 			match(LITERAL_char);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 168:
+		case 173:
 		{
-			AST tmp588_AST = null;
-			tmp588_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp588_AST);
-			match(168);
+			AST tmp637_AST = null;
+			tmp637_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp637_AST);
+			match(173);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_char_length:
 		{
-			AST tmp589_AST = null;
-			tmp589_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp589_AST);
+			AST tmp638_AST = null;
+			tmp638_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp638_AST);
 			match(LITERAL_char_length);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 170:
+		case 175:
 		{
-			AST tmp590_AST = null;
-			tmp590_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp590_AST);
-			match(170);
+			AST tmp639_AST = null;
+			tmp639_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp639_AST);
+			match(175);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_charindex:
 		{
-			AST tmp591_AST = null;
-			tmp591_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp591_AST);
+			AST tmp640_AST = null;
+			tmp640_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp640_AST);
 			match(LITERAL_charindex);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 172:
+		case 177:
 		{
-			AST tmp592_AST = null;
-			tmp592_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp592_AST);
-			match(172);
+			AST tmp641_AST = null;
+			tmp641_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp641_AST);
+			match(177);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_difference:
 		{
-			AST tmp593_AST = null;
-			tmp593_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp593_AST);
+			AST tmp642_AST = null;
+			tmp642_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp642_AST);
 			match(LITERAL_difference);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 174:
+		case 179:
 		{
-			AST tmp594_AST = null;
-			tmp594_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp594_AST);
-			match(174);
+			AST tmp643_AST = null;
+			tmp643_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp643_AST);
+			match(179);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_insertstr:
 		{
-			AST tmp595_AST = null;
-			tmp595_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp595_AST);
+			AST tmp644_AST = null;
+			tmp644_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp644_AST);
 			match(LITERAL_insertstr);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 176:
+		case 181:
 		{
-			AST tmp596_AST = null;
-			tmp596_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp596_AST);
-			match(176);
+			AST tmp645_AST = null;
+			tmp645_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp645_AST);
+			match(181);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_lcase:
 		{
-			AST tmp597_AST = null;
-			tmp597_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp597_AST);
+			AST tmp646_AST = null;
+			tmp646_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp646_AST);
 			match(LITERAL_lcase);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 178:
+		case 183:
 		{
-			AST tmp598_AST = null;
-			tmp598_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp598_AST);
-			match(178);
+			AST tmp647_AST = null;
+			tmp647_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp647_AST);
+			match(183);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_left:
 		{
-			AST tmp599_AST = null;
-			tmp599_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp599_AST);
+			AST tmp648_AST = null;
+			tmp648_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp648_AST);
 			match(LITERAL_left);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 180:
+		case 185:
 		{
-			AST tmp600_AST = null;
-			tmp600_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp600_AST);
-			match(180);
+			AST tmp649_AST = null;
+			tmp649_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp649_AST);
+			match(185);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_length:
 		{
-			AST tmp601_AST = null;
-			tmp601_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp601_AST);
+			AST tmp650_AST = null;
+			tmp650_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp650_AST);
 			match(LITERAL_length);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 182:
+		case 187:
 		{
-			AST tmp602_AST = null;
-			tmp602_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp602_AST);
-			match(182);
+			AST tmp651_AST = null;
+			tmp651_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp651_AST);
+			match(187);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_locate:
 		{
-			AST tmp603_AST = null;
-			tmp603_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp603_AST);
+			AST tmp652_AST = null;
+			tmp652_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp652_AST);
 			match(LITERAL_locate);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 184:
+		case 189:
 		{
-			AST tmp604_AST = null;
-			tmp604_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp604_AST);
-			match(184);
+			AST tmp653_AST = null;
+			tmp653_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp653_AST);
+			match(189);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_lower:
 		{
-			AST tmp605_AST = null;
-			tmp605_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp605_AST);
+			AST tmp654_AST = null;
+			tmp654_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp654_AST);
 			match(LITERAL_lower);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 186:
+		case 191:
 		{
-			AST tmp606_AST = null;
-			tmp606_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp606_AST);
-			match(186);
+			AST tmp655_AST = null;
+			tmp655_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp655_AST);
+			match(191);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_ltrim:
 		{
-			AST tmp607_AST = null;
-			tmp607_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp607_AST);
+			AST tmp656_AST = null;
+			tmp656_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp656_AST);
 			match(LITERAL_ltrim);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 188:
+		case 193:
 		{
-			AST tmp608_AST = null;
-			tmp608_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp608_AST);
-			match(188);
+			AST tmp657_AST = null;
+			tmp657_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp657_AST);
+			match(193);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_octet_length:
 		{
-			AST tmp609_AST = null;
-			tmp609_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp609_AST);
+			AST tmp658_AST = null;
+			tmp658_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp658_AST);
 			match(LITERAL_octet_length);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 190:
+		case 195:
 		{
-			AST tmp610_AST = null;
-			tmp610_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp610_AST);
-			match(190);
+			AST tmp659_AST = null;
+			tmp659_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp659_AST);
+			match(195);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_patindex:
 		{
-			AST tmp611_AST = null;
-			tmp611_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp611_AST);
+			AST tmp660_AST = null;
+			tmp660_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp660_AST);
 			match(LITERAL_patindex);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 192:
+		case 197:
 		{
-			AST tmp612_AST = null;
-			tmp612_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp612_AST);
-			match(192);
+			AST tmp661_AST = null;
+			tmp661_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp661_AST);
+			match(197);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_repeat:
 		{
-			AST tmp613_AST = null;
-			tmp613_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp613_AST);
+			AST tmp662_AST = null;
+			tmp662_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp662_AST);
 			match(LITERAL_repeat);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 194:
+		case 199:
 		{
-			AST tmp614_AST = null;
-			tmp614_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp614_AST);
-			match(194);
+			AST tmp663_AST = null;
+			tmp663_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp663_AST);
+			match(199);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_replace:
 		{
-			AST tmp615_AST = null;
-			tmp615_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp615_AST);
+			AST tmp664_AST = null;
+			tmp664_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp664_AST);
 			match(LITERAL_replace);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 196:
+		case 201:
 		{
-			AST tmp616_AST = null;
-			tmp616_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp616_AST);
-			match(196);
+			AST tmp665_AST = null;
+			tmp665_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp665_AST);
+			match(201);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_replicate:
 		{
-			AST tmp617_AST = null;
-			tmp617_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp617_AST);
+			AST tmp666_AST = null;
+			tmp666_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp666_AST);
 			match(LITERAL_replicate);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 198:
+		case 203:
 		{
-			AST tmp618_AST = null;
-			tmp618_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp618_AST);
-			match(198);
+			AST tmp667_AST = null;
+			tmp667_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp667_AST);
+			match(203);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_right:
 		{
-			AST tmp619_AST = null;
-			tmp619_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp619_AST);
+			AST tmp668_AST = null;
+			tmp668_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp668_AST);
 			match(LITERAL_right);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 200:
+		case 205:
 		{
-			AST tmp620_AST = null;
-			tmp620_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp620_AST);
-			match(200);
+			AST tmp669_AST = null;
+			tmp669_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp669_AST);
+			match(205);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_rtrim:
 		{
-			AST tmp621_AST = null;
-			tmp621_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp621_AST);
+			AST tmp670_AST = null;
+			tmp670_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp670_AST);
 			match(LITERAL_rtrim);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 202:
+		case 207:
 		{
-			AST tmp622_AST = null;
-			tmp622_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp622_AST);
-			match(202);
+			AST tmp671_AST = null;
+			tmp671_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp671_AST);
+			match(207);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_similar:
 		{
-			AST tmp623_AST = null;
-			tmp623_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp623_AST);
+			AST tmp672_AST = null;
+			tmp672_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp672_AST);
 			match(LITERAL_similar);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 204:
+		case 209:
 		{
-			AST tmp624_AST = null;
-			tmp624_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp624_AST);
-			match(204);
+			AST tmp673_AST = null;
+			tmp673_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp673_AST);
+			match(209);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_sortkey:
 		{
-			AST tmp625_AST = null;
-			tmp625_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp625_AST);
+			AST tmp674_AST = null;
+			tmp674_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp674_AST);
 			match(LITERAL_sortkey);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 206:
+		case 211:
 		{
-			AST tmp626_AST = null;
-			tmp626_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp626_AST);
-			match(206);
+			AST tmp675_AST = null;
+			tmp675_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp675_AST);
+			match(211);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_soundex:
 		{
-			AST tmp627_AST = null;
-			tmp627_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp627_AST);
+			AST tmp676_AST = null;
+			tmp676_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp676_AST);
 			match(LITERAL_soundex);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 208:
+		case 213:
 		{
-			AST tmp628_AST = null;
-			tmp628_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp628_AST);
-			match(208);
+			AST tmp677_AST = null;
+			tmp677_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp677_AST);
+			match(213);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_space:
 		{
-			AST tmp629_AST = null;
-			tmp629_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp629_AST);
+			AST tmp678_AST = null;
+			tmp678_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp678_AST);
 			match(LITERAL_space);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 210:
+		case 215:
 		{
-			AST tmp630_AST = null;
-			tmp630_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp630_AST);
-			match(210);
+			AST tmp679_AST = null;
+			tmp679_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp679_AST);
+			match(215);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_str:
 		{
-			AST tmp631_AST = null;
-			tmp631_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp631_AST);
+			AST tmp680_AST = null;
+			tmp680_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp680_AST);
 			match(LITERAL_str);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 212:
+		case 217:
 		{
-			AST tmp632_AST = null;
-			tmp632_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp632_AST);
-			match(212);
+			AST tmp681_AST = null;
+			tmp681_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp681_AST);
+			match(217);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_string:
 		{
-			AST tmp633_AST = null;
-			tmp633_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp633_AST);
+			AST tmp682_AST = null;
+			tmp682_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp682_AST);
 			match(LITERAL_string);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 214:
+		case 219:
 		{
-			AST tmp634_AST = null;
-			tmp634_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp634_AST);
-			match(214);
+			AST tmp683_AST = null;
+			tmp683_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp683_AST);
+			match(219);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_stuff:
 		{
-			AST tmp635_AST = null;
-			tmp635_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp635_AST);
+			AST tmp684_AST = null;
+			tmp684_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp684_AST);
 			match(LITERAL_stuff);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 216:
+		case 221:
 		{
-			AST tmp636_AST = null;
-			tmp636_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp636_AST);
-			match(216);
+			AST tmp685_AST = null;
+			tmp685_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp685_AST);
+			match(221);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_substring:
 		{
-			AST tmp637_AST = null;
-			tmp637_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp637_AST);
+			AST tmp686_AST = null;
+			tmp686_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp686_AST);
 			match(LITERAL_substring);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 218:
+		case 223:
 		{
-			AST tmp638_AST = null;
-			tmp638_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp638_AST);
-			match(218);
+			AST tmp687_AST = null;
+			tmp687_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp687_AST);
+			match(223);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_trim:
 		{
-			AST tmp639_AST = null;
-			tmp639_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp639_AST);
+			AST tmp688_AST = null;
+			tmp688_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp688_AST);
 			match(LITERAL_trim);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 220:
+		case 225:
 		{
-			AST tmp640_AST = null;
-			tmp640_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp640_AST);
-			match(220);
+			AST tmp689_AST = null;
+			tmp689_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp689_AST);
+			match(225);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_ucase:
 		{
-			AST tmp641_AST = null;
-			tmp641_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp641_AST);
+			AST tmp690_AST = null;
+			tmp690_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp690_AST);
 			match(LITERAL_ucase);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 222:
+		case 227:
 		{
-			AST tmp642_AST = null;
-			tmp642_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp642_AST);
-			match(222);
+			AST tmp691_AST = null;
+			tmp691_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp691_AST);
+			match(227);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_upper:
 		{
-			AST tmp643_AST = null;
-			tmp643_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp643_AST);
+			AST tmp692_AST = null;
+			tmp692_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp692_AST);
 			match(LITERAL_upper);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 224:
+		case 229:
 		{
-			AST tmp644_AST = null;
-			tmp644_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp644_AST);
-			match(224);
+			AST tmp693_AST = null;
+			tmp693_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp693_AST);
+			match(229);
 			string_function_AST = (AST)currentAST.root;
 			break;
 		}
@@ -4445,451 +4820,451 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case LITERAL_dateformat:
 		{
-			AST tmp645_AST = null;
-			tmp645_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp645_AST);
+			AST tmp694_AST = null;
+			tmp694_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp694_AST);
 			match(LITERAL_dateformat);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 226:
+		case 231:
 		{
-			AST tmp646_AST = null;
-			tmp646_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp646_AST);
-			match(226);
+			AST tmp695_AST = null;
+			tmp695_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp695_AST);
+			match(231);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_datename:
 		{
-			AST tmp647_AST = null;
-			tmp647_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp647_AST);
+			AST tmp696_AST = null;
+			tmp696_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp696_AST);
 			match(LITERAL_datename);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 228:
+		case 233:
 		{
-			AST tmp648_AST = null;
-			tmp648_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp648_AST);
-			match(228);
+			AST tmp697_AST = null;
+			tmp697_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp697_AST);
+			match(233);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_datepart:
 		{
-			AST tmp649_AST = null;
-			tmp649_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp649_AST);
+			AST tmp698_AST = null;
+			tmp698_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp698_AST);
 			match(LITERAL_datepart);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 230:
+		case 235:
 		{
-			AST tmp650_AST = null;
-			tmp650_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp650_AST);
-			match(230);
+			AST tmp699_AST = null;
+			tmp699_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp699_AST);
+			match(235);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_datetime:
 		{
-			AST tmp651_AST = null;
-			tmp651_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp651_AST);
+			AST tmp700_AST = null;
+			tmp700_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp700_AST);
 			match(LITERAL_datetime);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 232:
+		case 237:
 		{
-			AST tmp652_AST = null;
-			tmp652_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp652_AST);
-			match(232);
+			AST tmp701_AST = null;
+			tmp701_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp701_AST);
+			match(237);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_date:
 		{
-			AST tmp653_AST = null;
-			tmp653_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp653_AST);
+			AST tmp702_AST = null;
+			tmp702_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp702_AST);
 			match(LITERAL_date);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 234:
+		case 239:
 		{
-			AST tmp654_AST = null;
-			tmp654_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp654_AST);
-			match(234);
+			AST tmp703_AST = null;
+			tmp703_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp703_AST);
+			match(239);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_dayname:
 		{
-			AST tmp655_AST = null;
-			tmp655_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp655_AST);
+			AST tmp704_AST = null;
+			tmp704_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp704_AST);
 			match(LITERAL_dayname);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 236:
+		case 241:
 		{
-			AST tmp656_AST = null;
-			tmp656_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp656_AST);
-			match(236);
+			AST tmp705_AST = null;
+			tmp705_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp705_AST);
+			match(241);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_days:
 		{
-			AST tmp657_AST = null;
-			tmp657_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp657_AST);
+			AST tmp706_AST = null;
+			tmp706_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp706_AST);
 			match(LITERAL_days);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 238:
+		case 243:
 		{
-			AST tmp658_AST = null;
-			tmp658_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp658_AST);
-			match(238);
+			AST tmp707_AST = null;
+			tmp707_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp707_AST);
+			match(243);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_day:
 		{
-			AST tmp659_AST = null;
-			tmp659_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp659_AST);
+			AST tmp708_AST = null;
+			tmp708_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp708_AST);
 			match(LITERAL_day);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 240:
+		case 245:
 		{
-			AST tmp660_AST = null;
-			tmp660_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp660_AST);
-			match(240);
+			AST tmp709_AST = null;
+			tmp709_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp709_AST);
+			match(245);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_dow:
 		{
-			AST tmp661_AST = null;
-			tmp661_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp661_AST);
+			AST tmp710_AST = null;
+			tmp710_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp710_AST);
 			match(LITERAL_dow);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 242:
+		case 247:
 		{
-			AST tmp662_AST = null;
-			tmp662_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp662_AST);
-			match(242);
+			AST tmp711_AST = null;
+			tmp711_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp711_AST);
+			match(247);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_hours:
 		{
-			AST tmp663_AST = null;
-			tmp663_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp663_AST);
+			AST tmp712_AST = null;
+			tmp712_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp712_AST);
 			match(LITERAL_hours);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 244:
+		case 249:
 		{
-			AST tmp664_AST = null;
-			tmp664_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp664_AST);
-			match(244);
+			AST tmp713_AST = null;
+			tmp713_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp713_AST);
+			match(249);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_hour:
 		{
-			AST tmp665_AST = null;
-			tmp665_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp665_AST);
+			AST tmp714_AST = null;
+			tmp714_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp714_AST);
 			match(LITERAL_hour);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 246:
+		case 251:
 		{
-			AST tmp666_AST = null;
-			tmp666_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp666_AST);
-			match(246);
+			AST tmp715_AST = null;
+			tmp715_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp715_AST);
+			match(251);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_minutes:
 		{
-			AST tmp667_AST = null;
-			tmp667_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp667_AST);
+			AST tmp716_AST = null;
+			tmp716_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp716_AST);
 			match(LITERAL_minutes);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 248:
+		case 253:
 		{
-			AST tmp668_AST = null;
-			tmp668_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp668_AST);
-			match(248);
+			AST tmp717_AST = null;
+			tmp717_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp717_AST);
+			match(253);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_minute:
 		{
-			AST tmp669_AST = null;
-			tmp669_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp669_AST);
+			AST tmp718_AST = null;
+			tmp718_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp718_AST);
 			match(LITERAL_minute);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 250:
+		case 255:
 		{
-			AST tmp670_AST = null;
-			tmp670_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp670_AST);
-			match(250);
+			AST tmp719_AST = null;
+			tmp719_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp719_AST);
+			match(255);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_monthname:
 		{
-			AST tmp671_AST = null;
-			tmp671_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp671_AST);
+			AST tmp720_AST = null;
+			tmp720_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp720_AST);
 			match(LITERAL_monthname);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 252:
+		case 257:
 		{
-			AST tmp672_AST = null;
-			tmp672_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp672_AST);
-			match(252);
+			AST tmp721_AST = null;
+			tmp721_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp721_AST);
+			match(257);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_months:
 		{
-			AST tmp673_AST = null;
-			tmp673_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp673_AST);
+			AST tmp722_AST = null;
+			tmp722_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp722_AST);
 			match(LITERAL_months);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 254:
+		case 259:
 		{
-			AST tmp674_AST = null;
-			tmp674_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp674_AST);
-			match(254);
+			AST tmp723_AST = null;
+			tmp723_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp723_AST);
+			match(259);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_month:
 		{
-			AST tmp675_AST = null;
-			tmp675_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp675_AST);
+			AST tmp724_AST = null;
+			tmp724_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp724_AST);
 			match(LITERAL_month);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 256:
+		case 261:
 		{
-			AST tmp676_AST = null;
-			tmp676_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp676_AST);
-			match(256);
+			AST tmp725_AST = null;
+			tmp725_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp725_AST);
+			match(261);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_quarter:
 		{
-			AST tmp677_AST = null;
-			tmp677_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp677_AST);
+			AST tmp726_AST = null;
+			tmp726_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp726_AST);
 			match(LITERAL_quarter);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 258:
+		case 263:
 		{
-			AST tmp678_AST = null;
-			tmp678_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp678_AST);
-			match(258);
+			AST tmp727_AST = null;
+			tmp727_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp727_AST);
+			match(263);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_seconds:
 		{
-			AST tmp679_AST = null;
-			tmp679_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp679_AST);
+			AST tmp728_AST = null;
+			tmp728_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp728_AST);
 			match(LITERAL_seconds);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 260:
+		case 265:
 		{
-			AST tmp680_AST = null;
-			tmp680_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp680_AST);
-			match(260);
+			AST tmp729_AST = null;
+			tmp729_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp729_AST);
+			match(265);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_second:
 		{
-			AST tmp681_AST = null;
-			tmp681_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp681_AST);
+			AST tmp730_AST = null;
+			tmp730_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp730_AST);
 			match(LITERAL_second);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 262:
+		case 267:
 		{
-			AST tmp682_AST = null;
-			tmp682_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp682_AST);
-			match(262);
+			AST tmp731_AST = null;
+			tmp731_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp731_AST);
+			match(267);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_weeks:
 		{
-			AST tmp683_AST = null;
-			tmp683_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp683_AST);
+			AST tmp732_AST = null;
+			tmp732_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp732_AST);
 			match(LITERAL_weeks);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 264:
+		case 269:
 		{
-			AST tmp684_AST = null;
-			tmp684_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp684_AST);
-			match(264);
+			AST tmp733_AST = null;
+			tmp733_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp733_AST);
+			match(269);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_years:
 		{
-			AST tmp685_AST = null;
-			tmp685_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp685_AST);
+			AST tmp734_AST = null;
+			tmp734_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp734_AST);
 			match(LITERAL_years);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 266:
+		case 271:
 		{
-			AST tmp686_AST = null;
-			tmp686_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp686_AST);
-			match(266);
+			AST tmp735_AST = null;
+			tmp735_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp735_AST);
+			match(271);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_year:
 		{
-			AST tmp687_AST = null;
-			tmp687_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp687_AST);
+			AST tmp736_AST = null;
+			tmp736_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp736_AST);
 			match(LITERAL_year);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 268:
+		case 273:
 		{
-			AST tmp688_AST = null;
-			tmp688_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp688_AST);
-			match(268);
+			AST tmp737_AST = null;
+			tmp737_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp737_AST);
+			match(273);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_ymd:
 		{
-			AST tmp689_AST = null;
-			tmp689_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp689_AST);
+			AST tmp738_AST = null;
+			tmp738_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp738_AST);
 			match(LITERAL_ymd);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 270:
+		case 275:
 		{
-			AST tmp690_AST = null;
-			tmp690_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp690_AST);
-			match(270);
+			AST tmp739_AST = null;
+			tmp739_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp739_AST);
+			match(275);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_dateadd:
 		{
-			AST tmp691_AST = null;
-			tmp691_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp691_AST);
+			AST tmp740_AST = null;
+			tmp740_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp740_AST);
 			match(LITERAL_dateadd);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 272:
+		case 277:
 		{
-			AST tmp692_AST = null;
-			tmp692_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp692_AST);
-			match(272);
+			AST tmp741_AST = null;
+			tmp741_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp741_AST);
+			match(277);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_datediff:
 		{
-			AST tmp693_AST = null;
-			tmp693_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp693_AST);
+			AST tmp742_AST = null;
+			tmp742_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp742_AST);
 			match(LITERAL_datediff);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 274:
+		case 279:
 		{
-			AST tmp694_AST = null;
-			tmp694_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp694_AST);
-			match(274);
+			AST tmp743_AST = null;
+			tmp743_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp743_AST);
+			match(279);
 			datetime_function_AST = (AST)currentAST.root;
 			break;
 		}
@@ -4910,109 +5285,73 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case LITERAL_hextoint:
 		{
-			AST tmp695_AST = null;
-			tmp695_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp695_AST);
+			AST tmp744_AST = null;
+			tmp744_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp744_AST);
 			match(LITERAL_hextoint);
 			conversion_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 276:
+		case 281:
 		{
-			AST tmp696_AST = null;
-			tmp696_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp696_AST);
-			match(276);
+			AST tmp745_AST = null;
+			tmp745_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp745_AST);
+			match(281);
 			conversion_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_inttohex:
 		{
-			AST tmp697_AST = null;
-			tmp697_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp697_AST);
+			AST tmp746_AST = null;
+			tmp746_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp746_AST);
 			match(LITERAL_inttohex);
 			conversion_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 278:
+		case 283:
 		{
-			AST tmp698_AST = null;
-			tmp698_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp698_AST);
-			match(278);
+			AST tmp747_AST = null;
+			tmp747_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp747_AST);
+			match(283);
 			conversion_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_isdate:
 		{
-			AST tmp699_AST = null;
-			tmp699_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp699_AST);
+			AST tmp748_AST = null;
+			tmp748_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp748_AST);
 			match(LITERAL_isdate);
 			conversion_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 280:
+		case 285:
 		{
-			AST tmp700_AST = null;
-			tmp700_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp700_AST);
-			match(280);
+			AST tmp749_AST = null;
+			tmp749_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp749_AST);
+			match(285);
 			conversion_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_isnumeric:
 		{
-			AST tmp701_AST = null;
-			tmp701_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp701_AST);
+			AST tmp750_AST = null;
+			tmp750_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp750_AST);
 			match(LITERAL_isnumeric);
 			conversion_function_AST = (AST)currentAST.root;
 			break;
 		}
-		case 282:
+		case 287:
 		{
-			AST tmp702_AST = null;
-			tmp702_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp702_AST);
-			match(282);
-			conversion_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_cast:
-		{
-			AST tmp703_AST = null;
-			tmp703_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp703_AST);
-			match(LITERAL_cast);
-			conversion_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case 113:
-		{
-			AST tmp704_AST = null;
-			tmp704_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp704_AST);
-			match(113);
-			conversion_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case LITERAL_convert:
-		{
-			AST tmp705_AST = null;
-			tmp705_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp705_AST);
-			match(LITERAL_convert);
-			conversion_function_AST = (AST)currentAST.root;
-			break;
-		}
-		case 284:
-		{
-			AST tmp706_AST = null;
-			tmp706_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp706_AST);
-			match(284);
+			AST tmp751_AST = null;
+			tmp751_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp751_AST);
+			match(287);
 			conversion_function_AST = (AST)currentAST.root;
 			break;
 		}
@@ -5033,36 +5372,36 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case LITERAL_suser_id:
 		{
-			AST tmp707_AST = null;
-			tmp707_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp707_AST);
+			AST tmp752_AST = null;
+			tmp752_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp752_AST);
 			match(LITERAL_suser_id);
 			system_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_suser_name:
 		{
-			AST tmp708_AST = null;
-			tmp708_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp708_AST);
+			AST tmp753_AST = null;
+			tmp753_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp753_AST);
 			match(LITERAL_suser_name);
 			system_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_user_id:
 		{
-			AST tmp709_AST = null;
-			tmp709_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp709_AST);
+			AST tmp754_AST = null;
+			tmp754_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp754_AST);
 			match(LITERAL_user_id);
 			system_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_user_name:
 		{
-			AST tmp710_AST = null;
-			tmp710_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp710_AST);
+			AST tmp755_AST = null;
+			tmp755_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp755_AST);
 			match(LITERAL_user_name);
 			system_function_AST = (AST)currentAST.root;
 			break;
@@ -5084,18 +5423,18 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case LITERAL_argn:
 		{
-			AST tmp711_AST = null;
-			tmp711_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp711_AST);
+			AST tmp756_AST = null;
+			tmp756_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp756_AST);
 			match(LITERAL_argn);
 			other_function_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_rowid:
 		{
-			AST tmp712_AST = null;
-			tmp712_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp712_AST);
+			AST tmp757_AST = null;
+			tmp757_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp757_AST);
 			match(LITERAL_rowid);
 			other_function_AST = (AST)currentAST.root;
 			break;
@@ -5117,37 +5456,37 @@ inputState.guessing--;
 		switch ( LA(1)) {
 		case LITERAL_and:
 		{
-			AST tmp713_AST = null;
-			tmp713_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp713_AST);
+			AST tmp758_AST = null;
+			tmp758_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp758_AST);
 			match(LITERAL_and);
 			logic_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case LITERAL_or:
 		{
-			AST tmp714_AST = null;
-			tmp714_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp714_AST);
+			AST tmp759_AST = null;
+			tmp759_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp759_AST);
 			match(LITERAL_or);
-			logic_op_AST = (AST)currentAST.root;
-			break;
-		}
-		case 56:
-		{
-			AST tmp715_AST = null;
-			tmp715_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp715_AST);
-			match(56);
 			logic_op_AST = (AST)currentAST.root;
 			break;
 		}
 		case 57:
 		{
-			AST tmp716_AST = null;
-			tmp716_AST = astFactory.create(LT(1));
-			astFactory.addASTChild(currentAST, tmp716_AST);
+			AST tmp760_AST = null;
+			tmp760_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp760_AST);
 			match(57);
+			logic_op_AST = (AST)currentAST.root;
+			break;
+		}
+		case 58:
+		{
+			AST tmp761_AST = null;
+			tmp761_AST = astFactory.create(LT(1));
+			astFactory.addASTChild(currentAST, tmp761_AST);
+			match(58);
 			logic_op_AST = (AST)currentAST.root;
 			break;
 		}
@@ -5174,9 +5513,9 @@ inputState.guessing--;
 		"FUNCTION",
 		"FUNCTION_EMPTY_PARAM",
 		"FUNCTION_STAR_PARAM",
-		"FUNCTION_CONVERSION_AS",
 		"FUNCTION_STAR_COUNT",
-		"AS_PARAMETERS",
+		"FUNCTION_DATA_TYPE",
+		"FUNCTION_AS_DATA_TYPE",
 		"LOGIC_OP",
 		"LOGICAL_NULL",
 		"LOGICAL_NOT_NULL",
@@ -5190,6 +5529,7 @@ inputState.guessing--;
 		"SUBCONTAIN_OP",
 		"ALL_FIELDS",
 		"PAREN_FIELD",
+		"PAREN_DATA_TYPE",
 		"LOGIC_BLOCK",
 		"COLUMN",
 		"WHERE",
@@ -5241,16 +5581,18 @@ inputState.guessing--;
 		"\"in\"",
 		"\"\\u5728\\u4e8e\"",
 		"\"\\u4e0d\\u5728\\u4e8e\"",
-		"PARAM_ID",
-		"ID",
-		"QUOTED_STRING",
-		"POINT",
-		"REAL_NUM",
-		"NEGATIVE_DIGIT_ELEMENT",
 		"\"\\u6c42\\u8bb0\\u5f55\\u603b\\u6570\"",
 		"\"count\"",
 		"\"all\"",
 		"\"\\u5168\\u90e8\"",
+		"\"\\u4e3a\"",
+		"DATA_TYPE_STRING",
+		"REAL_NUM",
+		"ID",
+		"PARAM_ID",
+		"QUOTED_STRING",
+		"POINT",
+		"NEGATIVE_DIGIT_ELEMENT",
 		"\"avg\"",
 		"\"\\u6c42\\u5e73\\u5747\\u6570\"",
 		"\"max\"",
@@ -5273,6 +5615,8 @@ inputState.guessing--;
 		"\"\\u53d6\\u5f53\\u524d\\u65e5\\u671f\\u65f6\\u95f4\"",
 		"\"today\"",
 		"\"\\u6c42\\u5f53\\u524d\\u65e5\\u671f\"",
+		"\"convert\"",
+		"\"\\u5c06\\u6570\\u636e\\u7c7b\\u578b\\u8f6c\\u5316\\u4e3a\"",
 		"\"cast\"",
 		"\"\\u6570\\u636e\\u7c7b\\u578b\\u8f6c\\u5316\"",
 		"\"abs\"",
@@ -5444,8 +5788,6 @@ inputState.guessing--;
 		"\"\\u4e3a\\u65e5\\u671f\\u578b\"",
 		"\"isnumeric\"",
 		"\"\\u4e3a\\u6570\\u503c\\u578b\"",
-		"\"convert\"",
-		"\"\\u5b57\\u7b26\\u8f6c\\u4e3a\\u65e5\\u671f\"",
 		"\"suser_id\"",
 		"\"suser_name\"",
 		"\"user_id\"",
@@ -5496,6 +5838,18 @@ inputState.guessing--;
 		"\"cyr\"",
 		"\"caldayofweek\"",
 		"\"cdw\"",
+		"\"uniqueidentifierstr\"",
+		"\"bigint\"",
+		"\"int\"",
+		"\"integer\"",
+		"\"smallint\"",
+		"\"tinyint\"",
+		"\"double\"",
+		"\"real\"",
+		"\"smalldatetime\"",
+		"\"time\"",
+		"\"timestamp\"",
+		"\"bit\"",
 		"PARAM_LPAREN",
 		"PARAM_RPAREN",
 		"WS",
@@ -5515,329 +5869,379 @@ inputState.guessing--;
 	
 	private static final long[] mk_tokenSet_0() {
 		long[] data = new long[12];
-		data[0]=288230376151711744L;
-		data[1]=-50986752L;
+		data[0]=576460752303423488L;
+		data[1]=-175767040L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288230307432235009L;
-		data[5]=32767L;
+		data[4]=-2305842459457880065L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
 	private static final long[] mk_tokenSet_1() {
 		long[] data = new long[12];
-		data[0]=4331830386121244674L;
-		data[1]=-50396926L;
+		data[0]=8663660772242489346L;
+		data[1]=-7994876L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288160007407534081L;
-		data[5]=32767L;
+		data[4]=-2305280059260272641L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
 	private static final long[] mk_tokenSet_2() {
 		long[] data = new long[12];
-		data[0]=288230376151711744L;
-		data[1]=-274874302208L;
+		data[0]=576460752303423488L;
+		data[1]=-2198628990464L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288230307432235009L;
-		data[5]=32767L;
+		data[4]=-2305842459457880065L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_2 = new BitSet(mk_tokenSet_2());
 	private static final long[] mk_tokenSet_3() {
 		long[] data = new long[12];
-		data[0]=288230376151711744L;
-		data[1]=-50986749L;
+		data[0]=576460752303423488L;
+		data[1]=-175767034L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288230307432235009L;
-		data[5]=32767L;
+		data[4]=-2305842459457880065L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_3 = new BitSet(mk_tokenSet_3());
 	private static final long[] mk_tokenSet_4() {
 		long[] data = new long[12];
-		data[0]=-4323454542764048384L;
-		data[1]=-274873712702L;
+		data[0]=-8646909085528096768L;
+		data[1]=-2198494642299L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=-1729382256910270465L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_4 = new BitSet(mk_tokenSet_4());
 	private static final long[] mk_tokenSet_5() {
 		long[] data = new long[12];
-		data[0]=-3476777778458656768L;
-		data[1]=-274873712702L;
+		data[0]=-6953555556917313536L;
+		data[1]=-2198490447995L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=-1729382256910270465L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_5 = new BitSet(mk_tokenSet_5());
 	private static final long[] mk_tokenSet_6() {
 		long[] data = new long[12];
-		data[0]=-3468614999839080446L;
-		data[1]=-274873712702L;
+		data[0]=-4631386990464466942L;
+		data[1]=-2198488350843L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=-1729382256910270465L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_6 = new BitSet(mk_tokenSet_6());
 	private static final long[] mk_tokenSet_7() {
 		long[] data = new long[12];
-		data[0]=-3468038623817891838L;
-		data[1]=-50331710L;
+		data[0]=-6937229999678160894L;
+		data[1]=-2198490447995L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=-1729382256910270465L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_7 = new BitSet(mk_tokenSet_7());
 	private static final long[] mk_tokenSet_8() {
 		long[] data = new long[12];
-		data[0]=-3467985847259758590L;
-		data[1]=-50331649L;
+		data[0]=-4630234238422089726L;
+		data[1]=-1572987L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=-1729382256910270465L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_8 = new BitSet(mk_tokenSet_8());
 	private static final long[] mk_tokenSet_9() {
-		long[] data = { 1099511627776L, 57344L, 0L, 0L, 0L, 0L};
+		long[] data = new long[12];
+		data[0]=-4630128685305823230L;
+		data[1]=-1572865L;
+		for (int i = 2; i<=3; i++) { data[i]=-1L; }
+		data[4]=-1729382256910270465L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_9 = new BitSet(mk_tokenSet_9());
 	private static final long[] mk_tokenSet_10() {
-		long[] data = new long[10];
-		data[0]=288230376151711744L;
-		data[1]=-274877906944L;
-		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=34359738367L;
+		long[] data = { 2199023255552L, 114688L, 0L, 0L, 0L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_10 = new BitSet(mk_tokenSet_10());
 	private static final long[] mk_tokenSet_11() {
-		long[] data = { 576460790958129154L, 60L, 0L, 0L, 0L, 0L};
+		long[] data = new long[10];
+		data[0]=576460752303423488L;
+		data[1]=-2199023255552L;
+		for (int i = 2; i<=3; i++) { data[i]=-1L; }
+		data[4]=274877906943L;
 		return data;
 	}
 	public static final BitSet _tokenSet_11 = new BitSet(mk_tokenSet_11());
 	private static final long[] mk_tokenSet_12() {
-		long[] data = { 0L, 274823380992L, 0L, 0L, 0L, 0L};
+		long[] data = { 1152921581916258306L, 120L, 0L, 0L, 0L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_12 = new BitSet(mk_tokenSet_12());
 	private static final long[] mk_tokenSet_13() {
-		long[] data = new long[12];
-		data[0]=288230376151711744L;
-		data[1]=-50986752L;
-		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288230341791973377L;
-		data[5]=32767L;
+		long[] data = { 0L, 2198486777856L, 0L, 0L, 0L, 0L};
 		return data;
 	}
 	public static final BitSet _tokenSet_13 = new BitSet(mk_tokenSet_13());
 	private static final long[] mk_tokenSet_14() {
 		long[] data = new long[12];
-		data[0]=4331830386121244674L;
-		data[1]=-274873777918L;
+		data[0]=576460752303423488L;
+		data[1]=-175767040L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288160007407534081L;
-		data[5]=32767L;
+		data[4]=-2305842734335787009L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_14 = new BitSet(mk_tokenSet_14());
 	private static final long[] mk_tokenSet_15() {
 		long[] data = new long[12];
-		data[0]=4341467837466935298L;
-		data[1]=-65277L;
+		data[0]=8663660772242489346L;
+		data[1]=-2198494772732L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288160007407534081L;
-		data[5]=32767L;
+		data[4]=-2305280059260272641L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_15 = new BitSet(mk_tokenSet_15());
 	private static final long[] mk_tokenSet_16() {
 		long[] data = new long[12];
-		data[0]=-270218180960452606L;
-		data[1]=-50331649L;
+		data[0]=8682935674933870594L;
+		data[1]=-2227706L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=-2305280059260272641L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_16 = new BitSet(mk_tokenSet_16());
 	private static final long[] mk_tokenSet_17() {
 		long[] data = new long[12];
-		data[0]=-2203318222846L;
-		for (int i = 1; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[0]=-540436361920905214L;
+		data[1]=-1572865L;
+		for (int i = 2; i<=3; i++) { data[i]=-1L; }
+		data[4]=-1729382256910270465L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_17 = new BitSet(mk_tokenSet_17());
 	private static final long[] mk_tokenSet_18() {
 		long[] data = new long[12];
-		data[1]=3408128L;
-		data[3]=-9070108912035823616L;
-		data[4]=-288230376151709662L;
-		data[5]=32767L;
+		data[0]=-4406636445694L;
+		for (int i = 1; i<=3; i++) { data[i]=-1L; }
+		data[4]=-1729382256910270465L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_18 = new BitSet(mk_tokenSet_18());
 	private static final long[] mk_tokenSet_19() {
-		long[] data = new long[10];
-		data[0]=4043600009969532930L;
-		data[1]=2L;
-		data[4]=70300024700928L;
+		long[] data = new long[12];
+		data[1]=343933440L;
+		data[3]=4904419994206470144L;
+		data[4]=-2305843009213627312L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_19 = new BitSet(mk_tokenSet_19());
 	private static final long[] mk_tokenSet_20() {
-		long[] data = new long[12];
-		data[0]=864691128455135232L;
-		data[1]=-50396926L;
-		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288160007407534081L;
-		data[5]=32767L;
+		long[] data = new long[10];
+		data[0]=8087200019939065858L;
+		data[1]=4L;
+		data[4]=562400197607424L;
 		return data;
 	}
 	public static final BitSet _tokenSet_20 = new BitSet(mk_tokenSet_20());
 	private static final long[] mk_tokenSet_21() {
 		long[] data = new long[12];
-		data[0]=4331883162679377922L;
-		data[1]=-65278L;
+		data[0]=1729382256910270464L;
+		data[1]=-7994876L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288160007407534081L;
-		data[5]=32767L;
+		data[4]=-2305280059260272641L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_21 = new BitSet(mk_tokenSet_21());
 	private static final long[] mk_tokenSet_22() {
 		long[] data = new long[12];
-		data[0]=-9638555152285694L;
-		data[1]=-274874236930L;
+		data[0]=8663766325358755842L;
+		data[1]=-2227708L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=-2305280059260272641L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_22 = new BitSet(mk_tokenSet_22());
 	private static final long[] mk_tokenSet_23() {
 		long[] data = new long[12];
-		data[0]=-54979876356094L;
-		data[1]=-50331649L;
+		data[0]=8682935674933870594L;
+		data[1]=-130554L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=-2305280059260272641L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_23 = new BitSet(mk_tokenSet_23());
 	private static final long[] mk_tokenSet_24() {
-		long[] data = new long[10];
-		data[0]=288230376151711744L;
-		data[1]=-278176441827328L;
+		long[] data = new long[12];
+		data[0]=-19277110304571390L;
+		data[1]=-2198626762755L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=34359738367L;
+		data[4]=-1729382256910270465L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_24 = new BitSet(mk_tokenSet_24());
 	private static final long[] mk_tokenSet_25() {
 		long[] data = new long[12];
-		data[0]=864691162814873600L;
-		data[1]=-274873777918L;
+		data[0]=-109959752712190L;
+		data[1]=-1572865L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288160007407534081L;
-		data[5]=32767L;
+		data[4]=-1729382256910270465L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_25 = new BitSet(mk_tokenSet_25());
 	private static final long[] mk_tokenSet_26() {
-		long[] data = new long[12];
-		data[0]=-9638555152285694L;
-		data[1]=-274873712642L;
+		long[] data = new long[10];
+		data[0]=576460752303423488L;
+		data[1]=-36002408739897344L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=274877906943L;
 		return data;
 	}
 	public static final BitSet _tokenSet_26 = new BitSet(mk_tokenSet_26());
 	private static final long[] mk_tokenSet_27() {
 		long[] data = new long[12];
-		data[0]=288283152709844992L;
-		data[1]=-274823970560L;
+		data[0]=1729382325629747200L;
+		data[1]=-2198494772732L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288230307432235009L;
-		data[5]=32767L;
+		data[4]=-2305280059260272641L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_27 = new BitSet(mk_tokenSet_27());
 	private static final long[] mk_tokenSet_28() {
 		long[] data = new long[12];
-		data[0]=288230376151711744L;
-		data[1]=-274874302208L;
+		data[0]=-19277110304571390L;
+		data[1]=-2198488350723L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288230341791973377L;
-		data[5]=32767L;
+		data[4]=-1729382256910270465L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_28 = new BitSet(mk_tokenSet_28());
 	private static final long[] mk_tokenSet_29() {
 		long[] data = new long[12];
-		data[0]=-9062179131097086L;
-		data[1]=-50331650L;
+		data[0]=576566305419689984L;
+		data[1]=-2198627417600L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=-2305842459457880065L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_29 = new BitSet(mk_tokenSet_29());
 	private static final long[] mk_tokenSet_30() {
 		long[] data = new long[12];
-		data[0]=-2203318222846L;
-		data[1]=-50331649L;
+		data[0]=576460752303423488L;
+		data[1]=-2198628990464L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=-2305842734335787009L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_30 = new BitSet(mk_tokenSet_30());
 	private static final long[] mk_tokenSet_31() {
 		long[] data = new long[12];
-		data[0]=-3468614999839080446L;
-		data[1]=-274874236990L;
+		data[0]=-4631386990464466942L;
+		data[1]=-2198492545147L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216172782113783809L;
-		data[5]=32767L;
+		data[4]=-1729382256910270465L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_31 = new BitSet(mk_tokenSet_31());
 	private static final long[] mk_tokenSet_32() {
-		long[] data = new long[10];
-		data[1]=2L;
-		data[4]=70300024700928L;
+		long[] data = new long[12];
+		data[0]=-18124358262194174L;
+		data[1]=-1572867L;
+		for (int i = 2; i<=3; i++) { data[i]=-1L; }
+		data[4]=-1729382256910270465L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_32 = new BitSet(mk_tokenSet_32());
 	private static final long[] mk_tokenSet_33() {
 		long[] data = new long[12];
-		data[0]=-3468614999839080446L;
-		data[1]=-274874236992L;
+		data[0]=-4406636445694L;
+		data[1]=-1572865L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-216243082138484737L;
-		data[5]=32767L;
+		data[4]=-1729382256910270465L;
+		data[5]=1073741823L;
 		return data;
 	}
 	public static final BitSet _tokenSet_33 = new BitSet(mk_tokenSet_33());
 	private static final long[] mk_tokenSet_34() {
 		long[] data = new long[12];
-		data[0]=864691128455135232L;
-		data[1]=-274873777918L;
+		data[0]=-4631386990464466942L;
+		data[1]=-2198626762875L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		data[4]=-288160007407534081L;
-		data[5]=32767L;
+		data[4]=-1729382256910270465L;
+		data[5]=262143L;
 		return data;
 	}
 	public static final BitSet _tokenSet_34 = new BitSet(mk_tokenSet_34());
+	private static final long[] mk_tokenSet_35() {
+		long[] data = new long[12];
+		data[0]=1729382325629747200L;
+		data[1]=-2198490578428L;
+		for (int i = 2; i<=3; i++) { data[i]=-1L; }
+		data[4]=-2305280059260272641L;
+		data[5]=1073741823L;
+		return data;
+	}
+	public static final BitSet _tokenSet_35 = new BitSet(mk_tokenSet_35());
+	private static final long[] mk_tokenSet_36() {
+		long[] data = new long[10];
+		data[1]=4L;
+		data[4]=562400197607424L;
+		return data;
+	}
+	public static final BitSet _tokenSet_36 = new BitSet(mk_tokenSet_36());
+	private static final long[] mk_tokenSet_37() {
+		long[] data = new long[12];
+		data[0]=-4631386990464466942L;
+		data[1]=-2198626762879L;
+		for (int i = 2; i<=3; i++) { data[i]=-1L; }
+		data[4]=-1729944657107877889L;
+		data[5]=262143L;
+		return data;
+	}
+	public static final BitSet _tokenSet_37 = new BitSet(mk_tokenSet_37());
+	private static final long[] mk_tokenSet_38() {
+		long[] data = new long[12];
+		data[0]=1729382256910270464L;
+		data[1]=-2198494772732L;
+		for (int i = 2; i<=3; i++) { data[i]=-1L; }
+		data[4]=-2305280059260272641L;
+		data[5]=262143L;
+		return data;
+	}
+	public static final BitSet _tokenSet_38 = new BitSet(mk_tokenSet_38());
+	private static final long[] mk_tokenSet_39() {
+		long[] data = new long[12];
+		data[0]=-19277110304571390L;
+		data[1]=-2198492545027L;
+		for (int i = 2; i<=3; i++) { data[i]=-1L; }
+		data[4]=-1729382256910270465L;
+		data[5]=262143L;
+		return data;
+	}
+	public static final BitSet _tokenSet_39 = new BitSet(mk_tokenSet_39());
 	
 	}
