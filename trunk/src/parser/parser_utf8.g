@@ -377,7 +377,7 @@ star_function
 
 //带数据类型函数
 datatype_function
-	:	"convert"	|	"将数据类型转化为"
+	:	"convert"	|	"数据类型转化为"
 	;
 
 //带数据类型函数
@@ -501,7 +501,7 @@ conversion_function
 	|	"isdate"	|	"为日期型"
 	|	"isnumeric"	|	"为数值型"
 //	|	"cast"		|	"数据类型转化"
-//	|	"convert"	|	"将数据类型转化为"
+//	|	"convert"	|	"数据类型转化为"
 	;
 
 //系统函数
@@ -1526,7 +1526,7 @@ datetime_function
 //数据类型转化函数
 conversion_function
 	:	"cast"		|	"数据类型转化"
-	|	"convert"	|	"将数据类型转化为"
+	|	"convert"	|	"数据类型转化为"
 	|	"hextoint"	|	"十六进制转为整数"
 	|	"inttohex"	|	"整数转为十六进制"
 	|	"isdate"	|	"为日期型"

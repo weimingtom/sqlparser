@@ -141,6 +141,7 @@ public L(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u53d6\u4f59", this), new Integer(154));
 	literals.put(new ANTLRHashString("char_length", this), new Integer(175));
 	literals.put(new ANTLRHashString("\u6c42\u6b63\u5207\u503c", this), new Integer(164));
+	literals.put(new ANTLRHashString("\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u4e3a", this), new Integer(118));
 	literals.put(new ANTLRHashString("\u5b57\u7b26\u4e32\u6392\u5e8f", this), new Integer(212));
 	literals.put(new ANTLRHashString("not", this), new Integer(42));
 	literals.put(new ANTLRHashString("\u5927\u4e8e\u7b49\u4e8e", this), new Integer(307));
@@ -248,7 +249,6 @@ public L(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u7684\u957f\u5ea6", this), new Integer(176));
 	literals.put(new ANTLRHashString("\u5b57\u7b26\u4e32\u8fde\u63a5", this), new Integer(204));
 	literals.put(new ANTLRHashString("locate", this), new Integer(189));
-	literals.put(new ANTLRHashString("\u5c06\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u4e3a", this), new Integer(118));
 	literals.put(new ANTLRHashString("or", this), new Integer(57));
 	literals.put(new ANTLRHashString("char", this), new Integer(87));
 	literals.put(new ANTLRHashString("seconds", this), new Integer(265));
