@@ -56,9 +56,10 @@ tokens {
 	FUNCTION;				//函数TOKEN
 	FUNCTION_EMPTY_PARAM;	//空参数函数TOKEN[getdate()]
 	FUNCTION_STAR_PARAM;	//参数为*函数TOKEN[now(*);today(*)]
-	FUNCTION_CONVERSION_AS;	//转化函数必须带AS TOKEN
 	FUNCTION_STAR_COUNT;	//函数COUNT(*) TOKEN
-	AS_PARAMETERS;			//转化函数AS所有参数
+	
+	FUNCTION_DATA_TYPE;		//带数据类型的函数TOKEN
+	FUNCTION_AS_DATA_TYPE;	//带AS及数据类型的函数TOKEN
 
 	LOGIC_OP;				//逻辑操作符TOKEN
 	LOGICAL_NULL;			//逻辑IS NULL TOKEN
@@ -74,6 +75,7 @@ tokens {
 	SUBCONTAIN_OP;			//关系IN/NOT IN TOKEN
 	ALL_FIELDS;				//字段所有(*) TOKEN
 	PAREN_FIELD;			//带括号的字段[利率(百分比%)] TOKEN
+	PAREN_DATA_TYPE;		//带括号的数据类型 TOKEN
 	LOGIC_BLOCK;			//WHERE条件逻辑块 TOKEN
 }
 
@@ -228,6 +230,57 @@ equation
 	)
 	;
 
+function
+	:	empty_function LPAREN! RPAREN!
+	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
+	|	star_function LPAREN! STAR! RPAREN!
+	{#function = #([FUNCTION_STAR_PARAM, "function_star_param"], #function);}
+	|	datatype_function LPAREN! data_type_parameter RPAREN!
+	{#function = #([FUNCTION_DATA_TYPE, "function_data_type"], #function);}
+	|	asdatatype_function LPAREN! as_data_type_parameter RPAREN!
+	{#function = #([FUNCTION_AS_DATA_TYPE, "function_as_data_type"], #function);}
+	|	function_name LPAREN! parameters RPAREN!
+	{#function = #([FUNCTION, "function_block"], #function);}
+	;
+
+aggregate_func
+	:	("求记录总数" | "count") LPAREN! STAR! RPAREN!
+		{#aggregate_func = #([FUNCTION_STAR_COUNT, "function_star_count"], #aggregate_func);}
+	|	aggregate_func_name LPAREN! ("all"^ | "全部"^ | "distinct"^ |"唯一"^)? parameters RPAREN!
+	;
+
+parameters
+	:	expression (COMMA^ expression)*
+	;
+
+//==========数据类型参数 BEGIN==========//
+as_data_type_parameter
+	: expression ("as"! | "为"!) (datatype_constant)
+	;
+
+data_type_parameter
+	:	datatype_constant (COMMA^ expression)+
+	;
+
+datatype_constant
+	:	//"character" "varying"
+		data_type_word
+	|	DATA_TYPE_STRING LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
+		{#datatype_constant = #([PAREN_DATA_TYPE, "paren_data_type"], #datatype_constant);}
+	;
+
+datatype_precision_or_scale_or_maxlength
+	:	REAL_NUM COMMA^ REAL_NUM
+	|	REAL_NUM
+	;
+
+//==========数据类型参数  END===========//
+
+
+table_name
+	:	ID (("as"^|"作为"^) alias)?
+	;
+
 exp_set
 	: 	LPAREN constexpset RPAREN
 	{#exp_set = #([SUBCONTAIN_OP, "subcontain_op"], #exp_set);}
@@ -274,39 +327,7 @@ constant
 	|	"null"
 	;
 
-function
-	:	empty_function LPAREN! RPAREN!
-	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
-	|	star_function LPAREN! STAR! RPAREN!
-	{#function = #([FUNCTION_STAR_PARAM, "function_star_param"], #function);}
-//	|	conversion_as_function LPAREN! as_parameters RPAREN!
-//	{#function = #([FUNCTION_CONVERSION_AS, "function_conversion_as"], #function);}
-	|	function_name LPAREN! parameters RPAREN!
-	{#function = #([FUNCTION, "function_block"], #function);}
-	;
-
-aggregate_func
-	:	("求记录总数" | "count") LPAREN! STAR! RPAREN!
-		{#aggregate_func = #([FUNCTION_STAR_COUNT, "function_star_count"], #aggregate_func);}
-	|	aggregate_func_name LPAREN! ("all"^ | "全部"^ | "distinct"^ |"唯一"^)? parameters RPAREN!
-	;
-
-parameters
-	:	expression (COMMA^ expression)*
-	;
-//as_parameters
-//	:	expression ("as"! | "作为"!) data_type_define
-//		{#as_parameters = #([AS_PARAMETERS, "conversion_as_parameters"], #as_parameters);}
-//	;
-//data_type_define
-//	:	CONVERSION_DATA_TYPE
-//	;
-
-table_name
-	:	ID (("as"^|"作为"^) alias)?
-	;
-
-
+//=======================================//
 //聚合函数
 aggregate_func_name
 	:	"avg" 		| 	"求平均数"
@@ -349,8 +370,14 @@ star_function
 	|	"today"	|	"求当前日期"
 	;
 
-conversion_as_function
-	:	"cast"	|	"数据类型转化"
+//带数据类型函数
+datatype_function
+	:	"convert"	|	"将数据类型转化为"
+	;
+
+//带数据类型函数
+asdatatype_function
+	:	"cast"		|	"数据类型转化"
 	;
 
 //普通函数(数学函数、字符串函数、日期时间函数、系统函数、数据类型转化函数、其他函数)
@@ -468,8 +495,8 @@ conversion_function
 	|	"inttohex"	|	"整数转为十六进制"
 	|	"isdate"	|	"为日期型"
 	|	"isnumeric"	|	"为数值型"
-	|	"cast"		|	"数据类型转化"
-	|	"convert"	|	"字符转为日期"
+//	|	"cast"		|	"数据类型转化"
+//	|	"convert"	|	"将数据类型转化为"
 	;
 
 //系统函数
@@ -513,6 +540,15 @@ date_key_word
 	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
 	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
 	;
+
+//数据类型保留字
+data_type_word
+	: "uniqueidentifierstr" 
+	| "bigint" | "int" | "integer" | "smallint" | "tinyint" | "double" | "real"
+	| "date" | "datetime" | "smalldatetime" | "time" | "timestamp"
+	| "bit"
+	;
+
 /*==========================================================//
 //															//
 //						Lexer Define						//
@@ -577,14 +613,6 @@ WHERE
 WS	:	(' '|'\n'|'\r'|'\t')+ {$setType(Token.SKIP);}
     ;
 
-
-//CONVERSION_DATA_TYPE options {testLiterals=true;}
-//	:	(DATA_TYPE_LETTER)+
-//	;
-//
-//protected DATA_TYPE_LETTER
-//    :    'a'..'z'
-//    ;
 
 QUOTED_STRING
 	:	('"'|'\'') (ESC|~('\''|'"'|'\\'|'\n'|'\r'))* ('"'|'\'')
@@ -671,6 +699,19 @@ protected
 NUM_LETTER
 	:	'0'..'9'
 	;
+
+DATA_TYPE_STRING options {testLiterals=true;}
+    : "character" | "varchar" | "char"
+    | "decimal" | "numeric" | "float"
+    | "binary" | "varbinary"
+    ;
+
+//DATA_TYPE_STRING options {testLiterals=true;}
+//	: "character" | "varchar" | "char" | "uniqueidentifierstr"
+//	| "bigint" | "int" | "integer" | "smallint" | "tinyint" | "double" | "float" | "real" | "decimal" | "numeric"
+//	| "date" | "datetime" | "smalldatetime" | "time" | "timestamp"
+//	| "bit" | "binary" | "varbinary"
+//	;
 
 ML_COMMENT
 	:	"/*"
@@ -1133,7 +1174,7 @@ sfield_name returns [String rValue]
 function returns [FunctionModel model]
 {
 	model=null;
-	ParametersModel p; 
+	ParametersModel p, dtp1, dtp2; 
 	ExpressionModel express1 = new ExpressionModel();
 }
 	:	//Aggregate functions聚合函数
@@ -1165,6 +1206,20 @@ function returns [FunctionModel model]
 			p = new ParametersModel();
 			p.addParameter(express1);
 			model.setParameters(p);
+		}
+	
+		//Normal functions参数为DATA TYPE的普通函数[convert(char(10), '2007-01-01', 120)]
+	|	#(FUNCTION_DATA_TYPE dtf1:function_name dtp1=data_type_parameters)
+		{
+			model = new FunctionModel(dtf1.getText());
+			model.setParameters(dtp1);
+		}
+	
+		//Normal functions参数为AS及DATA TYPE的普通函数[cast('2007-01-01' as char(10))]
+	|	#(FUNCTION_AS_DATA_TYPE dtf2:function_name dtp2=as_data_type_parameters)
+		{
+			model = new FunctionModel(dtf2.getText());
+			model.setParameters(dtp2);
 		}
 		
 		//Aggregate functions参数为*的COUNT函数，聚合函数[count(*)]
@@ -1212,13 +1267,61 @@ function returns [FunctionModel model]
 			model.setParameters(p);
 		}
 	;
-	
+
+//普通参数语法树遍历	
 parameters returns [ParametersModel model]
 {ParametersModel p1, p2; ExpressionModel e; model=new ParametersModel();}
 	:	#(COMMA p1=parameters p2=parameters)
 	{model.addChild(p1); model.addChild(p2);}
 	|	e=expression
 	{model.addParameter(e);}
+	;
+
+//数据类型参数语法树遍历	
+data_type_parameters returns [ParametersModel model]
+{ParametersModel p1, p2; ExpressionModel dtc, e; model=new ParametersModel();}
+	: 	#(COMMA p1=data_type_parameters p2=data_type_parameters)
+		{model.addChild(p1);model.addChild(p2);}
+	|	dtc=datatype_constant
+		{model.addParameter(dtc);}
+	|	e=expression
+		{model.addParameter(e);}
+	;
+
+//带AS数据类型参数语法树遍历
+as_data_type_parameters returns [ParametersModel model]
+{ParametersModel p1, p2; ExpressionModel adtc, e, re; model=new ParametersModel();}
+	:	e=expression adtc=datatype_constant
+	   	{
+	   		model.addParameter(e);
+	   		model.addParameter(adtc);
+	   		model.addFilter(" AS ");
+	   	}
+	;
+
+//数据类型常量遍历
+datatype_constant returns [ExpressionModel model]
+{model=new ExpressionModel(); String rValue = ""; String rp = "";}
+	:	dtw:data_type_word
+		{
+			//返回数据类型保留字(date、datetime...)
+			rValue = dtw.getText();
+			model.addConstant(rValue);
+		}
+	|	#(PAREN_DATA_TYPE dts:DATA_TYPE_STRING rp=datatype_precision_or_scale_or_maxlength)
+		{
+			//返回数据类型加其参数,如char(10)、numeric(20, 2)]
+			rValue = dts.getText() + "(" + rp + ")";
+			model.addConstant(rValue);
+		}
+	;
+
+datatype_precision_or_scale_or_maxlength returns [String rValue]
+{rValue = "";}
+	:	#(COMMA rn1:REAL_NUM rn2:REAL_NUM)
+		{rValue = rn1.getText() + ", " + rn2.getText();}
+	|	rn:REAL_NUM
+		{rValue = rn.getText();}
 	;
 
 table_name returns [TableModel model]
@@ -1400,7 +1503,7 @@ datetime_function
 //数据类型转化函数
 conversion_function
 	:	"cast"		|	"数据类型转化"
-	|	"convert"	|	"字符转为日期"
+	|	"convert"	|	"将数据类型转化为"
 	|	"hextoint"	|	"十六进制转为整数"
 	|	"inttohex"	|	"整数转为十六进制"
 	|	"isdate"	|	"为日期型"
@@ -1420,3 +1523,12 @@ other_function
 	:	"argn"
 	| 	"rowid"
 	;
+
+//数据类型保留字
+data_type_word
+	: "uniqueidentifierstr" 
+	| "bigint" | "int" | "integer" | "smallint" | "tinyint" | "double" | "real"
+	| "date" | "datetime" | "smalldatetime" | "time" | "timestamp"
+	| "bit"
+	;
+
