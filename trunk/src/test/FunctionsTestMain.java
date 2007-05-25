@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 /**
  * 函数测试用例
  */
-public class FunctionsTestMain extends TestCase {
+public class FunctionsTestMain {
 	
 	/**
 	 * 测试用例入口
@@ -15,18 +15,25 @@ public class FunctionsTestMain extends TestCase {
 	 */
 	public static void main(String[] args) {
 		FunctionsTestMain test = new FunctionsTestMain();
-		test.FunctionsTest();
+		for (int i = 0; i < args.length; i++){
+			test.FunctionsTest(Integer.parseInt(args[0]));
+		}
 	}
 	
 	/**
 	 * 函数测试方法
 	 */
-	public void FunctionsTest() {
-		AggregateFunctionsTest();
-		NumericFunctionsTest();
-		StringFunctionsTest();
-		DateTimeFunctionsTest();
-		ConversionFunctionsTest();
+	public void FunctionsTest(int funNum) {
+		if (funNum == 1)
+			AggregateFunctionsTest();
+		else if (funNum == 2)
+			NumericFunctionsTest();
+		else if (funNum == 3)
+			StringFunctionsTest();
+		else if (funNum == 4)
+			DateTimeFunctionsTest();
+		else if (funNum == 5)
+			ConversionFunctionsTest();
 	}
 	
 	/**
