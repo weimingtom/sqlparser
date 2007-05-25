@@ -73,6 +73,7 @@ tokens {
 	
 	SUBCONTAIN_OP;			//关系IN/NOT IN TOKEN
 	ALL_FIELDS;				//字段所有(*) TOKEN
+	PAREN_FIELD;			//带括号的字段[利率(百分比%)] TOKEN
 	LOGIC_BLOCK;			//WHERE条件逻辑块 TOKEN
 }
 
@@ -248,8 +249,23 @@ param_equ
 
 alias
 	:	ID | QUOTED_STRING;
+
+
+//field_name
+//	:	ID POINT^ ID
+//	;
+
 field_name
-	:	ID POINT^ ID;
+	:	sfield_name POINT^ sfield_name
+	;	
+
+sfield_name
+	:	//如：利率(百分比%)
+		ID LPAREN! ID RPAREN!
+		{#sfield_name = #([PAREN_FIELD, "paren_field"], #sfield_name);}
+	|	ID
+	;
+
 constant
 	:	REAL_NUM
 	|	NEGATIVE_DIGIT_ELEMENT
@@ -515,8 +531,11 @@ options {
 ONE_ARG_OP
 	:	'~';
 
+//TWO_ARG_OP
+//	:	'&' | '|' | '^' | '+' | '/' | '%';
+
 TWO_ARG_OP
-	:	'&' | '|' | '^' | '+' | '/' | '%';
+	:	'&' | '|' | '^' | '+' | '/';
 
 MINUS 
 	: 	'-' ;
@@ -610,7 +629,9 @@ PARAM_ID
 	;
 
 ID	options {testLiterals=true;}
-	:	ID_START_LETTER ( ID_LETTER )*;
+	:	ID_START_LETTER ( ID_LETTER )*
+	;
+	
 protected
 ID_START_LETTER
     :    'a'..'z'
@@ -622,6 +643,7 @@ ID_LETTER
     :	ID_START_LETTER
     |	'0'..'9'
     |	'/'
+    |	'%'
     ;
 
 REAL_NUM
@@ -1072,15 +1094,40 @@ param_equ returns [ParamModel model]
 //		{model = new ParamModel(paramName.getText(), lp.getText(), rp.getText());}
 	;
 	
+//field_name returns [FieldModel model]
+//{model=null;}
+//	:	f:ID
+//	{model=new FieldModel(f.getText());}
+//	|	#(POINT t:ID f1:ID)
+//	{
+//		model=new FieldModel(f1.getText(), t.getText());
+//		addTableByChName(t.getText());
+//	}
+//	;
+
 field_name returns [FieldModel model]
-{model=null;}
-	:	f:ID
-	{model=new FieldModel(f.getText());}
-	|	#(POINT t:ID f1:ID)
-	{
-		model=new FieldModel(f1.getText(), t.getText());
-		addTableByChName(t.getText());
-	}
+{
+	model=null;
+	String tStr = "";
+	String fStr = "";
+}
+	:	#(POINT tStr = sfield_name fStr = sfield_name)
+		{
+			model = new FieldModel(fStr, tStr);
+			addTableByChName(tStr);
+		}
+	|	fStr = sfield_name
+		{
+			model=new FieldModel(fStr);
+		}
+	;
+
+sfield_name returns [String rValue]
+{rValue = "";}
+	:	#(PAREN_FIELD f1:ID f2:ID)
+		{rValue = f1.getText() + "(" + f2.getText() + ")";}
+	|	f:ID
+		{rValue = f.getText();}
 	;
 
 function returns [FunctionModel model]
