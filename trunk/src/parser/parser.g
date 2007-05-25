@@ -73,6 +73,7 @@ tokens {
 	
 	SUBCONTAIN_OP;			//\u5173\u7cfbIN/NOT IN TOKEN
 	ALL_FIELDS;				//\u5b57\u6bb5\u6240\u6709(*) TOKEN
+	PAREN_FIELD;			//\u5e26\u62ec\u53f7\u7684\u5b57\u6bb5[\u5229\u7387(\u767e\u5206\u6bd4%)] TOKEN
 	LOGIC_BLOCK;			//WHERE\u6761\u4ef6\u903b\u8f91\u5757 TOKEN
 }
 
@@ -248,8 +249,23 @@ param_equ
 
 alias
 	:	ID | QUOTED_STRING;
+
+
+//field_name
+//	:	ID POINT^ ID
+//	;
+
 field_name
-	:	ID POINT^ ID;
+	:	sfield_name POINT^ sfield_name
+	;	
+
+sfield_name
+	:	//\u5982\uff1a\u5229\u7387(\u767e\u5206\u6bd4%)
+		ID LPAREN! ID RPAREN!
+		{#sfield_name = #([PAREN_FIELD, "paren_field"], #sfield_name);}
+	|	ID
+	;
+
 constant
 	:	REAL_NUM
 	|	NEGATIVE_DIGIT_ELEMENT
@@ -515,8 +531,11 @@ options {
 ONE_ARG_OP
 	:	'~';
 
+//TWO_ARG_OP
+//	:	'&' | '|' | '^' | '+' | '/' | '%';
+
 TWO_ARG_OP
-	:	'&' | '|' | '^' | '+' | '/' | '%';
+	:	'&' | '|' | '^' | '+' | '/';
 
 MINUS 
 	: 	'-' ;
@@ -610,7 +629,9 @@ PARAM_ID
 	;
 
 ID	options {testLiterals=true;}
-	:	ID_START_LETTER ( ID_LETTER )*;
+	:	ID_START_LETTER ( ID_LETTER )*
+	;
+	
 protected
 ID_START_LETTER
     :    'a'..'z'
@@ -622,6 +643,7 @@ ID_LETTER
     :	ID_START_LETTER
     |	'0'..'9'
     |	'/'
+    |	'%'
     ;
 
 REAL_NUM
@@ -1072,15 +1094,40 @@ param_equ returns [ParamModel model]
 //		{model = new ParamModel(paramName.getText(), lp.getText(), rp.getText());}
 	;
 	
+//field_name returns [FieldModel model]
+//{model=null;}
+//	:	f:ID
+//	{model=new FieldModel(f.getText());}
+//	|	#(POINT t:ID f1:ID)
+//	{
+//		model=new FieldModel(f1.getText(), t.getText());
+//		addTableByChName(t.getText());
+//	}
+//	;
+
 field_name returns [FieldModel model]
-{model=null;}
-	:	f:ID
-	{model=new FieldModel(f.getText());}
-	|	#(POINT t:ID f1:ID)
-	{
-		model=new FieldModel(f1.getText(), t.getText());
-		addTableByChName(t.getText());
-	}
+{
+	model=null;
+	String tStr = "";
+	String fStr = "";
+}
+	:	#(POINT tStr = sfield_name fStr = sfield_name)
+		{
+			model = new FieldModel(fStr, tStr);
+			addTableByChName(tStr);
+		}
+	|	fStr = sfield_name
+		{
+			model=new FieldModel(fStr);
+		}
+	;
+
+sfield_name returns [String rValue]
+{rValue = "";}
+	:	#(PAREN_FIELD f1:ID f2:ID)
+		{rValue = f1.getText() + "(" + f2.getText() + ")";}
+	|	f:ID
+		{rValue = f.getText();}
 	;
 
 function returns [FunctionModel model]
