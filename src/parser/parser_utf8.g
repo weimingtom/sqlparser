@@ -47,19 +47,19 @@ options {
 
 tokens {	
 	SELECT_STATEMENT;
-	SEARCH_NOT_CONDITION;	//非整个条件TOKEN
-	SUBQUERY;				//子查询TOKEN
+	SEARCH_NOT_CONDITION;	//非整个条件 TOKEN
+	SUBQUERY;				//子查询 TOKEN
 	GROUP_BY;				//GROUP BY TOKEN
 	ORDER_BY;				//ORDER BY TOKEN
-	ALIAS_EQU;				//别名TOKEN
+	ALIAS_EQU;				//别名 TOKEN
 	
-	FUNCTION;				//函数TOKEN
-	FUNCTION_EMPTY_PARAM;	//空参数函数TOKEN[getdate()]
-	FUNCTION_STAR_PARAM;	//参数为*函数TOKEN[now(*);today(*)]
+	FUNCTION;				//函数 TOKEN
+	FUNCTION_EMPTY_PARAM;	//空参数函数 TOKEN [getdate()]
+	FUNCTION_STAR_PARAM;	//参数为*函数 TOKEN [now(*);today(*)]
 	FUNCTION_STAR_COUNT;	//函数COUNT(*) TOKEN
 	
-	FUNCTION_DATA_TYPE;		//带数据类型的函数TOKEN
-	FUNCTION_AS_DATA_TYPE;	//带AS及数据类型的函数TOKEN
+	FUNCTION_DATA_TYPE;		//带数据类型的函数 TOKEN
+	FUNCTION_AS_DATA_TYPE;	//带AS及数据类型的函数 TOKEN
 
 	LOGIC_OP;				//逻辑操作符TOKEN
 	LOGICAL_NULL;			//逻辑IS NULL TOKEN
@@ -76,6 +76,7 @@ tokens {
 	ALL_FIELDS;				//字段所有(*) TOKEN
 	PAREN_FIELD;			//带括号的字段[利率(百分比%)] TOKEN
 	PAREN_DATA_TYPE;		//带括号的数据类型 TOKEN
+	PAREN_CHAR_DATA_TYPE;	//带括号的保留字char数据类型 TOKEN
 	LOGIC_BLOCK;			//WHERE条件逻辑块 TOKEN
 }
 
@@ -265,8 +266,12 @@ data_type_parameter
 datatype_constant
 	:	//"character" "varying"
 		data_type_word
+	|	"char"
+	|	"char" LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
+		{#datatype_constant = #([PAREN_CHAR_DATA_TYPE, "paren_char_data_type"], #datatype_constant);}
 	|	DATA_TYPE_STRING LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
 		{#datatype_constant = #([PAREN_DATA_TYPE, "paren_data_type"], #datatype_constant);}
+	|	DATA_TYPE_STRING
 	;
 
 datatype_precision_or_scale_or_maxlength
@@ -701,7 +706,7 @@ NUM_LETTER
 	;
 
 DATA_TYPE_STRING options {testLiterals=true;}
-    : "character" | "varchar" | "char"
+    : "character" | "varchar"
     | "decimal" | "numeric" | "float"
     | "binary" | "varbinary"
     ;
@@ -1302,7 +1307,19 @@ as_data_type_parameters returns [ParametersModel model]
 //数据类型常量遍历
 datatype_constant returns [ExpressionModel model]
 {model=new ExpressionModel(); String rValue = ""; String rp = "";}
-	:	dtw:data_type_word
+	:	c1:"char"
+		{
+			//返回char保留字
+			rValue = c1.getText();
+			model.addConstant(rValue);
+		}
+	|	#(PAREN_CHAR_DATA_TYPE c2:"char" rp=datatype_precision_or_scale_or_maxlength)
+		{
+			//返回带参数char保留
+			rValue = c2.getText() + "(" + rp + ")";
+			model.addConstant(rValue);
+		}
+	|	dtw:data_type_word
 		{
 			//返回数据类型保留字(date、datetime...)
 			rValue = dtw.getText();
@@ -1312,6 +1329,12 @@ datatype_constant returns [ExpressionModel model]
 		{
 			//返回数据类型加其参数,如char(10)、numeric(20, 2)]
 			rValue = dts.getText() + "(" + rp + ")";
+			model.addConstant(rValue);
+		}
+	|	sdts:DATA_TYPE_STRING
+		{
+			//返回数据类型为可不带参数]
+			rValue = sdts.getText();
 			model.addConstant(rValue);
 		}
 	;

@@ -47,19 +47,19 @@ options {
 
 tokens {	
 	SELECT_STATEMENT;
-	SEARCH_NOT_CONDITION;	//\u975e\u6574\u4e2a\u6761\u4ef6TOKEN
-	SUBQUERY;				//\u5b50\u67e5\u8be2TOKEN
+	SEARCH_NOT_CONDITION;	//\u975e\u6574\u4e2a\u6761\u4ef6 TOKEN
+	SUBQUERY;				//\u5b50\u67e5\u8be2 TOKEN
 	GROUP_BY;				//GROUP BY TOKEN
 	ORDER_BY;				//ORDER BY TOKEN
-	ALIAS_EQU;				//\u522b\u540dTOKEN
+	ALIAS_EQU;				//\u522b\u540d TOKEN
 	
-	FUNCTION;				//\u51fd\u6570TOKEN
-	FUNCTION_EMPTY_PARAM;	//\u7a7a\u53c2\u6570\u51fd\u6570TOKEN[getdate()]
-	FUNCTION_STAR_PARAM;	//\u53c2\u6570\u4e3a*\u51fd\u6570TOKEN[now(*);today(*)]
+	FUNCTION;				//\u51fd\u6570 TOKEN
+	FUNCTION_EMPTY_PARAM;	//\u7a7a\u53c2\u6570\u51fd\u6570 TOKEN [getdate()]
+	FUNCTION_STAR_PARAM;	//\u53c2\u6570\u4e3a*\u51fd\u6570 TOKEN [now(*);today(*)]
 	FUNCTION_STAR_COUNT;	//\u51fd\u6570COUNT(*) TOKEN
 	
-	FUNCTION_DATA_TYPE;		//\u5e26\u6570\u636e\u7c7b\u578b\u7684\u51fd\u6570TOKEN
-	FUNCTION_AS_DATA_TYPE;	//\u5e26AS\u53ca\u6570\u636e\u7c7b\u578b\u7684\u51fd\u6570TOKEN
+	FUNCTION_DATA_TYPE;		//\u5e26\u6570\u636e\u7c7b\u578b\u7684\u51fd\u6570 TOKEN
+	FUNCTION_AS_DATA_TYPE;	//\u5e26AS\u53ca\u6570\u636e\u7c7b\u578b\u7684\u51fd\u6570 TOKEN
 
 	LOGIC_OP;				//\u903b\u8f91\u64cd\u4f5c\u7b26TOKEN
 	LOGICAL_NULL;			//\u903b\u8f91IS NULL TOKEN
@@ -76,6 +76,7 @@ tokens {
 	ALL_FIELDS;				//\u5b57\u6bb5\u6240\u6709(*) TOKEN
 	PAREN_FIELD;			//\u5e26\u62ec\u53f7\u7684\u5b57\u6bb5[\u5229\u7387(\u767e\u5206\u6bd4%)] TOKEN
 	PAREN_DATA_TYPE;		//\u5e26\u62ec\u53f7\u7684\u6570\u636e\u7c7b\u578b TOKEN
+	PAREN_CHAR_DATA_TYPE;	//\u5e26\u62ec\u53f7\u7684\u4fdd\u7559\u5b57char\u6570\u636e\u7c7b\u578b TOKEN
 	LOGIC_BLOCK;			//WHERE\u6761\u4ef6\u903b\u8f91\u5757 TOKEN
 }
 
@@ -265,8 +266,12 @@ data_type_parameter
 datatype_constant
 	:	//"character" "varying"
 		data_type_word
+	|	"char"
+	|	"char" LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
+		{#datatype_constant = #([PAREN_CHAR_DATA_TYPE, "paren_char_data_type"], #datatype_constant);}
 	|	DATA_TYPE_STRING LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
 		{#datatype_constant = #([PAREN_DATA_TYPE, "paren_data_type"], #datatype_constant);}
+	|	DATA_TYPE_STRING
 	;
 
 datatype_precision_or_scale_or_maxlength
@@ -701,7 +706,7 @@ NUM_LETTER
 	;
 
 DATA_TYPE_STRING options {testLiterals=true;}
-    : "character" | "varchar" | "char"
+    : "character" | "varchar"
     | "decimal" | "numeric" | "float"
     | "binary" | "varbinary"
     ;
@@ -1302,7 +1307,19 @@ as_data_type_parameters returns [ParametersModel model]
 //\u6570\u636e\u7c7b\u578b\u5e38\u91cf\u904d\u5386
 datatype_constant returns [ExpressionModel model]
 {model=new ExpressionModel(); String rValue = ""; String rp = "";}
-	:	dtw:data_type_word
+	:	c1:"char"
+		{
+			//\u8fd4\u56dechar\u4fdd\u7559\u5b57
+			rValue = c1.getText();
+			model.addConstant(rValue);
+		}
+	|	#(PAREN_CHAR_DATA_TYPE c2:"char" rp=datatype_precision_or_scale_or_maxlength)
+		{
+			//\u8fd4\u56de\u5e26\u53c2\u6570char\u4fdd\u7559
+			rValue = c2.getText() + "(" + rp + ")";
+			model.addConstant(rValue);
+		}
+	|	dtw:data_type_word
 		{
 			//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57(date\u3001datetime...)
 			rValue = dtw.getText();
@@ -1312,6 +1329,12 @@ datatype_constant returns [ExpressionModel model]
 		{
 			//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u52a0\u5176\u53c2\u6570,\u5982char(10)\u3001numeric(20, 2)]
 			rValue = dts.getText() + "(" + rp + ")";
+			model.addConstant(rValue);
+		}
+	|	sdts:DATA_TYPE_STRING
+		{
+			//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u4e3a\u53ef\u4e0d\u5e26\u53c2\u6570]
+			rValue = sdts.getText();
 			model.addConstant(rValue);
 		}
 	;
