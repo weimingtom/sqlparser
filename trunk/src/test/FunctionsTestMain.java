@@ -278,7 +278,7 @@ public class FunctionsTestMain {
   	String strHead = "查询 ";
   	String[] functionsArr = new String[]{
   			"数据类型转化('Surname' as char)", 
-  			"字符转为日期(char(10), AI_94传票对照表.日期, 120)",
+  			"数据类型转化为(char(10), AI_94传票对照表.日期, 120)",
   			"十六进制转为整数('0x00000100')",
   			"整数转为十六进制(120)",
   			"为日期型('2007-01-01 12:01:20')",
