@@ -353,6 +353,9 @@ public class Main {
   			
   			"查询 将数据类型转化为(bit, AI_94传票对照表.标识) 作为 标识 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
+  			
+  			"查询 convert(bit, AI_94传票对照表.标识) 作为 标识 来自 AI_94传票对照表 作为 CNF" +
+  			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   		};
   	
   	String[] strArr2 = new String[]{
