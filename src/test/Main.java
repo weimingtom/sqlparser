@@ -243,10 +243,13 @@ public class Main {
   public void customQueryTest(){
   	String[] strArr = new String[]{
   			"查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, AI_94传票对照表.金额 作为 金额 来自 AI_94传票对照表 作为 CNF" +
-  			" 条件 AI_94传票对照表.利率% 大于 0.123 并且 AI_94传票对照表.利%率 大于 0.5" +
+  			" 条件 (AI_94传票对照表.利率(百分比%) 大于 0.123 并且 AI_94传票对照表.利%率 大于 0.5)" +
+  			"	或者 (AI_94传票对照表.利率% 等于 0.88 并且 AI_94传票对照表.利率 小于 0.99)" +
   			" 排序 省/市代号, 行号",
+  			
   			"查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, AI_94传票对照表.金额 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 字符串右截(字符串截取(AI_94传票对照表.省/市代号, 1, 4), 1) 等于 '1'",
+  			
   		};
   	
   	Translator t = new Translator();
@@ -267,10 +270,12 @@ public class Main {
         t.addDbField("AI_94传票对照表", "日期", "CNF05");
         t.addDbField("AI_94传票对照表", "日期1", "CNF05_1");
         t.addDbField("AI_94传票对照表", "日期2", "CNF05_2");
-        t.addDbField("AI_94传票对照表", "%利率", "CNF98");
-        t.addDbField("AI_94传票对照表", "利率%", "CNF98");
-        t.addDbField("AI_94传票对照表", "利%率", "CNF99");
+        t.addDbField("AI_94传票对照表", "利率", "CNF96");
+        t.addDbField("AI_94传票对照表", "利率%", "CNF97");
+        t.addDbField("AI_94传票对照表", "利%率", "CNF98");
+        t.addDbField("AI_94传票对照表", "利率(百分比%)", "CNF99");
         t.updateDbTables(t, t.getTables());
+        
         System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
         System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
         //System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
