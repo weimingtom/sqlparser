@@ -119,7 +119,7 @@ public interface PTokenTypes {
 	int LITERAL_today = 115;
 	// "\u6c42\u5f53\u524d\u65e5\u671f" = 116
 	int LITERAL_convert = 117;
-	// "\u5c06\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u4e3a" = 118
+	// "\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u4e3a" = 118
 	int LITERAL_cast = 119;
 	// "\u6570\u636e\u7c7b\u578b\u8f6c\u5316" = 120
 	int LITERAL_abs = 121;

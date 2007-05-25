@@ -5632,7 +5632,7 @@ inputState.guessing--;
 		"\"today\"",
 		"\"\\u6c42\\u5f53\\u524d\\u65e5\\u671f\"",
 		"\"convert\"",
-		"\"\\u5c06\\u6570\\u636e\\u7c7b\\u578b\\u8f6c\\u5316\\u4e3a\"",
+		"\"\\u6570\\u636e\\u7c7b\\u578b\\u8f6c\\u5316\\u4e3a\"",
 		"\"cast\"",
 		"\"\\u6570\\u636e\\u7c7b\\u578b\\u8f6c\\u5316\"",
 		"\"abs\"",
