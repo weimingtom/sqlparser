@@ -114,8 +114,8 @@ public L(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u5347\u5e8f", this), new Integer(68));
 	literals.put(new ANTLRHashString("\u6574\u6570\u8f6c\u4e3a\u5341\u516d\u8fdb\u5236", this), new Integer(284));
 	literals.put(new ANTLRHashString("cdw", this), new Integer(338));
-	literals.put(new ANTLRHashString("\u6c42\u56db\u820d\u540e\u7684\u6574\u6570", this), new Integer(142));
 	literals.put(new ANTLRHashString("\u6c42\u4f59\u5207\u503c", this), new Integer(136));
+	literals.put(new ANTLRHashString("\u6c42\u6570\u5b57\u7684\u4e0a\u9650\u6574\u6570", this), new Integer(132));
 	literals.put(new ANTLRHashString("\u6c42\u6570\u5b57\u7684\u6b21\u5e42\u503c", this), new Integer(150));
 	literals.put(new ANTLRHashString("dw", this), new Integer(327));
 	literals.put(new ANTLRHashString("\u8f6c\u4e3a\u65e5\u671f", this), new Integer(240));
@@ -174,7 +174,6 @@ public L(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("user_name", this), new Integer(292));
 	literals.put(new ANTLRHashString("\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5927\u5199", this), new Integer(228));
 	literals.put(new ANTLRHashString("suser_name", this), new Integer(290));
-	literals.put(new ANTLRHashString("\u6c42\u4e94\u5165\u540e\u7684\u6574\u6570", this), new Integer(132));
 	literals.put(new ANTLRHashString("\u53d6\u5b57\u7b26\u4e32\u7684\u957f\u5ea6", this), new Integer(188));
 	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u7684\u5b58\u50a8\u957f\u5ea6", this), new Integer(196));
 	literals.put(new ANTLRHashString("\u6c42\u7b2c\u4e00\u6b21\u51fa\u73b0\u4f4d\u7f6e", this), new Integer(198));
@@ -196,6 +195,7 @@ public L(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u4e3a\u65e5\u671f\u578b", this), new Integer(286));
 	literals.put(new ANTLRHashString("ucase", this), new Integer(227));
 	literals.put(new ANTLRHashString("month", this), new Integer(261));
+	literals.put(new ANTLRHashString("\u6c42\u6570\u5b57\u7684\u4e0b\u9650\u6574\u6570", this), new Integer(142));
 	literals.put(new ANTLRHashString("\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5c0f\u5199", this), new Integer(184));
 	literals.put(new ANTLRHashString("\u6c42\u8bb0\u5f55\u603b\u6570", this), new Integer(82));
 	literals.put(new ANTLRHashString("repeat", this), new Integer(199));
