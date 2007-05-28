@@ -133,7 +133,7 @@ public interface PTokenTypes {
 	// "atin2" = 129
 	// "\u6c42\u4e8c\u4e2a\u6570\u7684\u53cd\u6b63\u5207\u503c" = 130
 	int LITERAL_ceiling = 131;
-	// "\u6c42\u4e94\u5165\u540e\u7684\u6574\u6570" = 132
+	// "\u6c42\u6570\u5b57\u7684\u4e0a\u9650\u6574\u6570" = 132
 	int LITERAL_cos = 133;
 	// "\u6c42\u4f59\u5f26\u503c" = 134
 	int LITERAL_cot = 135;
@@ -143,7 +143,7 @@ public interface PTokenTypes {
 	int LITERAL_exp = 139;
 	// "\u6c42\u5e42\u503c" = 140
 	int LITERAL_floor = 141;
-	// "\u6c42\u56db\u820d\u540e\u7684\u6574\u6570" = 142
+	// "\u6c42\u6570\u5b57\u7684\u4e0b\u9650\u6574\u6570" = 142
 	int LITERAL_log = 143;
 	// "\u6c42\u81ea\u7136\u5bf9\u6570" = 144
 	// "log10" = 145
