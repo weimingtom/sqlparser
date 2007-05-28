@@ -1,31 +1,38 @@
-/*==========================================================//
-//	LongtopParser Of Sybase									//
-// 	Sybase 12.5.3/Sybase IQ 12.6 SQL Grammar				//
-//															//
-//	http://www.longtop.com									//
-//															//
-//  Recent updates by jiandeh@sina.com						//
-//															//
-//	\u4fee\u6539\u65e5\u5fd7:													//
-//	======================================================	//
-//	05/01/2007:												//
-//		- \u4fee\u6539\u4e86WHERE\u6761\u4ef6\u591a\u4e2a\u903b\u8f91\u5173\u7cfbAND/OR	\u4e4b\u95f4\u62ec\u53f7\u7684\u5d4c\u5957\u95ee\u9898		//
-//		- \u4fee\u6539\u4e86\u6574\u4e2aWHERE\u6761\u4ef6\u903b\u8f91\u975e(NOT)\u7684\u95ee\u9898					//
-//	05/18/2007\uff1a												//
-//		- \u4fee\u6539\u4e86\u903b\u8f91\u975e\u6574\u4e2a\u6761\u4ef6\uff0c\u7528SEARCH_NOT_CONDITION TOKEN	//
-//		- \u4fee\u6539\u4e86IS NULL/IS NOT NULL; NOT EXISTS;				//
-//        NOT LIKE; IN/NOT IN TOKEN\u53ca\u8bed\u6cd5\u6811\u904d\u5386\uff0c\u53ef\u4ee5\u7528\u9a8c\u8bc1\u82f1\u6587	//
-//		- \u589e\u52a0FUNCTION_EMPTY_PARAM TOKEN\uff0c\u53ef\u4ee5\u5bf9\u7a7a\u51fd\u6570\u9a8c\u8bc1		//
-//		- \u589e\u52a0FUNCTION_COUNT TOKEN\uff0c\u5141\u8bb8\u5bf9\u805a\u5408\u51fd\u6570COUNT(*)\u9a8c\u8bc1	//
-//		- \u589e\u52a0\u5de6\u8fde\u63a5(*=)\u8bed\u6cd5\u9a8c\u8bc1								//
-//	05/19/2007:												//
-//		- \u589e\u52a0\u4e86\u65e5\u671fdate-part\u4fdd\u7559\u5b57\u7684\u5904\u7406\uff0c\u53ef\u4ee5\u4f7f\u7528dateadd(day, 	//
-//		  10, getdate())\u51fd\u6570\u53caday\u4fdd\u7559\u5b57						//
-//		- \u589e\u52a0empty_function\u3001star_function\uff0c\u7528\u6765\u5bf9getdate();	//
-//		  pi(*)\u3001now(*)\u3001today(*)\u7684\u9a8c\u8bc1						//
-//	05/22/2007\uff1a												//
-//		- \u4fee\u6539\u4e86SELECT\u5b50\u53e5\u975e\u805a\u5408\u51fd\u6570\u8868\u8fbe\u5f0f\u5fc5\u987b\u5728GROUP BY\u51fa\u73b0\u95ee\u9898	//
-//		  													//
+/*==========================================================
+//	LongtopParser Of Sybase
+// 	Sybase 12.5.3/Sybase IQ 12.6 SQL Grammar
+//
+//	http://www.longtop.com									
+//
+//  Recent updates by jiandeh@sina.com
+//
+//	\u4fee\u6539\u65e5\u5fd7:
+//	========================================================	
+//	05/01/2007:
+//		- \u4fee\u6539\u4e86WHERE\u6761\u4ef6\u591a\u4e2a\u903b\u8f91\u5173\u7cfbAND/OR	\u4e4b\u95f4\u62ec\u53f7\u7684\u5d4c\u5957\u95ee\u9898
+//		- \u4fee\u6539\u4e86\u6574\u4e2aWHERE\u6761\u4ef6\u903b\u8f91\u975e(NOT)\u7684\u95ee\u9898
+//	05/18/2007\uff1a
+//		- \u4fee\u6539\u4e86\u903b\u8f91\u975e\u6574\u4e2a\u6761\u4ef6\uff0c\u7528SEARCH_NOT_CONDITION TOKEN
+//		- \u4fee\u6539\u4e86IS NULL/IS NOT NULL; NOT EXISTS;
+//        NOT LIKE; IN/NOT IN TOKEN\u53ca\u8bed\u6cd5\u6811\u904d\u5386\uff0c\u53ef\u4ee5\u7528\u9a8c\u8bc1\u82f1\u6587
+//		- \u589e\u52a0FUNCTION_EMPTY_PARAM TOKEN\uff0c\u53ef\u4ee5\u5bf9\u7a7a\u51fd\u6570\u9a8c\u8bc1
+//		- \u589e\u52a0FUNCTION_COUNT TOKEN\uff0c\u5141\u8bb8\u5bf9\u805a\u5408\u51fd\u6570COUNT(*)\u9a8c\u8bc1
+//		- \u589e\u52a0\u5de6\u8fde\u63a5(*=)\u8bed\u6cd5\u9a8c\u8bc1
+//	05/19/2007:
+//		- \u589e\u52a0\u4e86\u65e5\u671fdate-part\u4fdd\u7559\u5b57\u7684\u5904\u7406\uff0c\u53ef\u4ee5\u4f7f\u7528dateadd(day,
+//		  10, getdate())\u51fd\u6570\u53caday\u4fdd\u7559\u5b57
+//		- \u589e\u52a0empty_function\u3001star_function\uff0c\u7528\u6765\u5bf9getdate();
+//		  pi(*)\u3001now(*)\u3001today(*)\u7684\u9a8c\u8bc1
+//	05/22/2007\uff1a
+//		- \u4fee\u6539\u4e86SELECT\u5b50\u53e5\u975e\u805a\u5408\u51fd\u6570\u8868\u8fbe\u5f0f\u5fc5\u987b\u5728GROUP BY\u51fa\u73b0\u95ee\u9898
+//	05/25/2007\uff1a
+//		- \u4fee\u6539\u4e86field_name\u5b9a\u4e49\uff0c\u5141\u8bb8\u4f7f\u7528%\u53ca()\u7ed3\u5c3e\u7684\u8868\u540d/\u5b57\u6bb5\u540d
+//		  \u5982\uff1a AI_94\u4f20\u7968\u5bf9\u7167\u8868.\u5229\u7387(\u767e\u5206\u6bd4%)
+//		- \u4fee\u6539\u4e86\u6570\u636e\u7c7b\u578b\u51fd\u6570convert\u3001cast\u65e0\u6cd5\u4f7f\u7528\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57\u7684
+//		  \u95ee\u9898,\u589e\u52a0data_type_word\u4fdd\u7559\u5b57\u53caDATA_TYPE_STRING\u8bcd\u6cd5
+//		  convert\u4f7f\u7528FUNCTION_DATA_TYPE TOKEN
+//		  cast\u4f7f\u7528FUNCTION_AS_DATA_TYPE TOKEN
+//
 //==========================================================*/
 
 header {
