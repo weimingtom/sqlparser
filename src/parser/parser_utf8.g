@@ -1,31 +1,38 @@
-/*==========================================================//
-//	LongtopParser Of Sybase									//
-// 	Sybase 12.5.3/Sybase IQ 12.6 SQL Grammar				//
-//															//
-//	http://www.longtop.com									//
-//															//
-//  Recent updates by jiandeh@sina.com						//
-//															//
-//	修改日志:													//
-//	======================================================	//
-//	05/01/2007:												//
-//		- 修改了WHERE条件多个逻辑关系AND/OR	之间括号的嵌套问题		//
-//		- 修改了整个WHERE条件逻辑非(NOT)的问题					//
-//	05/18/2007：												//
-//		- 修改了逻辑非整个条件，用SEARCH_NOT_CONDITION TOKEN	//
-//		- 修改了IS NULL/IS NOT NULL; NOT EXISTS;				//
-//        NOT LIKE; IN/NOT IN TOKEN及语法树遍历，可以用验证英文	//
-//		- 增加FUNCTION_EMPTY_PARAM TOKEN，可以对空函数验证		//
-//		- 增加FUNCTION_COUNT TOKEN，允许对聚合函数COUNT(*)验证	//
-//		- 增加左连接(*=)语法验证								//
-//	05/19/2007:												//
-//		- 增加了日期date-part保留字的处理，可以使用dateadd(day, 	//
-//		  10, getdate())函数及day保留字						//
-//		- 增加empty_function、star_function，用来对getdate();	//
-//		  pi(*)、now(*)、today(*)的验证						//
-//	05/22/2007：												//
-//		- 修改了SELECT子句非聚合函数表达式必须在GROUP BY出现问题	//
-//		  													//
+/*==========================================================
+//	LongtopParser Of Sybase
+// 	Sybase 12.5.3/Sybase IQ 12.6 SQL Grammar
+//
+//	http://www.longtop.com									
+//
+//  Recent updates by jiandeh@sina.com
+//
+//	修改日志:
+//	========================================================	
+//	05/01/2007:
+//		- 修改了WHERE条件多个逻辑关系AND/OR	之间括号的嵌套问题
+//		- 修改了整个WHERE条件逻辑非(NOT)的问题
+//	05/18/2007：
+//		- 修改了逻辑非整个条件，用SEARCH_NOT_CONDITION TOKEN
+//		- 修改了IS NULL/IS NOT NULL; NOT EXISTS;
+//        NOT LIKE; IN/NOT IN TOKEN及语法树遍历，可以用验证英文
+//		- 增加FUNCTION_EMPTY_PARAM TOKEN，可以对空函数验证
+//		- 增加FUNCTION_COUNT TOKEN，允许对聚合函数COUNT(*)验证
+//		- 增加左连接(*=)语法验证
+//	05/19/2007:
+//		- 增加了日期date-part保留字的处理，可以使用dateadd(day,
+//		  10, getdate())函数及day保留字
+//		- 增加empty_function、star_function，用来对getdate();
+//		  pi(*)、now(*)、today(*)的验证
+//	05/22/2007：
+//		- 修改了SELECT子句非聚合函数表达式必须在GROUP BY出现问题
+//	05/25/2007：
+//		- 修改了field_name定义，允许使用%及()结尾的表名/字段名
+//		  如： AI_94传票对照表.利率(百分比%)
+//		- 修改了数据类型函数convert、cast无法使用数据类型保留字的
+//		  问题,增加data_type_word保留字及DATA_TYPE_STRING词法
+//		  convert使用FUNCTION_DATA_TYPE TOKEN
+//		  cast使用FUNCTION_AS_DATA_TYPE TOKEN
+//
 //==========================================================*/
 
 header {
