@@ -2,12 +2,12 @@
 //	LongtopParser Of Sybase
 // 	Sybase 12.5.3/Sybase IQ 12.6 SQL Grammar
 //
-//	http://www.longtop.com									
+//	http://www.longtop.com
 //
 //  Recent updates by jiandeh@sina.com
 //
 //	\u4fee\u6539\u65e5\u5fd7:
-//	========================================================	
+//	========================================================
 //	05/01/2007:
 //		- \u4fee\u6539\u4e86WHERE\u6761\u4ef6\u591a\u4e2a\u903b\u8f91\u5173\u7cfbAND/OR	\u4e4b\u95f4\u62ec\u53f7\u7684\u5d4c\u5957\u95ee\u9898
 //		- \u4fee\u6539\u4e86\u6574\u4e2aWHERE\u6761\u4ef6\u903b\u8f91\u975e(NOT)\u7684\u95ee\u9898

@@ -2,12 +2,12 @@
 //	LongtopParser Of Sybase
 // 	Sybase 12.5.3/Sybase IQ 12.6 SQL Grammar
 //
-//	http://www.longtop.com									
+//	http://www.longtop.com
 //
 //  Recent updates by jiandeh@sina.com
 //
 //	修改日志:
-//	========================================================	
+//	========================================================
 //	05/01/2007:
 //		- 修改了WHERE条件多个逻辑关系AND/OR	之间括号的嵌套问题
 //		- 修改了整个WHERE条件逻辑非(NOT)的问题
