@@ -1,5 +1,7 @@
 package model.parser;
 
+import model.parser.common.Constants;
+
 public class OrderExpressionModel extends QueryModel {
   public static final int ASC=1;
   public static final int DESC=2;
@@ -24,27 +26,27 @@ public class OrderExpressionModel extends QueryModel {
   public String getChSort() {
     String s = "";
     if (sort == DESC)
-      s = "½µÐò";
+      s = Constants.DESC_CN;
     else
-      s = "ÉýÐò";
+      s = Constants.ASC_CN;
     return s;
   }
   
   public String getChString() {
     String s="";
-    if (sort==ASC)
-      s=" ÉýÐò";
-    else if (sort==DESC)
-      s=" ½µÐò";
+    if (sort == ASC)
+      s= " " + Constants.ASC_CN;
+    else if (sort == DESC)
+      s= " " + Constants.DESC_CN;
     return super.getChString()+s;
   }
 
   public String getEnString() {
     String s="";
-    if (sort==ASC)
-      s=" asc";
-    else if (sort==DESC)
-      s=" desc";
+    if (sort == ASC)
+      s= " " + Constants.ASC_EN;
+    else if (sort == DESC)
+      s= " " + Constants.DESC_EN;
     return super.getEnString()+s;
   }
 }

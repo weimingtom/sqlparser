@@ -19,4 +19,11 @@ public class AggregateFuncModel extends FunctionModel {
 
 	}
 
+	public AggregateFuncModel(String functionName, int filter, boolean isEn2Ch) {
+
+		super(functionName, isEn2Ch);
+
+		setFilter(filter);
+
+	}
 }

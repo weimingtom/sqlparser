@@ -7,4 +7,7 @@ public class AggregateExprModel extends QueryModel {
   public void addFunction(FunctionModel model) {
     addChild(model);
   }
+  public void addConstant(String c) {
+    addChild(new StringModel(c));
+  }
 }

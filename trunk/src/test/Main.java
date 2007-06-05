@@ -3,15 +3,15 @@ package test;
 import java.io.StringReader;
 import java.util.Iterator;
 
+//import org.dom4j.DocumentException;
+
 import model.parser.AliasModel;
 import model.parser.ChWrongMessage;
 import model.parser.OrderAliasModel;
 import model.parser.ParamModel;
 import model.parser.QueryModel;
 import model.parser.TableAliasModel;
-import parser.L;
-import parser.P;
-import parser.T;
+import model.parser.common.DataBaseType;
 import translator.AppDbField;
 import translator.AppDbTable;
 import translator.DbField;
@@ -22,9 +22,6 @@ import translator.OrderByListVO;
 import translator.SelectListVO;
 import translator.Translator;
 import translator.WhereListVO;
-import antlr.CommonAST;
-import antlr.RecognitionException;
-import antlr.TokenStreamException;
 
 public class Main {
   public static void main(String[] args) {
@@ -41,12 +38,12 @@ public class Main {
 //  		main.testTranslator();
 //      main.testUnion();
 //      main.testCompare();
-//      main.testSegment();
+      main.testSegment();
   	}
   }
  
   public void testSegment(){
-    String[] segmentArr = new String[]{"求和(AI_94传票对照表.省/市代号) 作为 c", "(AI_94传票对照表.金额 加 AI_94传票对照表.货币码) 乘 AI_94传票对照月表.金额"};
+    String[] segmentArr = new String[]{"求总和(AI_94传票对照表.省/市代号) 作为 c", "((AI_94传票对照表.金额 加 AI_94传票对照表.货币码) 乘 AI_94传票对照月表.金额)"};
     Translator t = new Translator();
     for (int i = 0; i < segmentArr.length; i++){
       t.setChSegment(t.COLUMN, segmentArr[i]);
@@ -73,7 +70,7 @@ public class Main {
     }
     
 //    segmentArr = new String[]{"AI_94传票对照表.省/市代号 + AI_94传票对照表.金额 大于 30", "AI_94传票对照月表.货币码 包含 'abcd'", "字符串右截( 字符串截取(AI_通用分户帐0701.省/市代号,1,4),1) 等于 '1'"};
-    segmentArr = new String[]{"字符串右截( 字符串截取(AI_通用分户帐0701.省/市代号,1,4),1) 等于 '1'"};
+    segmentArr = new String[]{"右截字符串( 字符串截取(AI_通用分户帐0701.省/市代号,1,4),1) 等于 '1'"};
     t = new Translator();
     for (int i = 0; i < segmentArr.length; i++){
       t.setChSegment(t.WHERE, segmentArr[i]);
@@ -104,8 +101,8 @@ public class Main {
   public void testCompare(){
     String str = "表比较 AI_94传票对照表, AI_94传票对照月表 条件 not exists AI_94传票对照表.省/市代号 等于 AI_94传票对照月表.省/市代号 并且 AI_94传票对照表.行号 大于 5 并且 AI_94传票对照表.行号 < 2";
     Translator t = new Translator();
-    System.out.println(t.getCnKeyWordByValue(t.ENVALUE_COMPARE));
-    System.out.println(t.getCnKeyWords(""));
+//    System.out.println(t.getCnKeyWordByValue(t.ENVALUE_COMPARE));
+//    System.out.println(t.getCnKeyWords(""));
     t.setChQuery(str);
     t.addDbTable("AI_94传票对照表", "CNF");
     t.addDbField("AI_94传票对照表", "省/市代号", "CNF01");
@@ -242,16 +239,43 @@ public class Main {
   
   public void customQueryTest(){
   	String[] strArr = new String[]{
-  			"查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, AI_94传票对照表.金额 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"SeLECT distinct AI_94传票对照表.行号 来自 AI_94传票对照表 作为 CNF" +
+  			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
+  			
+  			"查询 前N条 10 AI_94传票对照表.行号 来自 AI_94传票对照表 作为 CNF" +
+  			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
+  			
+  			"查询 top 20 AI_94传票对照表.行号 来自 AI_94传票对照表 作为 CNF" +
+  			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
+  			
+  			"查询 唯一 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, AI_94传票对照表.金额 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 (AI_94传票对照表.利率(百分比%) 大于 0.123 并且 AI_94传票对照表.利%率 大于 0.5)" +
   			"	或者 (AI_94传票对照表.利率% 等于 0.88 并且 AI_94传票对照表.利率 小于 0.99)" +
   			" 排序 省/市代号, 行号",
   			
-  			"查询 abs(-900), AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, AI_94传票对照表.金额 作为 金额 来自 AI_94传票对照表 作为 CNF" +
-  			" 条件 字符串右截(字符串截取(AI_94传票对照表.省/市代号, 1, 4), 1) 等于 '1'",
+  			"查询 distinct top 20 abs(-900), AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, AI_94传票对照表.金额 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			" 条件 右截字符串(字符串截取(AI_94传票对照表.省/市代号, 1, 4), 1) 等于 '1'",
   			
-  			"查询 AI_94传票对照表.金额 加 AI_94传票对照表.货币码 乘 AI_94传票对照表.金额, AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, AI_94传票对照表.金额 作为 金额 来自 AI_94传票对照表 作为 CNF" +
-  			" 条件 字符串右截(字符串截取(AI_94传票对照表.省/市代号, 1, 4), 1) 等于 '1'",
+  			"查询 唯一 前N条 30 AI_94传票对照表.行号, (求幂(2, 3) 加 45), (AI_94传票对照表.金额 加 AI_94传票对照表.货币码) 乘 AI_94传票对照表.金额 来自 AI_94传票对照表 作为 CNF" +
+  			" 条件 右截字符串(字符串截取(AI_94传票对照表.省/市代号, 1, 4), 1) 等于 '1'",
+  			
+  			" 查询 distinct 前N条 10 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, 求总和(AI_94传票对照表.金额) 作为 金额" +
+		    " 来自 AI_94传票对照表 作为 CNF, AI_94传票对照表 作为 标2" + 
+		    " 条件 非 (" +
+		    " (AI_94传票对照表.金额 大于 5000 或者 AI_94传票对照表.金额 < -9000)" + 
+		    " 或者 (AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 not like '001')" +
+		    " 并且 (AI_94传票对照表.金额 加 50) 大于 -50000" +
+		    " 并且 数值转字符串(AI_94传票对照表.金额) 等于 -5" +
+		    " 并且 AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 like '%HJD%'" +
+		    " 并且 AI_94传票对照表.省/市代号 非空" +
+		    " 并且 字符串截取(AI_94传票对照表.省/市代号, 1, 20) 等于 '355'" + 
+		    " 并且 (AI_94传票对照表.省/市代号 范围 1 3)" + 
+		    " 并且 AI_94传票对照表.金额 为空" +
+		    " 并且 AI_94传票对照表.金额 左连接 AI_94传票对照表.金额" +
+		    ")" + 
+		    " 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号" + 
+		    " 排序 AI_94传票对照表.行号 降序, 金额 降序, AI_94传票对照表.行号 降序",
+  			
   	};
   	
   	String[] strArr1 = new String[]{
@@ -353,119 +377,116 @@ public class Main {
   	};
   	
   	String[] strArr2 = new String[]{
-  			"查询 数据类型转化为(char, AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(char, AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(char(10), AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(char(10), AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(char(10), 字符串右截(AI_94传票对照表.省/市代号, 10)) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(char(10), 右截字符串(AI_94传票对照表.省/市代号, 120)) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(character, AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(character, AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(character(10), AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(character(10), AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(varchar, AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(varchar, AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(varchar(20), AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(varchar(20), AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(uniqueidentifierstr, AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(uniqueidentifierstr, AI_94传票对照表.省/市代号) 作为 省/市代号 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(bigint, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(bigint, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(int, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(int, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(integer, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(integer, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(smallint, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(smallint, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(tinyint, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(tinyint, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(decimal, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(decimal, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(decimal(10), AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(decimal(10), AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(decimal(10, 2), AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(decimal(10, 2), AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(numeric, '89.09') 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(numeric, '89.09') 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(numeric(10), AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(numeric(10), AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(numeric(10, 2), AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(numeric(10, 2), AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(double, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(double, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(float, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(float, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(float(12), AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(float(12), AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(real, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(real, AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(binary, AI_94传票对照表.内容) 作为 内容 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(binary, AI_94传票对照表.内容) 作为 内容 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(binary(200), AI_94传票对照表.内容) 作为 内容 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(binary(200), AI_94传票对照表.内容) 作为 内容 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(varbinary, AI_94传票对照表.内容) 作为 内容 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(varbinary, AI_94传票对照表.内容) 作为 内容 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(varbinary(200), AI_94传票对照表.内容) 作为 内容 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(varbinary(200), AI_94传票对照表.内容) 作为 内容 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(date, '2007-01-01') 作为 日期 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(date, '2007-01-01') 作为 日期 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(date, '2007-01-01', 120) 作为 日期 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(DATE, '2007-01-01', 120) 作为 日期 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(datetime, '2007-01-01 12:01:21') 作为 日期 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(datetime, '2007-01-01 12:01:21') 作为 日期 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(smalldatetime, '2007-01-01') 作为 日期 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(smalldatetime, '2007-01-01') 作为 日期 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(time, '2007-01-01') 作为 日期 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(time, '2007-01-01') 作为 日期 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(timestamp, '2007-01-01') 作为 日期 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(timestamp, '2007-01-01') 作为 日期 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
-  			"查询 数据类型转化为(bit, AI_94传票对照表.标识) 作为 标识 来自 AI_94传票对照表 作为 CNF" +
+  			"查询 数据类型转换(bit, AI_94传票对照表.标识) 作为 标识 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   			
   			"查询 convert(bit, AI_94传票对照表.标识) 作为 标识 来自 AI_94传票对照表 作为 CNF" +
   			" 条件 AI_94传票对照表.省/市代号 等于 '1'",
   		};
   	
-  	
-  	
   	Translator t = new Translator();
-  	/*
-  	System.out.println("==========convert函数测试========");
+  	System.out.println("==========cast函数测试========");
     for (int i = 0; i < strArr1.length; i++){
-    	System.out.println("convert函数测试" + (i + 1) + "：");
+    	System.out.println("cast函数测试" + (i + 1) + "：");
     	t.setChQuery(strArr1[i]);
     	if (t.hasError()){
         ChWrongMessage[] msgs = t.showWrongMsgs();
@@ -497,9 +518,9 @@ public class Main {
     	System.out.println();
     }
     
-    System.out.println("==========cast函数测试========");
+    System.out.println("==========convert函数测试========");
     for (int i = 0; i < strArr2.length; i++){
-    	System.out.println("cast函数测试" + (i + 1) + "：");
+    	System.out.println("convert函数测试" + (i + 1) + "：");
     	t.setChQuery(strArr2[i]);
     	if (t.hasError()){
         ChWrongMessage[] msgs = t.showWrongMsgs();
@@ -530,7 +551,6 @@ public class Main {
       }
     	System.out.println();
     }
-    */
   	
     System.out.println("============自定义查询测试==========");
     for (int i = 0; i < strArr.length; i++){
@@ -579,45 +599,34 @@ public class Main {
         + "排序 a, 表1.字段1 升序, 数值转字符串(表2.字段3), 求和(表2.字段4) 降序, 字符串截取(表1.字段3, 1, 4)";
     
     
-    str = " 查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, 求和(AI_94传票对照表.金额) 作为 金额" +
-          " 来自 AI_94传票对照表 作为 CNF, AI_94传票对照表 作为 标2" + 
-          " 条件 非 (" +
-          " (AI_94传票对照表.金额 大于 5000 或者 AI_94传票对照表.金额 < -9000)" + 
-          " 或者 (AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 not like '001')" +
-          " 并且 (AI_94传票对照表.金额 加 50) 大于 -50000" +
-          " 并且 数值转字符串(AI_94传票对照表.金额) 等于 -5" +
-          " 并且 AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 like '%HJD%'" +
-          " 并且 AI_94传票对照表.省/市代号 非空" +
-          " 并且 字符串截取(AI_94传票对照表.省/市代号, 1, 20) 等于 '355'" + 
-          " 并且 (AI_94传票对照表.省/市代号 范围 1 3)" + 
-          " 并且 AI_94传票对照表.金额 is not null" +
-          " 并且 AI_94传票对照表.金额 左连接 AI_94传票对照表.金额" +
-          ")" + 
-          " 分组 数值转字符串(AI_94传票对照表.行号), 求平方根(AI_94传票对照表.省/市代号), AI_94传票对照表.行号, 字符串截取(AI_94传票对照表.金额, 1, 3)" + 
-          " 排序 AI_94传票对照表.行号 降序, 金额 降序, AI_94传票对照表.行号 降序";
+    str = " select 所有, -780, abs(-900) + 400, AI_94传票对照表.省/市代号 as 省/市代号, AI_94传票对照表.行号 作为 行号, 求总和(AI_94传票对照表.金额) 作为 金额" +
+			    " 来自 AI_94传票对照表 作为 CNF, AI_94传票对照表 作为 标2" + 
+			    " 条件 not (" +
+			    " (AI_94传票对照表.金额 大于 5000 或者 AI_94传票对照表.金额 小于 -9000)" + 
+			    " or (AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 not like '001')" +
+			    " or (AI_94传票对照表.金额 * 50) 大于 -50000" +
+			    " 并且 str(AI_94传票对照表.金额) 等于 -5" +
+			    " 并且 AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 like '%HJD%'" +
+			    " 并且 AI_94传票对照表.省/市代号 is NOT null" +
+			    " 并且 字符串截取(AI_94传票对照表.省/市代号, 1, 20) 等于 '355'" + 
+			    " 并且 (AI_94传票对照表.省/市代号 between 1 AND 3)" + 
+			    " 并且 AI_94传票对照表.金额% 非空" +
+			    " 并且 AI_94传票对照表.金额 左连接 AI_94传票对照表.金额" +
+			    ")" + 
+			    " 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号, abs(-900) + 400" + 
+			    " 排序 AI_94传票对照表.行号 降序, 金额 降序, AI_94传票对照表.行号 降序";
     
-    str = " select 所有" +
-			    " 来自 AI_94传票对照表 作为 CNF" + 
-			    " 条件 (" +
-			    " 字符串截取(AI_94传票对照表.利率%, 1, 3) = 'XYZ'" +
-			    ")";
-    
-//  str = " 查询 now(*)" +
-//  " 来自 AI_94传票对照表 作为 CNF" + 
-//  " 条件 字符串右截( 字符串截取(AI_94传票对照表.省/市代号,1,4),1) 等于 '1'" +
-//  " 条件 字符串截取(字符串右截(AI_通用分户帐0701.省/市代号, 4), 1, 3) 等于 '1'" +
-//  " 条件 非 (" +
-//  " (AI_94传票对照表.金额 大于 5000)" + 
-//  " 或者 (AI_94传票对照表.行号 等于 '3')" +
-//  " 或者 格式化日期(日期相加(day, 20, 数据类型转化为(char(10), AI_94传票对照表.日期, 120)), day) 等于 '2007-01-01'" +
-//  ")" + 
-//  " 分组 AI_94传票对照表.省/市代号, 求字符串的长度(字符串左截(AI_94传票对照表.行号, 4)), AI_94传票对照表.日期" + 
-//  " 排序 AI_94传票对照表.行号 降序, 金额 降序, AI_94传票对照表.行号 降序";
-    
-    
-
     Translator t = new Translator();
-    t.setChQuery(str);
+//    t.setDatabaseType(DataBaseType.ORACLE8i);
+    
+    t.setChQuery(str, false);
+    if (t.hasError()){
+      ChWrongMessage[] msgs = t.showWrongMsgs();
+      for (int j = 0; j < msgs.length; j++){
+        System.out.println("【测试错误】" + msgs[j]);
+      }
+      return;
+    }
     
     QueryModel[] tableAliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(TableAliasModel.class);
     for (int i = 0; i < tableAliasModelArr.length; i++){
@@ -646,7 +655,6 @@ public class Main {
     DbTable[] ts = t.getTables();
     t.updateDbTables(t, ts);
     
-    /*
     //获取循环语句条件变量参数
     QueryModel[] paramModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(ParamModel.class);
     for (int i = 0; i < paramModelArr.length; i++){
@@ -731,27 +739,18 @@ public class Main {
       OrderAliasModel orderAliasModel = (OrderAliasModel) orderAliasModelArr[i];
       orderAliasModel.setEnAlias("enOrderAlias" + i);
     }
-    */
-    
+    System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
     System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
     System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
     System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
     System.out.println("EXE SQL IS: " + t.getQueryModel().getExecuteEnString("S001"));
-//    String xml1 = t.getXmlString();
-//    System.out.println("TO DB XML: " + xml1);
+//    String queryXML = t.getXmlString();
+//    System.out.println("TO DB XML: " + queryXML);
     
     /*
     Translator t1 = new Translator();
-    String rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + "<query><ch_query_string>查询 唯一 所有 , 求和(e.字段2) 作为 a , 表1.字段1 , ( 表2.字段3 加 表2.字段4 ) 乘 表2.字段5 , 表3.字段1 加 表3.字段2 , 求平方根(表4.字段3)  来自 表1 作为 e, 表2 作为 f, 表3, 表4 条件 1 等于 1 并且 e.字段1 + e.字段2 大于 '30' 或者 表2.字段3 包含 'abcd' 或者 表3.字段1 非空 或者 表3.字段2 范围 1 2 分组 表1.字段1, 字符串截取(表1.字段3, 1, 4), 数值转字符串(表2.字段3), 表2.字段3 加 表2.字段4 排序  a, 表1.字段1 升序, 数值转字符串(表2.字段3), 求和(表2.字段4) 降序, 字符串截取(表1.字段3, 1, 4)</ch_query_string><db_info ch_name=\"表1\" en_name=\"table0\"><db_field ch_name=\"字段2\" en_name=\"field2\"/><db_field ch_name=\"字段3\" en_name=\"field3\"/><db_field ch_name=\"字段1\" en_name=\"field1\"/></db_info><db_info ch_name=\"表2\" en_name=\"table1\"><db_field ch_name=\"字段4\" en_name=\"field4\"/><db_field ch_name=\"字段5\" en_name=\"field5\"/><db_field ch_name=\"字段3\" en_name=\"field3\"/></db_info><db_info ch_name=\"表3\" en_name=\"table2\"><db_field ch_name=\"字段2\" en_name=\"field2\"/><db_field ch_name=\"字段1\" en_name=\"field1\"/></db_info><db_info ch_name=\"表4\" en_name=\"table3\"><db_field ch_name=\"字段3\" en_name=\"field3\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"a\" enAlias=\"enAlias0\"/><aliasListVO alias=\"e\" enAlias=\"enAlias1\"/><aliasListVO alias=\"f\" enAlias=\"enAlias2\"/></aliasListEqu><orderAliasListEqu><orderAliasListVO alias=\"a\" enAlias=\"enOrderAlias0\"/></orderAliasListEqu></query>";
-    rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-      + "<query><ch_query_string>查询 AI_94传票对照表.省/市代号 作为 省/市代号 , AI_94传票对照表.行号 作为 行号 , 求和(AI_94传票对照表.金额) 作为 金额  来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 '0200' 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序 求和(AI_94传票对照表.金额) 升序, AI_94传票对照表.行号 降序</ch_query_string><db_info ch_name=\"AI_94传票对照表\" en_name=\"CNF\" flag=\"casdb2\" tableParam=\"\"><db_field ch_name=\"行号\" en_name=\"CNF02\" fieldParam=\"\"/><db_field ch_name=\"货币码\" en_name=\"CNF04\" fieldParam=\"\"/><db_field ch_name=\"省/市代号\" en_name=\"CNF01\" fieldParam=\"\"/><db_field ch_name=\"金额\" en_name=\"CNF03\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"省/市代号\" enAlias=\"enAlias0\"/><aliasListVO alias=\"行号\" enAlias=\"enAlias1\"/><aliasListVO alias=\"金额\" enAlias=\"enAlias2\"/></aliasListEqu><orderAliasListEqu/></query>";
-    rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-      + "<query><ch_query_string circleType=\"1\">查询 AI_94传票对照表.省/市代号 作为 省/市代号 , AI_94传票对照表.行号 作为 行号 , 求和(AI_94传票对照表.金额) 作为 金额  来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 等于 '0200' 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号 排序 求和(AI_94传票对照表.金额) 升序, AI_94传票对照表.行号 降序</ch_query_string><db_info ch_name=\"AI_94传票对照表\" en_name=\"CNF\" flag=\"casdb2\" tableParam=\"CNF_table_Param\"><db_field ch_name=\"行号\" en_name=\"CNF02\" fieldParam=\"\"/><db_field ch_name=\"货币码\" en_name=\"CNF04\" fieldParam=\"\"/><db_field ch_name=\"省/市代号\" en_name=\"CNF01\" fieldParam=\"\"/><db_field ch_name=\"金额\" en_name=\"CNF03\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"省/市代号\" enAlias=\"enAlias0\"/><aliasListVO alias=\"行号\" enAlias=\"enAlias1\"/><aliasListVO alias=\"金额\" enAlias=\"enAlias2\"/></aliasListEqu><orderAliasListEqu/></query>";
-    rXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-       + "<query><ch_query_string>查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, 求和(AI_94传票对照表.金额) 作为 金额 来自 AI_94传票对照表 作为 CNF, AI_94传票对照表 作为 标2 条件 非 ( ( AI_94传票对照表.金额 大于 5000 或者 AI_94传票对照表.金额 &lt; -9000 ) 或者 ( AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 不包含 '001' ) 并且 ( AI_94传票对照表.金额 加 50 ) 大于 -50000 并且 数值转字符串(AI_94传票对照表.金额) 等于 -5 并且 AI_94传票对照表.行号 等于 '3' 并且 AI_94传票对照表.省/市代号 不包含 '001' 并且 AI_94传票对照表.省/市代号 非空 并且 字符串截取(AI_94传票对照表.省/市代号, 1, 20) 等于 '355' 并且 AI_94传票对照表.省/市代号 范围 1 3 并且 AI_94传票对照表.金额 在于 (23, 12, 34, 350) ) 分组 数值转字符串(AI_94传票对照表.行号), 求平方根(AI_94传票对照表.省/市代号), AI_94传票对照表.行号, 字符串截取(AI_94传票对照表.金额, 1, 3) 排序 AI_94传票对照表.行号 降序, 金额 降序, AI_94传票对照表.行号 降序</ch_query_string><db_info ch_name=\"AI_94传票对照表\" en_name=\"CNF\" flag=\"\" tableParam=\"\"><db_field ch_name=\"省/市代号\" en_name=\"CNF01\" fieldParam=\"\"/><db_field ch_name=\"行号\" en_name=\"CNF02\" fieldParam=\"\"/><db_field ch_name=\"金额\" en_name=\"CNF03\" fieldParam=\"\"/><db_field ch_name=\"货币码\" en_name=\"CNF04\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/><SelectListVO fieldDataType=\"String\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/><WhereListVO checkedFlag=\"1\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"省/市代号\" enAlias=\"enAlias0\"/><aliasListVO alias=\"行号\" enAlias=\"enAlias1\"/><aliasListVO alias=\"金额\" enAlias=\"enAlias2\"/></aliasListEqu><tableAliasListEqu><tableAliasListVO alias=\"CNF\" enAlias=\"CNF20070101\"/><tableAliasListVO alias=\"标2\" enAlias=\"CNF20070101\"/></tableAliasListEqu><orderAliasListEqu><orderAliasListVO alias=\"金额\" enAlias=\"enOrderAlias0\"/></orderAliasListEqu></query>";
     try{
-      QueryModel m = t1.loadModelFromXML(rXML);
+      QueryModel m = t1.loadModelFromXML(queryXML);
       t1.setAliasModelListVOArrByXML();
       t1.setTableAliasModelListVOArrByXML();
       t1.setOrderAliasModelListVOArrByXML();
@@ -774,10 +773,10 @@ public class Main {
       }
       AppDbTable[] appDbTables = t1.getInfo().getDbTableInfoToAppTableArr();
       
-//      for (int i = 0; i < r_selectListVOArr.length; i++){
-//        r_selectListVOArr[i].setFieldDataType("Date");
-//      }
-//      t1.setSelectListVOArr(r_selectListVOArr);
+      for (int i = 0; i < r_selectListVOArr.length; i++){
+        r_selectListVOArr[i].setFieldDataType("Date");
+      }
+      t1.setSelectListVOArr(r_selectListVOArr);
      aliasModels = t1.getAliasModelListVOArrByModel();
       TableAliasModel[] tableAliasModels = t1.getTableAliasModelListVOArrByModel();
       tableAliasModels[0].setEnAlias("CNF00000");
@@ -791,58 +790,5 @@ public class Main {
     }
     */
   }
-  
-  public void testGettingStart() {
-    String str = "查询 字段 来自 表";
-    GSL l = new GSL(new StringReader(str));
-    GSP p = new GSP(l);
-    try{
-      p.startRule();
-      CommonAST ast = (CommonAST) p.getAST();
-      System.out.println(ast.toStringList());
-    }catch (RecognitionException e){
-      e.printStackTrace();
-    }catch (TokenStreamException e){
-      e.printStackTrace();
-    }
-  }
-
-  public void testQueryParser() {
-    String str = "select distinct *, 求和(表1.字段2) 作为 a, 表1.字段1, (表2.字段3 加 表2.字段4) * 表2.字段5, 表3.字段1 加 表3.字段2, 求平方根(表4.字段3) "
-        + "from 表1 作为 e, 表2 作为 f, 表3, 表4 "
-        + "where 1 等于 1 并且 e.字段1+e.字段2 大于 '30' 或者 表2.字段3 包含 'abcd' 或者 表3.字段1 非空 或者 表3.字段2 范围 1 2 "
-        + "group by 表1.字段1 加 表2.字段2, 表2.字段1 " + "order by 表1.字段1 升序, a 降序";
-    System.out.println(str);
-    L lexer = new L(new StringReader(str));
-    P parser = new P(lexer);
-    try{
-      parser.select_statement();
-      CommonAST ast = (CommonAST) parser.getAST();
-      System.out.println(ast.toStringList());
-      T t = new T();
-      QueryModel m = t.select_statement(ast);
-      System.out.println(m.getChString());
-    }catch (RecognitionException e){
-      e.printStackTrace();
-    }catch (TokenStreamException e){
-      e.printStackTrace();
-    }
-  }
-
-  private static void setTableInfo(DbTable[] tables) {
-    for (int j = 0; j < tables.length; j++){
-      System.out.println(tables[j].getChName());
-      tables[j].setEnName("table" + j);
-      tables[j].addDbField("字段1", "field1");
-      tables[j].addDbField("字段2", "field2");
-      tables[j].addDbField("字段3", "field3");
-      tables[j].addDbField("字段4", "field4");
-      tables[j].addDbField("字段5", "field5");
-      tables[j].addDbField("字段6", "field6");
-      tables[j].addDbField("金额", "field5");
-      tables[j].addDbField("省/市代号", "field6");
-      tables[j].addDbField("行号", "line_num");
-      tables[j].addDbField("货币码", "code");
-    }
-  }
+ 
 }

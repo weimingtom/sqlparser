@@ -10,6 +10,8 @@ package model.parser;
  *
  */
 public class ParametersModel extends QueryModel {
+	public static final String AS = " as ";
+	
 	private String filter = "";
   public void addParameter(ExpressionModel e) {
     addChild(e);

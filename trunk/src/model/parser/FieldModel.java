@@ -40,6 +40,8 @@ public class FieldModel extends QueryModel {
 
   public String getEnString() {
     String ret = fieldEnName;
+    if (ret == null || ret.equals(""))
+    	ret = fieldName;
     //如果存在英文表名
     if (tableEnName != null && tableEnName.length() > 0){
       String[] tableEnNameArr = tableEnName.split(" as ");

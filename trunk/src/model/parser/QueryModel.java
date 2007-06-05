@@ -10,7 +10,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import parser.oracle.*;
+import parser.sybase.*;
 import antlr.ANTLRException;
 import antlr.CharStreamIOException;
 import antlr.CommonAST;
@@ -25,9 +30,7 @@ import antlr.TokenStreamRetryException;
 import antlr.debug.misc.ASTFrame;
 
 import util.StringUtil;
-import parser.L;
-import parser.P;
-import parser.T;
+import model.parser.common.DataBaseType;
 import model.parser.exceptions.NoGroupExistsException;
 import model.parser.exceptions.NoSuchFieldException;
 import model.parser.exceptions.NoSuchTableException;
@@ -42,14 +45,19 @@ public class QueryModel {
   private static final String KEYWORDS = "keywords";  //关键字属性文件名称
   private static Map mapKeyword = new HashMap();      //存放关键字的HashMap
   
-  private List children = new ArrayList();
-  private P parser;
-  private L lexer;
-  private T tree;
-  private DbTableModel dbTableModel = new DbTableModel();
+  private SybaseIQ12Parser sybaseIQ12Parser;
+  private SybaseIQ12Lexer sybaseIQ12Lexer;
+  private Oracle9iParser oracle9iParser;
+  private Oracle9iLexer oracle9iLexer;
+  
   private String chQuery;
+  private String databaseType;
+  private List children = new ArrayList();
+  private DbTableModel dbTableModel = new DbTableModel();
+  private List antlrExceptions = new ArrayList();
+  
   private String circleType;  //循环语句类型(表变量/条件变量)
-  private List antlrExceptions=new ArrayList();
+  
   
   static {
     //获取所有中英文关键字并存储在HashMap的mapKeyword中
@@ -72,14 +80,65 @@ public class QueryModel {
     return (en==null)?str:en;
   }
   
-  protected QueryModel() {}
+  /**
+   * 将英文的关键字（关键字/函数/运算符/操作符...）翻译成中文的关键字
+   * @param str 英文的关键字
+   * @return String 中文的关键字
+   */
+  protected static String translateStringEn2Ch(String str) {
+  	String ch = "";
+  	Set set = mapKeyword.entrySet();
+  	Iterator it=set.iterator();
+  	while (it.hasNext()) {
+  		Map.Entry entry = (Map.Entry) it.next();
+  		if (entry.getValue().equals(str)) {
+  			ch = (String) entry.getKey();
+  		}
+  	}
+    return (ch == null || ch.equals("")) ? str : ch;
+  }
+  
+  protected QueryModel() {
+  	
+  }
   
   /**
    * 完整SQL语句解析，当解析正确时返回QueryModel对象
    * @param chQuery 完整SQL语句
    * @return QueryModel 编译器QueryModel对象
    */
-  public static QueryModel parseQuery(String chQuery) {
+  public static QueryModel parseQuery(String chQuery){
+  	return parseQuery(chQuery, DataBaseType.DEFAULT_DATABASE_TYPE, true);
+  }
+  
+  /**
+   * 完整SQL语句解析，当解析正确时返回QueryModel对象
+   * @param chQuery 完整SQL语句
+   * @param isGroupByValid 是否对GROUP BY聚合函数进行验证
+   * @return QueryModel 编译器QueryModel对象
+   */
+  public static QueryModel parseQuery(String chQuery, boolean isGroupByValid){
+  	return parseQuery(chQuery, DataBaseType.DEFAULT_DATABASE_TYPE, isGroupByValid);
+  }
+  
+  /**
+   * 完整SQL语句解析，当解析正确时返回QueryModel对象
+   * @param chQuery 完整SQL语句
+   * @param databaseType 数据库类型
+   * @return QueryModel 编译器QueryModel对象
+   */
+  public static QueryModel parseQuery(String chQuery, String databaseType){
+  	return parseQuery(chQuery, DataBaseType.DEFAULT_DATABASE_TYPE, true);
+  }
+  
+  /**
+   * 完整SQL语句解析，当解析正确时返回QueryModel对象
+   * @param chQuery 完整SQL语句
+   * @param databaseType 数据库类型
+   * @param isGroupByValid 是否对GROUP BY聚合函数进行验证
+   * @return QueryModel 编译器QueryModel对象
+   */
+  public static QueryModel parseQuery(String chQuery, String databaseType, boolean isGroupByValid) {
   	String IS_NOT_EXISTS = "0";
   	String IS_EXISTS = "1";
     String IS_EXISTS_ERROR = "2";
@@ -87,166 +146,242 @@ public class QueryModel {
   	QueryModel model = null;
     List exs = new ArrayList();
     
-    L l = new L(new StringReader(chQuery));
-    P p = new P(l);
-    try {
-      p.statements();
-      CommonAST ast = (CommonAST)p.getAST();
-      //TODO Visible ASTFrame
-//      ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
-//      _ASTFrame.setVisible(true);
-      T t = new T();
-      model = t.statement(ast);
-    } catch (ANTLRException e) {
-      exs.add(e);
-    }
+    if (databaseType.equals(DataBaseType.SYBASE_IQ_12) || databaseType.equals(DataBaseType.SYBASE_ASE_12)){
+    	SybaseIQ12Lexer rSybaseIQ12Lexer = new SybaseIQ12Lexer(new StringReader(chQuery));
+      SybaseIQ12Parser rSybaseIQ12Parser = new SybaseIQ12Parser(rSybaseIQ12Lexer);
+    	try {
+	      rSybaseIQ12Parser.statements();
+	      CommonAST ast = (CommonAST) rSybaseIQ12Parser.getAST();
+	      // TODO Visible ASTFrame
+//  	    ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+//  	    _ASTFrame.setVisible(true);
+		    SybaseIQ12TreeParser rSybaseIQ12TreeParser = new SybaseIQ12TreeParser();
+	      model = rSybaseIQ12TreeParser.statement(ast);
+    	}catch (ANTLRException e) {
+        exs.add(e);
+      }
+    	
+    	if (model == null){
+        model = new QueryModel();
+      }
+    	model.setDatabaseType(databaseType);
+      model.setSybaseIQ12Lexer(rSybaseIQ12Lexer);
+      model.setSybaseIQ12Parser(rSybaseIQ12Parser);
+  	}else if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
+  		Oracle9iLexer rOracle9iLexer = new Oracle9iLexer(new StringReader(chQuery));
+  		Oracle9iParser rOracle9iParser = new Oracle9iParser(rOracle9iLexer);
+  		try {
+  			rOracle9iParser.statements();
+	      CommonAST ast = (CommonAST) rOracle9iParser.getAST();
+	      // TODO Visible ASTFrame
+//	  	    ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+//	  	    _ASTFrame.setVisible(true);
+	      Oracle9iTreeParser rOracle9iTreeParser = new Oracle9iTreeParser();
+	      model = rOracle9iTreeParser.statement(ast);
+    	}catch (ANTLRException e) {
+        exs.add(e);
+      }
+    	if (model == null){
+        model = new QueryModel();
+      }
+      model.setDatabaseType(databaseType);
+      model.setOracle9iLexer(rOracle9iLexer);
+      model.setOracle9iParser(rOracle9iParser);
+  	}else{
+  		if (model == null){
+        model = new QueryModel();
+      }
+  		model.setDatabaseType(databaseType);
+  	}
     
-    if (model == null){
-      model = new QueryModel();
-    }
-    model.setParser(p);
-    model.setLexer(l);
-    model.setExceptions(exs);
-    model.setQuery(chQuery);
     QueryModel[] _paramModelArr = model.getModelsFromAllChildrenByClass(ParamModel.class);
     if (_paramModelArr.length > 0)
       model.setCircleType(((ParamModel) _paramModelArr[0]).getCircleType());
     
-    //==== SELECT子句中非聚合函数表达式必须在GROUP BY子句中出现 BEGIN ====//
-    Map aFunMap = new LinkedHashMap();	//聚合函数Map
-    
-    //获取所有聚合函数Model数组
-    QueryModel[] _aggregateFunModelArr = model.getModelsFromAllChildrenByClass(AggregateFuncModel.class);
-    
-    if (_aggregateFunModelArr.length > 0){	//如果存在聚合函数
-	    // 循环获取所有聚合函数Model数组相关信息
-			for (int i = 0; i < _aggregateFunModelArr.length; i++) {
-				aFunMap.put(_aggregateFunModelArr[i].getChString(), IS_NOT_EXISTS);	//将聚合函数放入Map中，标识为IS_NOT_EXISTS
-				//QueryModel apm = _aggregateFunModelArr[i].getFirstModelByClass(ParametersModel.class);
-				// 得到每个集合函数的所有参数表达式模型
-				//QueryModel expm = apm.getFirstModelByClass(ExpressionModel.class);
-				//QueryModel[] expms = apm.getModelByClass(ExpressionModel.class);
-				// 得到每个集合函数的所有字段模型
-				//QueryModel[] fdms = apm.getModelsFromAllChildrenByClass(FieldModel.class);
-			}
-			
-			Map nGroupExprMap = new LinkedHashMap();				//需要在分组出现的表达式Map
-			Map mGroupSingleExprMap = new LinkedHashMap();	//可分组出现的单个表达式Map
-			
-			//获取SELECT子句下的所有表达式
-			QueryModel[] _columnModelArr = model.getModelsFromAllChildrenByClass(ColumnModel.class); 
-			for (int i = 0; i < _columnModelArr.length; i++){
-				ColumnModel _columnModel = (ColumnModel) _columnModelArr[i];
-				QueryModel expm =  _columnModel.getFirstModelByClass(ExpressionModel.class);	//获取ColumnModel的表达式
-				
-				if (!((ExpressionModel)expm).hasConstant()){	//如果不是常量则与带有聚合函数的表达式进行比较（目前abs(-900)认为不是常量）
-					if (aFunMap.containsKey(expm.getChString())){
-						aFunMap.put(expm.getChString(), IS_EXISTS);						//表示此聚合函数已在SELECT子句中找到
-					}else{
-						//获取此表达式的单个字段，如果为1个，则放入mGroupSingleExprMap中
-						QueryModel[] fmArr = expm.getModelsFromAllChildrenByClass(FieldModel.class);
-						if (fmArr.length == 1){
-							UnAggregateExpVO unAggregateExpVO = new UnAggregateExpVO();
-							unAggregateExpVO.setUnAggregateExp(expm.getChString());
-							unAggregateExpVO.setSingleExp(fmArr[0].getChString());
-							unAggregateExpVO.setExistsFlag(IS_NOT_EXISTS);
-							mGroupSingleExprMap.put(fmArr[0].getChString(), unAggregateExpVO);
-							nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY需要在分组中出现
-						}else if (fmArr.length == 0){
-							QueryModel[] smArr = expm.getModelsFromAllChildrenByClass(StringModel.class);
-							if (smArr.length != 1){	//如果表达式不存在单个常量（如: abs(-9000))
-								nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY需要在分组中出现
-							}
-						}else{
-							nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY需要在分组中出现
-						}
-					}
+    if (isGroupByValid) {
+	    //==== SELECT子句中非聚合函数表达式必须在GROUP BY子句中出现 BEGIN ====//
+	    Map aFunMap = new LinkedHashMap();	//聚合函数Map
+	    
+	    //获取所有聚合函数Model数组
+	    QueryModel[] _aggregateFunModelArr = model.getModelsFromAllChildrenByClass(AggregateFuncModel.class);
+	    
+	    if (_aggregateFunModelArr.length > 0){	//如果存在聚合函数
+		    // 循环获取所有聚合函数Model数组相关信息
+				for (int i = 0; i < _aggregateFunModelArr.length; i++) {
+					aFunMap.put(_aggregateFunModelArr[i].getChString(), IS_NOT_EXISTS);	//将聚合函数放入Map中，标识为IS_NOT_EXISTS
+					//QueryModel apm = _aggregateFunModelArr[i].getFirstModelByClass(ParametersModel.class);
+					// 得到每个集合函数的所有参数表达式模型
+					//QueryModel expm = apm.getFirstModelByClass(ExpressionModel.class);
+					//QueryModel[] expms = apm.getModelByClass(ExpressionModel.class);
+					// 得到每个集合函数的所有字段模型
+					//QueryModel[] fdms = apm.getModelsFromAllChildrenByClass(FieldModel.class);
 				}
 				
+				Map nGroupExprMap = new LinkedHashMap();				//需要在分组出现的表达式Map
+				Map mGroupSingleExprMap = new LinkedHashMap();	//可分组出现的单个表达式Map
+				
+				//获取SELECT子句下的所有表达式
+				QueryModel[] _columnModelArr = model.getModelsFromAllChildrenByClass(ColumnModel.class); 
+				for (int i = 0; i < _columnModelArr.length; i++){
+					ColumnModel _columnModel = (ColumnModel) _columnModelArr[i];
+					QueryModel expm =  _columnModel.getFirstModelByClass(ExpressionModel.class);	//获取ColumnModel的表达式
+					
+					if (!((ExpressionModel)expm).hasConstant()){	//如果不是常量则与带有聚合函数的表达式进行比较（目前abs(-900)认为不是常量）
+						if (aFunMap.containsKey(expm.getChString())){
+							aFunMap.put(expm.getChString(), IS_EXISTS);						//表示此聚合函数已在SELECT子句中找到
+						}else{
+							//获取此表达式的单个字段，如果为1个，则放入mGroupSingleExprMap中
+							QueryModel[] fmArr = expm.getModelsFromAllChildrenByClass(FieldModel.class);
+							if (fmArr.length == 1){
+								UnAggregateExpVO unAggregateExpVO = new UnAggregateExpVO();
+								unAggregateExpVO.setUnAggregateExp(expm.getChString());
+								unAggregateExpVO.setSingleExp(fmArr[0].getChString());
+								unAggregateExpVO.setExistsFlag(IS_NOT_EXISTS);
+								mGroupSingleExprMap.put(fmArr[0].getChString(), unAggregateExpVO);
+								nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY需要在分组中出现
+							}else if (fmArr.length == 0){
+								QueryModel[] smArr = expm.getModelsFromAllChildrenByClass(StringModel.class);
+								if (smArr.length != 1){	//如果表达式不存在单个常量（如: abs(-9000))
+									nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY需要在分组中出现
+								}
+							}else{
+								nGroupExprMap.put(expm.getChString(), IS_NOT_EXISTS);	//表示此KEY需要在分组中出现
+							}
+						}
+					}
+					
+		    }
+				
+				//获取GROUP BY列表模型对象
+		    QueryModel _groupByListModel = model.getFirstModelByClass(AggregateExprListModel.class);
+		    //获取GROUP BY列表中所有表达式数组
+		    QueryModel[] _groupByExprModelArr;
+		    if (_groupByListModel == null){
+		    	_groupByExprModelArr = new QueryModel[0];
+		    }else{
+		    	_groupByExprModelArr = _groupByListModel.getModelByClass(AggregateExprModel.class);
+		    }
+		    
+		    //如果GROUP BY列表中的表达式在SELECT字句的需分组的Map(nGroupExprMap)中存在，则设置存在标识
+		    for (int i = 0; i < _groupByExprModelArr.length; i++){
+		    	if (nGroupExprMap.containsKey(_groupByExprModelArr[i].getChString())){
+		    		nGroupExprMap.put(_groupByExprModelArr[i].getChString(), IS_EXISTS);
+		    	}else if (mGroupSingleExprMap.containsKey(_groupByExprModelArr[i].getChString())){
+		    		//判断此表达式的单个字段是否出现，如果在分组中出现，则设置存在标识
+		    		UnAggregateExpVO unAggregateExpVO = (UnAggregateExpVO) mGroupSingleExprMap.get(_groupByExprModelArr[i].getChString());
+		    		nGroupExprMap.put(unAggregateExpVO.getUnAggregateExp(), IS_EXISTS);
+		    	}else if (aFunMap.containsKey(_groupByExprModelArr[i].getChString())){
+		    		NoGroupExistsException _exception = new NoGroupExistsException(_groupByExprModelArr[i].getChString(), NoGroupExistsException.EXPR_EXISTS_ERROR);
+		    		exs.add(_exception);
+		    	}
+		    }
+		    
+		    //循环获取需分组的Map(nGroupExprMap)中，在GROUP BY没出现的SELECT表达式则放入编译器异常集合中
+		    for (Iterator it = nGroupExprMap.keySet().iterator(); it.hasNext();){
+		    	String selectExpr = (String) it.next();
+		    	if (((String)nGroupExprMap.get(selectExpr)).equals(IS_NOT_EXISTS)){
+		    		NoGroupExistsException _exception = new NoGroupExistsException(selectExpr);
+		    		exs.add(_exception);
+		    	}
+		    }
+		    
+		    
+		    // 得到所有函数模型(包括一般函数和聚合函数)--此函数会带有GROUP BY中的函数
+		    //QueryModel[] _allFunctionModelArr = model.getModelsFromAllChildrenByClass(FunctionModel.class);
 	    }
-			
-			//获取GROUP BY列表模型对象
-	    QueryModel _groupByListModel = model.getFirstModelByClass(AggregateExprListModel.class);
-	    //获取GROUP BY列表中所有表达式数组
-	    QueryModel[] _groupByExprModelArr;
-	    if (_groupByListModel == null){
-	    	_groupByExprModelArr = new QueryModel[0];
-	    }else{
-	    	_groupByExprModelArr = _groupByListModel.getModelByClass(AggregateExprModel.class);
-	    }
-	    
-	    //如果GROUP BY列表中的表达式在SELECT字句的需分组的Map(nGroupExprMap)中存在，则设置存在标识
-	    for (int i = 0; i < _groupByExprModelArr.length; i++){
-	    	if (nGroupExprMap.containsKey(_groupByExprModelArr[i].getChString())){
-	    		nGroupExprMap.put(_groupByExprModelArr[i].getChString(), IS_EXISTS);
-	    	}else if (mGroupSingleExprMap.containsKey(_groupByExprModelArr[i].getChString())){
-	    		//判断此表达式的单个字段是否出现，如果在分组中出现，则设置存在标识
-	    		UnAggregateExpVO unAggregateExpVO = (UnAggregateExpVO) mGroupSingleExprMap.get(_groupByExprModelArr[i].getChString());
-	    		nGroupExprMap.put(unAggregateExpVO.getUnAggregateExp(), IS_EXISTS);
-	    	}else if (aFunMap.containsKey(_groupByExprModelArr[i].getChString())){
-	    		NoGroupExistsException _exception = new NoGroupExistsException(_groupByExprModelArr[i].getChString(), NoGroupExistsException.EXPR_EXISTS_ERROR);
-	    		exs.add(_exception);
-	    	}
-	    }
-	    
-	    //循环获取需分组的Map(nGroupExprMap)中，在GROUP BY没出现的SELECT表达式则放入编译器异常集合中
-	    for (Iterator it = nGroupExprMap.keySet().iterator(); it.hasNext();){
-	    	String selectExpr = (String) it.next();
-	    	if (((String)nGroupExprMap.get(selectExpr)).equals(IS_NOT_EXISTS)){
-	    		NoGroupExistsException _exception = new NoGroupExistsException(selectExpr);
-	    		exs.add(_exception);
-	    	}
-	    }
-	    
-	    
-	    // 得到所有函数模型(包括一般函数和聚合函数)--此函数会带有GROUP BY中的函数
-	    //QueryModel[] _allFunctionModelArr = model.getModelsFromAllChildrenByClass(FunctionModel.class);
+	    //====SELECT子句中非聚合函数表达式必须在GROUP BY子句中出现 END ===//
     }
-    //====SELECT子句中非聚合函数表达式必须在GROUP BY子句中出现 END ===//
+    
+    model.setExceptions(exs);
+    model.setChQuery(chQuery);
     
     return model;
   }
   
+  public static QueryModel parseSegment(String chSegment){
+  	return parseSegment(chSegment, DataBaseType.DEFAULT_DATABASE_TYPE);
+  }
   /**
    * 片断子句语法验证，当解析正确是返回QueryModel对象
    * @param chSegment 片断子句
    * @return QueryModel 编译器QueryModel对象
    */
-  public static QueryModel parseSegment(String chSegment) {
+  public static QueryModel parseSegment(String chSegment, String databaseType) {
     QueryModel model = null;
     
     List exs = new ArrayList();
-    L l = new L(new StringReader(chSegment));
-    P p = new P(l);
-    try {
-      p.segment();
-      CommonAST ast = (CommonAST)p.getAST();
-      T t = new T();
-      model = t.segment(ast);
-    } catch (ANTLRException e) {
-      exs.add(e);
-    }
+    if (databaseType.equals(DataBaseType.SYBASE_IQ_12) || databaseType.equals(DataBaseType.SYBASE_ASE_12)){
+    	SybaseIQ12Lexer rSybaseIQ12Lexer = new SybaseIQ12Lexer(new StringReader(chSegment));
+      SybaseIQ12Parser rSybaseIQ12Parser = new SybaseIQ12Parser(rSybaseIQ12Lexer);
+      
+      try {
+	      rSybaseIQ12Parser.segment();
+	      CommonAST ast = (CommonAST) rSybaseIQ12Parser.getAST();
+	      // TODO Visible ASTFrame
+//		    ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+//		    _ASTFrame.setVisible(true);
+		    SybaseIQ12TreeParser rSybaseIQ12TreeParser = new SybaseIQ12TreeParser();
+	      model = rSybaseIQ12TreeParser.segment(ast);
+      }catch (ANTLRException e) {
+        exs.add(e);
+      }
+      
+      if (model == null){
+        model = new QueryModel();
+      }
+      model.setSybaseIQ12Lexer(rSybaseIQ12Lexer);
+      model.setSybaseIQ12Parser(rSybaseIQ12Parser);
+    }else if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
+  		Oracle9iLexer rOracle9iLexer = new Oracle9iLexer(new StringReader(chSegment));
+  		Oracle9iParser rOracle9iParser = new Oracle9iParser(rOracle9iLexer);
+  		
+  		try {
+  			rOracle9iParser.statements();
+	      CommonAST ast = (CommonAST) rOracle9iParser.getAST();
+	      // TODO Visible ASTFrame
+//	  	    ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+//	  	    _ASTFrame.setVisible(true);
+	      Oracle9iTreeParser rOracle9iTreeParser = new Oracle9iTreeParser();
+	      model = rOracle9iTreeParser.statement(ast);
+    	}catch (ANTLRException e) {
+        exs.add(e);
+      }
+    	
+    	if (model == null){
+        model = new QueryModel();
+      }
+      model.setDatabaseType(databaseType);
+      model.setOracle9iLexer(rOracle9iLexer);
+      model.setOracle9iParser(rOracle9iParser);
+  	}else{
+  		if (model == null){
+        model = new QueryModel();
+      }
+  	}
     
-    if (model == null){
-      model = new QueryModel();
-    }
-    model.setParser(p);
-    model.setLexer(l);
     model.setExceptions(exs);
-    model.setQuery(chSegment);
+    model.setChQuery(chSegment);
     
     return model;
   }
   
   /**
+   * 获取原始的业务化查询语句
+   * @return String 原始的业务化查询语句
+   */
+  public String getChQuery() {
+		return chQuery;
+	}
+  
+  /**
    * 将传入的原始业务化查询语句保存在QueryModel的chQuery属性中
    * @param query 业务化查询
    */
-  public void setQuery(String query) {
-    this.chQuery = query;
-  }
-  
-  /**
+	public void setChQuery(String chQuery) {
+		this.chQuery = chQuery;
+	}
+
+	/**
    * 取得循环语句类型（1为表变量，2为条件变量）
    * @return String 循环语句类型
    */
@@ -262,7 +397,15 @@ public class QueryModel {
     this.circleType = circleType;
   }
   
-  /**
+  public String getDatabaseType() {
+		return databaseType;
+	}
+
+	public void setDatabaseType(String databaseType) {
+		this.databaseType = databaseType;
+	}
+
+	/**
    * 清空模型中表及字段信息
    *
    */
@@ -317,30 +460,84 @@ public class QueryModel {
    * @param op 操作符
    */
   public void addOperator(String op) {
-    children.add(new StringModel(op));
+    addOperator(op, false);
   }
   
+  /**
+   * 增加操作符对象到QueryModel的children的List集合中（在遍历语法树时加入）
+   * @param op 操作符
+   * @param isEn2Ch 是否将英文关键字转成中文
+   */
+  public void addOperator(String op, boolean isEn2Ch) {
+	  /*
+		 int count=0;
+		 String regEx = "[\\u4e00-\\u9fa5]";
+		 Pattern p = Pattern.compile(regEx);
+		 Matcher m = p.matcher(op);
+		 while (m.find()) {
+	  	 for (int i = 0; i <= m.groupCount(); i++) {
+	  		 count=count+1;
+	  	 }
+		 }
+		 */
+  	
+  	String rValue = op.toLowerCase();
+  	if (isEn2Ch)
+  		rValue = translateStringEn2Ch(rValue);
+  	children.add(new StringModel(rValue));
+  }
+  
+  /**
+   * 获取下一级语法结构内容集合
+   * @return List 语法结构内容集合
+   */
   public List getChildren() {
     return this.children;
   }
   
-  public void setParser(P parser) {
-    this.parser = parser;
-  }
-  
-  public void setLexer(L lexer) {
-    this.lexer = lexer;
-  }
-  
-  public void setTree(T tree) {
-    this.tree = tree;
-  }
-  
+  /**
+   * 设置异常信息集合
+   * @param antlrExceptions 异常信息集合
+   */
   public void setExceptions(List antlrExceptions) {
     this.antlrExceptions = antlrExceptions;
   }
   
-  /**
+  
+  
+  public SybaseIQ12Lexer getSybaseIQ12Lexer() {
+		return sybaseIQ12Lexer;
+	}
+
+	public void setSybaseIQ12Lexer(SybaseIQ12Lexer sybaseIQ12Lexer) {
+		this.sybaseIQ12Lexer = sybaseIQ12Lexer;
+	}
+
+	public SybaseIQ12Parser getSybaseIQ12Parser() {
+		return sybaseIQ12Parser;
+	}
+
+	public void setSybaseIQ12Parser(SybaseIQ12Parser sybaseIQ12Parser) {
+		this.sybaseIQ12Parser = sybaseIQ12Parser;
+	}
+
+  public Oracle9iLexer getOracle9iLexer() {
+		return oracle9iLexer;
+	}
+
+	public void setOracle9iLexer(Oracle9iLexer oracle9iLexer) {
+		this.oracle9iLexer = oracle9iLexer;
+	}
+
+	public Oracle9iParser getOracle9iParser() {
+		return oracle9iParser;
+	}
+
+	public void setOracle9iParser(Oracle9iParser oracle9iParser) {
+		this.oracle9iParser = oracle9iParser;
+	}
+
+	/**
    * 从QueryModel的children List集合中获取对象为c的所有对象存放到QueryModel[]中
    * @param c 指定的模型对象(StatementsModel、SelectStatementModel...）
    * @return QueryModel[] 返回类型为指定的模型对象的所有信息集合
@@ -651,7 +848,18 @@ public class QueryModel {
     ChWrongMessage msg = new ChWrongMessage();
     msg.setLine(exception.line);
     msg.setColumn(exception.column);
-    String expecting = parser.getTokenName(exception.expecting);
+    String expecting = "";
+    
+    if (databaseType != null) {
+    	if (databaseType.equals(DataBaseType.SYBASE_ASE_12) || databaseType.equals(DataBaseType.SYBASE_IQ_12)){
+    		expecting = sybaseIQ12Parser.getTokenName(exception.expecting);
+    	} else if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
+    		expecting = oracle9iParser.getTokenName(exception.expecting);
+    	}else{
+    		expecting = sybaseIQ12Parser.getTokenName(exception.expecting);
+    	}
+  	}
+    
     String input = exception.token.getText();
     
     ErrorLexer errorLexer = new ErrorLexer();

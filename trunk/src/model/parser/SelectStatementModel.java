@@ -1,7 +1,8 @@
 package model.parser;
 
+import model.parser.common.Constants;
+
 public class SelectStatementModel extends QueryModel {
-  
   /**
    * 设置SELECT子句SELECT列表模型对象
    * @param model
@@ -51,9 +52,9 @@ public class SelectStatementModel extends QueryModel {
     String rValue = "";
     SelectListModel sl = (SelectListModel) getFirstModelByClass(SelectListModel.class);
     SearchConditionModel cond = (SearchConditionModel) getFirstModelByClass(SearchConditionModel.class);
-    if (segmentType.equals("column")){
+    if (segmentType.equals(Constants.COLUMN)){
       rValue = sl.getChString();
-    }else if (segmentType.equals("where")){
+    }else if (segmentType.equals(Constants.WHERE)){
       rValue = cond.getChString();
     }
     return rValue;
@@ -68,9 +69,9 @@ public class SelectStatementModel extends QueryModel {
     String rValue = "";
     SelectListModel sl = (SelectListModel) getFirstModelByClass(SelectListModel.class);
     SearchConditionModel cond = (SearchConditionModel) getFirstModelByClass(SearchConditionModel.class);
-    if (segmentType.equals("column")){
+    if (segmentType.equals(Constants.COLUMN)){
       rValue = sl.getEnString();
-    }else if (segmentType.equals("where")){
+    }else if (segmentType.equals(Constants.WHERE)){
       rValue = cond.getEnString();
     }
     return rValue;
@@ -86,15 +87,15 @@ public class SelectStatementModel extends QueryModel {
     SearchConditionModel cond = (SearchConditionModel) getFirstModelByClass(SearchConditionModel.class);
     AggregateExprListModel aggr = (AggregateExprListModel) getFirstModelByClass(AggregateExprListModel.class);
     OrderExpressionListModel order = (OrderExpressionListModel) getFirstModelByClass(OrderExpressionListModel.class);
-    String ret = "查询 " + sl.getChString();
+    String ret = Constants.SELECT_CN + " " + sl.getChString();
     if (tl != null)
-      ret += " 来自 " + tl.getChString();
+      ret += " " + Constants.FROM_CN + " " + tl.getChString();
     if (cond != null)
-      ret += " 条件 " + cond.getChString();
+      ret += " " + Constants.WHERE_CN + " " + cond.getChString();
     if (aggr != null)
-      ret += " 分组 " + aggr.getChString();
+      ret += " " + Constants.GROUP_BY_CN + " " + aggr.getChString();
     if (order != null)
-      ret += " 排序 " + order.getChString();
+      ret += " " + Constants.ORDER_BY_CN + " " + order.getChString();
     return ret;
   }
   
@@ -117,22 +118,21 @@ public class SelectStatementModel extends QueryModel {
     AggregateExprListModel aggr = (AggregateExprListModel) getFirstModelByClass(AggregateExprListModel.class);
     OrderExpressionListModel order = (OrderExpressionListModel) getFirstModelByClass(OrderExpressionListModel.class);
     
-    String ret = "SELECT " + sl.getEnString();
+    String ret = Constants.SELECT_EN + " " + sl.getEnString();
     if (intoTableName != null && !intoTableName.equals("")){
       ret += " INTO " + intoTableName;
       if (tl != null)
-        ret += " FROM " + tl.getEnString();
+        ret += " " + Constants.FROM_EN + " " + tl.getEnString();
     }else{
       if (tl != null)
-        ret += " FROM " + tl.getEnString();
+        ret += " " + Constants.FROM_EN + " " + tl.getEnString();
     }
     if (cond != null)
-      ret += " WHERE " + cond.getEnString();
+      ret += " " + Constants.WHERE_EN + " " + cond.getEnString();
     if (aggr != null)
-      ret += " GROUP BY " + aggr.getEnString();
+      ret += " " + Constants.GROUP_BY_EN + " " + aggr.getEnString();
     if (order != null)
-      ret += " ORDER BY " + order.getEnString();
-    
+      ret += " " + Constants.ORDER_BY_EN + " " + order.getEnString();
     return ret;
   }
   
@@ -147,16 +147,16 @@ public class SelectStatementModel extends QueryModel {
     AggregateExprListModel aggr = (AggregateExprListModel) getFirstModelByClass(AggregateExprListModel.class);
     OrderExpressionListModel order = (OrderExpressionListModel) getFirstModelByClass(OrderExpressionListModel.class);
     
-    String ret = "SELECT " + sl.getEnString();
+    String ret = Constants.SELECT_EN + " " + sl.getEnString();
     if (intoTableName != null && !intoTableName.equals(""))
       ret += " INTO " + intoTableName;
     if (tl != null)
-      ret += " FROM " + tl.getEnString();
-    ret += " WHERE 1 = 0";
+      ret += " " + Constants.FROM_EN + " " + tl.getEnString();
+    ret += " " + Constants.WHERE_EN + " 1 = 0";
     if (aggr != null)
-      ret += " GROUP BY " + aggr.getEnString();
+      ret += " " + Constants.GROUP_BY_EN + " " + aggr.getEnString();
     if (order != null)
-      ret += " ORDER BY " + order.getEnString();
+      ret += " " + Constants.ORDER_BY_EN + " " + order.getEnString();
     return ret;
   }
 }
