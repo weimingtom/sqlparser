@@ -34,11 +34,11 @@ public class Main {
     	functionsTestMain.FunctionsTest(mNum);
   	}else{
   		Main main = new Main();
+//  		main.testSegment();
   		main.customQueryTest();
-//  		main.testTranslator();
+  		main.testTranslator();
 //      main.testUnion();
 //      main.testCompare();
-      main.testSegment();
   	}
   }
  
@@ -276,6 +276,10 @@ public class Main {
 		    " 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号" + 
 		    " 排序 AI_94传票对照表.行号 降序, 金额 降序, AI_94传票对照表.行号 降序",
   			
+		    " 查询 测试过渡一.出票日期 作为 出票日期, 测试过渡一.出票人代码 作为 出票人代码, 测试过渡一.机构编码 作为 机构编码, 求总和(测试过渡一.汇票金额) 作为 汇票金额" +
+		    " 来自 测试过渡一" +
+		    " 分组 测试过渡一.机构编码, 测试过渡一.出票人代码, 测试过渡一.出票日期" +
+		    " 排序 测试过渡一.机构编码 升序, 测试过渡一.出票人代码 升序, 测试过渡一.出票日期 升序"
   	};
   	
   	String[] strArr1 = new String[]{
@@ -615,7 +619,6 @@ public class Main {
 			    ")" + 
 			    " 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号, abs(-900) + 400" + 
 			    " 排序 AI_94传票对照表.行号 降序, 金额 降序, AI_94传票对照表.行号 降序";
-    
     Translator t = new Translator();
 //    t.setDatabaseType(DataBaseType.ORACLE8i);
     
@@ -665,122 +668,132 @@ public class Main {
     }
     System.out.println(t.getQueryModel().getEnString());
     
-    String selectStr = t.getChSelectStr();
-    String fromStr = t.getChFromStr();
-    String whereStr = t.getChWhereStr();
-    String groupByStr = t.getChGroupByStr();
-    String orderByStr = t.getChOrderByStr();
+//    String selectStr = t.getChSelectStr();
+//    String fromStr = t.getChFromStr();
+//    String whereStr = t.getChWhereStr();
+//    String groupByStr = t.getChGroupByStr();
+//    String orderByStr = t.getChOrderByStr();
+//    
+//    //进行翻译后的英文表名及字段名
+//    System.out.println("============DB Table============");
+//    for (int i = 0; i < ts.length; i++){
+//      System.out.println(ts[i].getChName());
+//      System.out.println(ts[i].getEnName());
+//      for (Iterator it = ts[i].getFields().iterator(); it.hasNext();){
+//        DbField dbField = (DbField) it.next();
+//        System.out.println(dbField.getChName());
+//        System.out.println(dbField.getEnName());
+//      }
+//    }
+//    
+//    //各子句内容
+//    System.out.println("============Segment SQL===========");
+//    System.out.println(t.getChSelectStr());
+//    System.out.println(t.getChFromStr());
+//    System.out.println(t.getChWhereStr());
+//    System.out.println(t.getChGroupByStr());
+//    System.out.println(t.getChOrderByStr());
+//    
+//    SelectListVO[] _selectListVOArr = t.getSelectListVOArr();
+//    FromListVO[] _fromListVOArr = t.getFromListVOArr();
+//    WhereListVO[] _whereListVOArr = t.getWhereListVOArr();
+//    GroupByListVO[] _groupListVOArr = t.getGroupByListVOArr();
+//    OrderByListVO[] _orderListVOArr = t.getOrderByListVOArr();
+//    
+//    System.out.println("============SELECT EQUEM===========");
+//    for (int i = 0; i < _selectListVOArr.length; i++){
+//      System.out.println(_selectListVOArr[i].getCnColumnEquElem());
+//      _selectListVOArr[i].setCnFieldAlias("代号" + i);
+//      _selectListVOArr[i].setFieldDataType("String");
+//    }
+//    t.setSelectListVOArr(_selectListVOArr);
+//    
+////  t.setSelectListVOArrToModel(_selectListVOArr);
+//    AliasModel[] aliasModels = t.getAliasModelListVOArrByModel();
+//    for (int i = 0; i < aliasModels.length; i++){
+//      System.out.println(aliasModels[i].getChString());
+//    }
+//    
+//    
+//    System.out.println("============WHERE EQUEM===========");
+//    for (int i = 0; i < _whereListVOArr.length; i++){
+//      System.out.println(_whereListVOArr[i].getCnAllWhereStr());
+//      _whereListVOArr[i].setCheckedFlag("1");
+//    }
+//    t.setWhereListVOArr(_whereListVOArr);
+//    
+//    System.out.println("============COLUNM ALIAS===========");
+//    QueryModel[] aliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(AliasModel.class);
+//    for (int i = 0; i < aliasModelArr.length; i++){
+//      System.out.println(aliasModelArr[i].getChString());
+//      AliasModel aliasModel = (AliasModel) aliasModelArr[i];
+//      aliasModel.setEnAlias("enAlias" + i);
+//    }
+//    aliasModels = t.getAliasModelListVOArrByModel();
+//    for (int i = 0; i < aliasModels.length; i++){
+//      System.out.println(aliasModels[i].getChString());
+//    }
+//    _selectListVOArr = t.getSelectListVOArr();
+//    
+//    System.out.println("============ORDER ALIAS===========");
+//    QueryModel[] orderAliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(OrderAliasModel.class);
+//    for (int i = 0; i < orderAliasModelArr.length; i++){
+//      System.out.println(orderAliasModelArr[i].getChString());
+//      OrderAliasModel orderAliasModel = (OrderAliasModel) orderAliasModelArr[i];
+//      orderAliasModel.setEnAlias("enOrderAlias" + i);
+//    }
     
-    //进行翻译后的英文表名及字段名
-    System.out.println("============DB Table============");
-    for (int i = 0; i < ts.length; i++){
-      System.out.println(ts[i].getChName());
-      System.out.println(ts[i].getEnName());
-      for (Iterator it = ts[i].getFields().iterator(); it.hasNext();){
-        DbField dbField = (DbField) it.next();
-        System.out.println(dbField.getChName());
-        System.out.println(dbField.getEnName());
-      }
-    }
-    
-    //各子句内容
-    System.out.println("============Segment SQL===========");
-    System.out.println(t.getChSelectStr());
-    System.out.println(t.getChFromStr());
-    System.out.println(t.getChWhereStr());
-    System.out.println(t.getChGroupByStr());
-    System.out.println(t.getChOrderByStr());
-    
-    SelectListVO[] _selectListVOArr = t.getSelectListVOArr();
-    FromListVO[] _fromListVOArr = t.getFromListVOArr();
-    WhereListVO[] _whereListVOArr = t.getWhereListVOArr();
-    GroupByListVO[] _groupListVOArr = t.getGroupByListVOArr();
-    OrderByListVO[] _orderListVOArr = t.getOrderByListVOArr();
-    
-    System.out.println("============SELECT EQUEM===========");
-    for (int i = 0; i < _selectListVOArr.length; i++){
-      System.out.println(_selectListVOArr[i].getCnColumnEquElem());
-      _selectListVOArr[i].setCnFieldAlias("代号" + i);
-      _selectListVOArr[i].setFieldDataType("String");
-    }
-    t.setSelectListVOArr(_selectListVOArr);
-    
-//  t.setSelectListVOArrToModel(_selectListVOArr);
-    AliasModel[] aliasModels = t.getAliasModelListVOArrByModel();
-    for (int i = 0; i < aliasModels.length; i++){
-      System.out.println(aliasModels[i].getChString());
-    }
-    
-    
-    System.out.println("============WHERE EQUEM===========");
-    for (int i = 0; i < _whereListVOArr.length; i++){
-      System.out.println(_whereListVOArr[i].getCnAllWhereStr());
-      _whereListVOArr[i].setCheckedFlag("1");
-    }
-    t.setWhereListVOArr(_whereListVOArr);
-    
-    System.out.println("============COLUNM ALIAS===========");
-    QueryModel[] aliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(AliasModel.class);
-    for (int i = 0; i < aliasModelArr.length; i++){
-      System.out.println(aliasModelArr[i].getChString());
-      AliasModel aliasModel = (AliasModel) aliasModelArr[i];
-      aliasModel.setEnAlias("enAlias" + i);
-    }
-    aliasModels = t.getAliasModelListVOArrByModel();
-    for (int i = 0; i < aliasModels.length; i++){
-      System.out.println(aliasModels[i].getChString());
-    }
-    _selectListVOArr = t.getSelectListVOArr();
-    
-    System.out.println("============ORDER ALIAS===========");
-    QueryModel[] orderAliasModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(OrderAliasModel.class);
-    for (int i = 0; i < orderAliasModelArr.length; i++){
-      System.out.println(orderAliasModelArr[i].getChString());
-      OrderAliasModel orderAliasModel = (OrderAliasModel) orderAliasModelArr[i];
-      orderAliasModel.setEnAlias("enOrderAlias" + i);
-    }
-    System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
     System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
     System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
-    System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
-    System.out.println("EXE SQL IS: " + t.getQueryModel().getExecuteEnString("S001"));
+//    System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
+//    System.out.println("EXE SQL IS: " + t.getQueryModel().getExecuteEnString("S001"));
 //    String queryXML = t.getXmlString();
 //    System.out.println("TO DB XML: " + queryXML);
     
     /*
-    Translator t1 = new Translator();
+		String queryXML2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> " +
+		 									 "<query><ch_query_string>查询 测试过渡一.出票日期 作为 出票日期, 测试过渡一.出票人代码 作为 出票人代码, 测试过渡一.机构编码 作为 机构编码, 求和(测试过渡一.汇票金额) 作为 汇票金额 来自 测试过渡一 分组 测试过渡一.机构编码, 测试过渡一.出票人代码, 测试过渡一.出票日期 排序 测试过渡一.机构编码 升序, 测试过渡一.出票人代码 升序, 测试过渡一.出票日期 升序</ch_query_string><db_info ch_name=\"测试过渡一\" en_name=\"S44021000021001490001\" flag=\"casdb3\"><db_field ch_name=\"出票人代码\" en_name=\"ACDV04\" fieldParam=\"\"/><db_field ch_name=\"机构编码\" en_name=\"ACDV08\" fieldParam=\"\"/><db_field ch_name=\"币种\" en_name=\"ACDV09\" fieldParam=\"\"/><db_field ch_name=\"汇票金额\" en_name=\"ACDV10\" fieldParam=\"\"/><db_field ch_name=\"汇票号码\" en_name=\"ACDV11\" fieldParam=\"\"/><db_field ch_name=\"出票日期\" en_name=\"ACDV12\" fieldParam=\"\"/><db_field ch_name=\"到期日期\" en_name=\"ACDV13\" fieldParam=\"\"/><db_field ch_name=\"垫款余额\" en_name=\"ACDV18\" fieldParam=\"\"/><db_field ch_name=\"承兑日期\" en_name=\"ACDV22\" fieldParam=\"\"/><db_field ch_name=\"增量标志\" en_name=\"ACDV36\" fieldParam=\"\"/></db_info><selectListEqu/><whereListEqu/><aliasListEqu><aliasListVO alias=\"出票日期\" enAlias=\"ACDV12\"/><aliasListVO alias=\"出票人代码\" enAlias=\"ACDV04\"/><aliasListVO alias=\"机构编码\" enAlias=\"ACDV08\"/><aliasListVO alias=\"汇票金额\" enAlias=\"ACDV101\"/></aliasListEqu><tableAliasListEqu/><orderAliasListEqu/></query>";
+		queryXML2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+								"<query><ch_query_string>表合并 测试过渡十九, 测试过渡十八, 测试过渡十七</ch_query_string><db_info ch_name=\"测试过渡十九\" en_name=\"S00021000065001230019\" flag=\"casdb3\"><db_field ch_name=\"二级分行代码\" en_name=\"ACDV081\" fieldParam=\"\"/><db_field ch_name=\"汇票金额\" en_name=\"ACDV10\" fieldParam=\"\"/><db_field ch_name=\"汇票号码\" en_name=\"ACDV11\" fieldParam=\"\"/><db_field ch_name=\"出票日期\" en_name=\"ACDV12\" fieldParam=\"\"/></db_info><db_info ch_name=\"测试过渡十八\" en_name=\"S00021000065001230018\" flag=\"casdb3\"><db_field ch_name=\"二级分行代码\" en_name=\"ACDV081\" fieldParam=\"\"/><db_field ch_name=\"汇票金额\" en_name=\"ACDV10\" fieldParam=\"\"/><db_field ch_name=\"汇票号码\" en_name=\"ACDV11\" fieldParam=\"\"/><db_field ch_name=\"出票日期\" en_name=\"ACDV12\" fieldParam=\"\"/></db_info><db_info ch_name=\"测试过渡十七\" en_name=\"S00021000065001230017\" flag=\"casdb3\"><db_field ch_name=\"二级分行代码\" en_name=\"ACDV081\" fieldParam=\"\"/><db_field ch_name=\"汇票金额\" en_name=\"ACDV10\" fieldParam=\"\"/><db_field ch_name=\"汇票号码\" en_name=\"ACDV11\" fieldParam=\"\"/><db_field ch_name=\"出票日期\" en_name=\"ACDV12\" fieldParam=\"\"/></db_info><selectListEqu/><whereListEqu/><aliasListEqu/><tableAliasListEqu/><orderAliasListEqu/></query>";
+		queryXML2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+								"<query><ch_query_string>查询 AI_通用分户帐0612.帐号 作为 帐号, AI_通用分户帐0612.科目号 作为 科目号, AI_通用分户帐0612.总帐行号 作为 总帐行号, AI_通用分户帐0612.中文名称 作为 中文名称, AI_通用分户帐0612.开户日期 作为 开户日期, AI_通用分户帐0612.帐务状态 作为 帐务状态, AI_通用分户帐0612.余额性质 作为 余额性质, AI_通用分户帐0612.当前余额 作为 当前余额, 格式化数值(取下限整数(AI_通用分户帐0612.当前余额), 0) 作为 四舍余额, round(取上限整数(AI_通用分户帐0612.当前余额), 0) 作为 五入余额 来自 AI_通用分户帐0612 条件 取绝对值(AI_通用分户帐0612.当前余额) 大于 100000000 或者 取绝对值(AI_通用分户帐0612.当前余额) &lt; 10</ch_query_string><db_info ch_name=\"AI_通用分户帐0612\" en_name=\"SIAC0612\" flag=\"casdb1\"><db_field ch_name=\"省/市代号\" en_name=\"IAC01\" fieldParam=\"\"/><db_field ch_name=\"帐号\" en_name=\"IAC02\" fieldParam=\"\"/><db_field ch_name=\"科目号\" en_name=\"IAC03\" fieldParam=\"\"/><db_field ch_name=\"总帐行号\" en_name=\"IAC04\" fieldParam=\"\"/><db_field ch_name=\"中文名称\" en_name=\"IAC05\" fieldParam=\"\"/><db_field ch_name=\"开户日期\" en_name=\"IAC06\" fieldParam=\"\"/><db_field ch_name=\"帐务状态\" en_name=\"IAC07\" fieldParam=\"\"/><db_field ch_name=\"余额性质\" en_name=\"IAC08\" fieldParam=\"\"/><db_field ch_name=\"当前余额\" en_name=\"IAC09\" fieldParam=\"\"/><db_field ch_name=\"红蓝字\" en_name=\"IAC10\" fieldParam=\"\"/><db_field ch_name=\"限额\" en_name=\"IAC11\" fieldParam=\"\"/><db_field ch_name=\"计息代码\" en_name=\"IAC12\" fieldParam=\"\"/><db_field ch_name=\"利率种类\" en_name=\"IAC13\" fieldParam=\"\"/><db_field ch_name=\"利率\" en_name=\"IAC14\" fieldParam=\"\"/><db_field ch_name=\"透支利率种类\" en_name=\"IAC15\" fieldParam=\"\"/><db_field ch_name=\"透支利率\" en_name=\"IAC16\" fieldParam=\"\"/><db_field ch_name=\"暂存结息金额\" en_name=\"IAC17\" fieldParam=\"\"/><db_field ch_name=\"借方积数\" en_name=\"IAC18\" fieldParam=\"\"/><db_field ch_name=\"借方调整积数\" en_name=\"IAC19\" fieldParam=\"\"/><db_field ch_name=\"贷方积数\" en_name=\"IAC20\" fieldParam=\"\"/><db_field ch_name=\"贷方调整积数\" en_name=\"IAC21\" fieldParam=\"\"/><db_field ch_name=\"借方利息帐号\" en_name=\"IAC22\" fieldParam=\"\"/><db_field ch_name=\"贷方利息帐号\" en_name=\"IAC23\" fieldParam=\"\"/><db_field ch_name=\"上交易日\" en_name=\"IAC24\" fieldParam=\"\"/><db_field ch_name=\"当前页号\" en_name=\"IAC25\" fieldParam=\"\"/><db_field ch_name=\"允许动帐标志\" en_name=\"IAC26\" fieldParam=\"\"/><db_field ch_name=\"销户日期\" en_name=\"IAC27\" fieldParam=\"\"/><db_field ch_name=\"上日余额\" en_name=\"IAC28\" fieldParam=\"\"/><db_field ch_name=\"上日红蓝字\" en_name=\"IAC29\" fieldParam=\"\"/><db_field ch_name=\"帐户属性\" en_name=\"IAC30\" fieldParam=\"\"/><db_field ch_name=\"月存表日期\" en_name=\"IAC31\" fieldParam=\"\"/></db_info><selectListEqu><SelectListVO fieldDataType=\"char\"/><SelectListVO fieldDataType=\"char\"/><SelectListVO fieldDataType=\"char\"/><SelectListVO fieldDataType=\"char\"/><SelectListVO fieldDataType=\"char\"/><SelectListVO fieldDataType=\"char\"/><SelectListVO fieldDataType=\"char\"/><SelectListVO fieldDataType=\"decimal\"/><SelectListVO fieldDataType=\"decimal\"/><SelectListVO fieldDataType=\"decimal\"/></selectListEqu><whereListEqu><WhereListVO checkedFlag=\"true\"/><WhereListVO checkedFlag=\"true\"/></whereListEqu><aliasListEqu><aliasListVO alias=\"帐号\" enAlias=\"IAC02\"/><aliasListVO alias=\"科目号\" enAlias=\"IAC03\"/><aliasListVO alias=\"总帐行号\" enAlias=\"IAC04\"/><aliasListVO alias=\"中文名称\" enAlias=\"IAC05\"/><aliasListVO alias=\"开户日期\" enAlias=\"IAC06\"/><aliasListVO alias=\"帐务状态\" enAlias=\"IAC07\"/><aliasListVO alias=\"余额性质\" enAlias=\"IAC08\"/><aliasListVO alias=\"当前余额\" enAlias=\"IAC09\"/><aliasListVO alias=\"四舍余额\" enAlias=\"IAC091\"/><aliasListVO alias=\"五入余额\" enAlias=\"IAC092\"/></aliasListEqu><tableAliasListEqu/><orderAliasListEqu/></query>";
+
+		Translator t1 = new Translator();
     try{
-      QueryModel m = t1.loadModelFromXML(queryXML);
+      QueryModel m = t1.loadModelFromXML(queryXML2);
+      if (t1.hasError()){
+        ChWrongMessage[] msgs = t1.showWrongMsgs();
+        for (int j = 0; j < msgs.length; j++){
+          System.out.println("【测试错误】" + msgs[j]);
+        }
+        return;
+      }
       t1.setAliasModelListVOArrByXML();
       t1.setTableAliasModelListVOArrByXML();
       t1.setOrderAliasModelListVOArrByXML();
-      System.out.println(m.getCircleType());
+      
       SelectListVO[] r_selectListVOArr = t1.getSelectListVOArr();
       FromListVO[] r_fromListVOArr = t1.getFromListVOArr();
       WhereListVO[] r_whereListVOArr = t1.getWhereListVOArr();
       GroupByListVO[] r_groupListVOArr = t1.getGroupByListVOArr();
       OrderByListVO[] r_orderListVOArr = t1.getOrderByListVOArr();
-      DbTable[] dbTables = t1.getTables();
-      t1.updateDbTables(t1, dbTables);
-      for (int i = 0; i < dbTables.length; i++){
-        System.out.println(dbTables[i].getChName());
-        System.out.println(dbTables[i].getEnName());
-        for (Iterator it = dbTables[i].getFields().iterator(); it.hasNext();){
-          DbField dbField = (DbField) it.next();
-          System.out.println(dbField.getChName());
-          System.out.println(dbField.getEnName());
-        }
-      }
       AppDbTable[] appDbTables = t1.getInfo().getDbTableInfoToAppTableArr();
-      
-      for (int i = 0; i < r_selectListVOArr.length; i++){
-        r_selectListVOArr[i].setFieldDataType("Date");
+      for (int i = 0; i < appDbTables.length; i++){
+      	t1.addDbTable(appDbTables[i].getTableName(), appDbTables[i].getTableEnName(), appDbTables[i].getFlag());
+      	AppDbField[] appDbFieldsArr = appDbTables[i].getFields();
+      	for (int j = 0; j < appDbFieldsArr.length; j++){
+      		System.out.println(appDbFieldsArr[j].getChName());
+      		System.out.println(appDbFieldsArr[j].getEnName());
+      		t1.addDbField(appDbTables[i].getTableName(), appDbFieldsArr[j].getChName(), appDbFieldsArr[j].getEnName());
+      	}
       }
-      t1.setSelectListVOArr(r_selectListVOArr);
-     aliasModels = t1.getAliasModelListVOArrByModel();
-      TableAliasModel[] tableAliasModels = t1.getTableAliasModelListVOArrByModel();
-      tableAliasModels[0].setEnAlias("CNF00000");
       t1.updateDbTables(t1, t1.getTables());
+      
+      t1.setSelectListVOArr(r_selectListVOArr);
+      TableAliasModel[] tableAliasModels = t1.getTableAliasModelListVOArrByModel();
+      if (tableAliasModels.length > 0){
+      	tableAliasModels[0].setEnAlias("CNF00000");
+      }
       System.out.println(m.getChString());
       System.out.println(m.getEnString());
       System.out.println(m.getExecuteEnString("xxx"));
