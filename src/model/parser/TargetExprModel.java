@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import model.parser.exceptions.common.ErrorLexer;
-
 import antlr.ANTLRException;
 import antlr.CharStreamIOException;
 import antlr.CommonAST;
@@ -23,31 +24,47 @@ import antlr.TokenStreamRecognitionException;
 import antlr.TokenStreamRetryException;
 import antlr.debug.misc.ASTFrame;
 
-import parser.ExpressionLexer;
-import parser.ExpressionParser;
-import parser.ExpressionTreeParser;
+import parser.indicator.ExpressionLexer;
+import parser.indicator.ExpressionParser;
+import parser.indicator.ExpressionTreeParser;
 import util.StringUtil;
 
 public class TargetExprModel {
+	private static final String EXPR_KEY_WORDS = "expr_keywords";
+	 
   private ExpressionParser parser;
   private ExpressionLexer lexer;
   private Map exprElemMap = new HashMap();
   private List antlrExceptions = new ArrayList();
   private String exprContent;
   private String exprExeContent;
-
+  
+  public static String getFunctionByKey(String _mKey){
+    String _rValue = "";
+    try {
+	    ResourceBundle bundle = ResourceBundle.getBundle(EXPR_KEY_WORDS, Locale.CHINESE);
+	    _rValue = bundle.getString(_mKey);
+    }catch(Exception ex){
+    	//
+    }
+    if (_rValue == null || _rValue.equals(""))
+    	_rValue = _mKey;
+    return _rValue;
+  }
+  
   public static TargetExprModel parseTargetExpr(String exprContent) {
     TargetExprModel _model = null;
     List antlrExs = new ArrayList();
     Map _exprElemLi = new HashMap();
+    
     ExpressionLexer expressionLexer = new ExpressionLexer(new StringReader(exprContent));
     ExpressionParser expressionParser = new ExpressionParser(expressionLexer);
     try{
       expressionParser.expr();
       CommonAST ast = (CommonAST) expressionParser.getAST();
       // TODO Visible ASTFrame
-//      ASTFrame _ASTFrame = new ASTFrame("ExprTreeParser", ast);
-//      _ASTFrame.setVisible(true);
+      //ASTFrame _ASTFrame = new ASTFrame("ExprTreeParser", ast);
+      //_ASTFrame.setVisible(true);
       ExpressionTreeParser expressionTreeParser = new ExpressionTreeParser();
       exprContent = expressionTreeParser.expr(ast);
       _exprElemLi = expressionTreeParser.getExprElemLi();
@@ -67,7 +84,7 @@ public class TargetExprModel {
     _model.setAntlrExceptions(antlrExs);
     return _model;
   }
-
+  
   public static BigDecimal ExcuteTargetExpr(TargetExprModel _model) {
     BigDecimal rValue = new BigDecimal("0");
     List antlrExs = new ArrayList();
@@ -87,7 +104,7 @@ public class TargetExprModel {
     _model.setAntlrExceptions(antlrExs);
     return rValue;
   }
-
+  
   /**
    * 判断编译器进行语法解析时是否存在错误
    * 

@@ -18,7 +18,10 @@ public class TableModel extends QueryModel {
   }
 
   public String getTableEnName() {
-    return tableEnName;
+  	if (tableEnName == null || tableEnName.equals(""))
+  		return tableName;
+  	else
+  		return tableEnName;
   }
 
   public String getAlias() {
@@ -50,7 +53,7 @@ public class TableModel extends QueryModel {
   }
   
   public String getEnString() {
-    String ret = tableEnName;
+    String ret = getTableEnName();
     // QueryModel alias=getFirstModelByClass(AliasModel.class);
     QueryModel alias = getFirstModelByClass(TableAliasModel.class);
     if (alias != null)

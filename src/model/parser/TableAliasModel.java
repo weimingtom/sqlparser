@@ -1,5 +1,7 @@
 package model.parser;
 
+import model.parser.common.Constants;
+
 /**
  * 表名别名模型对象
  */
@@ -24,13 +26,13 @@ public class TableAliasModel extends QueryModel {
   }
 
   public String getChString() {
-    return " 作为 " + alias;
+    return " " + Constants.AS_CN + " " + alias;
   }
   
   public String getEnString() {
     if (enAlias != null && !enAlias.equals(""))
-      return " as " + enAlias;
+      return " " + Constants.AS_EN + " " + enAlias;
     else
-      return " as " + alias;
+      return " " + Constants.AS_EN + " " + alias;
   }
 }
