@@ -1,6 +1,6 @@
 //*==========================================================
 //	LongtopParser Of Expression
-// 	Indicator Expression SQL Grammar
+// 	Indicator Expression Grammar
 //
 //	http://www.longtop.com
 //
