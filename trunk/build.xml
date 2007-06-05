@@ -4,18 +4,30 @@
 	<property name="dir.lib" value="lib"/>
 	<property name="dir.javadoc" value="doc"/>
 	<property environment="env"/>
-
 	<property name="charset" value="utf8" />
-	<property name="parser" value="${dir.src}/parser" />
-	<property name="test" value="${dir.src}/test" />
-	<property name="parser_src_file" value="${parser}/parser_utf8.g" />
-	<property name="parser_file" value="${parser}/parser.g" />
-	<property name="expr_parser_src_file" value="${parser}/expression_utf8.g" />
-	<property name="expr_parser_file" value="${parser}/expression.g" />
+
+	<property name="parser_oracle" value="${dir.src}/parser/oracle" />
+	<property name="parser_oracle_src_file" value="${parser_oracle}/parser_oracle_utf8.g" />
+	<property name="parser_oracle_file" value="${parser_oracle}/parser_oracle.g" />
+	
+	<property name="parser_sybase" value="${dir.src}/parser/sybase" />
+	<property name="parser_sybase_src_file" value="${parser_sybase}/parser_sybase_utf8.g" />
+	<property name="parser_sybase_file" value="${parser_sybase}/parser_sybase.g" />
+	
+	<property name="parser_expr" value="${dir.src}/parser/indicator" />
+	<property name="expr_parser_src_file" value="${parser_expr}/expression_utf8.g" />
+	<property name="expr_parser_file" value="${parser_expr}/expression.g" />
+	
 	<property name="keyword_src_file" value="keywords_utf8.properties" />
 	<property name="keyword_file" value="keywords.properties" />
+	
 	<property name="cnkeyword_src_file" value="cnKeyWords_utf8.properties" />
 	<property name="cnkeyword_file" value="cnKeyWords.properties" />
+	
+	<property name="expr_keyword_src_file" value="expr_keywords_utf8.properties" />
+	<property name="expr_keyword_file" value="expr_keywords.properties" />
+	
+	<property name="test" value="${dir.src}/test" />
 	
 	<path id="libfiles">
 		<fileset dir="${dir.lib}">
@@ -56,21 +68,32 @@
 		
 	<target name="generate_parser"
 		description="Translate parser file from utf8 to unicode then generate grammer parser">
-		<exec executable="native2ascii.exe">
-			<arg line="-encoding ${charset} ${parser_src_file} ${parser_file}" />
+		
+    <exec executable="native2ascii.exe">
+			<arg line="-encoding ${charset} ${parser_sybase_src_file} ${parser_sybase_file}" />
 		</exec>
-    	<java classname="antlr.Tool">
-			<arg line="-o ${parser} ${parser_file}"/>
-            <classpath>
-            	<path refid="libfiles" />
-            </classpath>
-    	</java>
+		<java classname="antlr.Tool">
+			<arg line="-o ${parser_sybase} ${parser_sybase_file}"/>
+			<classpath>
+				<path refid="libfiles" />
+			</classpath>
+		</java>	
+		
+		<exec executable="native2ascii.exe">
+			<arg line="-encoding ${charset} ${parser_oracle_src_file} ${parser_oracle_file}" />
+		</exec>
+		<java classname="antlr.Tool">
+			<arg line="-o ${parser_oracle} ${parser_oracle_file}"/>
+			<classpath>
+				<path refid="libfiles" />
+			</classpath>
+		</java>	
     	
     <exec executable="native2ascii.exe">
 			<arg line="-encoding ${charset} ${expr_parser_src_file} ${expr_parser_file}" />
 		</exec>
     	<java classname="antlr.Tool">
-			<arg line="-o ${parser} ${expr_parser_file}"/>
+			<arg line="-o ${parser_expr} ${expr_parser_file}"/>
             <classpath>
             	<path refid="libfiles" />
             </classpath>
@@ -82,11 +105,17 @@
 		<exec executable="native2ascii.exe">
 			<arg line="-encoding ${charset} ${keyword_src_file} ${keyword_file}" />
 		</exec>
-		<copy file="${keyword_file}" todir="${dir.build}" />
+		<!--<copy file="${keyword_file}" todir="${dir.build}" />-->
+		
 		<exec executable="native2ascii.exe">
 			<arg line="-encoding ${charset} ${cnkeyword_src_file} ${cnkeyword_file}" />
 		</exec>
-		<copy file="${cnkeyword_file}" todir="${dir.build}" />
+		<!--<copy file="${cnkeyword_file}" todir="${dir.build}" />-->
+		
+		<exec executable="native2ascii.exe">
+			<arg line="-encoding ${charset} ${expr_keyword_src_file} ${expr_keyword_file}" />
+		</exec>
+		<!--<copy file="${cnkeyword_file}" todir="${dir.build}" />-->
 	</target>
 
 	<target name="testAntlr"
