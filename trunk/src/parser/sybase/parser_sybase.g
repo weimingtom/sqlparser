@@ -58,7 +58,7 @@ options {
 	defaultErrorHandler = false;
 }
 
-tokens {	
+tokens {
 	SELECT_STATEMENT;
 	SELECT_TOKEN;
 	SEARCH_NOT_CONDITION;	//\u975e\u6574\u4e2a\u6761\u4ef6 TOKEN
