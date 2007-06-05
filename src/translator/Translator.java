@@ -16,7 +16,6 @@ import model.parser.AggregateExprModel;
 import model.parser.AliasModel;
 import model.parser.ChWrongMessage;
 import model.parser.ColumnModel;
-import model.parser.DbTableModel;
 import model.parser.EquationModel;
 import model.parser.ExpressionModel;
 import model.parser.FieldModel;
@@ -24,10 +23,10 @@ import model.parser.FunctionModel;
 import model.parser.OrderAliasModel;
 import model.parser.OrderExpressionListModel;
 import model.parser.OrderExpressionModel;
-import model.parser.ParamModel;
 import model.parser.QueryModel;
 import model.parser.SearchConditionModel;
 import model.parser.SelectListModel;
+import model.parser.SelectStatementModel;
 import model.parser.StringModel;
 import model.parser.TableAliasModel;
 import model.parser.TableCompareModel;
@@ -35,17 +34,24 @@ import model.parser.TableListModel;
 import model.parser.TableModel;
 import model.parser.TableUnionModel;
 
-import model.parser.exceptions.NoGroupExistsException;
+import model.parser.common.Constants;
+import model.parser.common.DataBaseType;
 import model.parser.exceptions.NoSuchFieldException;
 import model.parser.exceptions.NoSuchTableException;
 import model.parser.exceptions.TableNotInFromClause;
 import model.parser.exceptions.TableNumberException;
-import model.parser.exceptions.common.ErrorLexer;
-
 
 /**
  * 编译器与翻译器基本功能的实现类V1.0
- *
+ * 修改日志：
+ * ======================================================
+ * 05/28/2007：
+ * 	- 翻译器对象增加databaseType属性，用来对多种数据库的扩展
+ * 05/29/2007：
+ * 	-	setChQuery方法增加isGroupByValid参数，用来判断[分组]子句
+ * 		是否对聚合函数的有效性进行验证
+ * 
+ * ======================================================
  */
 public class Translator {
   //业务常用关键字、函数的属性文件
@@ -68,14 +74,14 @@ public class Translator {
   public static final String ENVALUE_COMPARE = "table_compare";
   
   //片段子句关键字
-  public static final String SELECT = "select";
-  public static final String COLUMN = "column";
-  public static final String FROM = "from";
-  public static final String WHERE = "where";
+  public static final String COLUMN = Constants.COLUMN;
+  public static final String FROM = Constants.FROM;
+  public static final String WHERE = Constants.WHERE;
   
   public static final String CIRCLE_TYPE_TABLE = "1"; //表变量循环
   public static final String CIRCLE_TYPE_WHERE = "2"; //条件变量循环
   
+  ///////////////////////////////////////////////////
   private QueryModel model;
   private DbTable[] tables;
   private DbTableInfo info = new DbTableInfo();
@@ -88,8 +94,24 @@ public class Translator {
   private List aliasModelList = new ArrayList();
   private List tableAliasModelList = new ArrayList();
   private List orderAliasModelList = new ArrayList();
+  private String databaseType;
   
-  /**
+  public Translator(){
+  }
+  
+  public Translator(String databaseType){
+  	this.databaseType = databaseType;
+  }
+  
+  public String getDatabaseType() {
+		return databaseType;
+	}
+
+	public void setDatabaseType(String databaseType) {
+		this.databaseType = databaseType;
+	}
+
+	/**
    * 根据关键字值获取对应中文关键字名称
    * @param _mValue 关键字值
    * @return String 中文关键字名称
@@ -123,11 +145,27 @@ public class Translator {
     return cnKeyWords;
   }
   
+	/**
+	 * 设置中文查询语句到编译器并验证
+	 * @param chQuery 业务化的中文查询语句
+	 */
+  public void setChQuery(String chQuery) {
+  	if (databaseType == null)
+  		model = QueryModel.parseQuery(chQuery);
+  	else
+  		model = QueryModel.parseQuery(chQuery, databaseType, true);
+  }
+  
   /**
    * 设置中文查询语句到编译器并验证
+   * @param chQuery 业务化的中文查询语句
+   * @param isGroupByValid [分组]字句的聚合函数是否进行有效验证
    */
-  public void setChQuery(String chQuery) {
-    model = QueryModel.parseQuery(chQuery);
+  public void setChQuery(String chQuery, boolean isGroupByValid) {
+  	if (databaseType == null)
+  		model = QueryModel.parseQuery(chQuery, isGroupByValid);
+  	else
+  		model = QueryModel.parseQuery(chQuery, databaseType, isGroupByValid);
   }
   
   /**
@@ -560,15 +598,26 @@ public class Translator {
   
   /**
    * 将XML内容转成QueryModel对象信息
-   * @param xml XML内容
+   * @param iXML XML内容
    * @return QueryModel QueryModel对象
    * @throws DocumentException
    */
-  public QueryModel loadModelFromXML(String xml) throws DocumentException {
-    Document document = DocumentHelper.parseText(xml);
+  public QueryModel loadModelFromXML(String iXML) throws DocumentException {
+  	return loadModelFromXML(iXML, DataBaseType.DEFAULT_DATABASE_TYPE);
+  }
+  
+  /**
+   * 将XML内容转成QueryModel对象信息
+   * @param iXML XML内容
+   * @param dataBaseType 数据库类型
+   * @return QueryModel QueryModel对象
+   * @throws DocumentException
+   */
+  public QueryModel loadModelFromXML(String iXML, String dataBaseType) throws DocumentException {
+    Document document = DocumentHelper.parseText(iXML);
     Element root = document.getRootElement();
     String query = root.elementText("ch_query_string");
-    model = QueryModel.parseQuery(query);
+    model = QueryModel.parseQuery(query, dataBaseType);
     
 //    DbTable[] tables = getTables();
 //    for (int i = 0; i < tables.length; i++){
