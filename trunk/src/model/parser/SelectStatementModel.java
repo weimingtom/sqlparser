@@ -2,7 +2,25 @@ package model.parser;
 
 import model.parser.common.Constants;
 
+/**
+ * 完整查询语句模型对象
+ * Recent updates by LORD
+ * email: jiandeh@sina.com
+ * 修改日志：
+ * ===============================================
+ * 06/11/2007:
+ * 	- 增加isSubquery属性，用来标识此查询语句是否为子查询
+ * 
+ * 
+ * ===============================================
+ */
 public class SelectStatementModel extends QueryModel {
+	private boolean isSubquery = false;
+	
+	public void setSubquery(boolean isSubquery) {
+		this.isSubquery = isSubquery;
+	}
+	
   /**
    * 设置SELECT子句SELECT列表模型对象
    * @param model
@@ -96,6 +114,9 @@ public class SelectStatementModel extends QueryModel {
       ret += " " + Constants.GROUP_BY_CN + " " + aggr.getChString();
     if (order != null)
       ret += " " + Constants.ORDER_BY_CN + " " + order.getChString();
+    if (isSubquery){
+    	ret = "(" + ret + ")";
+    }
     return ret;
   }
   
@@ -133,6 +154,11 @@ public class SelectStatementModel extends QueryModel {
       ret += " " + Constants.GROUP_BY_EN + " " + aggr.getEnString();
     if (order != null)
       ret += " " + Constants.ORDER_BY_EN + " " + order.getEnString();
+    
+    if (isSubquery){
+    	ret = "(" + ret + ")";
+    }
+    
     return ret;
   }
   
@@ -157,6 +183,11 @@ public class SelectStatementModel extends QueryModel {
       ret += " " + Constants.GROUP_BY_EN + " " + aggr.getEnString();
     if (order != null)
       ret += " " + Constants.ORDER_BY_EN + " " + order.getEnString();
+    
+    if (isSubquery){
+    	ret = "(" + ret + ")";
+    }
+    
     return ret;
   }
 }
