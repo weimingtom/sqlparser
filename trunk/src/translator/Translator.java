@@ -42,20 +42,20 @@ import model.parser.exceptions.TableNotInFromClause;
 import model.parser.exceptions.TableNumberException;
 
 /**
- * 编译器与翻译器基本功能的实现类V1.0
- * 修改日志：
- * ======================================================
- * 05/28/2007：
- * 	- 翻译器对象增加databaseType属性，用来对多种数据库的扩展
- * 05/29/2007：
- * 	-	setChQuery方法增加isGroupByValid参数，用来判断[分组]子句
- * 		是否对聚合函数的有效性进行验证
- * 06/05/2007：
- * 	-	loadModelFromXML方法增加对异常集合长度的判断，如果有异常，
- * 		则直接返回QueryModel 对象
- * 06/12/2007:
- * 	- getXmlString、loadModelFromXML方法增加对databaseType
- * 		的转化，用来判断语句的数据库类型
+ * 编译器与翻译器基本功能的实现类V1.0<br>
+ * 修改日志：<br>
+ * ======================================================<br>
+ * 05/28/2007：<br>
+ * 	- 翻译器对象增加databaseType属性，用来对多种数据库的扩展<br>
+ * 05/29/2007：<br>
+ * 	-	setChQuery方法增加isGroupByValid参数，用来判断[分组]子句<br>
+ * 		是否对聚合函数的有效性进行验证<br>
+ * 06/05/2007：<br>
+ * 	-	loadModelFromXML方法增加对异常集合长度的判断，如果有异常，<br>
+ * 		则直接返回QueryModel 对象<br>
+ * 06/12/2007:<br>
+ * 	- getXmlString、loadModelFromXML方法增加对databaseType<br>
+ * 		的转化，用来判断语句的数据库类型<br>
  * ======================================================
  */
 public class Translator {
