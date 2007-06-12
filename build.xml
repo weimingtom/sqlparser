@@ -18,6 +18,9 @@
 	<property name="expr_parser_src_file" value="${parser_expr}/expression_utf8.g" />
 	<property name="expr_parser_file" value="${parser_expr}/expression.g" />
 	
+	<property name="keyword_oracle_src_file" value="keywords_oracle_utf8.properties" />
+	<property name="keyword_oracle_file" value="keywords_oracle.properties" />
+	
 	<property name="keyword_src_file" value="keywords_utf8.properties" />
 	<property name="keyword_file" value="keywords.properties" />
 	
@@ -102,6 +105,11 @@
 	
 	<target name="generate_keyword"
 		description="Translate keyword file from utf8 to ascii">
+		
+		<exec executable="native2ascii.exe">
+			<arg line="-encoding ${charset} ${keyword_oracle_src_file} ${keyword_oracle_file}" />
+		</exec>
+		
 		<exec executable="native2ascii.exe">
 			<arg line="-encoding ${charset} ${keyword_src_file} ${keyword_file}" />
 		</exec>
