@@ -3,7 +3,7 @@ package test;
 import java.io.StringReader;
 import java.util.Iterator;
 
-//import org.dom4j.DocumentException;
+import org.dom4j.DocumentException;
 
 import model.parser.AliasModel;
 import model.parser.ChWrongMessage;
@@ -279,7 +279,7 @@ public class Main {
 		    " 查询 测试过渡一.出票日期 作为 出票日期, 测试过渡一.出票人代码 作为 出票人代码, 测试过渡一.机构编码 作为 机构编码, 求总和(测试过渡一.汇票金额) 作为 汇票金额" +
 		    " 来自 测试过渡一" +
 		    " 分组 测试过渡一.机构编码, 测试过渡一.出票人代码, 测试过渡一.出票日期" +
-		    " 排序 测试过渡一.机构编码 升序, 测试过渡一.出票人代码 升序, 测试过渡一.出票日期 升序"
+		    " 排序 测试过渡一.机构编码 升序, 测试过渡一.出票人代码 升序, 测试过渡一.出票日期 升序",
   	};
   	
   	String[] strArr1 = new String[]{
@@ -619,8 +619,25 @@ public class Main {
 			    ")" + 
 			    " 分组 AI_94传票对照表.省/市代号, AI_94传票对照表.行号, abs(-900) + 400" + 
 			    " 排序 AI_94传票对照表.行号 降序, 金额 降序, AI_94传票对照表.行号 降序";
+  
+//    str = "查询 AI_94传票对照表.省/市代号 作为 省/市代号,AI_94传票对照表.行号 作为 行号, 取绝对值(AI_94传票对照表.金额) 作为 金额" +
+//    " 来自 AI_94传票对照表 作为 CNF" +
+//    " 条件 not(" +
+//    "	(AI_94传票对照表.金额 大于 1000000) 并且 (AI_94传票对照表.行号 not in('232', '390', '900'))" +
+//    "	并且 AI_94传票对照表.货币码 not exists(select distinct AI_94传票对照表.货币码 from AI_94传票对照表)" +
+//    ")";
+    
+    
+    str = " 查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, 取绝对值(AI_94传票对照表.金额) 作为 金额 " +
+    		  " 来自 AI_94传票对照表 作为 CNF 条件 非 ( " +
+    		  "( AI_94传票对照表.金额 大于 1000000 ) " +
+    		  "并且 ( AI_94传票对照表.行号 不在于 ('232', '390', '900') ) " +
+    		  "并且 AI_94传票对照表.货币码 不存在 (查询 唯一 AI_94传票对照表.货币码 来自 AI_94传票对照表) " +
+    		  "并且 AI_94传票对照表.货币码 NOT IN(查询 唯一 AI_94传票对照表.货币码 来自 AI_94传票对照表 where AI_94传票对照表.行号 exists (select distinct AI_94传票对照表.行号 from AI_94传票对照表) )" +
+    		  ")";
+    
     Translator t = new Translator();
-//    t.setDatabaseType(DataBaseType.ORACLE8i);
+    t.setDatabaseType(DataBaseType.ORACLE9i);
     
     t.setChQuery(str, false);
     if (t.hasError()){
@@ -666,7 +683,6 @@ public class Main {
       paramModel.setParamValue("01");
       System.out.println(paramModelArr[i].getEnString());
     }
-    System.out.println(t.getQueryModel().getEnString());
     
 //    String selectStr = t.getChSelectStr();
 //    String fromStr = t.getChFromStr();
@@ -802,6 +818,6 @@ public class Main {
       e.printStackTrace();
     }
     */
+  
   }
- 
 }
