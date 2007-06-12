@@ -14,6 +14,9 @@
 //		- \u5728\u64cd\u4f5c\u7b26\u53ca\u51fd\u6570\u653e\u5165\u5bf9\u5e94Model\u65f6\u5c06\u82f1\u6587\u8f6c\u5316\u6210\u4e2d\u6587,\u7edf\u4e00\u683c\u5f0f\u5316
 //		- aggregate_expr\u8bed\u6cd5\u589e\u52a0\u5bf9()\u7684\u8bc6\u522b,\u5e76\u589e\u52a0\u5e38\u91cf\u7684\u5b9a\u4e49,\u4f7f
 //		  abs(-900) + 500\u7684\u8bed\u53e5\u53ef\u9a8c\u8bc1
+//	06/11/2007:
+//		- equation\u589e\u52a0EXISTS/NOT EXISTS\u7684\u8bed\u6cd5\u5b9a\u4e49\uff0c\u5141\u8bb8\u5b50\u67e5\u8be2
+//		  \u8bbe\u7f6eSUBQUERY\u7684TOKEN\u8fdb\u884c\u8bed\u6cd5\u6811\u904d\u5386
 //
 //==========================================================*/
 
@@ -29,7 +32,7 @@ header {
 class Oracle9iParser extends Parser;
 
 options {
-	k=5;
+	k = 5;
 	buildAST = true;
 	defaultErrorHandler = false;
 }
@@ -43,6 +46,7 @@ tokens {
 	ALIAS_EQU;				//\u522b\u540d TOKEN
 	
 	FUNCTION;				//\u666e\u901a\u51fd\u6570 TOKEN
+	FUNCTION_NOTHING;		//\u4e0d\u5e26\u4efb\u4f55\u4e1c\u897f\u7684\u51fd\u6570 TOKEN[sysdate]
 	FUNCTION_EMPTY_PARAM;	//\u7a7a\u53c2\u6570\u51fd\u6570 TOKEN [getdate()]
 	FUNCTION_STAR_PARAM;	//\u53c2\u6570\u4e3a*\u51fd\u6570 TOKEN [now(*);today(*)]
 	FUNCTION_STAR_COUNT;	//\u51fd\u6570COUNT(*) TOKEN
@@ -69,20 +73,23 @@ tokens {
 	LOGIC_BLOCK;			//WHERE\u6761\u4ef6\u903b\u8f91\u5757 TOKEN
 }
 
+//\u7247\u6bb5\u5b57\u53e5\u89c4\u5219\u5165\u53e3
 segment
 	:	(COLUMN column
 	|	WHERE search_condition)
 	EOF!
 	;
 
+//\u5b8c\u6574\u67e5\u8be2\u8bed\u53e5\u89c4\u5219\u5165\u53e3
 statements
 	:	statement (SEMI^ statement)* EOF!;
 
+//\u5355\u4e2a\u8bed\u53e5\u89c4\u5219(\u8868\u5408\u5e76\u3001\u8868\u6bd4\u8f83\u3001\u81ea\u5b9a\u4e49\u67e5\u8be2)
 statement
 	:	tableUnion
 	|	tableCompare
 	|	select_statement
-	{#statement=#([SELECT_STATEMENT], #statement);}
+		{#statement=#([SELECT_STATEMENT], #statement);}
 	;
 
 //\u8868\u5408\u5e76
@@ -90,6 +97,7 @@ tableUnion
 	:	(TABLE_UNION_EN^|TABLE_UNION_CN^) table_lists
 	;
 
+//\u8868\u5408\u5e76\u7684\u8868\u540d\u5217\u8868
 table_lists
 	:	table_name (COMMA^ table_name)+
 	;
@@ -99,6 +107,7 @@ tableCompare
 	:	(TABLE_COMPARE_EN^|TABLE_COMPARE_CN^) table_name COMMA! table_name (WHERE_EN!|WHERE_CN!) compare_method search_condition
 	;
 
+//\u6bd4\u8f83\u65b9\u6cd5\u5b9a\u4e49(\u5b58\u5728\u3001\u4e0d\u5b58\u5728)
 compare_method
 	:	(EXISTS_EN | EXISTS_CN | NOT_EXISTS_CN)
 	|	NOT_EN EXISTS_EN
@@ -116,14 +125,17 @@ select_statement
 		((ORDER_EN^ BY_EN! | ORDER_BY_CN^) order_expression_list)?
 	;
 
+//SELECT\u5b50\u53e5\u5b57\u6bb5\u5217\u8868
 select_list
 	:	column (COMMA^ column)*
 	;
 
+//FROM\u5b50\u53e5\u8868\u5217\u8868
 table_list
 	:	table_name (COMMA^ table_name)*
 	;
 
+//WHERE\u5b50\u53e5\u6761\u4ef6\u4fe1\u606f
 search_condition
 	:	bool_exp
 	|	( NOT_EN
@@ -132,25 +144,30 @@ search_condition
 		) search_condition
 	;
 
+//\u5355\u4e2a\u6761\u4ef6\u95f4\u7684\u903b\u8f91\u8fd0\u7b97
 bool_exp
 	:	bool_term 
 		((AND_EN^ | OR_EN^ | AND_CN^ | OR_CN^) bool_term)*
 	;
 
+//\u5355\u4e2a\u6761\u4ef6\u7684\u62ec\u53f7\u63a8\u7406
 bool_term
 	:	(LPAREN bool_exp RPAREN) => LPAREN! exp:bool_exp RPAREN!
 	{#bool_term=#([LOGIC_BLOCK, "log_block"], bool_term);}
 	|	equation
 	;
 
+//GROUP BY\u5b50\u53e5\u7684\u5206\u7ec4\u5217\u8868
 aggregate_expression_list
 	:	aggregate_expr (COMMA^ aggregate_expr)*
 	;
 
+//ORDER BY\u5b50\u53e5\u7684\u6392\u5e8f\u5217\u8868
 order_expression_list
 	:	order_expression (COMMA^ order_expression)*
 	;
 
+//\u5355\u4e2a\u5b57\u6bb5\u5b9a\u4e49
 column
 	:	expression_with_aggr_func ((AS_EN^|AS_CN^) alias)?
 	|	alias ("="|"\u7b49\u4e8e")! expression_with_aggr_func {#column=#([ALIAS_EQU, "="], #column);}
@@ -158,16 +175,19 @@ column
 	|	STAR {#column=#([ALL_FIELDS, "*"]);}
 	;
 
+//\u5355\u4e2a\u5206\u7ec4\u8868\u8fbe\u5f0f
 aggregate_expr
 	:	LPAREN aggregate_expr RPAREN
 	|	(field_name|function|constant) (
 		two_arg_op aggregate_expr {#aggregate_expr=#([TWO_ARG_OP, "two_arg_op"], #aggregate_expr);})?
 	;
 
+//\u5355\u4e2a\u6392\u5e8f\u8868\u8fbe\u5f0f
 order_expression
 	:	(alias|field_name|aggregate_func|function) (ASC_EN^|ASC_CN^|DESC_EN^|DESC_CN^)?
 	;
 
+//\u666e\u901a\u8868\u8fbe\u5f0f
 expression
 	:	LPAREN expression RPAREN
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
@@ -176,10 +196,11 @@ expression
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
 	;
 
+//\u5e26\u51fd\u6570\u7684\u5355\u4e2a\u5b57\u6bb5\u8868\u8fbe\u5f0f
 expression_with_aggr_func
 	:	
-		LPAREN expression_with_aggr_func RPAREN 
-		(two_arg_op expression_with_aggr_func 
+		LPAREN expression_with_aggr_func RPAREN
+		(two_arg_op expression_with_aggr_func
 		{#expression_with_aggr_func=#([TWO_ARG_OP, "two_arg_op"], #expression_with_aggr_func);})?
 	|	one_arg_op expression_with_aggr_func 
 		{#expression_with_aggr_func=#([ONE_ARG_OP, "one_arg_op"], #expression_with_aggr_func);}
@@ -188,13 +209,19 @@ expression_with_aggr_func
 		{#expression_with_aggr_func=#([TWO_ARG_OP, "two_arg_op"], #expression_with_aggr_func);})?
 	;
 
+//\u5355\u4e2a\u6761\u4ef6\u4fe1\u606f(a > 0/a like '%oracle%')
 equation
 	:	expression (
 		
-		//\u7b97\u672f\u8fd0\u7b97\u7b26(+ - * /) \u8868\u8fbe\u5f0f
+		//\u6bd4\u8f83\u8fd0\u7b97\u7b26(>= > = <...) \u8868\u8fbe\u5f0f
 		(compare_op) expression
 	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);}
-	  	
+	|	(EXISTS_EN) subquery
+		{#equation=#([LOGICAL_EXISTS, "logic_exists"], #equation);}	
+	|	(NOT_EN EXISTS_EN) subquery
+		{#equation=#([LOGICAL_NOT_EXISTS, "logic_not_exists"], #equation);}	
+	|	(EXISTS_CN^ | NOT_EXISTS_CN^) subquery
+	
 		//\u903b\u8f91\u8fd0\u7b97\u7b26LIKE/NOT LIKE \u8868\u8fbe\u5f0f
 	|	(LIKE_EN) expression
 		{#equation=#([LOGICAL_LIKE, "logic_like"], #equation);}	
@@ -224,38 +251,41 @@ equation
 	)
 	;
 
+//\u51fd\u6570\u5b9a\u4e49
 function
-	:	empty_function LPAREN! RPAREN!
-	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
-	|	star_function LPAREN! STAR! RPAREN!
-	{#function = #([FUNCTION_STAR_PARAM, "function_star_param"], #function);}
-	|	datatype_function LPAREN! data_type_parameter RPAREN!
-	{#function = #([FUNCTION_DATA_TYPE, "function_data_type"], #function);}
+	:	nothing_function
+	{#function = #([FUNCTION_NOTHING, "function_nothing"], #function);}
 	|	asdatatype_function LPAREN! as_data_type_parameter RPAREN!
 	{#function = #([FUNCTION_AS_DATA_TYPE, "function_as_data_type"], #function);}
 	|	function_name LPAREN! parameters RPAREN!
 	{#function = #([FUNCTION, "function_block"], #function);}
 	;
 
+//\u805a\u5408\u51fd\u6570
 aggregate_func
 	:	(COUNT_EN | COUNT_CN) LPAREN! STAR! RPAREN!
 		{#aggregate_func = #([FUNCTION_STAR_COUNT, "function_star_count"], #aggregate_func);}
 	|	aggregate_func_name LPAREN! (ALL_EN^ | ALL_CN^ | DISTINCT_EN^ | DISTINCT_CN^)? parameters RPAREN!
 	;
 
+//\u51fd\u6570\u7684\u53c2\u6570\u5217\u8868
 parameters
 	:	expression (COMMA^ expression)*
 	;
 
 //==========\u6570\u636e\u7c7b\u578b\u53c2\u6570 BEGIN==========//
+
+//\u5e26AS\u5173\u952e\u5b57\u7684\u6570\u636e\u7c7b\u578b\u53c2\u6570\u8868\u8fbe\u5f0f[f1 as char(10)]
 as_data_type_parameter
 	: expression (AS_EN! | DATA_TYPE_AS_CN!) (datatype_constant)
 	;
 
+//\u6570\u636e\u7c7b\u578b\u53c2\u6570\u8868\u8fbe\u5f0f[char(10), f1]
 data_type_parameter
 	:	datatype_constant (COMMA^ expression)+
 	;
 
+//\u6570\u636e\u7c7b\u578b\u5b9a\u4e49
 datatype_constant
 	:	//"character" "varying"
 		data_type_word
@@ -267,6 +297,7 @@ datatype_constant
 	|	DATA_TYPE_STRING
 	;
 
+//\u6570\u636e\u7c7b\u578b\u7684\u53c2\u6570\u8bbe\u7f6e
 datatype_precision_or_scale_or_maxlength
 	:	REAL_NUM COMMA^ REAL_NUM
 	|	REAL_NUM
@@ -275,34 +306,39 @@ datatype_precision_or_scale_or_maxlength
 //==========\u6570\u636e\u7c7b\u578b\u53c2\u6570  END===========//
 
 
+//\u8868\u540d\u5b9a\u4e49
 table_name
 	:	ID ((AS_EN^ | AS_CN^) alias)?
 	;
 
+
+//IN/NOT IN\u95f4\u7684\u5e38\u91cf\u8bbe\u7f6e
 exp_set
-	: 	LPAREN constexpset RPAREN
+	: 	LPAREN! constexpset RPAREN!
 	{#exp_set = #([SUBCONTAIN_OP, "subcontain_op"], #exp_set);}
-//	| subquery
+	| (subquery) => subquery
 	;
 
+//\u5e38\u91cf\u5b9a\u4e49[IN(10, 20, 30)]
 constexpset
 	:	constant (COMMA^ constant)*
 	;
-
+//\u5b50\u67e5\u8be2
 subquery
-	:	LPAREN select_statement RPAREN
+	:	LPAREN! select_statement RPAREN!
 		{#subquery = #([SUBQUERY, "subquery"], #subquery);}
 	;
 
+//\u5faa\u73af\u7684\u53c2\u6570\u53d8\u91cf[{\u6708\u53d8\u91cf}]
 param_equ
 	:	PARAM_ID
 	;
 
+//\u522b\u540d\u5b9a\u4e49
 alias
 	:	ID | QUOTED_STRING;
 
-
-
+//\u5b57\u6bb5\u5b9a\u4e49[\u8868\u540d.\u5b57\u6bb5\u540d]
 field_name
 	:	ID POINT^ sfield_name
 	;	
@@ -310,6 +346,7 @@ field_name
 //	:	ID POINT^ ID
 //	;
 
+//\u5355\u4e2a\u5b57\u6bb5\u540d\u5b9a\u4e49
 sfield_name
 	:	//\u5982\uff1a\u5229\u7387(\u767e\u5206\u6bd4%)
 		ID LPAREN! ID RPAREN!
@@ -317,6 +354,7 @@ sfield_name
 	|	ID
 	;
 
+//\u5e38\u91cf\u5b9a\u4e49[\u6b63\u6570\u3001\u8d1f\u6570\u3001\u5b57\u7b26\u4e32('abc')\u3001\u4fdd\u7559\u5b57\u3001NULL]
 constant
 	:	REAL_NUM
 	|	NEGATIVE_DIGIT_ELEMENT
@@ -329,34 +367,20 @@ constant
 //\u805a\u5408\u51fd\u6570
 aggregate_func_name
 	:	"avg" 		| 	"\u6c42\u5e73\u5747\u6570"
-//	|	"count" 	| 	"\u6c42\u8bb0\u5f55\u603b\u6570"
 	|	COUNT_EN	|	COUNT_CN
 	|	"max" 		| 	"\u6c42\u6700\u5927\u503c"
 	|	"min" 		| 	"\u6c42\u6700\u5c0f\u503c"
-	|	"stddev" 	| 	"\u6c42\u65b9\u5dee"
+	|	"stddev" 	| 	"\u6c42\u6807\u51c6\u5dee"
 	|	"sum" 		|	"\u6c42\u603b\u548c"
-	|	"variance" 	| 	"\u6c42\u7edf\u8ba1\u65b9\u5dee"
+	|	"variance" 	| 	"\u6c42\u534f\u65b9\u5dee"
 	;
 
-//\u7a7a\u53c2\u6570\u51fd\u6570
-empty_function
-	: 	"getdate"	| 	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f42"
-	|	"rand"		|	"\u53d6\u968f\u673a\u6570"
+//\u6ca1\u6709\u5e26\u4efb\u4f55\u4e1c\u897f\u7684\u51fd\u6570[\u683c\u5f0f\u5982\uff1a sysdate]
+nothing_function
+	:	SYSDATE_EN	|	SYSDATE_CN
 	;
 
-//\u53c2\u6570\u4e3a*\u51fd\u6570\u3001
-star_function
-	:  	"pi"	|	"\u6c42\u5706\u5468\u7387"
-	|	"now"	|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f41"
-	|	"today"	|	"\u6c42\u5f53\u524d\u65e5\u671f"
-	;
-
-//\u5e26\u6570\u636e\u7c7b\u578b\u51fd\u6570
-datatype_function
-	:	"convert"	|	"\u6570\u636e\u7c7b\u578b\u8f6c\u6362"
-	;
-
-//\u5e26\u6570\u636e\u7c7b\u578b\u51fd\u6570
+//\u5e26\u5173\u952e\u5b57AS\u7684\u6570\u636e\u7c7b\u578b\u51fd\u6570
 asdatatype_function
 	:	"cast"		|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
 	;
@@ -374,155 +398,133 @@ function_name
 
 //\u6570\u5b66\u51fd\u6570
 number_function
-	:	"abs" 			| 	"\u53d6\u7edd\u5bf9\u503c"
-	|	"acos"			|	"\u6c42\u53cd\u4f59\u5f26\u503c"
-	|	"asin"			|	"\u6c42\u53cd\u6b63\u5f26\u503c"
-	|	"atan"			|	"\u6c42\u53cd\u6b63\u5207\u503c"
-	
+	:	"abs" 		| 	"\u53d6\u7edd\u5bf9\u503c"
+	|	"acos"		|	"\u6c42\u53cd\u4f59\u5f26\u503c"
+	|	"asin"		|	"\u6c42\u53cd\u6b63\u5f26\u503c"
+	|	"atan"		|	"\u6c42\u53cd\u6b63\u5207\u503c"
 	|	"atin2"		|	"\u6c42\u4e8c\u4e2a\u6570\u7684\u53cd\u6b63\u5207\u503c"
-	|	"ceil"	|	"\u53d6\u4e0a\u9650\u6574\u6570"
+	|	"ceil"		|	"\u53d6\u4e0a\u9650\u6574\u6570"
 	|	"cos"		|	"\u6c42\u4f59\u5f26\u503c"
-	|	"cot"		|	"\u6c42\u4f59\u5207\u503c"
-	|	"degrees"	|	"\u5f27\u5ea6\u8f6c\u5ea6\u6570"
+	|	"cosh"		|	"\u6c42\u4f59\u5207\u503c"
 	|	"exp"		|	"\u6c42\u5e42\u503c"
 	|	"floor"		|	"\u53d6\u4e0b\u9650\u6574\u6570"
-	|	"log"		|	"\u6c42\u81ea\u7136\u5bf9\u6570"
-	|	"log10"		|	"\u6c4210\u4e3a\u5e95\u7684\u5bf9\u6570"
+	|	"ln"		|	"\u6c42\u81ea\u7136\u5bf9\u6570"
+	|	"log"		|	"\u6c42\u5bf9\u6570"
 	|	"mod"		|	"\u6c42\u6a21"
-//	|	"pi"		|	"\u6c42\u5706\u5468\u7387"
 	|	"power"		|	"\u6c42\u5e42"
-	|	"radians"	|	"\u5ea6\u6570\u8f6c\u5f27\u5ea6"
-	|	"rand"		|	"\u53d6\u968f\u673a\u6570"
-	|	"remainder"	|	"\u6c42\u6a212"
 	|	"round"		|	"\u683c\u5f0f\u5316\u6570\u503c"
 	|	"sign"		|	"\u6c42\u503c\u7684\u7b26\u53f7"
 	|	"sin"		|	"\u6c42\u6b63\u5f26\u503c"
+	|	"sinh"		|	"\u6c42\u53cc\u66f2\u6b63\u5f26\u503c"
 	|	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
 	|	"tan"		|	"\u6c42\u6b63\u5207\u503c"
-	|	"\u683c\u5f0f\u5316\u6570\u503c3"	//"\"truncate\""
-	|	"truncnum"	|	"\u683c\u5f0f\u5316\u6570\u503c2"
+	|	"tanh"		|	"\u6c42\u53cc\u66f2\u6b63\u5207\u503c"
+	|	"trunc"		|	"\u683c\u5f0f\u5316\u6570\u503c2"
 	;
 
 //\u5b57\u7b26\u4e32\u51fd\u6570
 string_function
-	:	"ascii"			|	"\u6c42ASCII\u7801"
+	:	"ascii"			|	"\u6c42ASCII\u7801"			//\u8fd4\u56de\u6570\u5b57
 	|	"asciistr"		|	"\u6c42\u5b57\u7b26\u4e32ASCII\u7801"
-	|	"chartorowid"	|	"\u5b57\u7b26\u4e32\u8f6c\u6210ROWID"
 	|	"chr"			|	"\u6c42\u7b49\u503c\u7684\u5b57\u7b26"
-	|	"char_length" 	| 	"\u6c42\u5b57\u7b26\u4e32\u957f\u5ea61"
-	|	"charindex" 	|	"\u5b58\u5728\u4e8e"
-	|	"difference" 	|	"\u6c42\u4e24\u4e2a\u4e32\u7684\u58f0\u97f3\u5dee\u503c"
-	|	"insertstr"		|	"\u63d2\u5165\u5b57\u7b26\u4e32"
-	|	"lcase"			|	"\u8f6c\u4e3a\u5c0f\u5199\u5b57\u6bcd1"
-	|	"left"			|	"\u5de6\u622a\u5b57\u7b26\u4e32"
-	|	"length"		|	"\u6c42\u5b57\u7b26\u4e32\u957f\u5ea62"
-	|	"locate"		|	"\u6c42\u4e32\u4f4d\u7f6e1"
-	|	"lower" 		| 	"\u8f6c\u4e3a\u5c0f\u5199\u5b57\u6bcd2"
+	|	"cancat" 		| 	"\u5b57\u7b26\u4e32\u8fde\u63a5"
+	|	"initcap" 		|	"\u5355\u8bcd\u9996\u5b57\u6bcd\u5927\u51991"
+	|	"instr"			|	"\u6c42\u4e32\u4f4d\u7f6e"			//\u8fd4\u56de\u6570\u5b57
+	|	"instrb"		|	"\u5b57\u8282\u65b9\u5f0f\u6c42\u4e32\u4f4d\u7f6e"		//\u8fd4\u56de\u6570\u5b57
+	|	"length"		|	"\u6c42\u5b57\u7b26\u4e32\u957f\u5ea6"		//\u8fd4\u56de\u6570\u5b57
+	|	"lengthb"		|	"\u6c42\u5b57\u7b26\u4e32\u5b57\u8282\u6570"		//\u8fd4\u56de\u6570\u5b57
+	|	"lower"			|	"\u8f6c\u4e3a\u5c0f\u5199\u5b57\u6bcd1"
 	|	"ltrim"			|	"\u53bb\u6389\u5de6\u7a7a\u683c"
-	|	"octet_length"	|	"\u6c42\u5b57\u7b26\u4e32\u7684\u5b58\u50a8\u957f\u5ea6"
-	|	"patindex"		|	"\u6c42\u4e32\u4f4d\u7f6e2"
-	|	"repeat"		|	"\u5b57\u7b26\u4e32\u5faa\u73af\u8fde\u63a51"
-	|	"replace"		|	"\u66ff\u6362\u5b57\u7b26\u4e32"
-	|	"replicate"		|	"\u5b57\u7b26\u4e32\u5faa\u73af\u8fde\u63a52"
-	|	"right"			|	"\u53f3\u622a\u5b57\u7b26\u4e32"
+	|	"lpad"			|	"\u5b57\u7b26\u4e32\u5de6\u8865"
+	|	"nls_initcap"	|	"\u5355\u8bcd\u9996\u5b57\u6bcd\u5927\u51992"
+	|	"nls_lower"		|	"\u8f6c\u4e3a\u5c0f\u5199\u5b57\u6bcd2"
+	|	"nlssort"		|	"\u5b57\u7b26\u4e32\u6392\u5e8f"			//\u8fd4\u56de\u6570\u5b57
+	|	"nls_upper"		|	"\u8f6c\u4e3a\u5927\u5199\u5b57\u6bcd2"
+	|	"replace"		|	"\u5b57\u7b26\u4e32\u66ff\u6362"
+	|	"rpad"			|	"\u5b57\u7b26\u4e32\u53f3\u8865"
 	|	"rtrim"			|	"\u53bb\u6389\u53f3\u7a7a\u683c"
-	|	"similar"		|	"\u6c42\u5b57\u7b26\u4e32\u76f8\u4f3c\u5ea6"
-	|	"sortkey"		|	"\u5b57\u7b26\u4e32\u6392\u5e8f"
 	|	"soundex"		|	"\u6c42\u5b57\u7b26\u4e32\u58f0\u97f3\u503c"
-	|	"space"			|	"\u586b\u7a7a\u683c"
-	|	"str"			|	"\u6570\u503c\u8f6c\u5b57\u7b26\u4e32"
-	|	"string"		|	"\u5b57\u7b26\u4e32\u5408\u5e76"
-	|	"stuff"			|	"\u5b57\u7b26\u4e32\u5220\u9664\u66ff\u6362"
-	|	"substring"		|	"\u5b57\u7b26\u4e32\u622a\u53d6"
+	|	"substr"		|	"\u5b57\u7b26\u4e32\u622a\u53d6"
 	|	"trim"			|	"\u53bb\u5de6\u53f3\u7a7a\u683c"
-	|	"ucase"			|	"\u8f6c\u4e3a\u5927\u5199\u5b57\u6bcd1"
-	|	"upper"			|	"\u8f6c\u4e3a\u5927\u5199\u5b57\u6bcd2"
+	|	"ranslate"		|	"\u5b57\u7b26\u4e32\u5168\u66ff\u6362"
+	|	"upper"			|	"\u8f6c\u4e3a\u5927\u5199\u5b57\u6bcd1"
 	;
 
 //\u65e5\u671f\u65f6\u95f4\u51fd\u6570
 datetime_function
 	:	"add_months"	|	"\u6708\u4efd\u8fd0\u7b97"
-	|	"dateformat" 	|	"\u683c\u5f0f\u5316\u65e5\u671f"
-	|	"datename"		|	"\u6c42\u65e5\u671f\u5206\u91cf\u82f1\u6587\u540d"
-	|	"datepart"		|	"\u6c42\u65e5\u671f\u7684\u5206\u91cf\u503c"
-	|	"datetime"		|	"\u8f6c\u4e3a\u65e5\u671f\u65f6\u95f4"
-	|	"date"			|	"\u8f6c\u4e3a\u65e5\u671f"
-	|	"dayname"		|	"\u6c42\u661f\u671f\u82f1\u6587\u540d"
-	|	"days"			|	"\u6c42\u5929\u6570"
-	|	"day"			|	"\u6c42\u5177\u4f53\u65e5\u671f"
-	|	"dow"			|	"\u6c42\u5177\u4f53\u661f\u671f"
-	|	"hours"			|	"\u6c42\u5c0f\u65f6\u6570"
-	|	"hour"			|	"\u6c42\u5177\u4f53\u5c0f\u65f6"
-	|	"minutes"		|	"\u6c42\u5206\u949f\u6570"
-	|	"minute"		|	"\u6c42\u5177\u4f53\u5206\u949f"
-	|	"monthname"		|	"\u6c42\u6708\u4efd\u82f1\u6587\u540d"
-	|	"months"		|	"\u6c42\u6708\u6570"
-	|	"month"			|	"\u6c42\u5177\u4f53\u6708\u6570"
-//	|	"now"			|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f41"
-	|	"quarter"		|	"\u6c42\u5177\u4f53\u5b63\u5ea6"
-	|	"seconds"		|	"\u6c42\u79d2\u6570"
-	|	"second"		|	"\u6c42\u5177\u4f53\u79d2"
-//	|	"today"			|	"\u6c42\u5f53\u524d\u65e5\u671f"
-	|	"weeks"			|	"\u6c42\u5468\u6570"
-	|	"years"			|	"\u6c42\u5e74\u6570"
-	|	"year"			|	"\u6c42\u5177\u4f53\u5e74\u4efd"
-	|	"ymd"			|	"\u6570\u503c\u8f6c\u65e5\u671f"
-//	|	"getdate"		|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f42"
-	|	"dateadd"		|	"\u65e5\u671f\u8fd0\u7b97"
-	|	"datediff"		|	"\u6c42\u4e24\u65e5\u671f\u5dee\u503c"
+	|	"last_day" 		|	"\u6c42\u65e5\u671f\u6700\u540e\u4e00\u5929"
+	|	"months_between"|	"\u6c42\u6708\u4efd\u5dee\u503c"
+	|	"new_time"		|	"\u6c42\u5bf9\u5e94\u65f6\u533a\u7684\u65f6\u95f4"
+	|	"next_day"		|	"\u6c42\u5177\u4f53\u661f\u671f\u7684\u65e5\u671f"
+//	|	"sysdate"		|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4"		//\u8be6\u89c1Lexer Token
 	;
 
-//\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u51fd\u6570
 conversion_function
 	:	"bin_to_num"	|	"\u4e8c\u8fdb\u5236\u8f6c\u4e3a\u6570\u503c"
-	|	"hextoint"	|	"\u5341\u516d\u8fdb\u5236\u8f6c\u4e3a\u6574\u6570"
-	|	"inttohex"	|	"\u6574\u6570\u8f6c\u4e3a\u5341\u516d\u8fdb\u5236"
-	|	"isdate"	|	"\u662f\u5426\u65e5\u671f\u578b"
-	|	"isnumeric"	|	"\u662f\u5426\u6570\u503c\u578b"
-//	|	"cast"		|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
-//	|	"convert"	|	"\u6570\u636e\u7c7b\u578b\u8f6c\u6362"
+	|	"chartorowid"	|	"\u5b57\u7b26\u4e32\u8f6c\u4e3a\u884c\u53f7"
+//	|	"cast"			|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"	//\u8bed\u6cd5\u89c1asdatatype_function
+	|	"convert"		|	"\u5b57\u7b26\u4e32\u8f6c\u5316"
+	|	"hextoraw"		|	"\u5341\u516d\u8fdb\u5236\u8f6c\u4e3a\u4e8c\u8fdb\u5236"
+	|	"rawtohex"		|	"\u4e8c\u8fdb\u5236\u8f6c\u4e3a\u5341\u516d\u8fdb\u5236"
+	|	"rowidtochar"	|	"\u884c\u53f7\u8f6c\u6210\u5b57\u7b26\u4e32"
+	|	"to_char"		|	"\u8f6c\u4e3a\u5b57\u7b26\u578b"
+	|	"to_date"		|	"\u8f6c\u4e3a\u65e5\u671f\u578b"
+	|	"to_multi_byte"	|	"\u8f6c\u4e3a\u591a\u5b57\u8282\u578b"
+	|	"to_number"		|	"\u8f6c\u4e3a\u6570\u503c\u578b"
+	|	"to_single_byte"|	"\u8f6c\u4e3a\u5355\u5b57\u8282\u578b"
 	;
 
 //\u7cfb\u7edf\u51fd\u6570
 system_function
-	:	"suser_id"
-	|	"suser_name"
-	|	"user_id"
-	|	"user_name"
+	:	"uid"		|	"\u6c42\u6807\u8bc6\u7f16\u53f7"
+	|	"user"		|	"\u6c42\u5f53\u524d\u7528\u6237"
+	|	"userenv"	|	"\u6c42\u5f53\u524d\u7528\u6237\u73af\u5883\u4fe1\u606f"
+	|	"vsize"		|	"\u6c42\u5b57\u6bb5\u5927\u5c0f"
 	;
 
 //\u5176\u4ed6\u51fd\u6570
 other_function
-	:	"bitand"	| "\u4e0e\u8fd0\u7b97"
-	|	"argn"
-	| 	"rowid"
+	:	"decode"	|	"\u6c42\u6bd4\u8f83\u7ed3\u679c"
+	|	"dump"		|	"\u8fd4\u56de\u6570\u636e\u683c\u5f0f"
+	| 	"empty_blob"|	"\u521d\u59cb\u5316BLOB"
+	|	"empty_clob"|	"\u521d\u59cb\u5316CLOB"
+	|	"greatest"	|	"\u6c42\u6700\u5927\u8868\u8fbe\u5f0f"
+	|	"least"		|	"\u6c42\u6700\u5c0f\u8868\u8fbe\u5f0f"
+	|	"nvl"		|	"\u6c42\u975e\u7a7a\u503c"
 	;
 
+//\u5355\u4e2a\u8fd0\u7b97\u7b26\u53f7[~]
 one_arg_op
 	: TILDE | "\u975e\u8fd0\u7b97";
 
+//\u524d\u540e\u5747\u9700\u8868\u8fbe\u5f0f\u8fd0\u7b97\u7b26\u53f7[\u7b97\u672f\u8fd0\u7b97\u7b26\u3001\u4f4d\u8fd0\u7b97\u7b26\u53f7...]
 two_arg_op
 	:	arithmeticOperator | bitwiseOperator
 	|	"\u4e0e" | "\u975e\u8fd0\u7b97" | "\u6216" | "\u5f02\u6216" | "\u52a0" | "\u51cf" | "\u4e58" | "\u9664" | "\u6c42\u6a21";
 
+//\u7b97\u672f\u8fd0\u7b97\u7b26[+ - * /]
 arithmeticOperator
     : PLUS | MINUS | STAR | DIVIDE | MOD
     ;
 
+//\u4f4d\u8fd0\u7b97\u7b26\u53f7[& ~ ^]
 bitwiseOperator
     : AMPERSAND | TILDE | BITWISEOR | BITWISEXOR
     ;
 
+//\u7b49\u4e8e\u8fd0\u7b97\u7b26
 alias_equ_op
 	:	ASSIGNEQUAL | "\u7b49\u4e8e"
 	;
 
+//\u6bd4\u8f83\u8fd0\u7b97\u7b26[\u4e2d\u82f1]
 compare_op
 	:	comparisonOperator
 	|	"\u7b49\u4e8e" | "\u5927\u4e8e\u7b49\u4e8e" | "\u5c0f\u4e8e\u7b49\u4e8e" | "\u5927\u4e8e" | "\u5c0f\u4e8e" | "\u4e0d\u7b49\u4e8e"
-	|	"\u5de6\u8fde\u63a5"	| LEFT_JOIN
 	;
 
+//\u6bd4\u8f83\u8fd0\u7b97\u7b26(= != <> <= ...)
 comparisonOperator
 	:	ASSIGNEQUAL
 	| 	NOTEQUAL1
@@ -537,18 +539,19 @@ comparisonOperator
 
 //\u65e5\u671fdate-part\u4fdd\u7559\u5b57
 date_key_word
-	: "year" | "yy" | "month" | "mm" | "day" | "dd"
-	| "quarter" | "qq" | "week" | "wk" | "dayofyear" | "dy"
-	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
-	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
+	: "year" | "yy" | "yyyy" | "month" | "mm" | "m" | "day" | "dd" | "d"
+	| "quarter" | "qq" | "q" | "week" | "wk" | "w" 
+	| "dayofyear" | "dy" | "y" | "weekday" | "dw" 
+	| "hour" | "hh" | "hh12" | "hh24" | "minute" | "mi" | "n"| "second" | "ss" | "s" | "millisecond" | "ms"
 	;
 
 //\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57
 data_type_word
-	: "uniqueidentifierstr" 
-	| "bigint" | "int" | "integer" | "smallint" | "tinyint" | "double" | "real"
-	| "date" | "datetime" | "smalldatetime" | "time" | "timestamp"
-	| "bit"
+	:
+	| "long" //| "long" "raw"
+	| "date"
+	| "rowid"
+	| "clob" | "nclob" | "blob" | "bfile"
 	;
 
 /*==========================================================
@@ -646,6 +649,9 @@ tokens {
 
 	COUNT_EN = "count";
 	COUNT_CN = "\u6c42\u8bb0\u5f55\u603b\u6570";
+
+	SYSDATE_EN = "SYSDATE";
+	SYSDATE_CN = "\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4";
 }
 
 PLUS	: '+' ;
@@ -755,58 +761,54 @@ ID	options {testLiterals=true;}
 	:	ID_START_LETTER ( ID_LETTER )*
 	;
 	
-protected
-ID_START_LETTER
+protected ID_START_LETTER
     :    'a'..'z'
     |	'_'
     |    '\u0080'..'\ufffe'
     ;
-protected
-ID_LETTER
+
+protected ID_LETTER
     :	ID_START_LETTER
     |	'0'..'9'
     |	'/'
     |	'%'
     ;
 
+
+//Real Numeric
 REAL_NUM
 	:	NUM (POINT DOT_NUM)?
 	;
 
-//negative digit element
+//Negative Digit Element
 NEGATIVE_DIGIT_ELEMENT
 	: 	MINUS NUM (POINT DOT_NUM)?
 	;
 	
-protected
-NUM	:	'0'
+protected NUM
+	:	'0'
 	|	NUM_START (NUM_LETTER)*
 	;
-protected
-DOT_NUM
+
+protected DOT_NUM
 	:	(NUM_LETTER)+
 	;
-protected
-NUM_START
+
+protected NUM_START
 	:	'1'..'9'
 	;
-protected
-NUM_LETTER
+
+protected NUM_LETTER
 	:	'0'..'9'
 	;
 
 DATA_TYPE_STRING options {testLiterals=true;}
-    : "character" | "varchar"
-    | "decimal" | "numeric" | "float"
-    | "binary" | "varbinary"
+    : "varchar2" | "nchar" | "nvarchar2"
+    | "numeric"
+    | "raw"
+//    | "interval" "year" | "interval" "month"
+    | "urowid"
     ;
-
-//DATA_TYPE_STRING options {testLiterals=true;}
-//	: "character" | "varchar" | "char" | "uniqueidentifierstr"
-//	| "bigint" | "int" | "integer" | "smallint" | "tinyint" | "double" | "float" | "real" | "decimal" | "numeric"
-//	| "date" | "datetime" | "smalldatetime" | "time" | "timestamp"
-//	| "bit" | "binary" | "varbinary"
-//	;
 
 ML_COMMENT
 	:	"/*"
@@ -1063,11 +1065,21 @@ equation returns [EquationModel model]
 {
 	ExpressionModel e1, e2, e3;
 	EquationModel equation;
+	SelectStatementModel stmt;
 	model=new EquationModel();
 	String nullStr = "";
 }
 	:	#(COMPARE_OP e1=expression op:compare_op e2=expression)
 	{model.addExpression(e1); model.addOperator(op.getText()); model.addExpression(e2);}
+	
+	|	#(LOGICAL_EXISTS e1=expression le0:EXISTS_EN #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(le0.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
+	|	#(LOGICAL_NOT_EXISTS e1=expression le1:NOT_EN le2:EXISTS_EN #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(le1.getText() + " " + le2.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
+	|	#(le:EXISTS_CN e1=expression #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(le.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
+	|	#(lne:NOT_EXISTS_CN e1=expression #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(lne.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
 	
 	|	#(LOGICAL_LIKE e1=expression ls:LIKE_EN e2=expression)
 	{model.addExpression(e1); model.addOperator(ls.getText(), true); model.addExpression(e2);}	
@@ -1077,7 +1089,6 @@ equation returns [EquationModel model]
 	{model.addExpression(e1); model.addOperator(l.getText()); model.addExpression(e2);}
 	|	#(nl:NOT_LIKE_CN e1=expression e2=expression)
 	{model.addExpression(e1); model.addOperator(nl.getText()); model.addExpression(e2);}
-
 
 	|	#(LOGICAL_NULL e1=expression nStr1:IS_EN nStr2:NULL_EN)
 	{model.addExpression(e1); model.addOperator(nStr1.getText() + " " + nStr2.getText(), true);}
@@ -1099,10 +1110,10 @@ equation returns [EquationModel model]
 	
 	|	#(LOGICAL_IN e1=expression in1:IN_EN e2=exp_set)
 	{model.addExpression(e1); model.addOperator(in1.getText(), true); model.addExpression(e2);}
-	|	#(ct1:IN_CN e1=expression e2=exp_set)
-	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
 	|	#(LOGICAL_NOT_IN e1=expression in2:NOT_EN in3: IN_EN e2=exp_set)
 	{model.addExpression(e1); model.addOperator(in2.getText() + " " + in3.getText(), true); model.addExpression(e2);}
+	|	#(ct1:IN_CN e1=expression e2=exp_set)
+	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
 	|	#(ct2:NOT_IN_CN e1=expression e2=exp_set)
 	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
 	;
@@ -1110,11 +1121,17 @@ equation returns [EquationModel model]
 exp_set returns [ExpressionModel model]
 {
 	model = new ExpressionModel();
+	SelectStatementModel stmt;
 	ExprContainModel expr;
 }
-	: 	#(SUBCONTAIN_OP LPAREN expr=constexpset RPAREN)
+	: 	#(SUBCONTAIN_OP expr=constexpset)
 		{
 			model.addExprContainModel(expr);
+		}
+	|	#(SUBQUERY stmt=select_statement)
+		{
+			model.addSelectStatement(stmt);
+			stmt.setSubquery(true);
 		}
 	;
 
@@ -1261,11 +1278,17 @@ function returns [FunctionModel model]
 		}
 		
 		//Normal functions\u666e\u901a\u51fd\u6570
-//	|	f:function_name p=parameters
 	|	#(FUNCTION f:function_name p=parameters)
 		{
 			model = new FunctionModel(f.getText(), true);
 			model.setParameters(p);
+		}
+		
+		//Normal functions\u53c2\u6570\u4e3a\u7a7a\u7684\u666e\u901a\u51fd\u6570[sysdate]
+	|	#(FUNCTION_NOTHING nfun:function_name)
+		{
+			model = new FunctionModel(nfun.getText(), true);
+			model.setNothing(true);
 		}
 		
 		//Normal functions\u53c2\u6570\u4e3a\u7a7a\u7684\u666e\u901a\u51fd\u6570[getdate()]
@@ -1479,29 +1502,21 @@ comparemethod_name
 	:	EXISTS_EN | EXISTS_CN | NOT_EXISTS_CN
 	;
 
-//\u65e5\u671fdate-part\u4fdd\u7559\u5b57
-date_key_word
-	: "year" | "yy" | "month" | "mm" | "day" | "dd"
-	| "quarter" | "qq" | "week" | "wk" | "dayofyear" | "dy"
-	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
-	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
-	;
-
 //\u805a\u5408\u51fd\u6570
 aggregate_func_name
 	:	"avg" 		| 	"\u6c42\u5e73\u5747\u6570"
-//	|	"count" 	| 	"\u6c42\u8bb0\u5f55\u603b\u6570"
 	|	COUNT_EN	|	COUNT_CN
 	|	"max" 		| 	"\u6c42\u6700\u5927\u503c"
 	|	"min" 		| 	"\u6c42\u6700\u5c0f\u503c"
-	|	"stddev" 	| 	"\u6c42\u65b9\u5dee"
+	|	"stddev" 	| 	"\u6c42\u6807\u51c6\u5dee"
 	|	"sum" 		|	"\u6c42\u603b\u548c"
-	|	"variance" 	| 	"\u6c42\u7edf\u8ba1\u65b9\u5dee"
+	|	"variance" 	| 	"\u6c42\u534f\u65b9\u5dee"
 	;
 
 //\u666e\u901a\u51fd\u6570(\u6570\u5b66\u51fd\u6570\u3001\u5b57\u7b26\u4e32\u51fd\u6570\u3001\u65e5\u671f\u65f6\u95f4\u51fd\u6570\u3001\u7cfb\u7edf\u51fd\u6570\u3001\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u51fd\u6570\u3001\u5176\u4ed6\u51fd\u6570)
 function_name
-	:	number_function
+	:
+	|	number_function
 	|	string_function
 	|	datetime_function
 	|	conversion_function
@@ -1516,125 +1531,112 @@ number_function
 	|	"asin"		|	"\u6c42\u53cd\u6b63\u5f26\u503c"
 	|	"atan"		|	"\u6c42\u53cd\u6b63\u5207\u503c"
 	|	"atin2"		|	"\u6c42\u4e8c\u4e2a\u6570\u7684\u53cd\u6b63\u5207\u503c"
-	|	"ceiling"	|	"\u53d6\u4e0a\u9650\u6574\u6570"
+	|	"ceil"		|	"\u53d6\u4e0a\u9650\u6574\u6570"
 	|	"cos"		|	"\u6c42\u4f59\u5f26\u503c"
-	|	"cot"		|	"\u6c42\u4f59\u5207\u503c"
-	|	"degrees"	|	"\u5f27\u5ea6\u8f6c\u5ea6\u6570"
+	|	"cosh"		|	"\u6c42\u4f59\u5207\u503c"
 	|	"exp"		|	"\u6c42\u5e42\u503c"
 	|	"floor"		|	"\u53d6\u4e0b\u9650\u6574\u6570"
-	|	"log"		|	"\u6c42\u81ea\u7136\u5bf9\u6570"
-	|	"log10"		|	"\u6c4210\u4e3a\u5e95\u7684\u5bf9\u6570"
+	|	"ln"		|	"\u6c42\u81ea\u7136\u5bf9\u6570"
+	|	"log"		|	"\u6c42\u5bf9\u6570"
 	|	"mod"		|	"\u6c42\u6a21"
-	|	"pi"		|	"\u6c42\u5706\u5468\u7387"
 	|	"power"		|	"\u6c42\u5e42"
-	|	"radians"	|	"\u5ea6\u6570\u8f6c\u5f27\u5ea6"
-	|	"rand"		|	"\u53d6\u968f\u673a\u6570"
-	|	"remainder"	|	"\u6c42\u6a212"
 	|	"round"		|	"\u683c\u5f0f\u5316\u6570\u503c"
 	|	"sign"		|	"\u6c42\u503c\u7684\u7b26\u53f7"
 	|	"sin"		|	"\u6c42\u6b63\u5f26\u503c"
+	|	"sinh"		|	"\u6c42\u53cc\u66f2\u6b63\u5f26\u503c"
 	|	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
 	|	"tan"		|	"\u6c42\u6b63\u5207\u503c"
-	|	"\u683c\u5f0f\u5316\u6570\u503c3"	//"\"truncate\""
-	|	"truncnum"	|	"\u683c\u5f0f\u5316\u6570\u503c2"
+	|	"tanh"		|	"\u6c42\u53cc\u66f2\u6b63\u5207\u503c"
+	|	"trunc"		|	"\u683c\u5f0f\u5316\u6570\u503c2"
 	;
 
 //\u5b57\u7b26\u4e32\u51fd\u6570
 string_function
-	:	"ascii"			|	"\u6c42ASCII\u7801"
-	|	"bit_length"	|	"\u6c42\u5b57\u7b26\u4e32\u7684\u4e8c\u8fdb\u5236\u957f\u5ea6"
-	|	"byte_length" 	| 	"\u6c42\u5b57\u7b26\u4e32\u7684\u5b57\u8282\u6570"
-	|	"char"			|	"\u6c42\u7b49\u503c\u7684\u5b57\u7b26"
-	|	"char_length" 	| 	"\u6c42\u5b57\u7b26\u4e32\u957f\u5ea61"
-	|	"charindex" 	|	"\u5b58\u5728\u4e8e"
-	|	"difference" 	|	"\u6c42\u4e24\u4e2a\u4e32\u7684\u58f0\u97f3\u5dee\u503c"
-	|	"insertstr"		|	"\u63d2\u5165\u5b57\u7b26\u4e32"
-	|	"lcase"			|	"\u8f6c\u4e3a\u5c0f\u5199\u5b57\u6bcd1"
-	|	"left"			|	"\u5de6\u622a\u5b57\u7b26\u4e32"
-	|	"length"		|	"\u6c42\u5b57\u7b26\u4e32\u957f\u5ea62"
-	|	"locate"		|	"\u6c42\u4e32\u4f4d\u7f6e1"
-	|	"lower" 		| 	"\u8f6c\u4e3a\u5c0f\u5199\u5b57\u6bcd2"
+	:	"ascii"			|	"\u6c42ASCII\u7801"			//\u8fd4\u56de\u6570\u5b57
+	|	"asciistr"		|	"\u6c42\u5b57\u7b26\u4e32ASCII\u7801"
+	|	"chr"			|	"\u6c42\u7b49\u503c\u7684\u5b57\u7b26"
+	|	"cancat" 		| 	"\u5b57\u7b26\u4e32\u8fde\u63a5"
+	|	"initcap" 		|	"\u5355\u8bcd\u9996\u5b57\u6bcd\u5927\u51991"
+	|	"instr"			|	"\u6c42\u4e32\u4f4d\u7f6e"			//\u8fd4\u56de\u6570\u5b57
+	|	"instrb"		|	"\u5b57\u8282\u65b9\u5f0f\u6c42\u4e32\u4f4d\u7f6e"		//\u8fd4\u56de\u6570\u5b57
+	|	"length"		|	"\u6c42\u5b57\u7b26\u4e32\u957f\u5ea6"		//\u8fd4\u56de\u6570\u5b57
+	|	"lengthb"		|	"\u6c42\u5b57\u7b26\u4e32\u5b57\u8282\u6570"		//\u8fd4\u56de\u6570\u5b57
+	|	"lower"			|	"\u8f6c\u4e3a\u5c0f\u5199\u5b57\u6bcd1"
+	|	"lpad"			|	"\u5b57\u7b26\u4e32\u5de6\u8865"
 	|	"ltrim"			|	"\u53bb\u6389\u5de6\u7a7a\u683c"
-	|	"octet_length"	|	"\u6c42\u5b57\u7b26\u4e32\u7684\u5b58\u50a8\u957f\u5ea6"
-	|	"patindex"		|	"\u6c42\u4e32\u4f4d\u7f6e2"
-	|	"repeat"		|	"\u5b57\u7b26\u4e32\u5faa\u73af\u8fde\u63a51"
-	|	"replace"		|	"\u66ff\u6362\u5b57\u7b26\u4e32"
-	|	"replicate"		|	"\u5b57\u7b26\u4e32\u5faa\u73af\u8fde\u63a52"
-	|	"right"			|	"\u53f3\u622a\u5b57\u7b26\u4e32"
+	|	"nls_initcap"	|	"\u5355\u8bcd\u9996\u5b57\u6bcd\u5927\u51992"
+	|	"nls_lower"		|	"\u8f6c\u4e3a\u5c0f\u5199\u5b57\u6bcd2"
+	|	"nlssort"		|	"\u5b57\u7b26\u4e32\u6392\u5e8f"			//\u8fd4\u56de\u6570\u5b57
+	|	"nls_upper"		|	"\u8f6c\u4e3a\u5927\u5199\u5b57\u6bcd2"
+	|	"replace"		|	"\u5b57\u7b26\u4e32\u66ff\u6362"
+	|	"rpad"			|	"\u5b57\u7b26\u4e32\u53f3\u8865"
 	|	"rtrim"			|	"\u53bb\u6389\u53f3\u7a7a\u683c"
-	|	"similar"		|	"\u6c42\u5b57\u7b26\u4e32\u76f8\u4f3c\u5ea6"
-	|	"sortkey"		|	"\u5b57\u7b26\u4e32\u6392\u5e8f"
 	|	"soundex"		|	"\u6c42\u5b57\u7b26\u4e32\u58f0\u97f3\u503c"
-	|	"space"			|	"\u586b\u7a7a\u683c"
-	|	"str"			|	"\u6570\u503c\u8f6c\u5b57\u7b26\u4e32"
-	|	"string"		|	"\u5b57\u7b26\u4e32\u5408\u5e76"
-	|	"stuff"			|	"\u5b57\u7b26\u4e32\u5220\u9664\u66ff\u6362"
-	|	"substring"		|	"\u5b57\u7b26\u4e32\u622a\u53d6"
+	|	"substr"		|	"\u5b57\u7b26\u4e32\u622a\u53d6"
 	|	"trim"			|	"\u53bb\u5de6\u53f3\u7a7a\u683c"
-	|	"ucase"			|	"\u8f6c\u4e3a\u5927\u5199\u5b57\u6bcd1"
-	|	"upper"			|	"\u8f6c\u4e3a\u5927\u5199\u5b57\u6bcd2"
+	|	"ranslate"		|	"\u5b57\u7b26\u4e32\u5168\u66ff\u6362"
+	|	"upper"			|	"\u8f6c\u4e3a\u5927\u5199\u5b57\u6bcd1"
 	;
 
 //\u65e5\u671f\u65f6\u95f4\u51fd\u6570
 datetime_function
-	:	"dateformat" 	|	"\u683c\u5f0f\u5316\u65e5\u671f"
-	|	"datename"		|	"\u6c42\u65e5\u671f\u5206\u91cf\u82f1\u6587\u540d"
-	|	"datepart"		|	"\u6c42\u65e5\u671f\u7684\u5206\u91cf\u503c"
-	|	"datetime"		|	"\u8f6c\u4e3a\u65e5\u671f\u65f6\u95f4"
-	|	"date"			|	"\u8f6c\u4e3a\u65e5\u671f"
-	|	"dayname"		|	"\u6c42\u661f\u671f\u82f1\u6587\u540d"
-	|	"days"			|	"\u6c42\u5929\u6570"
-	|	"day"			|	"\u6c42\u5177\u4f53\u65e5\u671f"
-	|	"dow"			|	"\u6c42\u5177\u4f53\u661f\u671f"
-	|	"hours"			|	"\u6c42\u5c0f\u65f6\u6570"
-	|	"hour"			|	"\u6c42\u5177\u4f53\u5c0f\u65f6"
-	|	"minutes"		|	"\u6c42\u5206\u949f\u6570"
-	|	"minute"		|	"\u6c42\u5177\u4f53\u5206\u949f"
-	|	"monthname"		|	"\u6c42\u6708\u4efd\u82f1\u6587\u540d"
-	|	"months"		|	"\u6c42\u6708\u6570"
-	|	"month"			|	"\u6c42\u5177\u4f53\u6708\u6570"
-	|	"now"			|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f41"
-	|	"quarter"		|	"\u6c42\u5177\u4f53\u5b63\u5ea6"
-	|	"seconds"		|	"\u6c42\u79d2\u6570"
-	|	"second"		|	"\u6c42\u5177\u4f53\u79d2"
-	|	"today"			|	"\u6c42\u5f53\u524d\u65e5\u671f"
-	|	"weeks"			|	"\u6c42\u5468\u6570"
-	|	"years"			|	"\u6c42\u5e74\u6570"
-	|	"year"			|	"\u6c42\u5177\u4f53\u5e74\u4efd"
-	|	"ymd"			|	"\u6570\u503c\u8f6c\u65e5\u671f"
-	|	"getdate"		|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f42"
-	|	"dateadd"		|	"\u65e5\u671f\u8fd0\u7b97"
-	|	"datediff"		|	"\u6c42\u4e24\u65e5\u671f\u5dee\u503c"
+	:	"add_months"	|	"\u6708\u4efd\u8fd0\u7b97"
+	|	"last_day" 		|	"\u6c42\u65e5\u671f\u6700\u540e\u4e00\u5929"
+	|	"months_between"|	"\u6c42\u6708\u4efd\u5dee\u503c"
+	|	"new_time"		|	"\u6c42\u5bf9\u5e94\u65f6\u533a\u7684\u65f6\u95f4"
+	|	"next_day"		|	"\u6c42\u5177\u4f53\u661f\u671f\u7684\u65e5\u671f"
+	|	SYSDATE_EN		|	SYSDATE_CN
 	;
 
 //\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u51fd\u6570
 conversion_function
-	:	"hextoint"	|	"\u5341\u516d\u8fdb\u5236\u8f6c\u4e3a\u6574\u6570"
-	|	"inttohex"	|	"\u6574\u6570\u8f6c\u4e3a\u5341\u516d\u8fdb\u5236"
-	|	"isdate"	|	"\u662f\u5426\u65e5\u671f\u578b"
-	|	"isnumeric"	|	"\u662f\u5426\u6570\u503c\u578b"
-	|	"cast"		|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
-	|	"convert"	|	"\u6570\u636e\u7c7b\u578b\u8f6c\u6362"
+	:	"bin_to_num"	|	"\u4e8c\u8fdb\u5236\u8f6c\u4e3a\u6570\u503c"
+	|	"chartorowid"	|	"\u5b57\u7b26\u4e32\u8f6c\u4e3a\u884c\u53f7"
+	|	"cast"			|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
+	|	"convert"		|	"\u5b57\u7b26\u4e32\u8f6c\u5316"
+	|	"hextoraw"		|	"\u5341\u516d\u8fdb\u5236\u8f6c\u4e3a\u4e8c\u8fdb\u5236"
+	|	"rawtohex"		|	"\u4e8c\u8fdb\u5236\u8f6c\u4e3a\u5341\u516d\u8fdb\u5236"
+	|	"rowidtochar"	|	"\u884c\u53f7\u8f6c\u6210\u5b57\u7b26\u4e32"
+	|	"to_char"		|	"\u8f6c\u4e3a\u5b57\u7b26\u578b"
+	|	"to_date"		|	"\u8f6c\u4e3a\u65e5\u671f\u578b"
+	|	"to_multi_byte"	|	"\u8f6c\u4e3a\u591a\u5b57\u8282\u578b"
+	|	"to_number"		|	"\u8f6c\u4e3a\u6570\u503c\u578b"
+	|	"to_single_byte"|	"\u8f6c\u4e3a\u5355\u5b57\u8282\u578b"
 	;
 
 //\u7cfb\u7edf\u51fd\u6570
 system_function
-	:	"suser_id"
-	|	"suser_name"
-	|	"user_id"
-	|	"user_name"
+	:	"uid"		|	"\u6c42\u6807\u8bc6\u7f16\u53f7"
+	|	"user"		|	"\u6c42\u5f53\u524d\u7528\u6237"
+	|	"userenv"	|	"\u6c42\u5f53\u524d\u7528\u6237\u73af\u5883\u4fe1\u606f"
+	|	"vsize"		|	"\u6c42\u5b57\u6bb5\u5927\u5c0f"
 	;
 
 //\u5176\u4ed6\u51fd\u6570
 other_function
-	:	"argn"
-	| 	"rowid"
+	:	"decode"	|	"\u6c42\u6bd4\u8f83\u7ed3\u679c"
+	|	"dump"		|	"\u8fd4\u56de\u6570\u636e\u683c\u5f0f"
+	| 	"empty_blob"|	"\u521d\u59cb\u5316BLOB"
+	|	"empty_clob"|	"\u521d\u59cb\u5316CLOB"
+	|	"greatest"	|	"\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c"
+	|	"least"		|	"\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c"
+	|	"nvl"		|	"\u6c42\u975e\u7a7a\u503c"
+	;
+
+
+//\u65e5\u671fdate-part\u4fdd\u7559\u5b57
+date_key_word
+	: "year" | "yy" | "yyyy" | "month" | "mm" | "m" | "day" | "dd" | "d"
+	| "quarter" | "qq" | "q" | "week" | "wk" | "w" 
+	| "dayofyear" | "dy" | "y" | "weekday" | "dw" 
+	| "hour" | "hh" | "hh12" | "hh24" | "minute" | "mi" | "n"| "second" | "ss" | "s" | "millisecond" | "ms"
 	;
 
 //\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57
 data_type_word
-	: "uniqueidentifierstr" 
-	| "bigint" | "int" | "integer" | "smallint" | "tinyint" | "double" | "real"
-	| "date" | "datetime" | "smalldatetime" | "time" | "timestamp"
-	| "bit"
+	:
+	| "long" //| "long" "raw"
+	| "date"
+	| "rowid"
+	| "clob" | "nclob" | "blob" | "bfile"
 	;
