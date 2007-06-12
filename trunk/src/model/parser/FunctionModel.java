@@ -5,11 +5,23 @@ import java.util.regex.Pattern;
 
 import model.parser.common.Constants;
 
+/**
+ * 编译器函数模型对象类
+ * Recent updates by LORD
+ * email: jiandeh@sina.com
+ * 修改日志：
+ * ======================================================
+ * 06/11/2007:
+ * 	- 增加isNothing属性，用来判断是否为不带任何东西的函数
+ * 	- 修改了相应getChString、getEnString方法	
+ * ======================================================
+ */
 public class FunctionModel extends QueryModel {
   public static final int ALL = 1;
   public static final int DISTINCT = 2;
-
+  
   private String functionName;
+  private boolean isNothing = false;
   private int filter;
 
   public FunctionModel(String functionName) {
@@ -46,8 +58,12 @@ public class FunctionModel extends QueryModel {
   protected void setFilter(int filter) {
     this.filter = filter;
   }
+  
+  public void setNothing(boolean isNothing) {
+		this.isNothing = isNothing;
+	}
 
-  public String getChString() {
+	public String getChString() {
   	String rValue = "";
     String f = "";
     if (filter == ALL)
@@ -57,6 +73,8 @@ public class FunctionModel extends QueryModel {
     ParametersModel para=(ParametersModel)getFirstModelByClass(ParametersModel.class);
     if (para != null)
     	rValue = functionName + "(" + f + para.getChString() + ")";
+    else if (isNothing)
+    	rValue = functionName;
     else
     	rValue = functionName + "(" + ")";
     return rValue;
@@ -72,6 +90,8 @@ public class FunctionModel extends QueryModel {
     ParametersModel para=(ParametersModel)getFirstModelByClass(ParametersModel.class);
     if (para != null)
     	rValue = translateStringCh2En(functionName) + "(" + f + para.getEnString() + ")";
+    else if (isNothing)
+    	rValue = translateStringCh2En(functionName);
     else
     	rValue = translateStringCh2En(functionName) + "(" + f + ")";
     return rValue;
