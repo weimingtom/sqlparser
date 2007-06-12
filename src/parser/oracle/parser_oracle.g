@@ -17,7 +17,8 @@
 //	06/11/2007:
 //		- equation\u589e\u52a0EXISTS/NOT EXISTS\u7684\u8bed\u6cd5\u5b9a\u4e49\uff0c\u5141\u8bb8\u5b50\u67e5\u8be2
 //		  \u8bbe\u7f6eSUBQUERY\u7684TOKEN\u8fdb\u884c\u8bed\u6cd5\u6811\u904d\u5386
-//
+//	06/12/2007:
+//		- exp_set\u8bed\u6cd5\u589e\u52a0\u5b50\u67e5\u8be2\u89e3\u6790\uff0c\u540c\u65f6\u589e\u52a0\u5b50\u67e5\u8be2\u7684\u8bed\u6cd5\u6811\u904d\u5386
 //==========================================================*/
 
 header {
