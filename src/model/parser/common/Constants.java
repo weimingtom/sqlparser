@@ -41,6 +41,6 @@ public class Constants {
   public static final String DISTINCT_EN = "distinct";
   public static final String DISTINCT_CN = "唯一";
   
-  public static final String ALL_EN = "distinct";
-  public static final String ALL_CN = "唯一";
+  public static final String ALL_EN = "all";
+  public static final String ALL_CN = "全部";
 }
