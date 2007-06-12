@@ -39,14 +39,14 @@ import model.parser.exceptions.TableNumberException;
 import model.parser.exceptions.common.ErrorLexer;
 
 /**
- * 编译器核心模型QueryModel及对语法解析实现类
- * 修改日志：
- * ======================================================
- * 06/12/2007：
- * 	- 取消构造类对中英文关键字的获取，增加setKeyWordsProp获取，
- * 		用来根据不同的数据库类型获取对应中英文关键字
- * 
- * ======================================================
+ * 编译器核心模型QueryModel及对语法解析实现类<br>
+ * 修改日志：<br>
+ * ======================================================<br>
+ * 06/12/2007：<br>
+ * 	- 取消构造类对中英文关键字的获取，增加setKeyWordsProp获取，<br>
+ * 		用来根据不同的数据库类型获取对应中英文关键字<br>
+ * <br>
+ * ======================================================<br>
  */
 public class QueryModel {
   private static final String KEYWORDS = "keywords";  							//关键字属性文件名称
