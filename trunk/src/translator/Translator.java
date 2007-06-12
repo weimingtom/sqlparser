@@ -53,6 +53,9 @@ import model.parser.exceptions.TableNumberException;
  * 06/05/2007：
  * 	-	loadModelFromXML方法增加对异常集合长度的判断，如果有异常，
  * 		则直接返回QueryModel 对象
+ * 06/12/2007:
+ * 	- getXmlString、loadModelFromXML方法增加对databaseType
+ * 		的转化，用来判断语句的数据库类型
  * ======================================================
  */
 public class Translator {
@@ -543,9 +546,13 @@ public class Translator {
   public String getXmlString() {
     Document d = DocumentHelper.createDocument();
     Element e = d.addElement("query");
+    
     Element chQueryString = e.addElement("ch_query_string");
-    chQueryString.addAttribute("circleType", model.getCircleType());
     chQueryString.addText(model.getChString());
+    
+    Element databaseTypeElem = e.addElement("databaseType");
+    databaseTypeElem.addText(model.getDatabaseType());
+    
     info.getElement(model.getDbTableModel(), e); //将表名称信息及字段属性信息转化成XML内容
     
 //    for (int i = 0; i < appDbTableList.size(); i++){
@@ -605,7 +612,7 @@ public class Translator {
    * @throws DocumentException
    */
   public QueryModel loadModelFromXML(String iXML) throws DocumentException {
-  	return loadModelFromXML(iXML, DataBaseType.DEFAULT_DATABASE_TYPE);
+  	return loadModelFromXML(iXML, "");
   }
   
   /**
@@ -619,7 +626,13 @@ public class Translator {
     Document document = DocumentHelper.parseText(iXML);
     Element root = document.getRootElement();
     String query = root.elementText("ch_query_string");
-    model = QueryModel.parseQuery(query, dataBaseType);
+
+    String rDatabaseType = root.elementText("databaseType");
+    if (dataBaseType != null && !dataBaseType.equals("")){
+    	rDatabaseType = dataBaseType;
+    }
+    
+    model = QueryModel.parseQuery(query, rDatabaseType);
     
     if (model.getWrongMessages().length > 0){
     	return model;
