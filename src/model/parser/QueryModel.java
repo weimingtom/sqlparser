@@ -40,9 +40,19 @@ import model.parser.exceptions.common.ErrorLexer;
 
 /**
  * 编译器核心模型QueryModel及对语法解析实现类
+ * 修改日志：
+ * ======================================================
+ * 06/12/2007：
+ * 	- 取消构造类对中英文关键字的获取，增加setKeyWordsProp获取，
+ * 		用来根据不同的数据库类型获取对应中英文关键字
+ * 
+ * ======================================================
  */
 public class QueryModel {
-  private static final String KEYWORDS = "keywords";  //关键字属性文件名称
+  private static final String KEYWORDS = "keywords";  							//关键字属性文件名称
+  private static final String KEYWORDS_ORACLE = "keywords_oracle";  //关键字属性文件名称
+  private static final String KEYWORDS_SYBASE = "keywords";  				//关键字属性文件名称
+  
   private static Map mapKeyword = new HashMap();      //存放关键字的HashMap
   
   private SybaseIQ12Parser sybaseIQ12Parser;
@@ -58,16 +68,30 @@ public class QueryModel {
   
   private String circleType;  //循环语句类型(表变量/条件变量)
   
-  
   static {
-    //获取所有中英文关键字并存储在HashMap的mapKeyword中
-    ResourceBundle bundle =  ResourceBundle.getBundle(KEYWORDS, Locale.CHINESE);
-    Enumeration keys = bundle.getKeys();
-    while (keys.hasMoreElements()) {
-      String key = keys.nextElement().toString();
-      String val = bundle.getString(key);
-      mapKeyword.put(key, val);
-    }
+  	
+  }
+  
+  private static void setKeyWordsProp(String _databaseType){
+  	//获取所有中英文关键字并存储在HashMap的mapKeyword中
+
+  	if (_databaseType != null && mapKeyword.size() == 0){
+  		String rKeyWordsName = "";
+  		if (_databaseType.equals(DataBaseType.ORACLE8i) || _databaseType.equals(DataBaseType.ORACLE9i)){
+  			rKeyWordsName = KEYWORDS_ORACLE;
+  		}else if (_databaseType.equals(DataBaseType.SYBASE_IQ_12) || _databaseType.equals(DataBaseType.SYBASE_ASE_12)){
+  			rKeyWordsName = KEYWORDS_SYBASE;
+  		}else{
+  			rKeyWordsName = KEYWORDS;
+  		}
+	    ResourceBundle bundle =  ResourceBundle.getBundle(rKeyWordsName, Locale.CHINESE);
+	    Enumeration keys = bundle.getKeys();
+	    while (keys.hasMoreElements()) {
+	      String key = keys.nextElement().toString();
+	      String val = bundle.getString(key);
+	      mapKeyword.put(key, val);
+	    }
+  	}
   }
   
   /**
@@ -128,7 +152,7 @@ public class QueryModel {
    * @return QueryModel 编译器QueryModel对象
    */
   public static QueryModel parseQuery(String chQuery, String databaseType){
-  	return parseQuery(chQuery, DataBaseType.DEFAULT_DATABASE_TYPE, true);
+  	return parseQuery(chQuery, databaseType, true);
   }
   
   /**
@@ -143,9 +167,12 @@ public class QueryModel {
   	String IS_EXISTS = "1";
     String IS_EXISTS_ERROR = "2";
     
+    if (databaseType == null || databaseType.equals(""))
+    	databaseType = DataBaseType.DEFAULT_DATABASE_TYPE;
+    setKeyWordsProp(databaseType);	//根据属性文件设置对应中英文关键字
+    
   	QueryModel model = null;
     List exs = new ArrayList();
-    
     if (databaseType.equals(DataBaseType.SYBASE_IQ_12) || databaseType.equals(DataBaseType.SYBASE_ASE_12)){
     	SybaseIQ12Lexer rSybaseIQ12Lexer = new SybaseIQ12Lexer(new StringReader(chQuery));
       SybaseIQ12Parser rSybaseIQ12Parser = new SybaseIQ12Parser(rSybaseIQ12Lexer);
@@ -153,8 +180,8 @@ public class QueryModel {
 	      rSybaseIQ12Parser.statements();
 	      CommonAST ast = (CommonAST) rSybaseIQ12Parser.getAST();
 	      // TODO Visible ASTFrame
-//  	    ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
-//  	    _ASTFrame.setVisible(true);
+  	    //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+  	    //_ASTFrame.setVisible(true);
 		    SybaseIQ12TreeParser rSybaseIQ12TreeParser = new SybaseIQ12TreeParser();
 	      model = rSybaseIQ12TreeParser.statement(ast);
     	}catch (ANTLRException e) {
@@ -164,7 +191,6 @@ public class QueryModel {
     	if (model == null){
         model = new QueryModel();
       }
-    	model.setDatabaseType(databaseType);
       model.setSybaseIQ12Lexer(rSybaseIQ12Lexer);
       model.setSybaseIQ12Parser(rSybaseIQ12Parser);
   	}else if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
@@ -174,8 +200,8 @@ public class QueryModel {
   			rOracle9iParser.statements();
 	      CommonAST ast = (CommonAST) rOracle9iParser.getAST();
 	      // TODO Visible ASTFrame
-//	  	    ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
-//	  	    _ASTFrame.setVisible(true);
+  	    //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+  	    //_ASTFrame.setVisible(true);
 	      Oracle9iTreeParser rOracle9iTreeParser = new Oracle9iTreeParser();
 	      model = rOracle9iTreeParser.statement(ast);
     	}catch (ANTLRException e) {
@@ -184,15 +210,14 @@ public class QueryModel {
     	if (model == null){
         model = new QueryModel();
       }
-      model.setDatabaseType(databaseType);
       model.setOracle9iLexer(rOracle9iLexer);
       model.setOracle9iParser(rOracle9iParser);
   	}else{
   		if (model == null){
         model = new QueryModel();
       }
-  		model.setDatabaseType(databaseType);
   	}
+    model.setDatabaseType(databaseType);
     
     QueryModel[] _paramModelArr = model.getModelsFromAllChildrenByClass(ParamModel.class);
     if (_paramModelArr.length > 0)
@@ -398,7 +423,7 @@ public class QueryModel {
   }
   
   public String getDatabaseType() {
-		return databaseType;
+		return this.databaseType;
 	}
 
 	public void setDatabaseType(String databaseType) {
