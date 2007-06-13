@@ -343,8 +343,8 @@ public class QueryModel {
 	      rSybaseIQ12Parser.segment();
 	      CommonAST ast = (CommonAST) rSybaseIQ12Parser.getAST();
 	      // TODO Visible ASTFrame
-//		    ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
-//		    _ASTFrame.setVisible(true);
+		    //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+		    //_ASTFrame.setVisible(true);
 		    SybaseIQ12TreeParser rSybaseIQ12TreeParser = new SybaseIQ12TreeParser();
 	      model = rSybaseIQ12TreeParser.segment(ast);
       }catch (ANTLRException e) {
@@ -364,8 +364,8 @@ public class QueryModel {
   			rOracle9iParser.statements();
 	      CommonAST ast = (CommonAST) rOracle9iParser.getAST();
 	      // TODO Visible ASTFrame
-//	  	    ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
-//	  	    _ASTFrame.setVisible(true);
+	  	  //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+	  	  //_ASTFrame.setVisible(true);
 	      Oracle9iTreeParser rOracle9iTreeParser = new Oracle9iTreeParser();
 	      model = rOracle9iTreeParser.statement(ast);
     	}catch (ANTLRException e) {
