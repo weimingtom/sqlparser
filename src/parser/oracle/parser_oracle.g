@@ -19,6 +19,8 @@
 //		  \u8bbe\u7f6eSUBQUERY\u7684TOKEN\u8fdb\u884c\u8bed\u6cd5\u6811\u904d\u5386
 //	06/12/2007:
 //		- exp_set\u8bed\u6cd5\u589e\u52a0\u5b50\u67e5\u8be2\u89e3\u6790\uff0c\u540c\u65f6\u589e\u52a0\u5b50\u67e5\u8be2\u7684\u8bed\u6cd5\u6811\u904d\u5386
+//	06/13/2007:
+//		- \u4fee\u6539\u4e86compare_method\u8bed\u6cd5\u6811\u904d\u5386NOT EXISTS\u5199\u9519\u7684\u95ee\u9898
 //==========================================================*/
 
 header {
@@ -952,7 +954,7 @@ compare_method returns [String rValue]
 {rValue = "";}
 	:	v1: comparemethod_name
 		{rValue = v1.getText();}
-	|	#(LOGICAL_NOT_EXISTS ne1:NOT ne2:EXISTS)
+	|	#(LOGICAL_NOT_EXISTS ne1:NOT_EN ne2:EXISTS_EN)
 		{rValue = ne1.getText() + " " + ne2.getText();}
 	;
 

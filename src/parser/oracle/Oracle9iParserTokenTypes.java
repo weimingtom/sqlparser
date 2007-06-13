@@ -346,12 +346,10 @@ public interface Oracle9iParserTokenTypes {
 	int NUM_START = 342;
 	int NUM_LETTER = 343;
 	int ML_COMMENT = 344;
-	int NOT = 345;
-	int EXISTS = 346;
-	int COMPARE_OP = 347;
-	int TWO_ARG_OP = 348;
-	int ONE_ARG_OP = 349;
-	// "\u5de6\u8fde\u63a5" = 350
-	// "\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c" = 351
-	// "\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c" = 352
+	int COMPARE_OP = 345;
+	int TWO_ARG_OP = 346;
+	int ONE_ARG_OP = 347;
+	// "\u5de6\u8fde\u63a5" = 348
+	// "\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c" = 349
+	// "\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c" = 350
 }
