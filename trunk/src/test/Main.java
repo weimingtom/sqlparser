@@ -766,7 +766,7 @@ public class Main {
 //      OrderAliasModel orderAliasModel = (OrderAliasModel) orderAliasModelArr[i];
 //      orderAliasModel.setEnAlias("enOrderAlias" + i);
 //    }
-    
+    System.out.println("IN SQL IS: " + t.getQueryModel().getChQuery());
     System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
     System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
 //    System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
