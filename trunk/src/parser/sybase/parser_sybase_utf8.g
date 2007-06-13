@@ -125,7 +125,7 @@ tableCompare
 compare_method
 	:	comparemethod_name
 	|	"not" "exists"
-		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], compare_method);}
+		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], #compare_method);}
 	;
 
 select_statement
@@ -158,7 +158,7 @@ table_list
 search_condition
 	:	bool_exp
 	|	( "not"
-		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], search_condition);}
+		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], #search_condition);}
 		| "非"^
 		) search_condition
 	;
@@ -170,7 +170,7 @@ bool_exp
 
 bool_term
 	:	(LPAREN bool_exp RPAREN) => LPAREN! exp:bool_exp RPAREN!
-	{#bool_term=#([LOGIC_BLOCK, "log_block"], bool_term);}
+	{#bool_term=#([LOGIC_BLOCK, "log_block"], #bool_term);}
 	|	equation
 	;
 
@@ -225,7 +225,13 @@ equation
 		//关系运算符(+ - * /) 表达式
 		("=" | compare_op) expression
 	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);}
-	  	
+
+//	|	("exists") subquery
+//		{#equation=#([LOGICAL_EXISTS, "logic_exists"], #equation);}	
+//	|	("not" "exists") subquery
+//		{#equation=#([LOGICAL_NOT_EXISTS, "logic_not_exists"], #equation);}	
+//	|	("存在"^ | "不存在"^) subquery
+	
 		//关系运算符NOT LIKE 表达式
 	|	("not" "like") expression
 		{#equation=#([LOGICAL_NOT_LIKE, "logic_not_like"], #equation);}	
