@@ -39,6 +39,14 @@
 //		- caseSensitiveLiterals设为false,大小写不敏感
 //	06/01/2007：
 //		- 增加对TOP N的验证及语法树遍历,增加topNum属性记录前几条
+//	06/11/2007:
+//		- equation增加EXISTS/NOT EXISTS的语法定义，允许子查询
+//		  设置SUBQUERY的TOKEN进行语法树遍历
+//	06/12/2007:
+//		- exp_set语法增加子查询解析，同时增加子查询的语法树遍历
+//	06/13/2007:
+//		- 将语法定义的关键字放在词法的tokens中,语法定义中不再出现
+//		  自己定义关键字
 //==========================================================*/
 
 header {
@@ -53,21 +61,21 @@ header {
 class SybaseIQ12Parser extends Parser;
 
 options {
-	k=5;
+	k = 5;
 	buildAST = true;
 	defaultErrorHandler = false;
 }
 
-tokens {
-	SELECT_STATEMENT;
-	SELECT_TOKEN;
+tokens {	
+	SELECT_STATEMENT;		//完整查询语句 TOKEN
 	SEARCH_NOT_CONDITION;	//非整个条件 TOKEN
 	SUBQUERY;				//子查询 TOKEN
-	GROUP_BY;				//GROUP BY TOKEN
-	ORDER_BY;				//ORDER BY TOKEN
+	GROUP_BY;				//分组 TOKEN
+	ORDER_BY;				//排序 TOKEN
 	ALIAS_EQU;				//别名 TOKEN
 	
-	FUNCTION;				//函数 TOKEN
+	FUNCTION;				//普通函数 TOKEN
+	FUNCTION_NOTHING;		//不带任何东西的函数 TOKEN[sysdate]
 	FUNCTION_EMPTY_PARAM;	//空参数函数 TOKEN [getdate()]
 	FUNCTION_STAR_PARAM;	//参数为*函数 TOKEN [now(*);today(*)]
 	FUNCTION_STAR_COUNT;	//函数COUNT(*) TOKEN
@@ -94,111 +102,125 @@ tokens {
 	LOGIC_BLOCK;			//WHERE条件逻辑块 TOKEN
 }
 
+//片段字句规则入口
 segment
-	:	(COLUMN^ column
-	|	WHERE^ search_condition)
+	:	(COLUMN column
+	|	WHERE search_condition)
 	EOF!
 	;
 
+//完整查询语句规则入口
 statements
 	:	statement (SEMI^ statement)* EOF!;
 
+//单个语句规则(表合并、表比较、自定义查询)
 statement
 	:	tableUnion
 	|	tableCompare
 	|	select_statement
-	{#statement=#([SELECT_STATEMENT], #statement);}
+		{#statement=#([SELECT_STATEMENT], #statement);}
 	;
 
+//表合并
 tableUnion
-	:	("t_union"^|"表合并"^) table_lists
+	:	(TABLE_UNION_EN^|TABLE_UNION_CN^) table_lists
 	;
 
+//表合并的表名列表
 table_lists
 	:	table_name (COMMA^ table_name)+
 	;
 
+//表比较
 tableCompare
-	:	("t_compare"^|"表比较"^) table_name COMMA! table_name ("where"!|"条件"!) compare_method search_condition
+	:	(TABLE_COMPARE_EN^|TABLE_COMPARE_CN^) table_name COMMA! table_name (WHERE_EN!|WHERE_CN!) compare_method search_condition
 	;
 
+//比较方法定义(存在、不存在)
 compare_method
-	:	comparemethod_name
-	|	"not" "exists"
+	:	(EXISTS_EN | EXISTS_CN | NOT_EXISTS_CN)
+	|	NOT_EN EXISTS_EN
 		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], #compare_method);}
 	;
 
+//自定义查询
 select_statement
 	:	
 		//CUSTOM SQL Sentence
-		("select"^ | "查询"^) ("distinct"^ | "唯一"^)? (("top"^ | "前N条"^) integer)? select_list
-		(("from"^ | "来自"^) table_list)?
-		(("where"^ | "条件"^) search_condition)?
-		(("group"^ "by"!|"分组"^) aggregate_expression_list)?
-		(("order"^ "by"!|"排序"^) order_expression_list)?
+		(SELECT_EN^ | SELECT_CN^) (DISTINCT_EN^ | DISTINCT_CN^)? ((TOP_EN^ | TOP_CN^) integer)? select_list
+		((FROM_EN^ | FROM_CN^) table_list)?
+		((WHERE_EN^ | WHERE_CN^)search_condition)?
+		((GROUP_EN^ BY_EN! | GROUP_BY_CN^) aggregate_expression_list)?
+		((ORDER_EN^ BY_EN! | ORDER_BY_CN^) order_expression_list)?
 	;
 
 integer
 	: REAL_NUM
 	;
 
+//SELECT子句字段列表
 select_list
 	:	column (COMMA^ column)*
 	;
 
+//FROM子句表列表
 table_list
 	:	table_name (COMMA^ table_name)*
 	;
 
-//search_condition
-//	:	equation
-//		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
-//	;
-
+//WHERE子句条件信息
 search_condition
 	:	bool_exp
-	|	( "not"
+	|	( NOT_EN
 		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], #search_condition);}
-		| "非"^
+		| NOT_CN^
 		) search_condition
 	;
 
+//单个条件间的逻辑运算
 bool_exp
 	:	bool_term 
-		(("and"^ | "or"^ | "并且"^ | "或者"^) bool_term)*
+		((AND_EN^ | OR_EN^ | AND_CN^ | OR_CN^) bool_term)*
 	;
 
+//单个条件的括号推理
 bool_term
 	:	(LPAREN bool_exp RPAREN) => LPAREN! exp:bool_exp RPAREN!
 	{#bool_term=#([LOGIC_BLOCK, "log_block"], #bool_term);}
 	|	equation
 	;
 
+//GROUP BY子句的分组列表
 aggregate_expression_list
 	:	aggregate_expr (COMMA^ aggregate_expr)*
 	;
 
+//ORDER BY子句的排序列表
 order_expression_list
 	:	order_expression (COMMA^ order_expression)*
 	;
 
+//单个字段定义
 column
-	:	expression_with_aggr_func (("as"^|"作为"^) alias)?
+	:	expression_with_aggr_func ((AS_EN^|AS_CN^) alias)?
 	|	alias ("="|"等于")! expression_with_aggr_func {#column=#([ALIAS_EQU, "="], #column);}
-	|	all:"所有" {#column=#([ALL_FIELDS, all.getText()]);}
+	|	all: SELECT_ALL_CN {#column=#([ALL_FIELDS, all.getText()]);}
 	|	STAR {#column=#([ALL_FIELDS, "*"]);}
 	;
 
+//单个分组表达式
 aggregate_expr
 	:	LPAREN aggregate_expr RPAREN
 	|	(field_name|function|constant) (
 		two_arg_op aggregate_expr {#aggregate_expr=#([TWO_ARG_OP, "two_arg_op"], #aggregate_expr);})?
 	;
 
+//单个排序表达式
 order_expression
-	:	(alias|field_name|aggregate_func|function) ("升序"^|"降序"^|"asc"^|"desc"^)?
+	:	(alias|field_name|aggregate_func|function) (ASC_EN^|ASC_CN^|DESC_EN^|DESC_CN^)?
 	;
 
+//普通表达式
 expression
 	:	LPAREN expression RPAREN
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
@@ -207,10 +229,11 @@ expression
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
 	;
 
+//带函数的单个字段表达式
 expression_with_aggr_func
 	:	
-		LPAREN expression_with_aggr_func RPAREN 
-		(two_arg_op expression_with_aggr_func 
+		LPAREN expression_with_aggr_func RPAREN
+		(two_arg_op expression_with_aggr_func
 		{#expression_with_aggr_func=#([TWO_ARG_OP, "two_arg_op"], #expression_with_aggr_func);})?
 	|	one_arg_op expression_with_aggr_func 
 		{#expression_with_aggr_func=#([ONE_ARG_OP, "one_arg_op"], #expression_with_aggr_func);}
@@ -219,44 +242,50 @@ expression_with_aggr_func
 		{#expression_with_aggr_func=#([TWO_ARG_OP, "two_arg_op"], #expression_with_aggr_func);})?
 	;
 
+//单个条件信息(a > 0/a like '%oracle%')
 equation
 	:	expression (
 		
-		//关系运算符(+ - * /) 表达式
-		("=" | compare_op) expression
+		//比较运算符(>= > = <...) 表达式
+		(compare_op) expression
 	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);}
 
-//	|	("exists") subquery
-//		{#equation=#([LOGICAL_EXISTS, "logic_exists"], #equation);}	
-//	|	("not" "exists") subquery
-//		{#equation=#([LOGICAL_NOT_EXISTS, "logic_not_exists"], #equation);}	
-//	|	("存在"^ | "不存在"^) subquery
-	
-		//关系运算符NOT LIKE 表达式
-	|	("not" "like") expression
-		{#equation=#([LOGICAL_NOT_LIKE, "logic_not_like"], #equation);}	
+	|	(EXISTS_EN) subquery
+		{#equation=#([LOGICAL_EXISTS, "logic_exists"], #equation);}	
+	|	(NOT_EN EXISTS_EN) subquery
+		{#equation=#([LOGICAL_NOT_EXISTS, "logic_not_exists"], #equation);}	
+	|	(EXISTS_CN^ | NOT_EXISTS_CN^) subquery
 
-		//关系运算符IS NULL/IS NOT NULL
-	|	( "is" "null"
+		//逻辑运算符LIKE/NOT LIKE 表达式
+	|	(LIKE_EN) expression
+		{#equation=#([LOGICAL_LIKE, "logic_like"], #equation);}	
+	|	(NOT_EN LIKE_EN) expression
+		{#equation=#([LOGICAL_NOT_LIKE, "logic_not_like"], #equation);}	
+	|	(LIKE_CN^|NOT_LIKE_CN^) expression
+
+		//逻辑运算符IS NULL/IS NOT NULL
+	|	( IS_EN NULL_EN
 		  {#equation = #([LOGICAL_NULL, "logic_null"], #equation);}
-		| "is" "not" "null"
+		| IS_EN NOT_EN NULL_EN
 		  {#equation = #([LOGICAL_NOT_NULL, "logic_not_null"], #equation);}
-		| "为空"^ | "非空"^
+		| NULL_CN^ | NOT_NULL_CN^
 		)
 	
-		//关系运算符BETWEEN AND
-	| 	("between"^ | "范围"^) expression ("and"!)? expression
+		//逻辑运算符BETWEEN AND
+	| 	BETWEEN_CN^ expression expression
+	|	BETWEEN_EN^ expression AND_EN! expression
 	
 		//关系运算符IN/NOT IN
-	|	( "in"
+	|	( IN_EN
 		  {#equation = #([LOGICAL_IN, "logic_in"], #equation);}
-		| "not" "in"
+		| NOT_EN IN_EN
 		  {#equation = #([LOGICAL_NOT_IN, "logic_not_in"], #equation);}
-		| "在于"^ | "不在于"^
+		| IN_CN^ | NOT_IN_CN^
 		) exp_set
 	)
 	;
 
+//函数定义
 function
 	:	empty_function LPAREN! RPAREN!
 	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
@@ -270,36 +299,43 @@ function
 	{#function = #([FUNCTION, "function_block"], #function);}
 	;
 
+//聚合函数
 aggregate_func
-	:	("求记录总数" | "count") LPAREN! STAR! RPAREN!
+	:	(COUNT_EN | COUNT_CN) LPAREN! STAR! RPAREN!
 		{#aggregate_func = #([FUNCTION_STAR_COUNT, "function_star_count"], #aggregate_func);}
-	|	aggregate_func_name LPAREN! ("all"^ | "全部"^ | "distinct"^ |"唯一"^)? parameters RPAREN!
+	|	aggregate_func_name LPAREN! (ALL_EN^ | ALL_CN^ | DISTINCT_EN^ | DISTINCT_CN^)? parameters RPAREN!
 	;
 
+//函数的参数列表
 parameters
 	:	expression (COMMA^ expression)*
 	;
 
 //==========数据类型参数 BEGIN==========//
+
+//带AS关键字的数据类型参数表达式[f1 as char(10)]
 as_data_type_parameter
-	: expression ("as"! | "为"!) (datatype_constant)
+	: expression (AS_EN! | DATA_TYPE_AS_CN!) (datatype_constant)
 	;
 
+//数据类型参数表达式[char(10), f1]
 data_type_parameter
 	:	datatype_constant (COMMA^ expression)+
 	;
 
+//数据类型定义
 datatype_constant
-	:	//"character" "varying"
+	:
 		data_type_word
-	|	"char"
-	|	"char" LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
+	|	CHAR
+	|	CHAR LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
 		{#datatype_constant = #([PAREN_CHAR_DATA_TYPE, "paren_char_data_type"], #datatype_constant);}
 	|	DATA_TYPE_STRING LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
 		{#datatype_constant = #([PAREN_DATA_TYPE, "paren_data_type"], #datatype_constant);}
 	|	DATA_TYPE_STRING
 	;
 
+//数据类型的参数设置
 datatype_precision_or_scale_or_maxlength
 	:	REAL_NUM COMMA^ REAL_NUM
 	|	REAL_NUM
@@ -308,34 +344,39 @@ datatype_precision_or_scale_or_maxlength
 //==========数据类型参数  END===========//
 
 
+//表名定义
 table_name
-	:	ID (("as"^|"作为"^) alias)?
+	:	ID ((AS_EN^ | AS_CN^) alias)?
 	;
 
+
+//IN/NOT IN间的常量设置
 exp_set
-	: 	LPAREN constexpset RPAREN
+	: 	LPAREN! constexpset RPAREN!
 	{#exp_set = #([SUBCONTAIN_OP, "subcontain_op"], #exp_set);}
-//	| subquery
+	| (subquery) => subquery
 	;
 
+//常量定义[IN(10, 20, 30)]
 constexpset
 	:	constant (COMMA^ constant)*
 	;
-
+//子查询
 subquery
-	:	LPAREN select_statement RPAREN
+	:	LPAREN! select_statement RPAREN!
 		{#subquery = #([SUBQUERY, "subquery"], #subquery);}
 	;
 
+//循环的参数变量[{月变量}]
 param_equ
 	:	PARAM_ID
 	;
 
+//别名定义
 alias
 	:	ID | QUOTED_STRING;
 
-
-
+//字段定义[表名.字段名]
 field_name
 	:	ID POINT^ sfield_name
 	;	
@@ -343,6 +384,7 @@ field_name
 //	:	ID POINT^ ID
 //	;
 
+//单个字段名定义
 sfield_name
 	:	//如：利率(百分比%)
 		ID LPAREN! ID RPAREN!
@@ -350,19 +392,20 @@ sfield_name
 	|	ID
 	;
 
+//常量定义[正数、负数、字符串('abc')、保留字、NULL]
 constant
 	:	REAL_NUM
 	|	NEGATIVE_DIGIT_ELEMENT
 	|	QUOTED_STRING
 	|	date_key_word
-	|	"null"
+	|	NULL_EN
 	;
 
 //=======================================//
 //聚合函数
 aggregate_func_name
 	:	"avg" 		| 	"求平均数"
-	|	"count" 	| 	"求记录总数"
+	|	COUNT_EN	|	COUNT_CN
 	|	"max" 		| 	"求最大值"
 	|	"min" 		| 	"求最小值"
 	|	"stddev" 	| 	"求方差"
@@ -370,43 +413,30 @@ aggregate_func_name
 	|	"variance" 	| 	"求统计方差"
 	;
 
-//function_name
-//	:	"sqrt" 		| 	"求平方根"
-//	|	"getdate" 	| 	"求当前日期时间"
-//	|	"abs" 		| 	"取绝对值"
-//	|	"acos"		|	"求余弦值"
-//	|	"substring" | 	"字符串截取"
-//	|	"round"		|	"格式化数值"
-//	|	"right" 	| 	"字符串右截"
-//	|	"ltrim"		|	"去掉左空格"
-//	|	"rtrim"		|	"去掉右空格"
-//	|	"char_length" | "求字符串的长度"
-//	|	"floor"		|	"求四舍后的整数"
-//	|	"ceiling"	|	"求五入后的整数"
-//	|	"lower" 	| 	"将字符串转为小写"
-//	|	"charindex"	|	"存在于"
-//	|	"str" 		| 	"数值转字符串"
-//	;
+//没有带任何东西的函数[格式如： sysdate]
+nothing_function
+	:	SYSDATE_EN	|	SYSDATE_CN
+	;
 
-//空参数函数
+//空参数函数[格式如： getdate()]
 empty_function
 	: 	"getdate"	| 	"取当前日期时间2"
 	|	"rand"		|	"取随机数"
 	;
 
-//参数为*函数、
+//参数为*函数[格式如： pi()]
 star_function
 	:  	"pi"	|	"求圆周率"
 	|	"now"	|	"取当前日期时间1"
 	|	"today"	|	"求当前日期"
 	;
 
-//带数据类型函数
+//带数据类型函数[格式如： convert(char(10), f1)]
 datatype_function
 	:	"convert"	|	"数据类型转换"
 	;
 
-//带数据类型函数
+//带数据类型函数[格式如： cast(f1 as char(10))]
 asdatatype_function
 	:	"cast"		|	"数据类型转化"
 	;
@@ -457,7 +487,8 @@ string_function
 	:	"ascii"			|	"求ASCII码"
 	|	"bit_length"	|	"求字符串的二进制长度"
 	|	"byte_length" 	| 	"求字符串的字节数"
-	|	"char"			|	"求等值的字符"
+//	|	"char"			|	"求等值的字符"
+	|	CHAR			|	"求等值的字符"
 	|	"char_length" 	| 	"求字符串长度1"
 	|	"charindex" 	|	"存在于"
 	|	"difference" 	|	"求两个串的声音差值"
@@ -544,25 +575,49 @@ other_function
 	| 	"rowid"
 	;
 
+//单个运算符号[~]
 one_arg_op
-	:	ONE_ARG_OP;
+	: TILDE | "非运算";
 
+//前后均需表达式运算符号[算术运算符、位运算符号...]
 two_arg_op
-	:	TWO_ARG_OP | STAR | MINUS
-	|	"与" | "或" | "异或" | "加" | "减" | "乘" | "除" | "求模";
+	:	arithmeticOperator | bitwiseOperator
+	|	"与" | "非运算" | "或" | "异或" | "加" | "减" | "乘" | "除" | "求模";
 
+//算术运算符[+ - * /]
+arithmeticOperator
+    : PLUS | MINUS | STAR | DIVIDE | MOD
+    ;
+
+//位运算符号[& ~ ^]
+bitwiseOperator
+    : AMPERSAND | TILDE | BITWISEOR | BITWISEXOR
+    ;
+
+//等于运算符
+alias_equ_op
+	:	ASSIGNEQUAL | "等于"
+	;
+
+//比较运算符[中英]
 compare_op
-	:	COMPARE_OP
+	:	comparisonOperator
 	|	"等于" | "大于等于" | "小于等于" | "大于" | "小于" | "不等于"
-	|	"包含" | "不包含" | "like"
 	|	"左连接"	| LEFT_JOIN
 	;
 
-logic_op
-	:	"and" | "or" | "并且" | "或者";
-
-comparemethod_name
-	:	"exists" | "存在" | "不存在";
+//比较运算符(= != <> <= ...)
+comparisonOperator
+	:	ASSIGNEQUAL
+	| 	NOTEQUAL1
+	| 	NOTEQUAL2
+	| 	LESSTHANOREQUALTO1
+	| 	LESSTHANOREQUALTO2 
+    | 	LESSTHAN
+	| 	GREATERTHANOREQUALTO1
+	| 	GREATERTHANOREQUALTO2
+	| 	GREATERTHAN
+	;
 
 //日期date-part保留字
 date_key_word
@@ -595,24 +650,118 @@ options {
 	caseSensitiveLiterals = false;
 }
 
+tokens {
+	TABLE_UNION_EN = "t_union";
+	TABLE_UNION_CN = "表合并";
+	
+	TABLE_COMPARE_EN = "t_compare";
+	TABLE_COMPARE_CN = "表比较";
 
-ONE_ARG_OP
-	:	'~';
+	SELECT_EN = "select";
+	SELECT_CN = "查询";
 
-//TWO_ARG_OP
-//	:	'&' | '|' | '^' | '+' | '/' | '%';
+	FROM_EN = "from";
+	FROM_CN = "来自";
 
-TWO_ARG_OP
-	:	'&' | '|' | '^' | '+' | '/';
+	WHERE_EN = "where";
+	WHERE_CN = "条件";
 
-MINUS 
-	: 	'-' ;
+	GROUP_EN = "group";
+	GROUP_BY_CN = "分组";
+	
+	ORDER_EN = "order";
+	ORDER_BY_CN = "排序";
 
-STAR
-	:	'*';
+	BY_EN = "by";
+	
+	ASC_EN = "asc";
+	ASC_CN = "升序";
 
-COMPARE_OP
-	:	'>' | '<' | ">=" | "<=" | "!=" | "<>" | "=";
+	DESC_EN = "desc";
+	DESC_CN = "降序";	
+
+	AND_EN = "and";
+	AND_CN = "并且";
+	
+	OR_EN = "or";
+	OR_CN = "或者";
+	
+	NOT_EN = "not";
+	NOT_CN = "非";
+	
+	ALL_EN = "all";
+	ALL_CN = "全部";
+	
+	SELECT_ALL_CN = "所有";
+
+	DISTINCT_EN = "distinct";
+	DISTINCT_CN = "唯一";
+
+	EXISTS_EN = "exists";
+	EXISTS_CN = "存在";
+	
+	NOT_EXISTS_CN = "不存在";
+
+	IN_EN = "in";
+	IN_CN = "在于";
+	
+	NOT_IN_CN = "不在于";
+
+	IS_EN = "is";
+	
+	NULL_EN = "null";
+	NULL_CN = "为空";
+	
+	NOT_NULL_CN = "非空";
+	
+	LIKE_EN = "like";
+	LIKE_CN = "包含";
+	
+	NOT_LIKE_CN = "不包含";
+	
+	BETWEEN_EN = "between";
+	BETWEEN_CN = "范围";
+	
+	AS_EN = "as";
+	AS_CN = "作为";
+	DATA_TYPE_AS_CN = "为";
+	
+	CHAR = "char";
+
+	COUNT_EN = "count";
+	COUNT_CN = "求记录总数";
+	
+	TOP_EN = "top";
+	TOP_CN = "前N条";
+
+	SYSDATE_EN = "SYSDATE";
+	SYSDATE_CN = "取系统日期";
+}
+
+PLUS	: '+' ;
+MINUS 	: '-' ;
+STAR 	: '*' ;
+DIVIDE 	: '/' ;
+MOD 	: '%' ;
+
+AMPERSAND	: '&' ;
+TILDE 		: '~' ;
+BITWISEOR 	: '|' ;
+BITWISEXOR 	: '^' ;
+DOT_STAR 	: ".*";
+
+//Comparison Operator
+ASSIGNEQUAL				:	'='	;
+NOTEQUAL1				: 	"<>";
+NOTEQUAL2				:	"!=";
+LESSTHANOREQUALTO1		:	"<=";
+LESSTHANOREQUALTO2		:	"!>";
+LESSTHAN				:	"<"	;
+GREATERTHANOREQUALTO1	:	">=";
+GREATERTHANOREQUALTO2	:	"!<";
+GREATERTHAN				:	">"	;
+
+
 LEFT_JOIN
 	: "*=";
 
@@ -635,11 +784,13 @@ PARAM_LPAREN
 
 PARAM_RPAREN
 	:	'}';
-
+	
 COLUMN
 	:	"seg_column";
+
 FROM
-	:	"seg_from";	
+	:	"seg_from";
+
 WHERE
 	:	"seg_where";
 
@@ -694,43 +845,44 @@ ID	options {testLiterals=true;}
 	:	ID_START_LETTER ( ID_LETTER )*
 	;
 	
-protected
-ID_START_LETTER
+protected ID_START_LETTER
     :    'a'..'z'
     |	'_'
     |    '\u0080'..'\ufffe'
     ;
-protected
-ID_LETTER
+
+protected ID_LETTER
     :	ID_START_LETTER
     |	'0'..'9'
     |	'/'
     |	'%'
     ;
 
+
+//Real Numeric
 REAL_NUM
 	:	NUM (POINT DOT_NUM)?
 	;
 
-//negative digit element
+//Negative Digit Element
 NEGATIVE_DIGIT_ELEMENT
 	: 	MINUS NUM (POINT DOT_NUM)?
 	;
 	
-protected
-NUM	:	'0'
+protected NUM
+	:	'0'
 	|	NUM_START (NUM_LETTER)*
 	;
-protected
-DOT_NUM
+
+protected DOT_NUM
 	:	(NUM_LETTER)+
 	;
-protected
-NUM_START
+
+protected NUM_START
 	:	'1'..'9'
 	;
-protected
-NUM_LETTER
+
+protected NUM_LETTER
 	:	'0'..'9'
 	;
 
@@ -739,13 +891,6 @@ DATA_TYPE_STRING options {testLiterals=true;}
     | "decimal" | "numeric" | "float"
     | "binary" | "varbinary"
     ;
-
-//DATA_TYPE_STRING options {testLiterals=true;}
-//	: "character" | "varchar" | "char" | "uniqueidentifierstr"
-//	| "bigint" | "int" | "integer" | "smallint" | "tinyint" | "double" | "float" | "real" | "decimal" | "numeric"
-//	| "date" | "datetime" | "smalldatetime" | "time" | "timestamp"
-//	| "bit" | "binary" | "varbinary"
-//	;
 
 ML_COMMENT
 	:	"/*"
@@ -780,7 +925,9 @@ ML_COMMENT
 
 	import model.parser.*;
 }
+
 class SybaseIQ12TreeParser extends TreeParser;
+
 {
 	Map tables = new HashMap();
 	
@@ -808,7 +955,7 @@ segment returns[QueryModel model]
 	ColumnModel c1 = new ColumnModel();
 	SearchConditionModel cond = new SearchConditionModel();
 }
-	: 	#(COLUMN c1 = column)
+	: 	COLUMN c1 = column
 		{
 			for (Iterator it = getTables().keySet().iterator(); it.hasNext();){
 	        	t1.addTable( (TableModel)getTables().get((String)it.next()));
@@ -818,7 +965,7 @@ segment returns[QueryModel model]
 			stmt.setSelectList(selList);
 			model = stmt;
 		}
-	|	#(WHERE cond = search_condition)
+	|	WHERE cond = search_condition
 		{
 			for (Iterator it = getTables().keySet().iterator(); it.hasNext();){
 	        	t1.addTable( (TableModel)getTables().get((String)it.next()));
@@ -848,14 +995,14 @@ statement returns [QueryModel model]
 	SearchConditionModel cond;
 }
 		//表合并语句
-	:	#("表合并" t1=tableUnionList)
+	:	#(TABLE_UNION_CN t1=tableUnionList)
 		{
 			union.addTableListModel(t1);
 			model = union;
 		}
 
 		//表比较语句
-	|	#("表比较" tableModel1=table_name tableModel2=table_name method=compare_method cond=search_condition)
+	|	#(TABLE_COMPARE_CN tableModel1=table_name tableModel2=table_name method=compare_method cond=search_condition)
 		{	
 			tableCompare.addTableModel1(tableModel1);
 			tableCompare.addTableModel2(tableModel2);
@@ -885,8 +1032,8 @@ compare_method returns [String rValue]
 {rValue = "";}
 	:	v1: comparemethod_name
 		{rValue = v1.getText();}
-	|	#(LOGICAL_NOT_EXISTS "not" "exists")
-		{rValue = "not exists";}
+	|	#(LOGICAL_NOT_EXISTS ne1:NOT_EN ne2:EXISTS_EN)
+		{rValue = ne1.getText() + " " + ne2.getText();}
 	;
 
 select_statement returns [SelectStatementModel model]
@@ -900,39 +1047,39 @@ select_statement returns [SelectStatementModel model]
 	model=new SelectStatementModel();
 	boolean isdst = false;
 }
-	:	#("唯一" select sl=select_list)
+	:	#(DISTINCT_CN select sl=select_list)
 	{sl.setDistinct(true); model.setSelectList(sl);}
-	|	#("distinct" select sl=select_list)
+	|	#(DISTINCT_EN select sl=select_list)
 	{sl.setDistinct(true); model.setSelectList(sl);}
-
-	|	#("前N条" isdst = distinct_select_op int1:REAL_NUM sl=select_list)
+	
+	|	#(TOP_CN isdst=distinct_select_op int1:REAL_NUM sl=select_list)
 	{sl.setTopNum(int1.getText()); sl.setDistinct(isdst); model.setSelectList(sl);}
-	|	#("top" isdst = distinct_select_op  int2:REAL_NUM sl=select_list)
+	|	#(TOP_EN isdst=distinct_select_op  int2:REAL_NUM sl=select_list)
 	{sl.setTopNum(int2.getText()); sl.setDistinct(isdst); model.setSelectList(sl);}
-
-	|	#("查询" sl=select_list)
+	
+	|	#(SELECT_CN sl=select_list)
 	{model.setSelectList(sl);}
-	|	#("select" sl=select_list)
+	|	#(SELECT_EN sl=select_list)
 	{model.setSelectList(sl);}
-
-	|	#("来自" s=select_statement tl=table_list)
+	
+	|	#(FROM_CN s=select_statement tl=table_list)
 	{model.addChild(s); model.setTableList(tl);}
-	|	#("from" s=select_statement tl=table_list)
+	|	#(FROM_EN s=select_statement tl=table_list)
 	{model.addChild(s); model.setTableList(tl);}
-
-	|	#("条件" s=select_statement cond=search_condition)
+	
+	|	#(WHERE_CN s=select_statement cond=search_condition)
 	{model.addChild(s); model.setSearchCondition(cond);}
-	|	#("where" s=select_statement cond=search_condition)
+	|	#(WHERE_EN s=select_statement cond=search_condition)
 	{model.addChild(s); model.setSearchCondition(cond);}
-
-	|	#("分组" s=select_statement group=aggregate_expression_list)
+	
+	|	#(GROUP_BY_CN s=select_statement group=aggregate_expression_list)
 	{model.addChild(s); model.setGroupExpressionList(group);}
-	|	#("group" s=select_statement group=aggregate_expression_list)
+	|	#(GROUP_EN s=select_statement group=aggregate_expression_list)
 	{model.addChild(s); model.setGroupExpressionList(group);}
 	
-	|	#("排序" s=select_statement order=order_expression_list)
+	|	#(ORDER_BY_CN s=select_statement order=order_expression_list)
 	{model.addChild(s); model.setOrderExpressionList(order);}
-	|	#("order" s=select_statement order=order_expression_list)
+	|	#(ORDER_EN s=select_statement order=order_expression_list)
 	{model.addChild(s); model.setOrderExpressionList(order);}
 	;
 
@@ -940,9 +1087,9 @@ distinct_select_op returns [boolean rValue]
 {
 	rValue = false;
 }
-	:	#("distinct" select)
+	:	#(DISTINCT_CN select)
 		{rValue = true;}
-	|	#("唯一" select)
+	|	#(DISTINCT_EN select)
 		{rValue = true;}
 	|	select
 		{rValue = false;}
@@ -968,35 +1115,24 @@ table_list returns [TableListModel model]
 	{model.addTable(t);}
 	;
 
-//search_condition returns [SearchConditionModel model]
-//{SearchConditionModel m1, m2; EquationModel equ; model=new SearchConditionModel();}
-//	:	#(LOGIC_OP m1=search_condition op:logic_op m2=search_condition)
-//	{model.addChild(m1); model.addOperator(op.getText()); model.addChild(m2);}
-//	|	equ=equation
-//	{model.addEquation(equ);}
-//	;
 search_condition returns [SearchConditionModel model]
 {SearchConditionModel m1, m2, m3, m4, m5; EquationModel equ; model=new SearchConditionModel();}
-	:	#(o1:"and" m1=search_condition m2=search_condition)
-	{model.addChild(m1); model.addOperator(o1.getText()); model.addChild(m2);}
-	|	#(o2:"or" m1=search_condition m2=search_condition)
-	{model.addChild(m1); model.addOperator(o2.getText()); model.addChild(m2);}
-	|	#(o3:"并且" m1=search_condition m2=search_condition)
+	:	#(o1:AND_EN m1=search_condition m2=search_condition)
+	{model.addChild(m1); model.addOperator(o1.getText(), true); model.addChild(m2);}
+	|	#(o2:OR_EN m1=search_condition m2=search_condition)
+	{model.addChild(m1); model.addOperator(o2.getText(), true); model.addChild(m2);}
+	|	#(o3:AND_CN m1=search_condition m2=search_condition)
 	{model.addChild(m1); model.addOperator(o3.getText()); model.addChild(m2);}
-	|	#(o4:"或者" m1=search_condition m2=search_condition)
+	|	#(o4:OR_CN m1=search_condition m2=search_condition)
 	{model.addChild(m1); model.addOperator(o4.getText()); model.addChild(m2);}
-
+	
 	|	#(LOGIC_BLOCK m3=search_condition)
 	{model.addOperator("("); model.addChild(m3); model.addOperator(")");}
 
-	|	#(SEARCH_NOT_CONDITION o11:"not" m4=search_condition)
-	{model.addOperator(o11.getText()); model.addChild(m4);}
-	|	#(o12:"非" m5=search_condition)
+	|	#(SEARCH_NOT_CONDITION o11:NOT_EN m4=search_condition)
+	{model.addOperator(o11.getText(), true); model.addChild(m4);}
+	|	#(o12:NOT_CN m5=search_condition)
 	{model.addOperator(o12.getText()); model.addChild(m5);}
-//	|	#(o11:"not" m4=search_condition)
-//	{model.addOperator(o11.getText()); model.addChild(m4);}
-//	|	#(o12:"非" m5=search_condition)
-//	{model.addOperator(o12.getText()); model.addChild(m5);}
 
 	|	equ=equation
 	{model.addEquation(equ);}
@@ -1020,9 +1156,9 @@ order_expression_list returns [OrderExpressionListModel model]
 
 column returns [ColumnModel model]
 {ExpressionModel e; AliasModel a; model=new ColumnModel();}
-	:	#("as" e=expression a=alias)
+	:	#(AS_EN e=expression a=alias)
 	{model.addExpression(e); model.addAlias(a);}
-	|	#("作为" e=expression a=alias)
+	|	#(AS_CN e=expression a=alias)
 	{model.addExpression(e); model.addAlias(a);}
 	|	#(ALIAS_EQU a=alias e=expression)
 	{model.addExpression(e); model.addAlias(a);}
@@ -1034,66 +1170,73 @@ equation returns [EquationModel model]
 {
 	ExpressionModel e1, e2, e3;
 	EquationModel equation;
+	SelectStatementModel stmt;
 	model=new EquationModel();
 	String nullStr = "";
 }
 	:	#(COMPARE_OP e1=expression op:compare_op e2=expression)
 	{model.addExpression(e1); model.addOperator(op.getText()); model.addExpression(e2);}
 	
-	|	#(LOGICAL_NOT_LIKE e1=expression "not" "like" e2=expression)
-	{model.addExpression(e1); model.addOperator("not like"); model.addExpression(e2);}
+	|	#(LOGICAL_EXISTS e1=expression le0:EXISTS_EN #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(le0.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
+	|	#(LOGICAL_NOT_EXISTS e1=expression le1:NOT_EN le2:EXISTS_EN #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(le1.getText() + " " + le2.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
+	|	#(le:EXISTS_CN e1=expression #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(le.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
+	|	#(lne:NOT_EXISTS_CN e1=expression #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(lne.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
 	
-	|	#(LOGICAL_NULL e1=expression "is" "null")
-	{model.addExpression(e1); model.addOperator("is null");}
-	|	#(n:"为空" e1=expression)
+	|	#(LOGICAL_LIKE e1=expression ls:LIKE_EN e2=expression)
+	{model.addExpression(e1); model.addOperator(ls.getText(), true); model.addExpression(e2);}	
+	|	#(LOGICAL_NOT_LIKE e1=expression ls1:NOT_EN ls2:LIKE_EN e2=expression)
+	{model.addExpression(e1); model.addOperator(ls1.getText() + " " + ls2.getText(), true); model.addExpression(e2);}
+	|	#(l:LIKE_CN e1=expression e2=expression)
+	{model.addExpression(e1); model.addOperator(l.getText()); model.addExpression(e2);}
+	|	#(nl:NOT_LIKE_CN e1=expression e2=expression)
+	{model.addExpression(e1); model.addOperator(nl.getText()); model.addExpression(e2);}
+
+	|	#(LOGICAL_NULL e1=expression nStr1:IS_EN nStr2:NULL_EN)
+	{model.addExpression(e1); model.addOperator(nStr1.getText() + " " + nStr2.getText(), true);}
+	|	#(n:NULL_CN e1=expression)
 	{model.addExpression(e1); model.addOperator(n.getText());}
-	|	#(LOGICAL_NOT_NULL e1=expression "is" "not" "null")
-	{model.addExpression(e1); model.addOperator("is not null");}
-	|	#(nn:"非空" e1=expression)
+	|	#(LOGICAL_NOT_NULL e1=expression nStr3:IS_EN nStr4:NOT_EN nStr5:NULL_EN)
+	{model.addExpression(e1); model.addOperator(nStr3.getText() + " " + nStr4.getText() + " " + nStr5.getText(), true);}
+	|	#(nn:NOT_NULL_CN e1=expression)
 	{model.addExpression(e1); model.addOperator(nn.getText());}
 
-//	|	#(n:"为空" e1=expression)
-//	{model.addExpression(e1); model.addOperator(n.getText());}
-//	|	#("null" e1=expression)
-//	{model.addExpression(e1); model.addOperator("is null");}
-//	|	#(nn:"非空" e1=expression)
-//	{model.addExpression(e1); model.addOperator(nn.getText());}
-//	|	#(nn_en:"not" e1=expression)
-//	{model.addExpression(e1); model.addOperator("is not null");}
 
-	|	#("between" e1=expression e2=expression e3=expression)
-	{model.addExpression(e1); model.addOperator("between");
+	|	#(bt1:BETWEEN_EN e1=expression e2=expression e3=expression)
+	{model.addExpression(e1); model.addOperator(bt1.getText(), true);
 	 model.addExpression(e2); model.addExpression(e3);}
-	|	#(btw:"范围" e1=expression e2=expression e3=expression)
+	|	#(btw:BETWEEN_CN e1=expression e2=expression e3=expression)
 	{model.addExpression(e1); model.addOperator(btw.getText());
 	 model.addExpression(e2); model.addExpression(e3);
 	}
 	
-	|	#(LOGICAL_IN e1=expression "in" e2=exp_set)
-	{model.addExpression(e1); model.addOperator("in"); model.addExpression(e2);}
-	|	#(ct1:"在于" e1=expression e2=exp_set)
+	|	#(LOGICAL_IN e1=expression in1:IN_EN e2=exp_set)
+	{model.addExpression(e1); model.addOperator(in1.getText(), true); model.addExpression(e2);}
+	|	#(LOGICAL_NOT_IN e1=expression in2:NOT_EN in3: IN_EN e2=exp_set)
+	{model.addExpression(e1); model.addOperator(in2.getText() + " " + in3.getText(), true); model.addExpression(e2);}
+	|	#(ct1:IN_CN e1=expression e2=exp_set)
 	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
-	|	#(LOGICAL_NOT_IN e1=expression "not" "in" e2=exp_set)
-	{model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);}
-	|	#(ct2:"不在于" e1=expression e2=exp_set)
+	|	#(ct2:NOT_IN_CN e1=expression e2=exp_set)
 	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
-
-//	|	#("in" e1=expression e2=exp_set)
-//	{model.addExpression(e1); model.addOperator("in"); model.addExpression(e2);}
-//	|	#(ct1:"在于" e1=expression e2=exp_set)
-//	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
-//	|	#("not in" e1=expression e2=exp_set)
-//	{model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);}
-//	|	#(ct2:"不在于" e1=expression e2=exp_set)
-//	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
-
 	;
 
 exp_set returns [ExpressionModel model]
-{model = new ExpressionModel(); ExprContainModel expr;}
-	: 	#(SUBCONTAIN_OP LPAREN expr=constexpset RPAREN)
+{
+	model = new ExpressionModel();
+	SelectStatementModel stmt;
+	ExprContainModel expr;
+}
+	: 	#(SUBCONTAIN_OP expr=constexpset)
 		{
 			model.addExprContainModel(expr);
+		}
+	|	#(SUBQUERY stmt=select_statement)
+		{
+			model.addSelectStatement(stmt);
+			stmt.setSubquery(true);
 		}
 	;
 
@@ -1119,8 +1262,10 @@ constant_expr returns [String rValue]
 
 aggregate_expression returns [AggregateExprModel model]
 {AggregateExprModel a1, a2; FieldModel field; FunctionModel func; model=new AggregateExprModel();}
-	:	#(TWO_ARG_OP a1=aggregate_expression op:two_arg_op a2=aggregate_expression)
-	{model.addChild(a1); model.addOperator(op.getText()); model.addChild(a2);}
+	:	lp:LPAREN a1=aggregate_expression rp:RPAREN
+	{model.addOperator(lp.getText()); model.addChild(a1); model.addOperator(rp.getText());}
+	|	#(TWO_ARG_OP a1=aggregate_expression op:two_arg_op a2=aggregate_expression)
+	{model.addChild(a1); model.addOperator(op.getText(), true); model.addChild(a2);}
 	|	field=field_name
 	{model.addField(field);}
 	|	func=function
@@ -1132,6 +1277,7 @@ aggregate_expression returns [AggregateExprModel model]
 	|	qs:QUOTED_STRING
 	{model.addConstant(qs.getText());}	
 	;
+
 order_expression returns [OrderExpressionModel model]
 {FunctionModel func; FieldModel field; OrderAliasModel alias; OrderExpressionModel o; model=new OrderExpressionModel();}
 	:	alias = orderAlias
@@ -1140,15 +1286,16 @@ order_expression returns [OrderExpressionModel model]
 	{model.addField(field);}
 	|	func=function
 	{model.addFunction(func);}
-	|	#("asc" o=order_expression)
+	|	#(ASC_EN o=order_expression)
 	{model.addChild(o); model.setSort(OrderExpressionModel.ASC);}
-	|	#("升序" o=order_expression)
+	|	#(ASC_CN o=order_expression)
 	{model.addChild(o); model.setSort(OrderExpressionModel.ASC);}
-	|	#("desc" o=order_expression)
+	|	#(DESC_EN o=order_expression)
 	{model.addChild(o); model.setSort(OrderExpressionModel.DESC);}
-	|	#("降序" o=order_expression)
+	|	#(DESC_CN o=order_expression)
 	{model.addChild(o); model.setSort(OrderExpressionModel.DESC);}
 	;
+
 orderAlias returns [OrderAliasModel model]
 {model=null;}
 	:	a1:QUOTED_STRING
@@ -1156,6 +1303,7 @@ orderAlias returns [OrderAliasModel model]
 	|	a2:ID
 	{model=new OrderAliasModel(a2.getText());}
 	;
+
 alias returns [AliasModel model]
 {model=null;}
 	:	a1:QUOTED_STRING
@@ -1167,9 +1315,9 @@ alias returns [AliasModel model]
 expression returns [ExpressionModel model]
 {FieldModel f; FunctionModel func; ParamModel param; ExpressionModel e1, e2; model=new ExpressionModel();}
 	:	#(TWO_ARG_OP e1=expression op:two_arg_op e2=expression)
-	{model.addChild(e1); model.addOperator(op.getText()); model.addChild(e2);}
+	{model.addChild(e1); model.addOperator(op.getText(), true); model.addChild(e2);}
 	|	#(ONE_ARG_OP op1:one_arg_op e1=expression)
-	{model.addOperator(op1.getText()); model.addChild(e1);}
+	{model.addOperator(op1.getText(), true); model.addChild(e1);}
 	|	lp:LPAREN e1=expression rp:RPAREN
 	{model.addOperator(lp.getText()); model.addChild(e1); model.addOperator(rp.getText());}
 	|	dkw:date_key_word
@@ -1191,24 +1339,11 @@ expression returns [ExpressionModel model]
 	;
 
 param_equ returns [ParamModel model]
-	{model = null;}
+{model = null;}
 	:	paramName:PARAM_ID
 		{model = new ParamModel(paramName.getText(), "{", "}");}
-//	|	#(paramName:ID lp:PARAM_LPAREN rp:PARAM_RPAREN)
-//		{model = new ParamModel(paramName.getText(), lp.getText(), rp.getText());}
 	;
 	
-//field_name returns [FieldModel model]
-//{model=null;}
-//	:	f:ID
-//	{model=new FieldModel(f.getText());}
-//	|	#(POINT t:ID f1:ID)
-//	{
-//		model=new FieldModel(f1.getText(), t.getText());
-//		addTableByChName(t.getText());
-//	}
-//	;
-
 field_name returns [FieldModel model]
 {
 	model=null;
@@ -1243,28 +1378,34 @@ function returns [FunctionModel model]
 	:	//Aggregate functions聚合函数
 		af:aggregate_func_name p=parameters
 		{
-			model = new AggregateFuncModel(af.getText(), AggregateFuncModel.NO_FILTER); 
+			model = new AggregateFuncModel(af.getText(), AggregateFuncModel.NO_FILTER, true); 
 			model.setParameters(p);
 		}
 		
 		//Normal functions普通函数
-//	|	f:function_name p=parameters
 	|	#(FUNCTION f:function_name p=parameters)
 		{
-			model = new FunctionModel(f.getText());
+			model = new FunctionModel(f.getText(), true);
 			model.setParameters(p);
+		}
+		
+		//Normal functions参数为空的普通函数[sysdate]
+	|	#(FUNCTION_NOTHING nfun:function_name)
+		{
+			model = new FunctionModel(nfun.getText(), true);
+			model.setNothing(true);
 		}
 		
 		//Normal functions参数为空的普通函数[getdate()]
 	|	#(FUNCTION_EMPTY_PARAM fun1:function_name)
 		{
-			model = new FunctionModel(fun1.getText());
+			model = new FunctionModel(fun1.getText(), true);
 		}
 		
 		//Normal functions参数为*的普通函数[now(*)...]
 	|	#(FUNCTION_STAR_PARAM funStar:function_name)
 		{
-			model = new FunctionModel(funStar.getText());
+			model = new FunctionModel(funStar.getText(), true);
 			express1.addOperator("*");
 			p = new ParametersModel();
 			p.addParameter(express1);
@@ -1274,32 +1415,29 @@ function returns [FunctionModel model]
 		//Normal functions参数为DATA TYPE的普通函数[convert(char(10), '2007-01-01', 120)]
 	|	#(FUNCTION_DATA_TYPE dtf1:function_name dtp1=data_type_parameters)
 		{
-			model = new FunctionModel(dtf1.getText());
+			model = new FunctionModel(dtf1.getText(), true);
 			model.setParameters(dtp1);
 		}
 	
 		//Normal functions参数为AS及DATA TYPE的普通函数[cast('2007-01-01' as char(10))]
 	|	#(FUNCTION_AS_DATA_TYPE dtf2:function_name dtp2=as_data_type_parameters)
 		{
-			model = new FunctionModel(dtf2.getText());
+			model = new FunctionModel(dtf2.getText(), true);
 			model.setParameters(dtp2);
 		}
 		
 		//Aggregate functions参数为*的COUNT函数，聚合函数[count(*)]
-//	|	#(FUNCTION_STAR_COUNT fun2:function_name)
-	|	#(FUNCTION_STAR_COUNT countStr:"求记录总数")
+	|	#(FUNCTION_STAR_COUNT cf1:"求记录总数")
 		{	
-			//model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
-			model = new AggregateFuncModel(countStr.getText(), AggregateFuncModel.NO_FILTER);
+			model = new AggregateFuncModel(cf1.getText(), AggregateFuncModel.NO_FILTER, true);
 			express1.addOperator("*");
 			p = new ParametersModel();
 			p.addParameter(express1);
 			model.setParameters(p);
 		}
-	|	#(FUNCTION_STAR_COUNT "count")
+	|	#(FUNCTION_STAR_COUNT cf2:COUNT_EN)
 		{	
-			//model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
-			model = new AggregateFuncModel("count", AggregateFuncModel.NO_FILTER);
+			model = new AggregateFuncModel(cf2.getText(), AggregateFuncModel.NO_FILTER, true);
 			express1.addOperator("*");
 			p = new ParametersModel();
 			p.addParameter(express1);
@@ -1307,26 +1445,26 @@ function returns [FunctionModel model]
 		}
 
 		//Aggregate functions参数为全部、all的聚合函数
-	|	#(all:"全部" af11:function_name p=parameters)
+	|	#(all1:ALL_CN af11:function_name p=parameters)
 		{
-			model = new AggregateFuncModel(af11.getText(), AggregateFuncModel.ALL);
+			model = new AggregateFuncModel(af11.getText(), AggregateFuncModel.ALL, true);
 			model.setParameters(p);
 		}
-	|	#("all" af12:function_name p=parameters)
+	|	#(all2:ALL_EN af12:function_name p=parameters)
 		{
-			model = new AggregateFuncModel(af12.getText(), AggregateFuncModel.ALL);
+			model = new AggregateFuncModel(af12.getText(), AggregateFuncModel.ALL, true);
 			model.setParameters(p);
 		}
 		
 		//Aggregate functions参数为唯一、distinct的聚合函数
-	|	#(dist:"唯一" af21:function_name p=parameters)
+	|	#(dist1:DISTINCT_CN af21:function_name p=parameters)
 		{
-			model = new AggregateFuncModel(af21.getText(), AggregateFuncModel.DISTINCT);
+			model = new AggregateFuncModel(af21.getText(), AggregateFuncModel.DISTINCT, true);
 			model.setParameters(p);
 		}
-	|	#("distinct" af22:function_name p=parameters)
+	|	#(dist2:DISTINCT_EN af22:function_name p=parameters)
 		{
-			model=new AggregateFuncModel(af22.getText(), AggregateFuncModel.DISTINCT);
+			model=new AggregateFuncModel(af22.getText(), AggregateFuncModel.DISTINCT, true);
 			model.setParameters(p);
 		}
 	;
@@ -1358,20 +1496,20 @@ as_data_type_parameters returns [ParametersModel model]
 	   	{
 	   		model.addParameter(e);
 	   		model.addParameter(adtc);
-	   		model.addFilter(" as ");
+	   		model.addFilter(ParametersModel.AS);
 	   	}
 	;
 
 //数据类型常量遍历
 datatype_constant returns [ExpressionModel model]
 {model=new ExpressionModel(); String rValue = ""; String rp = "";}
-	:	c1:"char"
+	:	c1:CHAR
 		{
 			//返回char保留字
 			rValue = c1.getText();
 			model.addConstant(rValue);
 		}
-	|	#(PAREN_CHAR_DATA_TYPE c2:"char" rp=datatype_precision_or_scale_or_maxlength)
+	|	#(PAREN_CHAR_DATA_TYPE c2:CHAR rp=datatype_precision_or_scale_or_maxlength)
 		{
 			//返回带参数char保留
 			rValue = c2.getText() + "(" + rp + ")";
@@ -1409,13 +1547,9 @@ table_name returns [TableModel model]
 {AliasModel a; model=null; TableAliasModel ta;}
 	:	t:ID
 	{model=new TableModel(t.getText());}
-//	|	#("as" t1:ID a=alias)
-//	{model=new TableModel(t1.getText()); model.setAlias(a);}
-//	|	#("作为" t2:ID a = alias)
-//	{model = new TableModel(t2.getText()); model.setAlias(a);}
-	|	#("as" t1:ID ta = tableAlias)
+	|	#(AS_EN t1:ID ta = tableAlias)
 	{model = new TableModel(t1.getText()); model.setAlias(ta);}
-	|	#("作为" t2:ID ta = tableAlias)
+	|	#(AS_CN t2:ID ta = tableAlias)
 	{model = new TableModel(t2.getText()); model.setAlias(ta);}
 	;
 
@@ -1428,38 +1562,49 @@ tableAlias returns [TableAliasModel model]
 	;
 
 //////////////////////////////////////////////////////////////
-// 常量
-select : "查询" | "select";
-
-distinct : "唯一" | "distinct";
-
-logic_op : "and" | "or" | "并且" | "或者";
-
-compare_op
-	:	COMPARE_OP
-	| "等于" | "大于等于" | "小于等于" | "大于" | "小于" | "不等于"
-	| "包含" | "不包含" | "like"
-	| "左连接" | LEFT_JOIN
+select
+	: SELECT_EN | SELECT_CN
 	;
 
 one_arg_op
-	:	ONE_ARG_OP;
+	: TILDE | "非运算";
 
 two_arg_op
-	:	TWO_ARG_OP | STAR | MINUS
-	|	"与" | "或" | "异或" | "加" | "减" | "乘" | "除" | "求模";
+	:	arithmeticOperator | bitwiseOperator
+	|	"与" | "非运算" | "或" | "异或" | "加" | "减" | "乘" | "除" | "求模";
 
-//比较运算符
-comparemethod_name
-	:	"exists" | "存在" | "不存在"
+arithmeticOperator
+    : PLUS | MINUS | STAR | DIVIDE | MOD
+    ;
+
+bitwiseOperator
+    : AMPERSAND | TILDE | BITWISEOR | BITWISEXOR
+    ;
+
+alias_equ_op
+	:	ASSIGNEQUAL | "等于"
 	;
 
-//日期date-part保留字
-date_key_word
-	: "year" | "yy" | "month" | "mm" | "day" | "dd"
-	| "quarter" | "qq" | "week" | "wk" | "dayofyear" | "dy"
-	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
-	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
+compare_op
+	:	comparisonOperator
+	|	"等于" | "大于等于" | "小于等于" | "大于" | "小于" | "不等于"
+	|	"左连接"	| LEFT_JOIN
+	;
+
+comparisonOperator
+	:	ASSIGNEQUAL
+	| 	NOTEQUAL1
+	| 	NOTEQUAL2
+	| 	LESSTHANOREQUALTO1
+	| 	LESSTHANOREQUALTO2 
+    | 	LESSTHAN
+	| 	GREATERTHANOREQUALTO1
+	| 	GREATERTHANOREQUALTO2
+	| 	GREATERTHAN
+	;
+
+comparemethod_name
+	:	EXISTS_EN | EXISTS_CN | NOT_EXISTS_CN
 	;
 
 //聚合函数
@@ -1603,6 +1748,15 @@ system_function
 other_function
 	:	"argn"
 	| 	"rowid"
+	;
+
+
+//日期date-part保留字
+date_key_word
+	: "year" | "yy" | "month" | "mm" | "day" | "dd"
+	| "quarter" | "qq" | "week" | "wk" | "dayofyear" | "dy"
+	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
+	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
 	;
 
 //数据类型保留字
