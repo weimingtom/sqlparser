@@ -14,6 +14,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import parser.db2.DB2UDB8xLexer;
+import parser.db2.DB2UDB8xParser;
+import parser.db2.DB2UDB8xTreeParser;
 import parser.oracle.*;
 import parser.sybase.*;
 import antlr.ANTLRException;
@@ -51,15 +54,17 @@ import model.parser.exceptions.common.ErrorLexer;
 public class QueryModel {
   private static final String KEYWORDS = "keywords";  							//关键字属性文件名称
   private static final String KEYWORDS_ORACLE = "keywords_oracle";  //关键字属性文件名称
-  private static final String KEYWORDS_SYBASE = "keywords";  				//关键字属性文件名称
+  private static final String KEYWORDS_SYBASE = "keywords_sybase";  //关键字属性文件名称
+  private static final String KEYWORDS_DB2 = "keywords_db2";  //关键字属性文件名称
   
-  private static Map mapKeyword = new HashMap();      //存放关键字的HashMap
-  
-  private SybaseIQ12Parser sybaseIQ12Parser;
-  private SybaseIQ12Lexer sybaseIQ12Lexer;
   private Oracle9iParser oracle9iParser;
   private Oracle9iLexer oracle9iLexer;
+  private SybaseIQ12Parser sybaseIQ12Parser;
+  private SybaseIQ12Lexer sybaseIQ12Lexer;
+  private DB2UDB8xParser db2UDB8xParser;
+  private DB2UDB8xLexer db2UDB8xLexer;
   
+  private static Map mapKeyword = new HashMap();      //存放关键字的HashMap
   private String chQuery;
   private String databaseType;
   private List children = new ArrayList();
@@ -75,12 +80,14 @@ public class QueryModel {
   private static void setKeyWordsProp(String _databaseType){
   	//获取所有中英文关键字并存储在HashMap的mapKeyword中
 
-  	if (_databaseType != null && mapKeyword.size() == 0){
+  	if (_databaseType != null && !_databaseType.equals("") && mapKeyword.size() == 0){
   		String rKeyWordsName = "";
   		if (_databaseType.equals(DataBaseType.ORACLE8i) || _databaseType.equals(DataBaseType.ORACLE9i)){
   			rKeyWordsName = KEYWORDS_ORACLE;
   		}else if (_databaseType.equals(DataBaseType.SYBASE_IQ_12) || _databaseType.equals(DataBaseType.SYBASE_ASE_12)){
   			rKeyWordsName = KEYWORDS_SYBASE;
+  		}else if (_databaseType.equals(DataBaseType.DB2_UDB_8x) || _databaseType.equals(DataBaseType.DB2_UDB_9x)){
+  			rKeyWordsName = KEYWORDS_DB2;
   		}else{
   			rKeyWordsName = KEYWORDS;
   		}
@@ -173,27 +180,7 @@ public class QueryModel {
     
   	QueryModel model = null;
     List exs = new ArrayList();
-    if (databaseType.equals(DataBaseType.SYBASE_IQ_12) || databaseType.equals(DataBaseType.SYBASE_ASE_12)){
-    	SybaseIQ12Lexer rSybaseIQ12Lexer = new SybaseIQ12Lexer(new StringReader(chQuery));
-      SybaseIQ12Parser rSybaseIQ12Parser = new SybaseIQ12Parser(rSybaseIQ12Lexer);
-    	try {
-	      rSybaseIQ12Parser.statements();
-	      CommonAST ast = (CommonAST) rSybaseIQ12Parser.getAST();
-	      // TODO Visible ASTFrame
-  	    //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
-  	    //_ASTFrame.setVisible(true);
-		    SybaseIQ12TreeParser rSybaseIQ12TreeParser = new SybaseIQ12TreeParser();
-	      model = rSybaseIQ12TreeParser.statement(ast);
-    	}catch (ANTLRException e) {
-        exs.add(e);
-      }
-    	
-    	if (model == null){
-        model = new QueryModel();
-      }
-      model.setSybaseIQ12Lexer(rSybaseIQ12Lexer);
-      model.setSybaseIQ12Parser(rSybaseIQ12Parser);
-  	}else if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
+    if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
   		Oracle9iLexer rOracle9iLexer = new Oracle9iLexer(new StringReader(chQuery));
   		Oracle9iParser rOracle9iParser = new Oracle9iParser(rOracle9iLexer);
   		try {
@@ -212,6 +199,45 @@ public class QueryModel {
       }
       model.setOracle9iLexer(rOracle9iLexer);
       model.setOracle9iParser(rOracle9iParser);
+    }else if (databaseType.equals(DataBaseType.SYBASE_IQ_12) || databaseType.equals(DataBaseType.SYBASE_ASE_12)){
+      	SybaseIQ12Lexer rSybaseIQ12Lexer = new SybaseIQ12Lexer(new StringReader(chQuery));
+        SybaseIQ12Parser rSybaseIQ12Parser = new SybaseIQ12Parser(rSybaseIQ12Lexer);
+      	try {
+  	      rSybaseIQ12Parser.statements();
+  	      CommonAST ast = (CommonAST) rSybaseIQ12Parser.getAST();
+  	      // TODO Visible ASTFrame
+    	    //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+    	    //_ASTFrame.setVisible(true);
+  		    SybaseIQ12TreeParser rSybaseIQ12TreeParser = new SybaseIQ12TreeParser();
+  	      model = rSybaseIQ12TreeParser.statement(ast);
+      	}catch (ANTLRException e) {
+          exs.add(e);
+        }
+      	
+      	if (model == null){
+          model = new QueryModel();
+        }
+        model.setSybaseIQ12Lexer(rSybaseIQ12Lexer);
+        model.setSybaseIQ12Parser(rSybaseIQ12Parser);
+  	}else if (databaseType.equals(DataBaseType.DB2_UDB_8x) || databaseType.equals(DataBaseType.DB2_UDB_9x)){
+  		DB2UDB8xLexer rDB2UDB8xLexer = new DB2UDB8xLexer(new StringReader(chQuery));
+  		DB2UDB8xParser rDB2UDB8xParser = new DB2UDB8xParser(rDB2UDB8xLexer);
+  		try {
+  			rDB2UDB8xParser.statements();
+	      CommonAST ast = (CommonAST) rDB2UDB8xParser.getAST();
+	      // TODO Visible ASTFrame
+  	    //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+  	    //_ASTFrame.setVisible(true);
+	      DB2UDB8xTreeParser rDB2UDB8xTreeParser = new DB2UDB8xTreeParser();
+	      model = rDB2UDB8xTreeParser.statement(ast);
+    	}catch (ANTLRException e) {
+        exs.add(e);
+      }
+    	if (model == null){
+        model = new QueryModel();
+      }
+      model.setDb2UDB8xLexer(rDB2UDB8xLexer);
+      model.setDb2UDB8xParser(rDB2UDB8xParser);
   	}else{
   		if (model == null){
         model = new QueryModel();
@@ -335,28 +361,7 @@ public class QueryModel {
     QueryModel model = null;
     
     List exs = new ArrayList();
-    if (databaseType.equals(DataBaseType.SYBASE_IQ_12) || databaseType.equals(DataBaseType.SYBASE_ASE_12)){
-    	SybaseIQ12Lexer rSybaseIQ12Lexer = new SybaseIQ12Lexer(new StringReader(chSegment));
-      SybaseIQ12Parser rSybaseIQ12Parser = new SybaseIQ12Parser(rSybaseIQ12Lexer);
-      
-      try {
-	      rSybaseIQ12Parser.segment();
-	      CommonAST ast = (CommonAST) rSybaseIQ12Parser.getAST();
-	      // TODO Visible ASTFrame
-		    //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
-		    //_ASTFrame.setVisible(true);
-		    SybaseIQ12TreeParser rSybaseIQ12TreeParser = new SybaseIQ12TreeParser();
-	      model = rSybaseIQ12TreeParser.segment(ast);
-      }catch (ANTLRException e) {
-        exs.add(e);
-      }
-      
-      if (model == null){
-        model = new QueryModel();
-      }
-      model.setSybaseIQ12Lexer(rSybaseIQ12Lexer);
-      model.setSybaseIQ12Parser(rSybaseIQ12Parser);
-    }else if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
+    if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
   		Oracle9iLexer rOracle9iLexer = new Oracle9iLexer(new StringReader(chSegment));
   		Oracle9iParser rOracle9iParser = new Oracle9iParser(rOracle9iLexer);
   		
@@ -378,6 +383,46 @@ public class QueryModel {
       model.setDatabaseType(databaseType);
       model.setOracle9iLexer(rOracle9iLexer);
       model.setOracle9iParser(rOracle9iParser);
+    }else if (databaseType.equals(DataBaseType.SYBASE_IQ_12) || databaseType.equals(DataBaseType.SYBASE_ASE_12)){
+      	SybaseIQ12Lexer rSybaseIQ12Lexer = new SybaseIQ12Lexer(new StringReader(chSegment));
+        SybaseIQ12Parser rSybaseIQ12Parser = new SybaseIQ12Parser(rSybaseIQ12Lexer);
+        
+        try {
+  	      rSybaseIQ12Parser.segment();
+  	      CommonAST ast = (CommonAST) rSybaseIQ12Parser.getAST();
+  	      // TODO Visible ASTFrame
+  		    //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+  		    //_ASTFrame.setVisible(true);
+  		    SybaseIQ12TreeParser rSybaseIQ12TreeParser = new SybaseIQ12TreeParser();
+  	      model = rSybaseIQ12TreeParser.segment(ast);
+        }catch (ANTLRException e) {
+          exs.add(e);
+        }
+        
+        if (model == null){
+          model = new QueryModel();
+        }
+        model.setSybaseIQ12Lexer(rSybaseIQ12Lexer);
+        model.setSybaseIQ12Parser(rSybaseIQ12Parser);
+    }else if (databaseType.equals(DataBaseType.DB2_UDB_8x) || databaseType.equals(DataBaseType.DB2_UDB_9x)){
+  		DB2UDB8xLexer rDB2UDB8xLexer = new DB2UDB8xLexer(new StringReader(chSegment));
+  		DB2UDB8xParser rDB2UDB8xParser = new DB2UDB8xParser(rDB2UDB8xLexer);
+  		try {
+  			rDB2UDB8xParser.segment();
+	      CommonAST ast = (CommonAST) rDB2UDB8xParser.getAST();
+	      // TODO Visible ASTFrame
+  	    //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+  	    //_ASTFrame.setVisible(true);
+	      DB2UDB8xTreeParser rDB2UDB8xTreeParser = new DB2UDB8xTreeParser();
+	      model = rDB2UDB8xTreeParser.segment(ast);
+    	}catch (ANTLRException e) {
+        exs.add(e);
+      }
+    	if (model == null){
+        model = new QueryModel();
+      }
+      model.setDb2UDB8xLexer(rDB2UDB8xLexer);
+      model.setDb2UDB8xParser(rDB2UDB8xParser);
   	}else{
   		if (model == null){
         model = new QueryModel();
@@ -560,6 +605,22 @@ public class QueryModel {
 
 	public void setOracle9iParser(Oracle9iParser oracle9iParser) {
 		this.oracle9iParser = oracle9iParser;
+	}
+	
+	public DB2UDB8xLexer getDb2UDB8xLexer() {
+		return db2UDB8xLexer;
+	}
+
+	public void setDb2UDB8xLexer(DB2UDB8xLexer db2UDB8xLexer) {
+		this.db2UDB8xLexer = db2UDB8xLexer;
+	}
+
+	public DB2UDB8xParser getDb2UDB8xParser() {
+		return db2UDB8xParser;
+	}
+
+	public void setDb2UDB8xParser(DB2UDB8xParser db2UDB8xParser) {
+		this.db2UDB8xParser = db2UDB8xParser;
 	}
 
 	/**
@@ -876,13 +937,17 @@ public class QueryModel {
     String expecting = "";
     
     if (databaseType != null) {
-    	if (databaseType.equals(DataBaseType.SYBASE_ASE_12) || databaseType.equals(DataBaseType.SYBASE_IQ_12)){
-    		expecting = sybaseIQ12Parser.getTokenName(exception.expecting);
-    	} else if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
+    	if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
     		expecting = oracle9iParser.getTokenName(exception.expecting);
+    	}else if (databaseType.equals(DataBaseType.SYBASE_ASE_12) || databaseType.equals(DataBaseType.SYBASE_IQ_12)){
+      		expecting = sybaseIQ12Parser.getTokenName(exception.expecting);
+    	} else if (databaseType.equals(DataBaseType.DB2_UDB_8x) || databaseType.equals(DataBaseType.DB2_UDB_9x)){
+    		expecting = db2UDB8xParser.getTokenName(exception.expecting);
     	}else{
     		expecting = sybaseIQ12Parser.getTokenName(exception.expecting);
     	}
+  	}else{
+  		expecting = sybaseIQ12Parser.getTokenName(exception.expecting);
   	}
     
     String input = exception.token.getText();
