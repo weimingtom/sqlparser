@@ -39,6 +39,14 @@
 //		- caseSensitiveLiterals\u8bbe\u4e3afalse,\u5927\u5c0f\u5199\u4e0d\u654f\u611f
 //	06/01/2007\uff1a
 //		- \u589e\u52a0\u5bf9TOP N\u7684\u9a8c\u8bc1\u53ca\u8bed\u6cd5\u6811\u904d\u5386,\u589e\u52a0topNum\u5c5e\u6027\u8bb0\u5f55\u524d\u51e0\u6761
+//	06/11/2007:
+//		- equation\u589e\u52a0EXISTS/NOT EXISTS\u7684\u8bed\u6cd5\u5b9a\u4e49\uff0c\u5141\u8bb8\u5b50\u67e5\u8be2
+//		  \u8bbe\u7f6eSUBQUERY\u7684TOKEN\u8fdb\u884c\u8bed\u6cd5\u6811\u904d\u5386
+//	06/12/2007:
+//		- exp_set\u8bed\u6cd5\u589e\u52a0\u5b50\u67e5\u8be2\u89e3\u6790\uff0c\u540c\u65f6\u589e\u52a0\u5b50\u67e5\u8be2\u7684\u8bed\u6cd5\u6811\u904d\u5386
+//	06/13/2007:
+//		- \u5c06\u8bed\u6cd5\u5b9a\u4e49\u7684\u5173\u952e\u5b57\u653e\u5728\u8bcd\u6cd5\u7684tokens\u4e2d,\u8bed\u6cd5\u5b9a\u4e49\u4e2d\u4e0d\u518d\u51fa\u73b0
+//		  \u81ea\u5df1\u5b9a\u4e49\u5173\u952e\u5b57
 //==========================================================*/
 
 header {
@@ -53,21 +61,21 @@ header {
 class SybaseIQ12Parser extends Parser;
 
 options {
-	k=5;
+	k = 5;
 	buildAST = true;
 	defaultErrorHandler = false;
 }
 
-tokens {
-	SELECT_STATEMENT;
-	SELECT_TOKEN;
+tokens {	
+	SELECT_STATEMENT;		//\u5b8c\u6574\u67e5\u8be2\u8bed\u53e5 TOKEN
 	SEARCH_NOT_CONDITION;	//\u975e\u6574\u4e2a\u6761\u4ef6 TOKEN
 	SUBQUERY;				//\u5b50\u67e5\u8be2 TOKEN
-	GROUP_BY;				//GROUP BY TOKEN
-	ORDER_BY;				//ORDER BY TOKEN
+	GROUP_BY;				//\u5206\u7ec4 TOKEN
+	ORDER_BY;				//\u6392\u5e8f TOKEN
 	ALIAS_EQU;				//\u522b\u540d TOKEN
 	
-	FUNCTION;				//\u51fd\u6570 TOKEN
+	FUNCTION;				//\u666e\u901a\u51fd\u6570 TOKEN
+	FUNCTION_NOTHING;		//\u4e0d\u5e26\u4efb\u4f55\u4e1c\u897f\u7684\u51fd\u6570 TOKEN[sysdate]
 	FUNCTION_EMPTY_PARAM;	//\u7a7a\u53c2\u6570\u51fd\u6570 TOKEN [getdate()]
 	FUNCTION_STAR_PARAM;	//\u53c2\u6570\u4e3a*\u51fd\u6570 TOKEN [now(*);today(*)]
 	FUNCTION_STAR_COUNT;	//\u51fd\u6570COUNT(*) TOKEN
@@ -94,111 +102,125 @@ tokens {
 	LOGIC_BLOCK;			//WHERE\u6761\u4ef6\u903b\u8f91\u5757 TOKEN
 }
 
+//\u7247\u6bb5\u5b57\u53e5\u89c4\u5219\u5165\u53e3
 segment
-	:	(COLUMN^ column
-	|	WHERE^ search_condition)
+	:	(COLUMN column
+	|	WHERE search_condition)
 	EOF!
 	;
 
+//\u5b8c\u6574\u67e5\u8be2\u8bed\u53e5\u89c4\u5219\u5165\u53e3
 statements
 	:	statement (SEMI^ statement)* EOF!;
 
+//\u5355\u4e2a\u8bed\u53e5\u89c4\u5219(\u8868\u5408\u5e76\u3001\u8868\u6bd4\u8f83\u3001\u81ea\u5b9a\u4e49\u67e5\u8be2)
 statement
 	:	tableUnion
 	|	tableCompare
 	|	select_statement
-	{#statement=#([SELECT_STATEMENT], #statement);}
+		{#statement=#([SELECT_STATEMENT], #statement);}
 	;
 
+//\u8868\u5408\u5e76
 tableUnion
-	:	("t_union"^|"\u8868\u5408\u5e76"^) table_lists
+	:	(TABLE_UNION_EN^|TABLE_UNION_CN^) table_lists
 	;
 
+//\u8868\u5408\u5e76\u7684\u8868\u540d\u5217\u8868
 table_lists
 	:	table_name (COMMA^ table_name)+
 	;
 
+//\u8868\u6bd4\u8f83
 tableCompare
-	:	("t_compare"^|"\u8868\u6bd4\u8f83"^) table_name COMMA! table_name ("where"!|"\u6761\u4ef6"!) compare_method search_condition
+	:	(TABLE_COMPARE_EN^|TABLE_COMPARE_CN^) table_name COMMA! table_name (WHERE_EN!|WHERE_CN!) compare_method search_condition
 	;
 
+//\u6bd4\u8f83\u65b9\u6cd5\u5b9a\u4e49(\u5b58\u5728\u3001\u4e0d\u5b58\u5728)
 compare_method
-	:	comparemethod_name
-	|	"not" "exists"
+	:	(EXISTS_EN | EXISTS_CN | NOT_EXISTS_CN)
+	|	NOT_EN EXISTS_EN
 		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], #compare_method);}
 	;
 
+//\u81ea\u5b9a\u4e49\u67e5\u8be2
 select_statement
 	:	
 		//CUSTOM SQL Sentence
-		("select"^ | "\u67e5\u8be2"^) ("distinct"^ | "\u552f\u4e00"^)? (("top"^ | "\u524dN\u6761"^) integer)? select_list
-		(("from"^ | "\u6765\u81ea"^) table_list)?
-		(("where"^ | "\u6761\u4ef6"^) search_condition)?
-		(("group"^ "by"!|"\u5206\u7ec4"^) aggregate_expression_list)?
-		(("order"^ "by"!|"\u6392\u5e8f"^) order_expression_list)?
+		(SELECT_EN^ | SELECT_CN^) (DISTINCT_EN^ | DISTINCT_CN^)? ((TOP_EN^ | TOP_CN^) integer)? select_list
+		((FROM_EN^ | FROM_CN^) table_list)?
+		((WHERE_EN^ | WHERE_CN^)search_condition)?
+		((GROUP_EN^ BY_EN! | GROUP_BY_CN^) aggregate_expression_list)?
+		((ORDER_EN^ BY_EN! | ORDER_BY_CN^) order_expression_list)?
 	;
 
 integer
 	: REAL_NUM
 	;
 
+//SELECT\u5b50\u53e5\u5b57\u6bb5\u5217\u8868
 select_list
 	:	column (COMMA^ column)*
 	;
 
+//FROM\u5b50\u53e5\u8868\u5217\u8868
 table_list
 	:	table_name (COMMA^ table_name)*
 	;
 
-//search_condition
-//	:	equation
-//		(logic_op search_condition {#search_condition=#([LOGIC_OP, "logic_op"], #search_condition);})?
-//	;
-
+//WHERE\u5b50\u53e5\u6761\u4ef6\u4fe1\u606f
 search_condition
 	:	bool_exp
-	|	( "not"
+	|	( NOT_EN
 		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], #search_condition);}
-		| "\u975e"^
+		| NOT_CN^
 		) search_condition
 	;
 
+//\u5355\u4e2a\u6761\u4ef6\u95f4\u7684\u903b\u8f91\u8fd0\u7b97
 bool_exp
 	:	bool_term 
-		(("and"^ | "or"^ | "\u5e76\u4e14"^ | "\u6216\u8005"^) bool_term)*
+		((AND_EN^ | OR_EN^ | AND_CN^ | OR_CN^) bool_term)*
 	;
 
+//\u5355\u4e2a\u6761\u4ef6\u7684\u62ec\u53f7\u63a8\u7406
 bool_term
 	:	(LPAREN bool_exp RPAREN) => LPAREN! exp:bool_exp RPAREN!
 	{#bool_term=#([LOGIC_BLOCK, "log_block"], #bool_term);}
 	|	equation
 	;
 
+//GROUP BY\u5b50\u53e5\u7684\u5206\u7ec4\u5217\u8868
 aggregate_expression_list
 	:	aggregate_expr (COMMA^ aggregate_expr)*
 	;
 
+//ORDER BY\u5b50\u53e5\u7684\u6392\u5e8f\u5217\u8868
 order_expression_list
 	:	order_expression (COMMA^ order_expression)*
 	;
 
+//\u5355\u4e2a\u5b57\u6bb5\u5b9a\u4e49
 column
-	:	expression_with_aggr_func (("as"^|"\u4f5c\u4e3a"^) alias)?
+	:	expression_with_aggr_func ((AS_EN^|AS_CN^) alias)?
 	|	alias ("="|"\u7b49\u4e8e")! expression_with_aggr_func {#column=#([ALIAS_EQU, "="], #column);}
-	|	all:"\u6240\u6709" {#column=#([ALL_FIELDS, all.getText()]);}
+	|	all: SELECT_ALL_CN {#column=#([ALL_FIELDS, all.getText()]);}
 	|	STAR {#column=#([ALL_FIELDS, "*"]);}
 	;
 
+//\u5355\u4e2a\u5206\u7ec4\u8868\u8fbe\u5f0f
 aggregate_expr
 	:	LPAREN aggregate_expr RPAREN
 	|	(field_name|function|constant) (
 		two_arg_op aggregate_expr {#aggregate_expr=#([TWO_ARG_OP, "two_arg_op"], #aggregate_expr);})?
 	;
 
+//\u5355\u4e2a\u6392\u5e8f\u8868\u8fbe\u5f0f
 order_expression
-	:	(alias|field_name|aggregate_func|function) ("\u5347\u5e8f"^|"\u964d\u5e8f"^|"asc"^|"desc"^)?
+	:	(alias|field_name|aggregate_func|function) (ASC_EN^|ASC_CN^|DESC_EN^|DESC_CN^)?
 	;
 
+//\u666e\u901a\u8868\u8fbe\u5f0f
 expression
 	:	LPAREN expression RPAREN
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
@@ -207,10 +229,11 @@ expression
 		(two_arg_op expression {#expression=#([TWO_ARG_OP, "two_arg_op"], #expression);})?
 	;
 
+//\u5e26\u51fd\u6570\u7684\u5355\u4e2a\u5b57\u6bb5\u8868\u8fbe\u5f0f
 expression_with_aggr_func
 	:	
-		LPAREN expression_with_aggr_func RPAREN 
-		(two_arg_op expression_with_aggr_func 
+		LPAREN expression_with_aggr_func RPAREN
+		(two_arg_op expression_with_aggr_func
 		{#expression_with_aggr_func=#([TWO_ARG_OP, "two_arg_op"], #expression_with_aggr_func);})?
 	|	one_arg_op expression_with_aggr_func 
 		{#expression_with_aggr_func=#([ONE_ARG_OP, "one_arg_op"], #expression_with_aggr_func);}
@@ -219,44 +242,50 @@ expression_with_aggr_func
 		{#expression_with_aggr_func=#([TWO_ARG_OP, "two_arg_op"], #expression_with_aggr_func);})?
 	;
 
+//\u5355\u4e2a\u6761\u4ef6\u4fe1\u606f(a > 0/a like '%oracle%')
 equation
 	:	expression (
 		
-		//\u5173\u7cfb\u8fd0\u7b97\u7b26(+ - * /) \u8868\u8fbe\u5f0f
-		("=" | compare_op) expression
+		//\u6bd4\u8f83\u8fd0\u7b97\u7b26(>= > = <...) \u8868\u8fbe\u5f0f
+		(compare_op) expression
 	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);}
 
-//	|	("exists") subquery
-//		{#equation=#([LOGICAL_EXISTS, "logic_exists"], #equation);}	
-//	|	("not" "exists") subquery
-//		{#equation=#([LOGICAL_NOT_EXISTS, "logic_not_exists"], #equation);}	
-//	|	("\u5b58\u5728"^ | "\u4e0d\u5b58\u5728"^) subquery
-	
-		//\u5173\u7cfb\u8fd0\u7b97\u7b26NOT LIKE \u8868\u8fbe\u5f0f
-	|	("not" "like") expression
-		{#equation=#([LOGICAL_NOT_LIKE, "logic_not_like"], #equation);}	
+	|	(EXISTS_EN) subquery
+		{#equation=#([LOGICAL_EXISTS, "logic_exists"], #equation);}	
+	|	(NOT_EN EXISTS_EN) subquery
+		{#equation=#([LOGICAL_NOT_EXISTS, "logic_not_exists"], #equation);}	
+	|	(EXISTS_CN^ | NOT_EXISTS_CN^) subquery
 
-		//\u5173\u7cfb\u8fd0\u7b97\u7b26IS NULL/IS NOT NULL
-	|	( "is" "null"
+		//\u903b\u8f91\u8fd0\u7b97\u7b26LIKE/NOT LIKE \u8868\u8fbe\u5f0f
+	|	(LIKE_EN) expression
+		{#equation=#([LOGICAL_LIKE, "logic_like"], #equation);}	
+	|	(NOT_EN LIKE_EN) expression
+		{#equation=#([LOGICAL_NOT_LIKE, "logic_not_like"], #equation);}	
+	|	(LIKE_CN^|NOT_LIKE_CN^) expression
+
+		//\u903b\u8f91\u8fd0\u7b97\u7b26IS NULL/IS NOT NULL
+	|	( IS_EN NULL_EN
 		  {#equation = #([LOGICAL_NULL, "logic_null"], #equation);}
-		| "is" "not" "null"
+		| IS_EN NOT_EN NULL_EN
 		  {#equation = #([LOGICAL_NOT_NULL, "logic_not_null"], #equation);}
-		| "\u4e3a\u7a7a"^ | "\u975e\u7a7a"^
+		| NULL_CN^ | NOT_NULL_CN^
 		)
 	
-		//\u5173\u7cfb\u8fd0\u7b97\u7b26BETWEEN AND
-	| 	("between"^ | "\u8303\u56f4"^) expression ("and"!)? expression
+		//\u903b\u8f91\u8fd0\u7b97\u7b26BETWEEN AND
+	| 	BETWEEN_CN^ expression expression
+	|	BETWEEN_EN^ expression AND_EN! expression
 	
 		//\u5173\u7cfb\u8fd0\u7b97\u7b26IN/NOT IN
-	|	( "in"
+	|	( IN_EN
 		  {#equation = #([LOGICAL_IN, "logic_in"], #equation);}
-		| "not" "in"
+		| NOT_EN IN_EN
 		  {#equation = #([LOGICAL_NOT_IN, "logic_not_in"], #equation);}
-		| "\u5728\u4e8e"^ | "\u4e0d\u5728\u4e8e"^
+		| IN_CN^ | NOT_IN_CN^
 		) exp_set
 	)
 	;
 
+//\u51fd\u6570\u5b9a\u4e49
 function
 	:	empty_function LPAREN! RPAREN!
 	{#function = #([FUNCTION_EMPTY_PARAM, "function_empty_param"], #function);}
@@ -270,36 +299,43 @@ function
 	{#function = #([FUNCTION, "function_block"], #function);}
 	;
 
+//\u805a\u5408\u51fd\u6570
 aggregate_func
-	:	("\u6c42\u8bb0\u5f55\u603b\u6570" | "count") LPAREN! STAR! RPAREN!
+	:	(COUNT_EN | COUNT_CN) LPAREN! STAR! RPAREN!
 		{#aggregate_func = #([FUNCTION_STAR_COUNT, "function_star_count"], #aggregate_func);}
-	|	aggregate_func_name LPAREN! ("all"^ | "\u5168\u90e8"^ | "distinct"^ |"\u552f\u4e00"^)? parameters RPAREN!
+	|	aggregate_func_name LPAREN! (ALL_EN^ | ALL_CN^ | DISTINCT_EN^ | DISTINCT_CN^)? parameters RPAREN!
 	;
 
+//\u51fd\u6570\u7684\u53c2\u6570\u5217\u8868
 parameters
 	:	expression (COMMA^ expression)*
 	;
 
 //==========\u6570\u636e\u7c7b\u578b\u53c2\u6570 BEGIN==========//
+
+//\u5e26AS\u5173\u952e\u5b57\u7684\u6570\u636e\u7c7b\u578b\u53c2\u6570\u8868\u8fbe\u5f0f[f1 as char(10)]
 as_data_type_parameter
-	: expression ("as"! | "\u4e3a"!) (datatype_constant)
+	: expression (AS_EN! | DATA_TYPE_AS_CN!) (datatype_constant)
 	;
 
+//\u6570\u636e\u7c7b\u578b\u53c2\u6570\u8868\u8fbe\u5f0f[char(10), f1]
 data_type_parameter
 	:	datatype_constant (COMMA^ expression)+
 	;
 
+//\u6570\u636e\u7c7b\u578b\u5b9a\u4e49
 datatype_constant
-	:	//"character" "varying"
+	:
 		data_type_word
-	|	"char"
-	|	"char" LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
+	|	CHAR
+	|	CHAR LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
 		{#datatype_constant = #([PAREN_CHAR_DATA_TYPE, "paren_char_data_type"], #datatype_constant);}
 	|	DATA_TYPE_STRING LPAREN! datatype_precision_or_scale_or_maxlength RPAREN!
 		{#datatype_constant = #([PAREN_DATA_TYPE, "paren_data_type"], #datatype_constant);}
 	|	DATA_TYPE_STRING
 	;
 
+//\u6570\u636e\u7c7b\u578b\u7684\u53c2\u6570\u8bbe\u7f6e
 datatype_precision_or_scale_or_maxlength
 	:	REAL_NUM COMMA^ REAL_NUM
 	|	REAL_NUM
@@ -308,34 +344,39 @@ datatype_precision_or_scale_or_maxlength
 //==========\u6570\u636e\u7c7b\u578b\u53c2\u6570  END===========//
 
 
+//\u8868\u540d\u5b9a\u4e49
 table_name
-	:	ID (("as"^|"\u4f5c\u4e3a"^) alias)?
+	:	ID ((AS_EN^ | AS_CN^) alias)?
 	;
 
+
+//IN/NOT IN\u95f4\u7684\u5e38\u91cf\u8bbe\u7f6e
 exp_set
-	: 	LPAREN constexpset RPAREN
+	: 	LPAREN! constexpset RPAREN!
 	{#exp_set = #([SUBCONTAIN_OP, "subcontain_op"], #exp_set);}
-//	| subquery
+	| (subquery) => subquery
 	;
 
+//\u5e38\u91cf\u5b9a\u4e49[IN(10, 20, 30)]
 constexpset
 	:	constant (COMMA^ constant)*
 	;
-
+//\u5b50\u67e5\u8be2
 subquery
-	:	LPAREN select_statement RPAREN
+	:	LPAREN! select_statement RPAREN!
 		{#subquery = #([SUBQUERY, "subquery"], #subquery);}
 	;
 
+//\u5faa\u73af\u7684\u53c2\u6570\u53d8\u91cf[{\u6708\u53d8\u91cf}]
 param_equ
 	:	PARAM_ID
 	;
 
+//\u522b\u540d\u5b9a\u4e49
 alias
 	:	ID | QUOTED_STRING;
 
-
-
+//\u5b57\u6bb5\u5b9a\u4e49[\u8868\u540d.\u5b57\u6bb5\u540d]
 field_name
 	:	ID POINT^ sfield_name
 	;	
@@ -343,6 +384,7 @@ field_name
 //	:	ID POINT^ ID
 //	;
 
+//\u5355\u4e2a\u5b57\u6bb5\u540d\u5b9a\u4e49
 sfield_name
 	:	//\u5982\uff1a\u5229\u7387(\u767e\u5206\u6bd4%)
 		ID LPAREN! ID RPAREN!
@@ -350,19 +392,20 @@ sfield_name
 	|	ID
 	;
 
+//\u5e38\u91cf\u5b9a\u4e49[\u6b63\u6570\u3001\u8d1f\u6570\u3001\u5b57\u7b26\u4e32('abc')\u3001\u4fdd\u7559\u5b57\u3001NULL]
 constant
 	:	REAL_NUM
 	|	NEGATIVE_DIGIT_ELEMENT
 	|	QUOTED_STRING
 	|	date_key_word
-	|	"null"
+	|	NULL_EN
 	;
 
 //=======================================//
 //\u805a\u5408\u51fd\u6570
 aggregate_func_name
 	:	"avg" 		| 	"\u6c42\u5e73\u5747\u6570"
-	|	"count" 	| 	"\u6c42\u8bb0\u5f55\u603b\u6570"
+	|	COUNT_EN	|	COUNT_CN
 	|	"max" 		| 	"\u6c42\u6700\u5927\u503c"
 	|	"min" 		| 	"\u6c42\u6700\u5c0f\u503c"
 	|	"stddev" 	| 	"\u6c42\u65b9\u5dee"
@@ -370,43 +413,30 @@ aggregate_func_name
 	|	"variance" 	| 	"\u6c42\u7edf\u8ba1\u65b9\u5dee"
 	;
 
-//function_name
-//	:	"sqrt" 		| 	"\u6c42\u5e73\u65b9\u6839"
-//	|	"getdate" 	| 	"\u6c42\u5f53\u524d\u65e5\u671f\u65f6\u95f4"
-//	|	"abs" 		| 	"\u53d6\u7edd\u5bf9\u503c"
-//	|	"acos"		|	"\u6c42\u4f59\u5f26\u503c"
-//	|	"substring" | 	"\u5b57\u7b26\u4e32\u622a\u53d6"
-//	|	"round"		|	"\u683c\u5f0f\u5316\u6570\u503c"
-//	|	"right" 	| 	"\u5b57\u7b26\u4e32\u53f3\u622a"
-//	|	"ltrim"		|	"\u53bb\u6389\u5de6\u7a7a\u683c"
-//	|	"rtrim"		|	"\u53bb\u6389\u53f3\u7a7a\u683c"
-//	|	"char_length" | "\u6c42\u5b57\u7b26\u4e32\u7684\u957f\u5ea6"
-//	|	"floor"		|	"\u6c42\u56db\u820d\u540e\u7684\u6574\u6570"
-//	|	"ceiling"	|	"\u6c42\u4e94\u5165\u540e\u7684\u6574\u6570"
-//	|	"lower" 	| 	"\u5c06\u5b57\u7b26\u4e32\u8f6c\u4e3a\u5c0f\u5199"
-//	|	"charindex"	|	"\u5b58\u5728\u4e8e"
-//	|	"str" 		| 	"\u6570\u503c\u8f6c\u5b57\u7b26\u4e32"
-//	;
+//\u6ca1\u6709\u5e26\u4efb\u4f55\u4e1c\u897f\u7684\u51fd\u6570[\u683c\u5f0f\u5982\uff1a sysdate]
+nothing_function
+	:	SYSDATE_EN	|	SYSDATE_CN
+	;
 
-//\u7a7a\u53c2\u6570\u51fd\u6570
+//\u7a7a\u53c2\u6570\u51fd\u6570[\u683c\u5f0f\u5982\uff1a getdate()]
 empty_function
 	: 	"getdate"	| 	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f42"
 	|	"rand"		|	"\u53d6\u968f\u673a\u6570"
 	;
 
-//\u53c2\u6570\u4e3a*\u51fd\u6570\u3001
+//\u53c2\u6570\u4e3a*\u51fd\u6570[\u683c\u5f0f\u5982\uff1a pi()]
 star_function
 	:  	"pi"	|	"\u6c42\u5706\u5468\u7387"
 	|	"now"	|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f41"
 	|	"today"	|	"\u6c42\u5f53\u524d\u65e5\u671f"
 	;
 
-//\u5e26\u6570\u636e\u7c7b\u578b\u51fd\u6570
+//\u5e26\u6570\u636e\u7c7b\u578b\u51fd\u6570[\u683c\u5f0f\u5982\uff1a convert(char(10), f1)]
 datatype_function
 	:	"convert"	|	"\u6570\u636e\u7c7b\u578b\u8f6c\u6362"
 	;
 
-//\u5e26\u6570\u636e\u7c7b\u578b\u51fd\u6570
+//\u5e26\u6570\u636e\u7c7b\u578b\u51fd\u6570[\u683c\u5f0f\u5982\uff1a cast(f1 as char(10))]
 asdatatype_function
 	:	"cast"		|	"\u6570\u636e\u7c7b\u578b\u8f6c\u5316"
 	;
@@ -457,7 +487,8 @@ string_function
 	:	"ascii"			|	"\u6c42ASCII\u7801"
 	|	"bit_length"	|	"\u6c42\u5b57\u7b26\u4e32\u7684\u4e8c\u8fdb\u5236\u957f\u5ea6"
 	|	"byte_length" 	| 	"\u6c42\u5b57\u7b26\u4e32\u7684\u5b57\u8282\u6570"
-	|	"char"			|	"\u6c42\u7b49\u503c\u7684\u5b57\u7b26"
+//	|	"char"			|	"\u6c42\u7b49\u503c\u7684\u5b57\u7b26"
+	|	CHAR			|	"\u6c42\u7b49\u503c\u7684\u5b57\u7b26"
 	|	"char_length" 	| 	"\u6c42\u5b57\u7b26\u4e32\u957f\u5ea61"
 	|	"charindex" 	|	"\u5b58\u5728\u4e8e"
 	|	"difference" 	|	"\u6c42\u4e24\u4e2a\u4e32\u7684\u58f0\u97f3\u5dee\u503c"
@@ -544,25 +575,49 @@ other_function
 	| 	"rowid"
 	;
 
+//\u5355\u4e2a\u8fd0\u7b97\u7b26\u53f7[~]
 one_arg_op
-	:	ONE_ARG_OP;
+	: TILDE | "\u975e\u8fd0\u7b97";
 
+//\u524d\u540e\u5747\u9700\u8868\u8fbe\u5f0f\u8fd0\u7b97\u7b26\u53f7[\u7b97\u672f\u8fd0\u7b97\u7b26\u3001\u4f4d\u8fd0\u7b97\u7b26\u53f7...]
 two_arg_op
-	:	TWO_ARG_OP | STAR | MINUS
-	|	"\u4e0e" | "\u6216" | "\u5f02\u6216" | "\u52a0" | "\u51cf" | "\u4e58" | "\u9664" | "\u6c42\u6a21";
+	:	arithmeticOperator | bitwiseOperator
+	|	"\u4e0e" | "\u975e\u8fd0\u7b97" | "\u6216" | "\u5f02\u6216" | "\u52a0" | "\u51cf" | "\u4e58" | "\u9664" | "\u6c42\u6a21";
 
+//\u7b97\u672f\u8fd0\u7b97\u7b26[+ - * /]
+arithmeticOperator
+    : PLUS | MINUS | STAR | DIVIDE | MOD
+    ;
+
+//\u4f4d\u8fd0\u7b97\u7b26\u53f7[& ~ ^]
+bitwiseOperator
+    : AMPERSAND | TILDE | BITWISEOR | BITWISEXOR
+    ;
+
+//\u7b49\u4e8e\u8fd0\u7b97\u7b26
+alias_equ_op
+	:	ASSIGNEQUAL | "\u7b49\u4e8e"
+	;
+
+//\u6bd4\u8f83\u8fd0\u7b97\u7b26[\u4e2d\u82f1]
 compare_op
-	:	COMPARE_OP
+	:	comparisonOperator
 	|	"\u7b49\u4e8e" | "\u5927\u4e8e\u7b49\u4e8e" | "\u5c0f\u4e8e\u7b49\u4e8e" | "\u5927\u4e8e" | "\u5c0f\u4e8e" | "\u4e0d\u7b49\u4e8e"
-	|	"\u5305\u542b" | "\u4e0d\u5305\u542b" | "like"
 	|	"\u5de6\u8fde\u63a5"	| LEFT_JOIN
 	;
 
-logic_op
-	:	"and" | "or" | "\u5e76\u4e14" | "\u6216\u8005";
-
-comparemethod_name
-	:	"exists" | "\u5b58\u5728" | "\u4e0d\u5b58\u5728";
+//\u6bd4\u8f83\u8fd0\u7b97\u7b26(= != <> <= ...)
+comparisonOperator
+	:	ASSIGNEQUAL
+	| 	NOTEQUAL1
+	| 	NOTEQUAL2
+	| 	LESSTHANOREQUALTO1
+	| 	LESSTHANOREQUALTO2 
+    | 	LESSTHAN
+	| 	GREATERTHANOREQUALTO1
+	| 	GREATERTHANOREQUALTO2
+	| 	GREATERTHAN
+	;
 
 //\u65e5\u671fdate-part\u4fdd\u7559\u5b57
 date_key_word
@@ -595,24 +650,118 @@ options {
 	caseSensitiveLiterals = false;
 }
 
+tokens {
+	TABLE_UNION_EN = "t_union";
+	TABLE_UNION_CN = "\u8868\u5408\u5e76";
+	
+	TABLE_COMPARE_EN = "t_compare";
+	TABLE_COMPARE_CN = "\u8868\u6bd4\u8f83";
 
-ONE_ARG_OP
-	:	'~';
+	SELECT_EN = "select";
+	SELECT_CN = "\u67e5\u8be2";
 
-//TWO_ARG_OP
-//	:	'&' | '|' | '^' | '+' | '/' | '%';
+	FROM_EN = "from";
+	FROM_CN = "\u6765\u81ea";
 
-TWO_ARG_OP
-	:	'&' | '|' | '^' | '+' | '/';
+	WHERE_EN = "where";
+	WHERE_CN = "\u6761\u4ef6";
 
-MINUS 
-	: 	'-' ;
+	GROUP_EN = "group";
+	GROUP_BY_CN = "\u5206\u7ec4";
+	
+	ORDER_EN = "order";
+	ORDER_BY_CN = "\u6392\u5e8f";
 
-STAR
-	:	'*';
+	BY_EN = "by";
+	
+	ASC_EN = "asc";
+	ASC_CN = "\u5347\u5e8f";
 
-COMPARE_OP
-	:	'>' | '<' | ">=" | "<=" | "!=" | "<>" | "=";
+	DESC_EN = "desc";
+	DESC_CN = "\u964d\u5e8f";	
+
+	AND_EN = "and";
+	AND_CN = "\u5e76\u4e14";
+	
+	OR_EN = "or";
+	OR_CN = "\u6216\u8005";
+	
+	NOT_EN = "not";
+	NOT_CN = "\u975e";
+	
+	ALL_EN = "all";
+	ALL_CN = "\u5168\u90e8";
+	
+	SELECT_ALL_CN = "\u6240\u6709";
+
+	DISTINCT_EN = "distinct";
+	DISTINCT_CN = "\u552f\u4e00";
+
+	EXISTS_EN = "exists";
+	EXISTS_CN = "\u5b58\u5728";
+	
+	NOT_EXISTS_CN = "\u4e0d\u5b58\u5728";
+
+	IN_EN = "in";
+	IN_CN = "\u5728\u4e8e";
+	
+	NOT_IN_CN = "\u4e0d\u5728\u4e8e";
+
+	IS_EN = "is";
+	
+	NULL_EN = "null";
+	NULL_CN = "\u4e3a\u7a7a";
+	
+	NOT_NULL_CN = "\u975e\u7a7a";
+	
+	LIKE_EN = "like";
+	LIKE_CN = "\u5305\u542b";
+	
+	NOT_LIKE_CN = "\u4e0d\u5305\u542b";
+	
+	BETWEEN_EN = "between";
+	BETWEEN_CN = "\u8303\u56f4";
+	
+	AS_EN = "as";
+	AS_CN = "\u4f5c\u4e3a";
+	DATA_TYPE_AS_CN = "\u4e3a";
+	
+	CHAR = "char";
+
+	COUNT_EN = "count";
+	COUNT_CN = "\u6c42\u8bb0\u5f55\u603b\u6570";
+	
+	TOP_EN = "top";
+	TOP_CN = "\u524dN\u6761";
+
+	SYSDATE_EN = "SYSDATE";
+	SYSDATE_CN = "\u53d6\u7cfb\u7edf\u65e5\u671f";
+}
+
+PLUS	: '+' ;
+MINUS 	: '-' ;
+STAR 	: '*' ;
+DIVIDE 	: '/' ;
+MOD 	: '%' ;
+
+AMPERSAND	: '&' ;
+TILDE 		: '~' ;
+BITWISEOR 	: '|' ;
+BITWISEXOR 	: '^' ;
+DOT_STAR 	: ".*";
+
+//Comparison Operator
+ASSIGNEQUAL				:	'='	;
+NOTEQUAL1				: 	"<>";
+NOTEQUAL2				:	"!=";
+LESSTHANOREQUALTO1		:	"<=";
+LESSTHANOREQUALTO2		:	"!>";
+LESSTHAN				:	"<"	;
+GREATERTHANOREQUALTO1	:	">=";
+GREATERTHANOREQUALTO2	:	"!<";
+GREATERTHAN				:	">"	;
+
+
 LEFT_JOIN
 	: "*=";
 
@@ -635,11 +784,13 @@ PARAM_LPAREN
 
 PARAM_RPAREN
 	:	'}';
-
+	
 COLUMN
 	:	"seg_column";
+
 FROM
-	:	"seg_from";	
+	:	"seg_from";
+
 WHERE
 	:	"seg_where";
 
@@ -694,43 +845,44 @@ ID	options {testLiterals=true;}
 	:	ID_START_LETTER ( ID_LETTER )*
 	;
 	
-protected
-ID_START_LETTER
+protected ID_START_LETTER
     :    'a'..'z'
     |	'_'
     |    '\u0080'..'\ufffe'
     ;
-protected
-ID_LETTER
+
+protected ID_LETTER
     :	ID_START_LETTER
     |	'0'..'9'
     |	'/'
     |	'%'
     ;
 
+
+//Real Numeric
 REAL_NUM
 	:	NUM (POINT DOT_NUM)?
 	;
 
-//negative digit element
+//Negative Digit Element
 NEGATIVE_DIGIT_ELEMENT
 	: 	MINUS NUM (POINT DOT_NUM)?
 	;
 	
-protected
-NUM	:	'0'
+protected NUM
+	:	'0'
 	|	NUM_START (NUM_LETTER)*
 	;
-protected
-DOT_NUM
+
+protected DOT_NUM
 	:	(NUM_LETTER)+
 	;
-protected
-NUM_START
+
+protected NUM_START
 	:	'1'..'9'
 	;
-protected
-NUM_LETTER
+
+protected NUM_LETTER
 	:	'0'..'9'
 	;
 
@@ -739,13 +891,6 @@ DATA_TYPE_STRING options {testLiterals=true;}
     | "decimal" | "numeric" | "float"
     | "binary" | "varbinary"
     ;
-
-//DATA_TYPE_STRING options {testLiterals=true;}
-//	: "character" | "varchar" | "char" | "uniqueidentifierstr"
-//	| "bigint" | "int" | "integer" | "smallint" | "tinyint" | "double" | "float" | "real" | "decimal" | "numeric"
-//	| "date" | "datetime" | "smalldatetime" | "time" | "timestamp"
-//	| "bit" | "binary" | "varbinary"
-//	;
 
 ML_COMMENT
 	:	"/*"
@@ -780,7 +925,9 @@ ML_COMMENT
 
 	import model.parser.*;
 }
+
 class SybaseIQ12TreeParser extends TreeParser;
+
 {
 	Map tables = new HashMap();
 	
@@ -808,7 +955,7 @@ segment returns[QueryModel model]
 	ColumnModel c1 = new ColumnModel();
 	SearchConditionModel cond = new SearchConditionModel();
 }
-	: 	#(COLUMN c1 = column)
+	: 	COLUMN c1 = column
 		{
 			for (Iterator it = getTables().keySet().iterator(); it.hasNext();){
 	        	t1.addTable( (TableModel)getTables().get((String)it.next()));
@@ -818,7 +965,7 @@ segment returns[QueryModel model]
 			stmt.setSelectList(selList);
 			model = stmt;
 		}
-	|	#(WHERE cond = search_condition)
+	|	WHERE cond = search_condition
 		{
 			for (Iterator it = getTables().keySet().iterator(); it.hasNext();){
 	        	t1.addTable( (TableModel)getTables().get((String)it.next()));
@@ -848,14 +995,14 @@ statement returns [QueryModel model]
 	SearchConditionModel cond;
 }
 		//\u8868\u5408\u5e76\u8bed\u53e5
-	:	#("\u8868\u5408\u5e76" t1=tableUnionList)
+	:	#(TABLE_UNION_CN t1=tableUnionList)
 		{
 			union.addTableListModel(t1);
 			model = union;
 		}
 
 		//\u8868\u6bd4\u8f83\u8bed\u53e5
-	|	#("\u8868\u6bd4\u8f83" tableModel1=table_name tableModel2=table_name method=compare_method cond=search_condition)
+	|	#(TABLE_COMPARE_CN tableModel1=table_name tableModel2=table_name method=compare_method cond=search_condition)
 		{	
 			tableCompare.addTableModel1(tableModel1);
 			tableCompare.addTableModel2(tableModel2);
@@ -885,8 +1032,8 @@ compare_method returns [String rValue]
 {rValue = "";}
 	:	v1: comparemethod_name
 		{rValue = v1.getText();}
-	|	#(LOGICAL_NOT_EXISTS "not" "exists")
-		{rValue = "not exists";}
+	|	#(LOGICAL_NOT_EXISTS ne1:NOT_EN ne2:EXISTS_EN)
+		{rValue = ne1.getText() + " " + ne2.getText();}
 	;
 
 select_statement returns [SelectStatementModel model]
@@ -900,39 +1047,39 @@ select_statement returns [SelectStatementModel model]
 	model=new SelectStatementModel();
 	boolean isdst = false;
 }
-	:	#("\u552f\u4e00" select sl=select_list)
+	:	#(DISTINCT_CN select sl=select_list)
 	{sl.setDistinct(true); model.setSelectList(sl);}
-	|	#("distinct" select sl=select_list)
+	|	#(DISTINCT_EN select sl=select_list)
 	{sl.setDistinct(true); model.setSelectList(sl);}
-
-	|	#("\u524dN\u6761" isdst = distinct_select_op int1:REAL_NUM sl=select_list)
+	
+	|	#(TOP_CN isdst=distinct_select_op int1:REAL_NUM sl=select_list)
 	{sl.setTopNum(int1.getText()); sl.setDistinct(isdst); model.setSelectList(sl);}
-	|	#("top" isdst = distinct_select_op  int2:REAL_NUM sl=select_list)
+	|	#(TOP_EN isdst=distinct_select_op  int2:REAL_NUM sl=select_list)
 	{sl.setTopNum(int2.getText()); sl.setDistinct(isdst); model.setSelectList(sl);}
-
-	|	#("\u67e5\u8be2" sl=select_list)
+	
+	|	#(SELECT_CN sl=select_list)
 	{model.setSelectList(sl);}
-	|	#("select" sl=select_list)
+	|	#(SELECT_EN sl=select_list)
 	{model.setSelectList(sl);}
-
-	|	#("\u6765\u81ea" s=select_statement tl=table_list)
+	
+	|	#(FROM_CN s=select_statement tl=table_list)
 	{model.addChild(s); model.setTableList(tl);}
-	|	#("from" s=select_statement tl=table_list)
+	|	#(FROM_EN s=select_statement tl=table_list)
 	{model.addChild(s); model.setTableList(tl);}
-
-	|	#("\u6761\u4ef6" s=select_statement cond=search_condition)
+	
+	|	#(WHERE_CN s=select_statement cond=search_condition)
 	{model.addChild(s); model.setSearchCondition(cond);}
-	|	#("where" s=select_statement cond=search_condition)
+	|	#(WHERE_EN s=select_statement cond=search_condition)
 	{model.addChild(s); model.setSearchCondition(cond);}
-
-	|	#("\u5206\u7ec4" s=select_statement group=aggregate_expression_list)
+	
+	|	#(GROUP_BY_CN s=select_statement group=aggregate_expression_list)
 	{model.addChild(s); model.setGroupExpressionList(group);}
-	|	#("group" s=select_statement group=aggregate_expression_list)
+	|	#(GROUP_EN s=select_statement group=aggregate_expression_list)
 	{model.addChild(s); model.setGroupExpressionList(group);}
 	
-	|	#("\u6392\u5e8f" s=select_statement order=order_expression_list)
+	|	#(ORDER_BY_CN s=select_statement order=order_expression_list)
 	{model.addChild(s); model.setOrderExpressionList(order);}
-	|	#("order" s=select_statement order=order_expression_list)
+	|	#(ORDER_EN s=select_statement order=order_expression_list)
 	{model.addChild(s); model.setOrderExpressionList(order);}
 	;
 
@@ -940,9 +1087,9 @@ distinct_select_op returns [boolean rValue]
 {
 	rValue = false;
 }
-	:	#("distinct" select)
+	:	#(DISTINCT_CN select)
 		{rValue = true;}
-	|	#("\u552f\u4e00" select)
+	|	#(DISTINCT_EN select)
 		{rValue = true;}
 	|	select
 		{rValue = false;}
@@ -968,35 +1115,24 @@ table_list returns [TableListModel model]
 	{model.addTable(t);}
 	;
 
-//search_condition returns [SearchConditionModel model]
-//{SearchConditionModel m1, m2; EquationModel equ; model=new SearchConditionModel();}
-//	:	#(LOGIC_OP m1=search_condition op:logic_op m2=search_condition)
-//	{model.addChild(m1); model.addOperator(op.getText()); model.addChild(m2);}
-//	|	equ=equation
-//	{model.addEquation(equ);}
-//	;
 search_condition returns [SearchConditionModel model]
 {SearchConditionModel m1, m2, m3, m4, m5; EquationModel equ; model=new SearchConditionModel();}
-	:	#(o1:"and" m1=search_condition m2=search_condition)
-	{model.addChild(m1); model.addOperator(o1.getText()); model.addChild(m2);}
-	|	#(o2:"or" m1=search_condition m2=search_condition)
-	{model.addChild(m1); model.addOperator(o2.getText()); model.addChild(m2);}
-	|	#(o3:"\u5e76\u4e14" m1=search_condition m2=search_condition)
+	:	#(o1:AND_EN m1=search_condition m2=search_condition)
+	{model.addChild(m1); model.addOperator(o1.getText(), true); model.addChild(m2);}
+	|	#(o2:OR_EN m1=search_condition m2=search_condition)
+	{model.addChild(m1); model.addOperator(o2.getText(), true); model.addChild(m2);}
+	|	#(o3:AND_CN m1=search_condition m2=search_condition)
 	{model.addChild(m1); model.addOperator(o3.getText()); model.addChild(m2);}
-	|	#(o4:"\u6216\u8005" m1=search_condition m2=search_condition)
+	|	#(o4:OR_CN m1=search_condition m2=search_condition)
 	{model.addChild(m1); model.addOperator(o4.getText()); model.addChild(m2);}
-
+	
 	|	#(LOGIC_BLOCK m3=search_condition)
 	{model.addOperator("("); model.addChild(m3); model.addOperator(")");}
 
-	|	#(SEARCH_NOT_CONDITION o11:"not" m4=search_condition)
-	{model.addOperator(o11.getText()); model.addChild(m4);}
-	|	#(o12:"\u975e" m5=search_condition)
+	|	#(SEARCH_NOT_CONDITION o11:NOT_EN m4=search_condition)
+	{model.addOperator(o11.getText(), true); model.addChild(m4);}
+	|	#(o12:NOT_CN m5=search_condition)
 	{model.addOperator(o12.getText()); model.addChild(m5);}
-//	|	#(o11:"not" m4=search_condition)
-//	{model.addOperator(o11.getText()); model.addChild(m4);}
-//	|	#(o12:"\u975e" m5=search_condition)
-//	{model.addOperator(o12.getText()); model.addChild(m5);}
 
 	|	equ=equation
 	{model.addEquation(equ);}
@@ -1020,9 +1156,9 @@ order_expression_list returns [OrderExpressionListModel model]
 
 column returns [ColumnModel model]
 {ExpressionModel e; AliasModel a; model=new ColumnModel();}
-	:	#("as" e=expression a=alias)
+	:	#(AS_EN e=expression a=alias)
 	{model.addExpression(e); model.addAlias(a);}
-	|	#("\u4f5c\u4e3a" e=expression a=alias)
+	|	#(AS_CN e=expression a=alias)
 	{model.addExpression(e); model.addAlias(a);}
 	|	#(ALIAS_EQU a=alias e=expression)
 	{model.addExpression(e); model.addAlias(a);}
@@ -1034,66 +1170,73 @@ equation returns [EquationModel model]
 {
 	ExpressionModel e1, e2, e3;
 	EquationModel equation;
+	SelectStatementModel stmt;
 	model=new EquationModel();
 	String nullStr = "";
 }
 	:	#(COMPARE_OP e1=expression op:compare_op e2=expression)
 	{model.addExpression(e1); model.addOperator(op.getText()); model.addExpression(e2);}
 	
-	|	#(LOGICAL_NOT_LIKE e1=expression "not" "like" e2=expression)
-	{model.addExpression(e1); model.addOperator("not like"); model.addExpression(e2);}
+	|	#(LOGICAL_EXISTS e1=expression le0:EXISTS_EN #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(le0.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
+	|	#(LOGICAL_NOT_EXISTS e1=expression le1:NOT_EN le2:EXISTS_EN #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(le1.getText() + " " + le2.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
+	|	#(le:EXISTS_CN e1=expression #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(le.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
+	|	#(lne:NOT_EXISTS_CN e1=expression #(SUBQUERY stmt=select_statement))
+	{model.addExpression(e1); model.addOperator(lne.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);}
 	
-	|	#(LOGICAL_NULL e1=expression "is" "null")
-	{model.addExpression(e1); model.addOperator("is null");}
-	|	#(n:"\u4e3a\u7a7a" e1=expression)
+	|	#(LOGICAL_LIKE e1=expression ls:LIKE_EN e2=expression)
+	{model.addExpression(e1); model.addOperator(ls.getText(), true); model.addExpression(e2);}	
+	|	#(LOGICAL_NOT_LIKE e1=expression ls1:NOT_EN ls2:LIKE_EN e2=expression)
+	{model.addExpression(e1); model.addOperator(ls1.getText() + " " + ls2.getText(), true); model.addExpression(e2);}
+	|	#(l:LIKE_CN e1=expression e2=expression)
+	{model.addExpression(e1); model.addOperator(l.getText()); model.addExpression(e2);}
+	|	#(nl:NOT_LIKE_CN e1=expression e2=expression)
+	{model.addExpression(e1); model.addOperator(nl.getText()); model.addExpression(e2);}
+
+	|	#(LOGICAL_NULL e1=expression nStr1:IS_EN nStr2:NULL_EN)
+	{model.addExpression(e1); model.addOperator(nStr1.getText() + " " + nStr2.getText(), true);}
+	|	#(n:NULL_CN e1=expression)
 	{model.addExpression(e1); model.addOperator(n.getText());}
-	|	#(LOGICAL_NOT_NULL e1=expression "is" "not" "null")
-	{model.addExpression(e1); model.addOperator("is not null");}
-	|	#(nn:"\u975e\u7a7a" e1=expression)
+	|	#(LOGICAL_NOT_NULL e1=expression nStr3:IS_EN nStr4:NOT_EN nStr5:NULL_EN)
+	{model.addExpression(e1); model.addOperator(nStr3.getText() + " " + nStr4.getText() + " " + nStr5.getText(), true);}
+	|	#(nn:NOT_NULL_CN e1=expression)
 	{model.addExpression(e1); model.addOperator(nn.getText());}
 
-//	|	#(n:"\u4e3a\u7a7a" e1=expression)
-//	{model.addExpression(e1); model.addOperator(n.getText());}
-//	|	#("null" e1=expression)
-//	{model.addExpression(e1); model.addOperator("is null");}
-//	|	#(nn:"\u975e\u7a7a" e1=expression)
-//	{model.addExpression(e1); model.addOperator(nn.getText());}
-//	|	#(nn_en:"not" e1=expression)
-//	{model.addExpression(e1); model.addOperator("is not null");}
 
-	|	#("between" e1=expression e2=expression e3=expression)
-	{model.addExpression(e1); model.addOperator("between");
+	|	#(bt1:BETWEEN_EN e1=expression e2=expression e3=expression)
+	{model.addExpression(e1); model.addOperator(bt1.getText(), true);
 	 model.addExpression(e2); model.addExpression(e3);}
-	|	#(btw:"\u8303\u56f4" e1=expression e2=expression e3=expression)
+	|	#(btw:BETWEEN_CN e1=expression e2=expression e3=expression)
 	{model.addExpression(e1); model.addOperator(btw.getText());
 	 model.addExpression(e2); model.addExpression(e3);
 	}
 	
-	|	#(LOGICAL_IN e1=expression "in" e2=exp_set)
-	{model.addExpression(e1); model.addOperator("in"); model.addExpression(e2);}
-	|	#(ct1:"\u5728\u4e8e" e1=expression e2=exp_set)
+	|	#(LOGICAL_IN e1=expression in1:IN_EN e2=exp_set)
+	{model.addExpression(e1); model.addOperator(in1.getText(), true); model.addExpression(e2);}
+	|	#(LOGICAL_NOT_IN e1=expression in2:NOT_EN in3: IN_EN e2=exp_set)
+	{model.addExpression(e1); model.addOperator(in2.getText() + " " + in3.getText(), true); model.addExpression(e2);}
+	|	#(ct1:IN_CN e1=expression e2=exp_set)
 	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
-	|	#(LOGICAL_NOT_IN e1=expression "not" "in" e2=exp_set)
-	{model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);}
-	|	#(ct2:"\u4e0d\u5728\u4e8e" e1=expression e2=exp_set)
+	|	#(ct2:NOT_IN_CN e1=expression e2=exp_set)
 	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
-
-//	|	#("in" e1=expression e2=exp_set)
-//	{model.addExpression(e1); model.addOperator("in"); model.addExpression(e2);}
-//	|	#(ct1:"\u5728\u4e8e" e1=expression e2=exp_set)
-//	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
-//	|	#("not in" e1=expression e2=exp_set)
-//	{model.addExpression(e1); model.addOperator("not in"); model.addExpression(e2);}
-//	|	#(ct2:"\u4e0d\u5728\u4e8e" e1=expression e2=exp_set)
-//	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
-
 	;
 
 exp_set returns [ExpressionModel model]
-{model = new ExpressionModel(); ExprContainModel expr;}
-	: 	#(SUBCONTAIN_OP LPAREN expr=constexpset RPAREN)
+{
+	model = new ExpressionModel();
+	SelectStatementModel stmt;
+	ExprContainModel expr;
+}
+	: 	#(SUBCONTAIN_OP expr=constexpset)
 		{
 			model.addExprContainModel(expr);
+		}
+	|	#(SUBQUERY stmt=select_statement)
+		{
+			model.addSelectStatement(stmt);
+			stmt.setSubquery(true);
 		}
 	;
 
@@ -1119,8 +1262,10 @@ constant_expr returns [String rValue]
 
 aggregate_expression returns [AggregateExprModel model]
 {AggregateExprModel a1, a2; FieldModel field; FunctionModel func; model=new AggregateExprModel();}
-	:	#(TWO_ARG_OP a1=aggregate_expression op:two_arg_op a2=aggregate_expression)
-	{model.addChild(a1); model.addOperator(op.getText()); model.addChild(a2);}
+	:	lp:LPAREN a1=aggregate_expression rp:RPAREN
+	{model.addOperator(lp.getText()); model.addChild(a1); model.addOperator(rp.getText());}
+	|	#(TWO_ARG_OP a1=aggregate_expression op:two_arg_op a2=aggregate_expression)
+	{model.addChild(a1); model.addOperator(op.getText(), true); model.addChild(a2);}
 	|	field=field_name
 	{model.addField(field);}
 	|	func=function
@@ -1132,6 +1277,7 @@ aggregate_expression returns [AggregateExprModel model]
 	|	qs:QUOTED_STRING
 	{model.addConstant(qs.getText());}	
 	;
+
 order_expression returns [OrderExpressionModel model]
 {FunctionModel func; FieldModel field; OrderAliasModel alias; OrderExpressionModel o; model=new OrderExpressionModel();}
 	:	alias = orderAlias
@@ -1140,15 +1286,16 @@ order_expression returns [OrderExpressionModel model]
 	{model.addField(field);}
 	|	func=function
 	{model.addFunction(func);}
-	|	#("asc" o=order_expression)
+	|	#(ASC_EN o=order_expression)
 	{model.addChild(o); model.setSort(OrderExpressionModel.ASC);}
-	|	#("\u5347\u5e8f" o=order_expression)
+	|	#(ASC_CN o=order_expression)
 	{model.addChild(o); model.setSort(OrderExpressionModel.ASC);}
-	|	#("desc" o=order_expression)
+	|	#(DESC_EN o=order_expression)
 	{model.addChild(o); model.setSort(OrderExpressionModel.DESC);}
-	|	#("\u964d\u5e8f" o=order_expression)
+	|	#(DESC_CN o=order_expression)
 	{model.addChild(o); model.setSort(OrderExpressionModel.DESC);}
 	;
+
 orderAlias returns [OrderAliasModel model]
 {model=null;}
 	:	a1:QUOTED_STRING
@@ -1156,6 +1303,7 @@ orderAlias returns [OrderAliasModel model]
 	|	a2:ID
 	{model=new OrderAliasModel(a2.getText());}
 	;
+
 alias returns [AliasModel model]
 {model=null;}
 	:	a1:QUOTED_STRING
@@ -1167,9 +1315,9 @@ alias returns [AliasModel model]
 expression returns [ExpressionModel model]
 {FieldModel f; FunctionModel func; ParamModel param; ExpressionModel e1, e2; model=new ExpressionModel();}
 	:	#(TWO_ARG_OP e1=expression op:two_arg_op e2=expression)
-	{model.addChild(e1); model.addOperator(op.getText()); model.addChild(e2);}
+	{model.addChild(e1); model.addOperator(op.getText(), true); model.addChild(e2);}
 	|	#(ONE_ARG_OP op1:one_arg_op e1=expression)
-	{model.addOperator(op1.getText()); model.addChild(e1);}
+	{model.addOperator(op1.getText(), true); model.addChild(e1);}
 	|	lp:LPAREN e1=expression rp:RPAREN
 	{model.addOperator(lp.getText()); model.addChild(e1); model.addOperator(rp.getText());}
 	|	dkw:date_key_word
@@ -1191,24 +1339,11 @@ expression returns [ExpressionModel model]
 	;
 
 param_equ returns [ParamModel model]
-	{model = null;}
+{model = null;}
 	:	paramName:PARAM_ID
 		{model = new ParamModel(paramName.getText(), "{", "}");}
-//	|	#(paramName:ID lp:PARAM_LPAREN rp:PARAM_RPAREN)
-//		{model = new ParamModel(paramName.getText(), lp.getText(), rp.getText());}
 	;
 	
-//field_name returns [FieldModel model]
-//{model=null;}
-//	:	f:ID
-//	{model=new FieldModel(f.getText());}
-//	|	#(POINT t:ID f1:ID)
-//	{
-//		model=new FieldModel(f1.getText(), t.getText());
-//		addTableByChName(t.getText());
-//	}
-//	;
-
 field_name returns [FieldModel model]
 {
 	model=null;
@@ -1243,28 +1378,34 @@ function returns [FunctionModel model]
 	:	//Aggregate functions\u805a\u5408\u51fd\u6570
 		af:aggregate_func_name p=parameters
 		{
-			model = new AggregateFuncModel(af.getText(), AggregateFuncModel.NO_FILTER); 
+			model = new AggregateFuncModel(af.getText(), AggregateFuncModel.NO_FILTER, true); 
 			model.setParameters(p);
 		}
 		
 		//Normal functions\u666e\u901a\u51fd\u6570
-//	|	f:function_name p=parameters
 	|	#(FUNCTION f:function_name p=parameters)
 		{
-			model = new FunctionModel(f.getText());
+			model = new FunctionModel(f.getText(), true);
 			model.setParameters(p);
+		}
+		
+		//Normal functions\u53c2\u6570\u4e3a\u7a7a\u7684\u666e\u901a\u51fd\u6570[sysdate]
+	|	#(FUNCTION_NOTHING nfun:function_name)
+		{
+			model = new FunctionModel(nfun.getText(), true);
+			model.setNothing(true);
 		}
 		
 		//Normal functions\u53c2\u6570\u4e3a\u7a7a\u7684\u666e\u901a\u51fd\u6570[getdate()]
 	|	#(FUNCTION_EMPTY_PARAM fun1:function_name)
 		{
-			model = new FunctionModel(fun1.getText());
+			model = new FunctionModel(fun1.getText(), true);
 		}
 		
 		//Normal functions\u53c2\u6570\u4e3a*\u7684\u666e\u901a\u51fd\u6570[now(*)...]
 	|	#(FUNCTION_STAR_PARAM funStar:function_name)
 		{
-			model = new FunctionModel(funStar.getText());
+			model = new FunctionModel(funStar.getText(), true);
 			express1.addOperator("*");
 			p = new ParametersModel();
 			p.addParameter(express1);
@@ -1274,32 +1415,29 @@ function returns [FunctionModel model]
 		//Normal functions\u53c2\u6570\u4e3aDATA TYPE\u7684\u666e\u901a\u51fd\u6570[convert(char(10), '2007-01-01', 120)]
 	|	#(FUNCTION_DATA_TYPE dtf1:function_name dtp1=data_type_parameters)
 		{
-			model = new FunctionModel(dtf1.getText());
+			model = new FunctionModel(dtf1.getText(), true);
 			model.setParameters(dtp1);
 		}
 	
 		//Normal functions\u53c2\u6570\u4e3aAS\u53caDATA TYPE\u7684\u666e\u901a\u51fd\u6570[cast('2007-01-01' as char(10))]
 	|	#(FUNCTION_AS_DATA_TYPE dtf2:function_name dtp2=as_data_type_parameters)
 		{
-			model = new FunctionModel(dtf2.getText());
+			model = new FunctionModel(dtf2.getText(), true);
 			model.setParameters(dtp2);
 		}
 		
 		//Aggregate functions\u53c2\u6570\u4e3a*\u7684COUNT\u51fd\u6570\uff0c\u805a\u5408\u51fd\u6570[count(*)]
-//	|	#(FUNCTION_STAR_COUNT fun2:function_name)
-	|	#(FUNCTION_STAR_COUNT countStr:"\u6c42\u8bb0\u5f55\u603b\u6570")
+	|	#(FUNCTION_STAR_COUNT cf1:"\u6c42\u8bb0\u5f55\u603b\u6570")
 		{	
-			//model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
-			model = new AggregateFuncModel(countStr.getText(), AggregateFuncModel.NO_FILTER);
+			model = new AggregateFuncModel(cf1.getText(), AggregateFuncModel.NO_FILTER, true);
 			express1.addOperator("*");
 			p = new ParametersModel();
 			p.addParameter(express1);
 			model.setParameters(p);
 		}
-	|	#(FUNCTION_STAR_COUNT "count")
+	|	#(FUNCTION_STAR_COUNT cf2:COUNT_EN)
 		{	
-			//model = new AggregateFuncModel(fun2.getText(), AggregateFuncModel.NO_FILTER);
-			model = new AggregateFuncModel("count", AggregateFuncModel.NO_FILTER);
+			model = new AggregateFuncModel(cf2.getText(), AggregateFuncModel.NO_FILTER, true);
 			express1.addOperator("*");
 			p = new ParametersModel();
 			p.addParameter(express1);
@@ -1307,26 +1445,26 @@ function returns [FunctionModel model]
 		}
 
 		//Aggregate functions\u53c2\u6570\u4e3a\u5168\u90e8\u3001all\u7684\u805a\u5408\u51fd\u6570
-	|	#(all:"\u5168\u90e8" af11:function_name p=parameters)
+	|	#(all1:ALL_CN af11:function_name p=parameters)
 		{
-			model = new AggregateFuncModel(af11.getText(), AggregateFuncModel.ALL);
+			model = new AggregateFuncModel(af11.getText(), AggregateFuncModel.ALL, true);
 			model.setParameters(p);
 		}
-	|	#("all" af12:function_name p=parameters)
+	|	#(all2:ALL_EN af12:function_name p=parameters)
 		{
-			model = new AggregateFuncModel(af12.getText(), AggregateFuncModel.ALL);
+			model = new AggregateFuncModel(af12.getText(), AggregateFuncModel.ALL, true);
 			model.setParameters(p);
 		}
 		
 		//Aggregate functions\u53c2\u6570\u4e3a\u552f\u4e00\u3001distinct\u7684\u805a\u5408\u51fd\u6570
-	|	#(dist:"\u552f\u4e00" af21:function_name p=parameters)
+	|	#(dist1:DISTINCT_CN af21:function_name p=parameters)
 		{
-			model = new AggregateFuncModel(af21.getText(), AggregateFuncModel.DISTINCT);
+			model = new AggregateFuncModel(af21.getText(), AggregateFuncModel.DISTINCT, true);
 			model.setParameters(p);
 		}
-	|	#("distinct" af22:function_name p=parameters)
+	|	#(dist2:DISTINCT_EN af22:function_name p=parameters)
 		{
-			model=new AggregateFuncModel(af22.getText(), AggregateFuncModel.DISTINCT);
+			model=new AggregateFuncModel(af22.getText(), AggregateFuncModel.DISTINCT, true);
 			model.setParameters(p);
 		}
 	;
@@ -1358,20 +1496,20 @@ as_data_type_parameters returns [ParametersModel model]
 	   	{
 	   		model.addParameter(e);
 	   		model.addParameter(adtc);
-	   		model.addFilter(" as ");
+	   		model.addFilter(ParametersModel.AS);
 	   	}
 	;
 
 //\u6570\u636e\u7c7b\u578b\u5e38\u91cf\u904d\u5386
 datatype_constant returns [ExpressionModel model]
 {model=new ExpressionModel(); String rValue = ""; String rp = "";}
-	:	c1:"char"
+	:	c1:CHAR
 		{
 			//\u8fd4\u56dechar\u4fdd\u7559\u5b57
 			rValue = c1.getText();
 			model.addConstant(rValue);
 		}
-	|	#(PAREN_CHAR_DATA_TYPE c2:"char" rp=datatype_precision_or_scale_or_maxlength)
+	|	#(PAREN_CHAR_DATA_TYPE c2:CHAR rp=datatype_precision_or_scale_or_maxlength)
 		{
 			//\u8fd4\u56de\u5e26\u53c2\u6570char\u4fdd\u7559
 			rValue = c2.getText() + "(" + rp + ")";
@@ -1409,13 +1547,9 @@ table_name returns [TableModel model]
 {AliasModel a; model=null; TableAliasModel ta;}
 	:	t:ID
 	{model=new TableModel(t.getText());}
-//	|	#("as" t1:ID a=alias)
-//	{model=new TableModel(t1.getText()); model.setAlias(a);}
-//	|	#("\u4f5c\u4e3a" t2:ID a = alias)
-//	{model = new TableModel(t2.getText()); model.setAlias(a);}
-	|	#("as" t1:ID ta = tableAlias)
+	|	#(AS_EN t1:ID ta = tableAlias)
 	{model = new TableModel(t1.getText()); model.setAlias(ta);}
-	|	#("\u4f5c\u4e3a" t2:ID ta = tableAlias)
+	|	#(AS_CN t2:ID ta = tableAlias)
 	{model = new TableModel(t2.getText()); model.setAlias(ta);}
 	;
 
@@ -1428,38 +1562,49 @@ tableAlias returns [TableAliasModel model]
 	;
 
 //////////////////////////////////////////////////////////////
-// \u5e38\u91cf
-select : "\u67e5\u8be2" | "select";
-
-distinct : "\u552f\u4e00" | "distinct";
-
-logic_op : "and" | "or" | "\u5e76\u4e14" | "\u6216\u8005";
-
-compare_op
-	:	COMPARE_OP
-	| "\u7b49\u4e8e" | "\u5927\u4e8e\u7b49\u4e8e" | "\u5c0f\u4e8e\u7b49\u4e8e" | "\u5927\u4e8e" | "\u5c0f\u4e8e" | "\u4e0d\u7b49\u4e8e"
-	| "\u5305\u542b" | "\u4e0d\u5305\u542b" | "like"
-	| "\u5de6\u8fde\u63a5" | LEFT_JOIN
+select
+	: SELECT_EN | SELECT_CN
 	;
 
 one_arg_op
-	:	ONE_ARG_OP;
+	: TILDE | "\u975e\u8fd0\u7b97";
 
 two_arg_op
-	:	TWO_ARG_OP | STAR | MINUS
-	|	"\u4e0e" | "\u6216" | "\u5f02\u6216" | "\u52a0" | "\u51cf" | "\u4e58" | "\u9664" | "\u6c42\u6a21";
+	:	arithmeticOperator | bitwiseOperator
+	|	"\u4e0e" | "\u975e\u8fd0\u7b97" | "\u6216" | "\u5f02\u6216" | "\u52a0" | "\u51cf" | "\u4e58" | "\u9664" | "\u6c42\u6a21";
 
-//\u6bd4\u8f83\u8fd0\u7b97\u7b26
-comparemethod_name
-	:	"exists" | "\u5b58\u5728" | "\u4e0d\u5b58\u5728"
+arithmeticOperator
+    : PLUS | MINUS | STAR | DIVIDE | MOD
+    ;
+
+bitwiseOperator
+    : AMPERSAND | TILDE | BITWISEOR | BITWISEXOR
+    ;
+
+alias_equ_op
+	:	ASSIGNEQUAL | "\u7b49\u4e8e"
 	;
 
-//\u65e5\u671fdate-part\u4fdd\u7559\u5b57
-date_key_word
-	: "year" | "yy" | "month" | "mm" | "day" | "dd"
-	| "quarter" | "qq" | "week" | "wk" | "dayofyear" | "dy"
-	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
-	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
+compare_op
+	:	comparisonOperator
+	|	"\u7b49\u4e8e" | "\u5927\u4e8e\u7b49\u4e8e" | "\u5c0f\u4e8e\u7b49\u4e8e" | "\u5927\u4e8e" | "\u5c0f\u4e8e" | "\u4e0d\u7b49\u4e8e"
+	|	"\u5de6\u8fde\u63a5"	| LEFT_JOIN
+	;
+
+comparisonOperator
+	:	ASSIGNEQUAL
+	| 	NOTEQUAL1
+	| 	NOTEQUAL2
+	| 	LESSTHANOREQUALTO1
+	| 	LESSTHANOREQUALTO2 
+    | 	LESSTHAN
+	| 	GREATERTHANOREQUALTO1
+	| 	GREATERTHANOREQUALTO2
+	| 	GREATERTHAN
+	;
+
+comparemethod_name
+	:	EXISTS_EN | EXISTS_CN | NOT_EXISTS_CN
 	;
 
 //\u805a\u5408\u51fd\u6570
@@ -1603,6 +1748,15 @@ system_function
 other_function
 	:	"argn"
 	| 	"rowid"
+	;
+
+
+//\u65e5\u671fdate-part\u4fdd\u7559\u5b57
+date_key_word
+	: "year" | "yy" | "month" | "mm" | "day" | "dd"
+	| "quarter" | "qq" | "week" | "wk" | "dayofyear" | "dy"
+	| "weekday" | "dw" | "hour" | "hh" | "minute" | "mi" | "second" | "ss" | "millisecond" | "ms"
+	| "calweekofyear" | "cwk" | "calyearofweek" | "cyr" | "caldayofweek" | "cdw"
 	;
 
 //\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57
