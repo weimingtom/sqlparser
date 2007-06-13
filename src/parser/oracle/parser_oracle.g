@@ -217,12 +217,13 @@ equation
 		//\u6bd4\u8f83\u8fd0\u7b97\u7b26(>= > = <...) \u8868\u8fbe\u5f0f
 		(compare_op) expression
 	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);}
+
 	|	(EXISTS_EN) subquery
 		{#equation=#([LOGICAL_EXISTS, "logic_exists"], #equation);}	
 	|	(NOT_EN EXISTS_EN) subquery
 		{#equation=#([LOGICAL_NOT_EXISTS, "logic_not_exists"], #equation);}	
 	|	(EXISTS_CN^ | NOT_EXISTS_CN^) subquery
-	
+
 		//\u903b\u8f91\u8fd0\u7b97\u7b26LIKE/NOT LIKE \u8868\u8fbe\u5f0f
 	|	(LIKE_EN) expression
 		{#equation=#([LOGICAL_LIKE, "logic_like"], #equation);}	
