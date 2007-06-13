@@ -109,7 +109,7 @@ public DB2UDB8xLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("like", this), new Integer(75));
 	literals.put(new ANTLRHashString("date", this), new Integer(325));
 	literals.put(new ANTLRHashString("\u9664", this), new Integer(270));
-	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c", this), new Integer(351));
+	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c", this), new Integer(349));
 	literals.put(new ANTLRHashString("variance", this), new Integer(110));
 	literals.put(new ANTLRHashString("hextoraw", this), new Integer(224));
 	literals.put(new ANTLRHashString("dayofyear", this), new Integer(307));
@@ -129,7 +129,7 @@ public DB2UDB8xLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u51cf", this), new Integer(268));
 	literals.put(new ANTLRHashString("\u6c42\u6807\u8bc6\u7f16\u53f7", this), new Integer(241));
 	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u58f0\u97f3\u503c", this), new Integer(199));
-	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c", this), new Integer(352));
+	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c", this), new Integer(350));
 	literals.put(new ANTLRHashString("\u683c\u5f0f\u5316\u6570\u503c2", this), new Integer(159));
 	literals.put(new ANTLRHashString("to_multi_byte", this), new Integer(234));
 	literals.put(new ANTLRHashString("empty_clob", this), new Integer(254));
@@ -172,7 +172,7 @@ public DB2UDB8xLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("acos", this), new Integer(118));
 	literals.put(new ANTLRHashString("\u6c42\u53cd\u6b63\u5207\u503c", this), new Integer(123));
 	literals.put(new ANTLRHashString("null", this), new Integer(79));
-	literals.put(new ANTLRHashString("\u5de6\u8fde\u63a5", this), new Integer(350));
+	literals.put(new ANTLRHashString("\u5de6\u8fde\u63a5", this), new Integer(348));
 	literals.put(new ANTLRHashString("\u5e76\u4e14", this), new Integer(61));
 	literals.put(new ANTLRHashString("lower", this), new Integer(178));
 	literals.put(new ANTLRHashString("y", this), new Integer(309));

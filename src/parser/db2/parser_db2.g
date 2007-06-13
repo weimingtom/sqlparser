@@ -8,17 +8,11 @@
 //
 //	\u4fee\u6539\u65e5\u5fd7:
 //	========================================================
-//	05/31/2007:
-//		- \u5c06\u8bed\u6cd5\u5b9a\u4e49\u7684\u5173\u952e\u5b57\u653e\u5728\u8bcd\u6cd5\u7684tokens\u4e2d,\u8bed\u6cd5\u5b9a\u4e49\u4e2d\u4e0d\u518d\u51fa\u73b0
-//		  \u81ea\u5df1\u5b9a\u4e49\u5173\u952e\u5b57
-//		- \u5728\u64cd\u4f5c\u7b26\u53ca\u51fd\u6570\u653e\u5165\u5bf9\u5e94Model\u65f6\u5c06\u82f1\u6587\u8f6c\u5316\u6210\u4e2d\u6587,\u7edf\u4e00\u683c\u5f0f\u5316
-//		- aggregate_expr\u8bed\u6cd5\u589e\u52a0\u5bf9()\u7684\u8bc6\u522b,\u5e76\u589e\u52a0\u5e38\u91cf\u7684\u5b9a\u4e49,\u4f7f
-//		  abs(-900) + 500\u7684\u8bed\u53e5\u53ef\u9a8c\u8bc1
-//	06/11/2007:
-//		- equation\u589e\u52a0EXISTS/NOT EXISTS\u7684\u8bed\u6cd5\u5b9a\u4e49\uff0c\u5141\u8bb8\u5b50\u67e5\u8be2
-//		  \u8bbe\u7f6eSUBQUERY\u7684TOKEN\u8fdb\u884c\u8bed\u6cd5\u6811\u904d\u5386
-//	06/12/2007:
-//		- exp_set\u8bed\u6cd5\u589e\u52a0\u5b50\u67e5\u8be2\u89e3\u6790\uff0c\u540c\u65f6\u589e\u52a0\u5b50\u67e5\u8be2\u7684\u8bed\u6cd5\u6811\u904d\u5386
+//	
+//	
+//	
+//	
+//	
 //==========================================================*/
 
 header {
@@ -951,7 +945,7 @@ compare_method returns [String rValue]
 {rValue = "";}
 	:	v1: comparemethod_name
 		{rValue = v1.getText();}
-	|	#(LOGICAL_NOT_EXISTS ne1:NOT ne2:EXISTS)
+	|	#(LOGICAL_NOT_EXISTS ne1:NOT_EN ne2:EXISTS_EN)
 		{rValue = ne1.getText() + " " + ne2.getText();}
 	;
 
