@@ -56,6 +56,10 @@ import model.parser.exceptions.TableNumberException;
  * 06/12/2007:<br>
  * 	- getXmlString、loadModelFromXML方法增加对databaseType<br>
  * 		的转化，用来判断语句的数据库类型<br>
+ * 06/13/2007:<br>
+ * 	- 重载getCnKeyWords方法，增加databaseType参数，用来根据数据<br>
+ * 		库类型获取对应中文关键字信息
+ * 		
  * ======================================================
  */
 public class Translator {
@@ -65,6 +69,7 @@ public class Translator {
   //中文关键字属性KEY
   public static final String CNKEY_WORDS = "cnKeyWords";
   public static final String CNKEY_FUNC = "cnFunc";
+  public static final String CNKEY_ORACLE_FUNC = "cnFunc_oracle";
   public static final String CNKEY_OPERSYMBOL = "operSymbol";
   public static final String CNKEY_NUMBERSYMBOL = "numberSymbol";
   
@@ -135,6 +140,37 @@ public class Translator {
    */
   public static String getCnKeyWords(String keyName) {
     String[] cnKeyWordsArr = new String[]{CNKEY_WORDS, CNKEY_FUNC, CNKEY_OPERSYMBOL, CNKEY_NUMBERSYMBOL};
+    
+    String cnKeyWords = "";
+    ResourceBundle bundle = ResourceBundle.getBundle(CN_KEY_WORDS, Locale.CHINESE);
+    if (keyName == null || keyName.equals("")){
+      for (int i = 0; i < cnKeyWordsArr.length; i++){
+        cnKeyWords +=  bundle.getString(cnKeyWordsArr[i]);
+        if (i < cnKeyWordsArr.length - 1)
+          cnKeyWords += ",";
+      }
+    }else{
+      cnKeyWords = bundle.getString(keyName);
+    }
+    return cnKeyWords;
+  }
+  
+  /**
+   * 根据关键字/函数/操作符/运算符的KEY获取对应中文关键字名称
+   * @param keyName 关键字/函数/操作符/运算符属性KEY
+   * @return String 中文关键字名称
+   */
+  public static String getCnKeyWords(String databaseType, String keyName) {
+  	String cnKeyFuncs = CNKEY_FUNC;
+  	if (databaseType != null && !databaseType.equals("")){
+	  	if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
+	  		cnKeyFuncs = CNKEY_ORACLE_FUNC;
+	  	}else if (databaseType.equals(DataBaseType.SYBASE_ASE_12) || databaseType.equals(DataBaseType.SYBASE_IQ_12)){
+	  		cnKeyFuncs = CNKEY_FUNC;
+	  	}
+  	}
+  	
+    String[] cnKeyWordsArr = new String[]{CNKEY_WORDS, cnKeyFuncs, CNKEY_OPERSYMBOL, CNKEY_NUMBERSYMBOL};
     
     String cnKeyWords = "";
     ResourceBundle bundle = ResourceBundle.getBundle(CN_KEY_WORDS, Locale.CHINESE);
