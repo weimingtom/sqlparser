@@ -225,7 +225,13 @@ equation
 		//\u5173\u7cfb\u8fd0\u7b97\u7b26(+ - * /) \u8868\u8fbe\u5f0f
 		("=" | compare_op) expression
 	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);}
-	  	
+
+//	|	("exists") subquery
+//		{#equation=#([LOGICAL_EXISTS, "logic_exists"], #equation);}	
+//	|	("not" "exists") subquery
+//		{#equation=#([LOGICAL_NOT_EXISTS, "logic_not_exists"], #equation);}	
+//	|	("\u5b58\u5728"^ | "\u4e0d\u5b58\u5728"^) subquery
+	
 		//\u5173\u7cfb\u8fd0\u7b97\u7b26NOT LIKE \u8868\u8fbe\u5f0f
 	|	("not" "like") expression
 		{#equation=#([LOGICAL_NOT_LIKE, "logic_not_like"], #equation);}	
