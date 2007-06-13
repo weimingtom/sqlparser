@@ -5785,8 +5785,6 @@ inputState.guessing--;
 		"NUM_START",
 		"NUM_LETTER",
 		"ML_COMMENT",
-		"NOT",
-		"EXISTS",
 		"COMPARE_OP",
 		"TWO_ARG_OP",
 		"ONE_ARG_OP",

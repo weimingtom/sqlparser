@@ -8,17 +8,11 @@
 //
 //	修改日志:
 //	========================================================
-//	05/31/2007:
-//		- 将语法定义的关键字放在词法的tokens中,语法定义中不再出现
-//		  自己定义关键字
-//		- 在操作符及函数放入对应Model时将英文转化成中文,统一格式化
-//		- aggregate_expr语法增加对()的识别,并增加常量的定义,使
-//		  abs(-900) + 500的语句可验证
-//	06/11/2007:
-//		- equation增加EXISTS/NOT EXISTS的语法定义，允许子查询
-//		  设置SUBQUERY的TOKEN进行语法树遍历
-//	06/12/2007:
-//		- exp_set语法增加子查询解析，同时增加子查询的语法树遍历
+//	
+//	
+//	
+//	
+//	
 //==========================================================*/
 
 header {
@@ -951,7 +945,7 @@ compare_method returns [String rValue]
 {rValue = "";}
 	:	v1: comparemethod_name
 		{rValue = v1.getText();}
-	|	#(LOGICAL_NOT_EXISTS ne1:NOT ne2:EXISTS)
+	|	#(LOGICAL_NOT_EXISTS ne1:NOT_EN ne2:EXISTS_EN)
 		{rValue = ne1.getText() + " " + ne2.getText();}
 	;
 
