@@ -112,7 +112,7 @@ tableCompare
 compare_method
 	:	(EXISTS_EN | EXISTS_CN | NOT_EXISTS_CN)
 	|	NOT_EN EXISTS_EN
-		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], compare_method);}
+		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], #compare_method);}
 	;
 
 //自定义查询
@@ -140,7 +140,7 @@ table_list
 search_condition
 	:	bool_exp
 	|	( NOT_EN
-		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], search_condition);}
+		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], #search_condition);}
 		| NOT_CN^
 		) search_condition
 	;
@@ -154,7 +154,7 @@ bool_exp
 //单个条件的括号推理
 bool_term
 	:	(LPAREN bool_exp RPAREN) => LPAREN! exp:bool_exp RPAREN!
-	{#bool_term=#([LOGIC_BLOCK, "log_block"], bool_term);}
+	{#bool_term=#([LOGIC_BLOCK, "log_block"], #bool_term);}
 	|	equation
 	;
 
@@ -217,12 +217,13 @@ equation
 		//比较运算符(>= > = <...) 表达式
 		(compare_op) expression
 	  	{#equation=#([COMPARE_OP, "comp_op"], #equation);}
+
 	|	(EXISTS_EN) subquery
 		{#equation=#([LOGICAL_EXISTS, "logic_exists"], #equation);}	
 	|	(NOT_EN EXISTS_EN) subquery
 		{#equation=#([LOGICAL_NOT_EXISTS, "logic_not_exists"], #equation);}	
 	|	(EXISTS_CN^ | NOT_EXISTS_CN^) subquery
-	
+
 		//逻辑运算符LIKE/NOT LIKE 表达式
 	|	(LIKE_EN) expression
 		{#equation=#([LOGICAL_LIKE, "logic_like"], #equation);}	

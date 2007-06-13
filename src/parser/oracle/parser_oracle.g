@@ -112,7 +112,7 @@ tableCompare
 compare_method
 	:	(EXISTS_EN | EXISTS_CN | NOT_EXISTS_CN)
 	|	NOT_EN EXISTS_EN
-		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], compare_method);}
+		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], #compare_method);}
 	;
 
 //\u81ea\u5b9a\u4e49\u67e5\u8be2
@@ -140,7 +140,7 @@ table_list
 search_condition
 	:	bool_exp
 	|	( NOT_EN
-		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], search_condition);}
+		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], #search_condition);}
 		| NOT_CN^
 		) search_condition
 	;
@@ -154,7 +154,7 @@ bool_exp
 //\u5355\u4e2a\u6761\u4ef6\u7684\u62ec\u53f7\u63a8\u7406
 bool_term
 	:	(LPAREN bool_exp RPAREN) => LPAREN! exp:bool_exp RPAREN!
-	{#bool_term=#([LOGIC_BLOCK, "log_block"], bool_term);}
+	{#bool_term=#([LOGIC_BLOCK, "log_block"], #bool_term);}
 	|	equation
 	;
 

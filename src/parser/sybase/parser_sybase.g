@@ -125,7 +125,7 @@ tableCompare
 compare_method
 	:	comparemethod_name
 	|	"not" "exists"
-		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], compare_method);}
+		{#compare_method = #([LOGICAL_NOT_EXISTS, "logic_not_exists"], #compare_method);}
 	;
 
 select_statement
@@ -158,7 +158,7 @@ table_list
 search_condition
 	:	bool_exp
 	|	( "not"
-		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], search_condition);}
+		{#search_condition = #([SEARCH_NOT_CONDITION, "search_not_condition"], #search_condition);}
 		| "\u975e"^
 		) search_condition
 	;
@@ -170,7 +170,7 @@ bool_exp
 
 bool_term
 	:	(LPAREN bool_exp RPAREN) => LPAREN! exp:bool_exp RPAREN!
-	{#bool_term=#([LOGIC_BLOCK, "log_block"], bool_term);}
+	{#bool_term=#([LOGIC_BLOCK, "log_block"], #bool_term);}
 	|	equation
 	;
 
