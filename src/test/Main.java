@@ -34,17 +34,19 @@ public class Main {
     	functionsTestMain.FunctionsTest(mNum);
   	}else{
   		Main main = new Main();
-//  		main.testSegment();
+  		main.testSegment();
+  		main.testUnion();
+      main.testCompare();
   		main.customQueryTest();
   		main.testTranslator();
-//      main.testUnion();
-//      main.testCompare();
   	}
   }
  
   public void testSegment(){
     String[] segmentArr = new String[]{"求总和(AI_94传票对照表.省/市代号) 作为 c", "((AI_94传票对照表.金额 加 AI_94传票对照表.货币码) 乘 AI_94传票对照月表.金额)"};
     Translator t = new Translator();
+    
+    System.out.println("SELECT子句测试：");
     for (int i = 0; i < segmentArr.length; i++){
       t.setChSegment(t.COLUMN, segmentArr[i]);
       DbTable[] ts = t.getTables();
@@ -65,13 +67,14 @@ public class Main {
           System.out.println(msgs[j]);
         }
       }
-      System.out.println(t.getQueryModel().getChSegment(t.COLUMN));
-      System.out.println(t.getQueryModel().getEnSegment(t.COLUMN));
+      System.out.println("CN SQL IS: " + t.getQueryModel().getChSegment(t.COLUMN));
+      System.out.println("EN SQL IS: " + t.getQueryModel().getEnSegment(t.COLUMN));
+      System.out.println("");
     }
     
-//    segmentArr = new String[]{"AI_94传票对照表.省/市代号 + AI_94传票对照表.金额 大于 30", "AI_94传票对照月表.货币码 包含 'abcd'", "字符串右截( 字符串截取(AI_通用分户帐0701.省/市代号,1,4),1) 等于 '1'"};
     segmentArr = new String[]{"右截字符串( 字符串截取(AI_通用分户帐0701.省/市代号,1,4),1) 等于 '1'"};
     t = new Translator();
+    System.out.println("WHERE子句测试：");
     for (int i = 0; i < segmentArr.length; i++){
       t.setChSegment(t.WHERE, segmentArr[i]);
       DbTable[] ts = t.getTables();
@@ -92,17 +95,16 @@ public class Main {
           System.out.println(msgs[j]);
         }
       }
-      System.out.println(t.getQueryModel().getChSegment(t.WHERE));
-      System.out.println(t.getQueryModel().getEnSegment(t.WHERE));
+      System.out.println("CN SQL IS: " + t.getQueryModel().getChSegment(t.WHERE));
+      System.out.println("EN SQL IS: " + t.getQueryModel().getEnSegment(t.WHERE));
     }
-    
+    System.out.println("");
   }
   
   public void testCompare(){
-    String str = "表比较 AI_94传票对照表, AI_94传票对照月表 条件 not exists AI_94传票对照表.省/市代号 等于 AI_94传票对照月表.省/市代号 并且 AI_94传票对照表.行号 大于 5 并且 AI_94传票对照表.行号 < 2";
+    String str = "表比较 AI_94传票对照表, AI_94传票对照月表 条件 exists AI_94传票对照表.省/市代号 等于 AI_94传票对照月表.省/市代号 并且 AI_94传票对照表.行号 大于 5 并且 AI_94传票对照表.行号 < 2";
     Translator t = new Translator();
-//    System.out.println(t.getCnKeyWordByValue(t.ENVALUE_COMPARE));
-//    System.out.println(t.getCnKeyWords(""));
+    System.out.println("比较语句测试：");
     t.setChQuery(str);
     t.addDbTable("AI_94传票对照表", "CNF");
     t.addDbField("AI_94传票对照表", "省/市代号", "CNF01");
@@ -124,19 +126,21 @@ public class Main {
       return;
     }
     
-    System.out.println(t.getChFromStr());
-    System.out.println(t.getChWhereStr());
+//    System.out.println(t.getChFromStr());
+//    System.out.println(t.getChWhereStr());
     
     AppDbTable[] appDbTableArr = t.getInfo().getDbTableInfoToAppTableArr();
     for (int i = 0; i < appDbTableArr.length; i++){
       AppDbTable appDbTable = appDbTableArr[i];
       AppDbField[] appDbFieldArr = appDbTable.getFields();
-      System.out.println(appDbTable.getTableName());
+//      System.out.println(appDbTable.getTableName());
     }
-    System.out.println(t.getChQuery());
-    System.out.println(t.getQueryModel().getEnString());
-    System.out.println(t.getQueryModel().getEmptyExecuteEnString("CNF238494"));
-    System.out.println(t.getQueryModel().getExecuteEnString("CNF238494"));
+
+    System.out.println("IN SQL IS: " + t.getQueryModel().getChQuery());
+    System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
+    System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
+//    System.out.println(t.getQueryModel().getEmptyExecuteEnString("CNF238494"));
+//    System.out.println(t.getQueryModel().getExecuteEnString("CNF238494"));
 //    String xml = t.getXmlString();
 //    System.out.println("TO DB XML: " + xml);
     
@@ -167,12 +171,13 @@ public class Main {
       e.printStackTrace();
     }
     */
+    System.out.println("");
   }
   
   public void testUnion(){
   	String xml = "";
     String str = "表合并 表1, 表2, 表3, 表4";
-    
+    System.out.println("追加语句测试：");
     Translator t = new Translator();
     t.setChQuery(str);
     t.addDbTable("表1", "CNF");
@@ -235,6 +240,7 @@ public class Main {
       e.printStackTrace();
     }
     */
+    System.out.println("");
   }
   
   public void customQueryTest(){
@@ -488,6 +494,7 @@ public class Main {
   		};
   	
   	Translator t = new Translator();
+  	
   	System.out.println("==========cast函数测试========");
     for (int i = 0; i < strArr1.length; i++){
     	System.out.println("cast函数测试" + (i + 1) + "：");
@@ -637,8 +644,9 @@ public class Main {
     		  ")";
     
     Translator t = new Translator();
-    t.setDatabaseType(DataBaseType.ORACLE9i);
+    t.setDatabaseType(DataBaseType.SYBASE_IQ_12);
     
+    System.out.println("自定义查询测试：");
     t.setChQuery(str, false);
     if (t.hasError()){
       ChWrongMessage[] msgs = t.showWrongMsgs();
@@ -818,6 +826,6 @@ public class Main {
       e.printStackTrace();
     }
     */
-  
+    System.out.println("");
   }
 }
