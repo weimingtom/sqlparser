@@ -70,6 +70,8 @@ public class Translator {
   public static final String CNKEY_WORDS = "cnKeyWords";
   public static final String CNKEY_FUNC = "cnFunc";
   public static final String CNKEY_ORACLE_FUNC = "cnFunc_oracle";
+  public static final String CNKEY_SYBASE_FUNC = "cnFunc_sybase";
+  public static final String CNKEY_DB2_FUNC = "cnFunc_db2";
   public static final String CNKEY_OPERSYMBOL = "operSymbol";
   public static final String CNKEY_NUMBERSYMBOL = "numberSymbol";
   
@@ -166,6 +168,10 @@ public class Translator {
 	  	if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
 	  		cnKeyFuncs = CNKEY_ORACLE_FUNC;
 	  	}else if (databaseType.equals(DataBaseType.SYBASE_ASE_12) || databaseType.equals(DataBaseType.SYBASE_IQ_12)){
+	  		cnKeyFuncs = CNKEY_SYBASE_FUNC;
+	  	}else if (databaseType.equals(DataBaseType.DB2_UDB_8x) || databaseType.equals(DataBaseType.DB2_UDB_9x)){
+	  		cnKeyFuncs = CNKEY_DB2_FUNC;
+	  	}else{
 	  		cnKeyFuncs = CNKEY_FUNC;
 	  	}
   	}
