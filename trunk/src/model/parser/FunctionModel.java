@@ -14,6 +14,9 @@ import model.parser.common.Constants;
  * 06/11/2007:
  * 	- 增加isNothing属性，用来判断是否为不带任何东西的函数
  * 	- 修改了相应getChString、getEnString方法	
+ * 06/13/2007:
+ * 	- 修改FunctionModel方法对含中英文混合关键字的转化，
+ *    如：求ASCII码，当含有任何一个中文时返回原传入函数名
  * ======================================================
  */
 public class FunctionModel extends QueryModel {
@@ -45,8 +48,10 @@ public class FunctionModel extends QueryModel {
 					break;
 				}
 			}
-			if (chCount == 0)
+			if (chCount == 0)	//如果为英文函数名，则转成中文函数名
 				rValue = QueryModel.translateStringEn2Ch(rValue);
+			else	//当含有任何一个中文时返回原传入函数名
+				rValue = functionName;
   	}
     this.functionName = rValue;
   }
