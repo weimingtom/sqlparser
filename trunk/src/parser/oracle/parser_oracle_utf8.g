@@ -19,6 +19,8 @@
 //		  设置SUBQUERY的TOKEN进行语法树遍历
 //	06/12/2007:
 //		- exp_set语法增加子查询解析，同时增加子查询的语法树遍历
+//	06/13/2007:
+//		- 修改了compare_method语法树遍历NOT EXISTS写错的问题
 //==========================================================*/
 
 header {
@@ -952,7 +954,7 @@ compare_method returns [String rValue]
 {rValue = "";}
 	:	v1: comparemethod_name
 		{rValue = v1.getText();}
-	|	#(LOGICAL_NOT_EXISTS ne1:NOT ne2:EXISTS)
+	|	#(LOGICAL_NOT_EXISTS ne1:NOT_EN ne2:EXISTS_EN)
 		{rValue = ne1.getText() + " " + ne2.getText();}
 	;
 

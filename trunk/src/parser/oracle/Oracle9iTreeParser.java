@@ -682,10 +682,10 @@ public Oracle9iTreeParser() {
 				match(_t,LOGICAL_NOT_EXISTS);
 				_t = _t.getFirstChild();
 				ne1 = (AST)_t;
-				match(_t,NOT);
+				match(_t,NOT_EN);
 				_t = _t.getNextSibling();
 				ne2 = (AST)_t;
-				match(_t,EXISTS);
+				match(_t,EXISTS_EN);
 				_t = _t.getNextSibling();
 				_t = __t204;
 				_t = _t.getNextSibling();
@@ -2257,10 +2257,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 350:
+			case 348:
 			{
 				AST tmp63_AST_in = (AST)_t;
-				match(_t,350);
+				match(_t,348);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -3768,8 +3768,8 @@ public Oracle9iTreeParser() {
 			case LITERAL_least:
 			case LITERAL_nvl:
 			case 261:
-			case 351:
-			case 352:
+			case 349:
+			case 350:
 			{
 				other_function(_t);
 				_t = _retTree;
@@ -5438,10 +5438,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 351:
+			case 349:
 			{
 				AST tmp312_AST_in = (AST)_t;
-				match(_t,351);
+				match(_t,349);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5452,10 +5452,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 352:
+			case 350:
 			{
 				AST tmp314_AST_in = (AST)_t;
-				match(_t,352);
+				match(_t,350);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5833,8 +5833,6 @@ public Oracle9iTreeParser() {
 		"NUM_START",
 		"NUM_LETTER",
 		"ML_COMMENT",
-		"NOT",
-		"EXISTS",
 		"COMPARE_OP",
 		"TWO_ARG_OP",
 		"ONE_ARG_OP",
@@ -5848,7 +5846,7 @@ public Oracle9iTreeParser() {
 		data[0]=-9221682908089943032L;
 		data[1]=281474834104320L;
 		data[4]=-68719476736L;
-		data[5]=805308415L;
+		data[5]=201328639L;
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
@@ -5857,7 +5855,7 @@ public Oracle9iTreeParser() {
 		data[0]=-9221683186189075456L;
 		data[1]=281474028797952L;
 		data[4]=-68719476736L;
-		data[5]=805306383L;
+		data[5]=201326607L;
 		return data;
 	}
 	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
