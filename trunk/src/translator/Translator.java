@@ -73,6 +73,7 @@ public class Translator {
   public static final String CNKEY_SYBASE_FUNC = "cnFunc_sybase";
   public static final String CNKEY_DB2_FUNC = "cnFunc_db2";
   public static final String CNKEY_OPERSYMBOL = "operSymbol";
+  public static final String CNKEY_LOGICSYMBOL = "logicSymbol";
   public static final String CNKEY_NUMBERSYMBOL = "numberSymbol";
   
   //英文关键字名称属性KEY
@@ -141,7 +142,7 @@ public class Translator {
    * @return String 中文关键字名称
    */
   public static String getCnKeyWords(String keyName) {
-    String[] cnKeyWordsArr = new String[]{CNKEY_WORDS, CNKEY_FUNC, CNKEY_OPERSYMBOL, CNKEY_NUMBERSYMBOL};
+    String[] cnKeyWordsArr = new String[]{CNKEY_WORDS, CNKEY_FUNC, CNKEY_OPERSYMBOL, CNKEY_LOGICSYMBOL, CNKEY_NUMBERSYMBOL};
     
     String cnKeyWords = "";
     ResourceBundle bundle = ResourceBundle.getBundle(CN_KEY_WORDS, Locale.CHINESE);
@@ -176,7 +177,7 @@ public class Translator {
 	  	}
   	}
   	
-    String[] cnKeyWordsArr = new String[]{CNKEY_WORDS, cnKeyFuncs, CNKEY_OPERSYMBOL, CNKEY_NUMBERSYMBOL};
+    String[] cnKeyWordsArr = new String[]{CNKEY_WORDS, cnKeyFuncs, CNKEY_OPERSYMBOL, CNKEY_LOGICSYMBOL, CNKEY_NUMBERSYMBOL};
     
     String cnKeyWords = "";
     ResourceBundle bundle = ResourceBundle.getBundle(CN_KEY_WORDS, Locale.CHINESE);
