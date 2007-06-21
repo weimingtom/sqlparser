@@ -645,7 +645,6 @@ public class Main {
     
     Translator t = new Translator();
     t.setDatabaseType(DataBaseType.SYBASE_IQ_12);
-    
     System.out.println("自定义查询测试：");
     t.setChQuery(str, false);
     if (t.hasError()){
