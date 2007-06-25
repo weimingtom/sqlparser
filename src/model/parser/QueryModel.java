@@ -814,11 +814,32 @@ public class QueryModel {
    * @return TableModel[] 表单信息对象数组
    */
   public TableModel[] getTables() {
-    QueryModel[] models = getModelsFromAllChildrenByClass(TableModel.class);
-    TableModel[] ret = new TableModel[models.length];
-    for (int i = 0; i < models.length; i++)
-        ret[i] = (TableModel)models[i];
-    return ret;
+  	TableModel[] ret = new TableModel[0];
+  	TableListModel tableListModel = (TableListModel) getFirstModelByClass(TableListModel.class);
+  	if (tableListModel != null){
+	    QueryModel[] models = tableListModel.getModelsFromAllChildrenByClass(TableModel.class);
+	    ret = new TableModel[models.length];
+	    for (int i = 0; i < models.length; i++)
+	        ret[i] = (TableModel)models[i];
+  	}
+  	return ret;
+  }
+  
+  /**
+   * 获取查询语句ROWID中的所有表名
+   * @return LinkedHashMap ROWID表名Map
+   */
+  public LinkedHashMap getRowidTables() {
+  	LinkedHashMap rTableHM = new LinkedHashMap();
+	  QueryModel[] models = getModelsFromAllChildrenByClass(TableModel.class);
+	  for (int i = 0; i < models.length; i++){
+	  	TableModel tableModel = (TableModel)models[i];
+	  	if (tableModel.isRowid() && 
+	  			!rTableHM.containsKey(tableModel.getTableName())){
+	  		rTableHM.put(tableModel.getTableName(), tableModel);
+	  	}
+	  }
+	  return rTableHM;
   }
   
   /**

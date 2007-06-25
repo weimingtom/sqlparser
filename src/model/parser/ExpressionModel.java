@@ -13,7 +13,8 @@ package model.parser;
  */
 public class ExpressionModel extends QueryModel {
   private boolean hasConstant = false;
-
+  private boolean hasTable = false;
+  
   public void addConstant(String c) {
     hasConstant = true;
     addChild(new StringModel(c));
@@ -22,7 +23,16 @@ public class ExpressionModel extends QueryModel {
   public boolean hasConstant() {
     return hasConstant;
   }
+  
+  public boolean isHasTable() {
+		return hasTable;
+	}
 
+	public void addTable(TableModel model){
+  	hasTable = true;
+  	addChild(model);
+  }
+  
   public void addParam(ParamModel model) {
     addChild(model);
   }
