@@ -648,10 +648,11 @@ public class Main {
     
     Translator t = new Translator();
 //    t.setDatabaseType(DataBaseType.ORACLE9i);
-//    String _cnKeyWords = t.getCnKeyWords(Translator.CNKEY_WORDS);
-//		String _cnKeyFun = t.getCnKeyWords(Translator.CNKEY_FUNC);
-//		String _cnKeyOper = t.getCnKeyWords(Translator.CNKEY_OPERSYMBOL);
-//		String _cnKeyNumber = t.getCnKeyWords(Translator.CNKEY_NUMBERSYMBOL);
+    String _cnKeyWords = t.getCnKeyWords(Translator.CNKEY_WORDS);
+    String _cnKeyLogic = t.getCnKeyWords(Translator.CNKEY_LOGICSYMBOL);
+		String _cnKeyFun = t.getCnKeyWords(Translator.CNKEY_FUNC);
+		String _cnKeyOper = t.getCnKeyWords(Translator.CNKEY_OPERSYMBOL);
+		String _cnKeyNumber = t.getCnKeyWords(Translator.CNKEY_NUMBERSYMBOL);
     
     System.out.println("自定义查询测试：");
     t.setChQuery(str, false);
