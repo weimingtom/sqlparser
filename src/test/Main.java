@@ -642,14 +642,14 @@ public class Main {
     		  "并且 AI_94传票对照表.货币码 NOT IN(查询 唯一 AI_94传票对照表.货币码 来自 AI_94传票对照表 where AI_94传票对照表.行号 exists (select distinct AI_94传票对照表.行号 from AI_94传票对照表) )" +
     		  ")";
     
-    str = "查询 rowid(AI_94传票对照表.省/市代号) 作为 省/市代号,AI_94传票对照表.行号 作为 行号, 取绝对值(AI_94传票对照表.金额) 作为 金额" +
+    str = "查询 rowid(AI_94传票对照表) 作为 省/市代号,AI_94传票对照表.行号 作为 行号, 取绝对值(AI_94传票对照表.金额) 作为 金额" +
 					" 来自 AI_94传票对照表 作为 CNF"+
-    			" 条件 求行号(AI_94传票对照表.省/市代号) > 100";
+    			" 条件 求行号(AI_94传票对照表) > 100";
     
     Translator t = new Translator();
 //    t.setDatabaseType(DataBaseType.ORACLE9i);
     String _cnKeyWords = t.getCnKeyWords(Translator.CNKEY_WORDS);
-    String _cnKeyLogic = t.getCnKeyWords(Translator.CNKEY_LOGICSYMBOL);
+//    String _cnKeyLogic = t.getCnKeyWords(Translator.CNKEY_LOGICSYMBOL);
 		String _cnKeyFun = t.getCnKeyWords(Translator.CNKEY_FUNC);
 		String _cnKeyOper = t.getCnKeyWords(Translator.CNKEY_OPERSYMBOL);
 		String _cnKeyNumber = t.getCnKeyWords(Translator.CNKEY_NUMBERSYMBOL);
@@ -691,6 +691,14 @@ public class Main {
     DbTable[] ts = t.getTables();
     t.updateDbTables(t, ts);
     
+    if (t.hasError()){
+      ChWrongMessage[] msgs = t.showWrongMsgs();
+      for (int j = 0; j < msgs.length; j++){
+        System.out.println("【测试错误】" + msgs[j]);
+      }
+      return;
+    }
+    
     //获取循环语句条件变量参数
     QueryModel[] paramModelArr = t.getQueryModel().getModelsFromAllChildrenByClass(ParamModel.class);
     for (int i = 0; i < paramModelArr.length; i++){
@@ -725,13 +733,13 @@ public class Main {
 //    System.out.println(t.getChWhereStr());
 //    System.out.println(t.getChGroupByStr());
 //    System.out.println(t.getChOrderByStr());
-//    
-//    SelectListVO[] _selectListVOArr = t.getSelectListVOArr();
-//    FromListVO[] _fromListVOArr = t.getFromListVOArr();
-//    WhereListVO[] _whereListVOArr = t.getWhereListVOArr();
-//    GroupByListVO[] _groupListVOArr = t.getGroupByListVOArr();
-//    OrderByListVO[] _orderListVOArr = t.getOrderByListVOArr();
-//    
+    
+    SelectListVO[] _selectListVOArr = t.getSelectListVOArr();
+    FromListVO[] _fromListVOArr = t.getFromListVOArr();
+    WhereListVO[] _whereListVOArr = t.getWhereListVOArr();
+    GroupByListVO[] _groupListVOArr = t.getGroupByListVOArr();
+    OrderByListVO[] _orderListVOArr = t.getOrderByListVOArr();
+    
 //    System.out.println("============SELECT EQUEM===========");
 //    for (int i = 0; i < _selectListVOArr.length; i++){
 //      System.out.println(_selectListVOArr[i].getCnColumnEquElem());
