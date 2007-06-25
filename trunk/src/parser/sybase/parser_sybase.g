@@ -48,7 +48,7 @@
 //		- \u5c06\u8bed\u6cd5\u5b9a\u4e49\u7684\u5173\u952e\u5b57\u653e\u5728\u8bcd\u6cd5\u7684tokens\u4e2d,\u8bed\u6cd5\u5b9a\u4e49\u4e2d\u4e0d\u518d\u51fa\u73b0
 //		  \u81ea\u5df1\u5b9a\u4e49\u5173\u952e\u5b57
 //	06/25/2007:
-//		- \u589e\u52a0rowid\u51fd\u6570\u4e2d\u6587\u540d\u79f0
+//		- \u589e\u52a0rowid\u51fd\u6570\u7684\u5904\u7406,\u540e\u9762\u53ea\u80fd\u662f\u8868\u540d
 //==========================================================*/
 
 header {
@@ -77,6 +77,7 @@ tokens {
 	ALIAS_EQU;				//\u522b\u540d TOKEN
 	
 	FUNCTION;				//\u666e\u901a\u51fd\u6570 TOKEN
+	FUNCTION_ROWID;			//ROWID\u51fd\u6570
 	FUNCTION_NOTHING;		//\u4e0d\u5e26\u4efb\u4f55\u4e1c\u897f\u7684\u51fd\u6570 TOKEN[sysdate]
 	FUNCTION_EMPTY_PARAM;	//\u7a7a\u53c2\u6570\u51fd\u6570 TOKEN [getdate()]
 	FUNCTION_STAR_PARAM;	//\u53c2\u6570\u4e3a*\u51fd\u6570 TOKEN [now(*);today(*)]
@@ -297,6 +298,8 @@ function
 	{#function = #([FUNCTION_DATA_TYPE, "function_data_type"], #function);}
 	|	asdatatype_function LPAREN! as_data_type_parameter RPAREN!
 	{#function = #([FUNCTION_AS_DATA_TYPE, "function_as_data_type"], #function);}
+	|	rowid_function LPAREN! stable_name RPAREN!
+	{#function = #([FUNCTION_ROWID, "function_rowid"], #function);}
 	|	function_name LPAREN! parameters RPAREN!
 	{#function = #([FUNCTION, "function_block"], #function);}
 	;
@@ -350,7 +353,9 @@ datatype_precision_or_scale_or_maxlength
 table_name
 	:	ID ((AS_EN^ | AS_CN^) alias)?
 	;
-
+stable_name
+	:	ID
+	;
 
 //IN/NOT IN\u95f4\u7684\u5e38\u91cf\u8bbe\u7f6e
 exp_set
@@ -574,7 +579,11 @@ system_function
 //\u5176\u4ed6\u51fd\u6570
 other_function
 	:	"argn"
-	| 	"rowid"	|	"\u6c42\u884c\u53f7"
+//	| 	"rowid"	|	"\u6c42\u884c\u53f7"
+	;
+
+rowid_function
+	: 	"rowid"	|	"\u6c42\u884c\u53f7"
 	;
 
 //\u5355\u4e2a\u8fd0\u7b97\u7b26\u53f7[~]
@@ -1390,7 +1399,18 @@ function returns [FunctionModel model]
 			model = new FunctionModel(f.getText(), true);
 			model.setParameters(p);
 		}
-		
+	
+		//rowid functions\u51fd\u6570,\u53c2\u6570\u5fc5\u987b\u4e3a\u8868\u540d[sysdate]
+	|	#(FUNCTION_ROWID rowidfun:function_name stable:ID)
+		{
+			model = new FunctionModel(rowidfun.getText(), true);
+			TableModel tableModel = new TableModel(stable.getText(), true);
+			express1.addTable(tableModel);
+			p = new ParametersModel();
+			p.addParameter(express1);
+			model.setParameters(p);
+		}
+				
 		//Normal functions\u53c2\u6570\u4e3a\u7a7a\u7684\u666e\u901a\u51fd\u6570[sysdate]
 	|	#(FUNCTION_NOTHING nfun:function_name)
 		{
@@ -1628,6 +1648,7 @@ function_name
 	|	conversion_function
 	|	system_function
 	|	other_function
+	|	rowid_function
 	;
 
 //\u6570\u5b66\u51fd\u6570
@@ -1749,9 +1770,12 @@ system_function
 //\u5176\u4ed6\u51fd\u6570
 other_function
 	:	"argn"
-	| 	"rowid"	| "\u6c42\u884c\u53f7"
+//	| 	"rowid"	|	"\u6c42\u884c\u53f7"
 	;
 
+rowid_function
+	: 	"rowid"	|	"\u6c42\u884c\u53f7"
+	;
 
 //\u65e5\u671fdate-part\u4fdd\u7559\u5b57
 date_key_word
