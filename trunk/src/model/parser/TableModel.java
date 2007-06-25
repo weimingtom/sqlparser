@@ -2,13 +2,18 @@ package model.parser;
 
 public class TableModel extends QueryModel {
   private String tableName;
-
+  private boolean isRowid = false;
   private String tableEnName;
 
   public TableModel(String tableName){
     this.tableName = tableName;
   }
-
+  
+  public TableModel(String tableName, boolean isRowid){
+    this.tableName = tableName;
+    this.isRowid = isRowid;
+  }
+  
   public String getTableName() {
     return tableName;
   }
@@ -16,15 +21,23 @@ public class TableModel extends QueryModel {
   public void setTableName(String tableName) {
     this.tableName = tableName;
   }
-
+  
+  public String getSTableEnName() {
+  	return tableEnName;
+  }
+  
   public String getTableEnName() {
   	if (tableEnName == null || tableEnName.equals(""))
   		return tableName;
   	else
   		return tableEnName;
   }
+  
+  public boolean isRowid() {
+		return isRowid;
+	}
 
-  public String getAlias() {
+	public String getAlias() {
     AliasModel alias = (AliasModel) getFirstModelByClass(AliasModel.class);
     if (alias != null)
       return alias.getAlias();
