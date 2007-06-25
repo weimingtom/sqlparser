@@ -47,6 +47,8 @@
 //	06/13/2007:
 //		- \u5c06\u8bed\u6cd5\u5b9a\u4e49\u7684\u5173\u952e\u5b57\u653e\u5728\u8bcd\u6cd5\u7684tokens\u4e2d,\u8bed\u6cd5\u5b9a\u4e49\u4e2d\u4e0d\u518d\u51fa\u73b0
 //		  \u81ea\u5df1\u5b9a\u4e49\u5173\u952e\u5b57
+//	06/25/2007:
+//		- \u589e\u52a0rowid\u51fd\u6570\u4e2d\u6587\u540d\u79f0
 //==========================================================*/
 
 header {
@@ -572,7 +574,7 @@ system_function
 //\u5176\u4ed6\u51fd\u6570
 other_function
 	:	"argn"
-	| 	"rowid"
+	| 	"rowid"	|	"\u6c42\u884c\u53f7"
 	;
 
 //\u5355\u4e2a\u8fd0\u7b97\u7b26\u53f7[~]
@@ -1747,7 +1749,7 @@ system_function
 //\u5176\u4ed6\u51fd\u6570
 other_function
 	:	"argn"
-	| 	"rowid"
+	| 	"rowid"	| "\u6c42\u884c\u53f7"
 	;
 
 

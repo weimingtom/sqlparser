@@ -2308,45 +2308,45 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 321:
-			{
-				AST tmp62_AST_in = (AST)_t;
-				match(_t,321);
-				_t = _t.getNextSibling();
-				break;
-			}
 			case 322:
 			{
-				AST tmp63_AST_in = (AST)_t;
+				AST tmp62_AST_in = (AST)_t;
 				match(_t,322);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 323:
 			{
-				AST tmp64_AST_in = (AST)_t;
+				AST tmp63_AST_in = (AST)_t;
 				match(_t,323);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 324:
 			{
-				AST tmp65_AST_in = (AST)_t;
+				AST tmp64_AST_in = (AST)_t;
 				match(_t,324);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 325:
 			{
-				AST tmp66_AST_in = (AST)_t;
+				AST tmp65_AST_in = (AST)_t;
 				match(_t,325);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 326:
 			{
-				AST tmp67_AST_in = (AST)_t;
+				AST tmp66_AST_in = (AST)_t;
 				match(_t,326);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 327:
+			{
+				AST tmp67_AST_in = (AST)_t;
+				match(_t,327);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -2545,59 +2545,59 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				break;
 			}
-			case 306:
-			{
-				AST tmp72_AST_in = (AST)_t;
-				match(_t,306);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 305:
-			{
-				AST tmp73_AST_in = (AST)_t;
-				match(_t,305);
-				_t = _t.getNextSibling();
-				break;
-			}
 			case 307:
 			{
-				AST tmp74_AST_in = (AST)_t;
+				AST tmp72_AST_in = (AST)_t;
 				match(_t,307);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 306:
+			{
+				AST tmp73_AST_in = (AST)_t;
+				match(_t,306);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 308:
 			{
-				AST tmp75_AST_in = (AST)_t;
+				AST tmp74_AST_in = (AST)_t;
 				match(_t,308);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 309:
 			{
-				AST tmp76_AST_in = (AST)_t;
+				AST tmp75_AST_in = (AST)_t;
 				match(_t,309);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 310:
 			{
-				AST tmp77_AST_in = (AST)_t;
+				AST tmp76_AST_in = (AST)_t;
 				match(_t,310);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 311:
 			{
-				AST tmp78_AST_in = (AST)_t;
+				AST tmp77_AST_in = (AST)_t;
 				match(_t,311);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 312:
 			{
-				AST tmp79_AST_in = (AST)_t;
+				AST tmp78_AST_in = (AST)_t;
 				match(_t,312);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 313:
+			{
+				AST tmp79_AST_in = (AST)_t;
+				match(_t,313);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -3024,10 +3024,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 305:
+			case 306:
 			{
 				AST tmp91_AST_in = (AST)_t;
-				match(_t,305);
+				match(_t,306);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -3779,6 +3779,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case LITERAL_argn:
 			case LITERAL_rowid:
+			case 304:
 			{
 				other_function(_t);
 				_t = _retTree;
@@ -5931,6 +5932,13 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
+			case 304:
+			{
+				AST tmp363_AST_in = (AST)_t;
+				match(_t,304);
+				_t = _t.getNextSibling();
+				break;
+			}
 			default:
 			{
 				throw new NoViableAltException(_t);
@@ -6250,6 +6258,7 @@ public SybaseIQ12TreeParser() {
 		"\"user_name\"",
 		"\"argn\"",
 		"\"rowid\"",
+		"\"\\u6c42\\u884c\\u53f7\"",
 		"TILDE",
 		"\"\\u975e\\u8fd0\\u7b97\"",
 		"\"\\u4e0e\"",
