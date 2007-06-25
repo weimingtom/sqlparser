@@ -634,7 +634,6 @@ public class Main {
 //    "	并且 AI_94传票对照表.货币码 not exists(select distinct AI_94传票对照表.货币码 from AI_94传票对照表)" +
 //    ")";
     
-    
     str = " 查询 AI_94传票对照表.省/市代号 作为 省/市代号, AI_94传票对照表.行号 作为 行号, 取绝对值(AI_94传票对照表.金额) 作为 金额 " +
     		  " 来自 AI_94传票对照表 作为 CNF 条件 非 ( " +
     		  "( AI_94传票对照表.金额 大于 1000000 ) " +
@@ -643,8 +642,17 @@ public class Main {
     		  "并且 AI_94传票对照表.货币码 NOT IN(查询 唯一 AI_94传票对照表.货币码 来自 AI_94传票对照表 where AI_94传票对照表.行号 exists (select distinct AI_94传票对照表.行号 from AI_94传票对照表) )" +
     		  ")";
     
+    str = "查询 rowid(AI_94传票对照表.省/市代号) 作为 省/市代号,AI_94传票对照表.行号 作为 行号, 取绝对值(AI_94传票对照表.金额) 作为 金额" +
+					" 来自 AI_94传票对照表 作为 CNF"+
+    			" 条件 求行号(AI_94传票对照表.省/市代号) > 100";
+    
     Translator t = new Translator();
-    t.setDatabaseType(DataBaseType.SYBASE_IQ_12);
+//    t.setDatabaseType(DataBaseType.ORACLE9i);
+//    String _cnKeyWords = t.getCnKeyWords(Translator.CNKEY_WORDS);
+//		String _cnKeyFun = t.getCnKeyWords(Translator.CNKEY_FUNC);
+//		String _cnKeyOper = t.getCnKeyWords(Translator.CNKEY_OPERSYMBOL);
+//		String _cnKeyNumber = t.getCnKeyWords(Translator.CNKEY_NUMBERSYMBOL);
+    
     System.out.println("自定义查询测试：");
     t.setChQuery(str, false);
     if (t.hasError()){
