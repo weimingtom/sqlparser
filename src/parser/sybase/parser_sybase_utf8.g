@@ -48,7 +48,7 @@
 //		- 将语法定义的关键字放在词法的tokens中,语法定义中不再出现
 //		  自己定义关键字
 //	06/25/2007:
-//		- 增加rowid函数中文名称
+//		- 增加rowid函数的处理,后面只能是表名
 //==========================================================*/
 
 header {
@@ -77,6 +77,7 @@ tokens {
 	ALIAS_EQU;				//别名 TOKEN
 	
 	FUNCTION;				//普通函数 TOKEN
+	FUNCTION_ROWID;			//ROWID函数
 	FUNCTION_NOTHING;		//不带任何东西的函数 TOKEN[sysdate]
 	FUNCTION_EMPTY_PARAM;	//空参数函数 TOKEN [getdate()]
 	FUNCTION_STAR_PARAM;	//参数为*函数 TOKEN [now(*);today(*)]
@@ -297,6 +298,8 @@ function
 	{#function = #([FUNCTION_DATA_TYPE, "function_data_type"], #function);}
 	|	asdatatype_function LPAREN! as_data_type_parameter RPAREN!
 	{#function = #([FUNCTION_AS_DATA_TYPE, "function_as_data_type"], #function);}
+	|	rowid_function LPAREN! stable_name RPAREN!
+	{#function = #([FUNCTION_ROWID, "function_rowid"], #function);}
 	|	function_name LPAREN! parameters RPAREN!
 	{#function = #([FUNCTION, "function_block"], #function);}
 	;
@@ -350,7 +353,9 @@ datatype_precision_or_scale_or_maxlength
 table_name
 	:	ID ((AS_EN^ | AS_CN^) alias)?
 	;
-
+stable_name
+	:	ID
+	;
 
 //IN/NOT IN间的常量设置
 exp_set
@@ -574,7 +579,11 @@ system_function
 //其他函数
 other_function
 	:	"argn"
-	| 	"rowid"	|	"求行号"
+//	| 	"rowid"	|	"求行号"
+	;
+
+rowid_function
+	: 	"rowid"	|	"求行号"
 	;
 
 //单个运算符号[~]
@@ -1390,7 +1399,18 @@ function returns [FunctionModel model]
 			model = new FunctionModel(f.getText(), true);
 			model.setParameters(p);
 		}
-		
+	
+		//rowid functions函数,参数必须为表名[sysdate]
+	|	#(FUNCTION_ROWID rowidfun:function_name stable:ID)
+		{
+			model = new FunctionModel(rowidfun.getText(), true);
+			TableModel tableModel = new TableModel(stable.getText(), true);
+			express1.addTable(tableModel);
+			p = new ParametersModel();
+			p.addParameter(express1);
+			model.setParameters(p);
+		}
+				
 		//Normal functions参数为空的普通函数[sysdate]
 	|	#(FUNCTION_NOTHING nfun:function_name)
 		{
@@ -1628,6 +1648,7 @@ function_name
 	|	conversion_function
 	|	system_function
 	|	other_function
+	|	rowid_function
 	;
 
 //数学函数
@@ -1749,9 +1770,12 @@ system_function
 //其他函数
 other_function
 	:	"argn"
-	| 	"rowid"	| "求行号"
+//	| 	"rowid"	|	"求行号"
 	;
 
+rowid_function
+	: 	"rowid"	|	"求行号"
+	;
 
 //日期date-part保留字
 date_key_word
