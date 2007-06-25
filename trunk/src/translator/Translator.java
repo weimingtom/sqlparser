@@ -69,9 +69,9 @@ public class Translator {
   //中文关键字属性KEY
   public static final String CNKEY_WORDS = "cnKeyWords";
   public static final String CNKEY_FUNC = "cnFunc";
-  public static final String CNKEY_ORACLE_FUNC = "cnFunc_oracle";
-  public static final String CNKEY_SYBASE_FUNC = "cnFunc_sybase";
-  public static final String CNKEY_DB2_FUNC = "cnFunc_db2";
+  private static final String CNKEY_ORACLE_FUNC = "cnFunc_oracle";
+  private static final String CNKEY_SYBASE_FUNC = "cnFunc_sybase";
+  private static final String CNKEY_DB2_FUNC = "cnFunc_db2";
   public static final String CNKEY_OPERSYMBOL = "operSymbol";
   public static final String CNKEY_LOGICSYMBOL = "logicSymbol";
   public static final String CNKEY_NUMBERSYMBOL = "numberSymbol";
@@ -175,6 +175,9 @@ public class Translator {
 	  	}else{
 	  		cnKeyFuncs = CNKEY_FUNC;
 	  	}
+  	}
+  	if (keyName.equals(CNKEY_FUNC)){
+  		keyName = cnKeyFuncs;
   	}
   	
     String[] cnKeyWordsArr = new String[]{CNKEY_WORDS, cnKeyFuncs, CNKEY_OPERSYMBOL, CNKEY_LOGICSYMBOL, CNKEY_NUMBERSYMBOL};
