@@ -2,6 +2,7 @@ package translator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -345,6 +346,8 @@ public class Translator {
    * @param ts DbTable对象数组
    */
   public void updateDbTables(Translator t, DbTable[] ts) {
+  	LinkedHashMap tableHM = model.getRowidTables();
+  	
     if (t.getQueryModel() instanceof TableUnionModel){  //如果为表合并（追加）
       AppDbTable[] _appDbTablesArr = t.info.getDbTableInfoToAppTableArr();
       if (_appDbTablesArr.length >= ts.length){
@@ -354,6 +357,17 @@ public class Translator {
           
           //根据DbTable的中文表名获取业务上传入的英文表名
           String enTableName = t.getTableEnName(_dbTable.getChName());
+          
+          //循环查找tableHM中的KEY是否有DbTable对应的表名
+          for (Iterator t_it = tableHM.keySet().iterator(); t_it.hasNext();) {
+          	String rTableName = (String)t_it.next();
+          	TableModel rTableModel = (TableModel)tableHM.get(rTableName);
+          	if ((rTableModel.getTableName() == null || rTableModel.getTableName().equals(""))
+          			&& _dbTable.getChName().equals(rTableName)){
+          		rTableModel.setTableEnName(enTableName);
+          		break;
+          	}
+          }
           
           //如果业务上英文表名不存在则提示错误信息，如果存在则将英文表名赋值给DbTable对象
           if (enTableName == null || enTableName.equals("")){
@@ -387,8 +401,20 @@ public class Translator {
         
         //根据DbTable的中文表名获取业务上传入的英文表名
         String enTableName = t.getTableEnName(dbt.getChName());
+        
+        //循环查找tableHM中的KEY是否有DbTable对应的表名
+        for (Iterator t_it = tableHM.keySet().iterator(); t_it.hasNext();) {
+        	String rTableName = (String)t_it.next();
+        	TableModel rTableModel = (TableModel)tableHM.get(rTableName);
+        	if ((rTableModel.getSTableEnName() == null || rTableModel.getSTableEnName().equals(""))
+        			&& dbt.getChName().equals(rTableName)){
+        		rTableModel.setTableEnName(enTableName);
+        		break;
+        	}
+        }
+        
         if (enTableName == null || enTableName.equals("")){
-          model.addException(new NoSuchTableException(dbt.getChName()));
+        	model.addException(new NoSuchTableException(dbt.getChName()));
         }else{
           dbt.setEnName(t.getTableEnName(dbt.getChName()));
         }
@@ -407,7 +433,24 @@ public class Translator {
           }
         }
       }
-      
+    }
+    
+    //查找tableHM中TableModel的tableEnName为空，增加到异常集合去
+    QueryModel[] tableModelArr = model.getModelsFromAllChildrenByClass(TableModel.class);
+    for (Iterator t_it = tableHM.keySet().iterator(); t_it.hasNext();) {
+    	String rTableName = (String) t_it.next();
+    	TableModel rTableModel = (TableModel)tableHM.get(rTableName);
+    	if (rTableModel.getSTableEnName() == null || rTableModel.getSTableEnName().equals("")){
+    		model.addException(new NoSuchTableException(rTableName));
+    	}else{
+    		for (int i = 0; i < tableModelArr.length; i++){
+    			TableModel tableModel = (TableModel) tableModelArr[i];
+    			if ((tableModel.getSTableEnName() == null || tableModel.getSTableEnName().equals(""))
+    					&& tableModel.getTableName().equals(rTableName)){
+    				tableModel.setTableEnName(rTableModel.getTableEnName());
+    			}
+    		}
+    	}
     }
     
   }
@@ -833,16 +876,20 @@ public class Translator {
    * @return FromListVO[] FromListVO对象数组
    */
   public FromListVO[] getFromListVOArrByModel() {
-    QueryModel[] _tableModelArr = model.getModelsFromAllChildrenByClass(TableModel.class);
-    FromListVO[] _fromListVOArr = new FromListVO[_tableModelArr.length];
-    for (int i = 0; i < _tableModelArr.length; i++){
-      FromListVO _fromListVO = new FromListVO();
-      _fromListVO.setCnTableName(((TableModel)_tableModelArr[i]).getTableName());
-      AliasModel aliasModel = (AliasModel) _tableModelArr[i].getFirstModelByClass(AliasModel.class);
-      if (aliasModel != null)
-        _fromListVO.setCnTAbleAlias(aliasModel.getAlias());
-      _fromListVOArr[i] = _fromListVO;
-    }
+  	FromListVO[] _fromListVOArr = new FromListVO[0];
+  	TableListModel tableListModel = (TableListModel) model.getFirstModelByClass(TableListModel.class);
+  	if (tableListModel != null){
+	    QueryModel[] _tableModelArr = tableListModel.getModelsFromAllChildrenByClass(TableModel.class);
+	    _fromListVOArr = new FromListVO[_tableModelArr.length];
+	    for (int i = 0; i < _tableModelArr.length; i++){
+	      FromListVO _fromListVO = new FromListVO();
+	      _fromListVO.setCnTableName(((TableModel)_tableModelArr[i]).getTableName());
+	      AliasModel aliasModel = (AliasModel) _tableModelArr[i].getFirstModelByClass(AliasModel.class);
+	      if (aliasModel != null)
+	        _fromListVO.setCnTAbleAlias(aliasModel.getAlias());
+	      _fromListVOArr[i] = _fromListVO;
+	    }
+  	}
     return _fromListVOArr;
   }
   
