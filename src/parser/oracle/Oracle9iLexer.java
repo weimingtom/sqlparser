@@ -186,6 +186,7 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u5b57\u8282\u6570", this), new Integer(180));
 	literals.put(new ANTLRHashString("month", this), new Integer(298));
 	literals.put(new ANTLRHashString("\u6c42\u8bb0\u5f55\u603b\u6570", this), new Integer(92));
+	literals.put(new ANTLRHashString("\u6c42\u884c\u53f7", this), new Integer(89));
 	literals.put(new ANTLRHashString("distinct", this), new Integer(50));
 	literals.put(new ANTLRHashString("tanh", this), new Integer(159));
 	literals.put(new ANTLRHashString("\u5b57\u7b26\u4e32\u66ff\u6362", this), new Integer(196));
@@ -298,7 +299,6 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("wk", this), new Integer(308));
 	literals.put(new ANTLRHashString("min", this), new Integer(107));
 	literals.put(new ANTLRHashString("asc", this), new Integer(72));
-	literals.put(new ANTLRHashString("\u884c\u53f7", this), new Integer(89));
 	literals.put(new ANTLRHashString("second", this), new Integer(322));
 	literals.put(new ANTLRHashString("m", this), new Integer(300));
 	literals.put(new ANTLRHashString("\u6765\u81ea", this), new Integer(53));

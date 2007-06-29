@@ -85,7 +85,7 @@ IN_EN="in"=85
 IN_CN="\u5728\u4e8e"=86
 NOT_IN_CN="\u4e0d\u5728\u4e8e"=87
 ROWNUM_EN="rownum"=88
-ROWNUM_CN="\u884c\u53f7"=89
+ROWNUM_CN="\u6c42\u884c\u53f7"=89
 REAL_NUM=90
 COUNT_EN="count"=91
 COUNT_CN="\u6c42\u8bb0\u5f55\u603b\u6570"=92

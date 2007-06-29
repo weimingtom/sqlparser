@@ -582,7 +582,7 @@ options {
 
 tokens {
 	ROWNUM_EN = "rownum";
-	ROWNUM_CN = "行号";
+	ROWNUM_CN = "求行号";
 
 	TABLE_UNION_EN = "t_union";
 	TABLE_UNION_CN = "表合并";

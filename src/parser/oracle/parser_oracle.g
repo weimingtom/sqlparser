@@ -582,7 +582,7 @@ options {
 
 tokens {
 	ROWNUM_EN = "rownum";
-	ROWNUM_CN = "\u884c\u53f7";
+	ROWNUM_CN = "\u6c42\u884c\u53f7";
 
 	TABLE_UNION_EN = "t_union";
 	TABLE_UNION_CN = "\u8868\u5408\u5e76";
