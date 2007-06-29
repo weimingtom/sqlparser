@@ -3,7 +3,7 @@ package test;
 import java.io.StringReader;
 import java.util.Iterator;
 
-import org.dom4j.DocumentException;
+//import org.dom4j.DocumentException;
 
 import model.parser.AliasModel;
 import model.parser.ChWrongMessage;
@@ -645,9 +645,10 @@ public class Main {
     str = "查询 rowid(AI_94传票对照表) 作为 省/市代号,AI_94传票对照表.行号 作为 行号, 取绝对值(AI_94传票对照表.金额) 作为 金额" +
 					" 来自 AI_94传票对照表 作为 CNF"+
     			" 条件 求行号(AI_94传票对照表) > 100";
+    str = "查询 AI_94传票对照表.省/市代号 来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 大于 '50' 并且 行号 小于等于 10000";
     
     Translator t = new Translator();
-//    t.setDatabaseType(DataBaseType.ORACLE9i);
+    t.setDatabaseType(DataBaseType.ORACLE9i);
     String _cnKeyWords = t.getCnKeyWords(Translator.CNKEY_WORDS);
     String _cnKeyLogic = t.getCnKeyWords(Translator.CNKEY_LOGICSYMBOL);
 		String _cnKeyFun = t.getCnKeyWords(Translator.CNKEY_FUNC);
@@ -669,6 +670,8 @@ public class Main {
       TableAliasModel aliasModel = (TableAliasModel) tableAliasModelArr[i];
       aliasModel.setEnAlias("CNF20070101");
     }
+    t.addDbTable("通用分户帐2007", "CNF");
+    t.addDbField("AI_94传票对照表", "省/市代号", "CNF01");
     t.addDbTable("AI_94传票对照表", "CNF");
     t.addDbField("AI_94传票对照表", "省/市代号", "CNF01");
     t.addDbField("AI_94传票对照表", "行号", "CNF02");
@@ -787,8 +790,8 @@ public class Main {
     System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
 //    System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
 //    System.out.println("EXE SQL IS: " + t.getQueryModel().getExecuteEnString("S001"));
-//    String queryXML = t.getXmlString();
-//    System.out.println("TO DB XML: " + queryXML);
+    String queryXML = t.getXmlString();
+    System.out.println("TO DB XML: " + queryXML);
     
     /*
 		String queryXML2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> " +
