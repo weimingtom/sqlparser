@@ -21,6 +21,8 @@
 //		- exp_set语法增加子查询解析，同时增加子查询的语法树遍历
 //	06/13/2007:
 //		- 修改了compare_method语法树遍历NOT EXISTS写错的问题
+//	06/29/2007:
+//		- 增加对rownum的验证
 //==========================================================*/
 
 header {
@@ -74,6 +76,7 @@ tokens {
 	PAREN_DATA_TYPE;		//带括号的数据类型 TOKEN
 	PAREN_CHAR_DATA_TYPE;	//带括号的保留字char数据类型 TOKEN
 	LOGIC_BLOCK;			//WHERE条件逻辑块 TOKEN
+	ROWNUM_BLOCK;			//ROWNUM行号块 TOKEN
 }
 
 //片段字句规则入口
@@ -123,7 +126,7 @@ select_statement
 		//CUSTOM SQL Sentence
 		(SELECT_EN^ | SELECT_CN^) (DISTINCT_EN^ | DISTINCT_CN^)? select_list
 		((FROM_EN^ | FROM_CN^) table_list)?
-		((WHERE_EN^ | WHERE_CN^)search_condition)?
+		((WHERE_EN^ | WHERE_CN^) search_condition)?
 		((GROUP_EN^ BY_EN! | GROUP_BY_CN^) aggregate_expression_list)?
 		((ORDER_EN^ BY_EN! | ORDER_BY_CN^) order_expression_list)?
 	;
@@ -253,6 +256,10 @@ equation
 		| IN_CN^ | NOT_IN_CN^
 		) exp_set
 	)
+	
+	|	(ROWNUM_EN
+		 {#equation = #([ROWNUM_BLOCK, "rownum"], #equation);}
+		| ROWNUM_CN^) compare_op REAL_NUM
 	;
 
 //函数定义
@@ -574,6 +581,9 @@ options {
 }
 
 tokens {
+	ROWNUM_EN = "rownum";
+	ROWNUM_CN = "行号";
+
 	TABLE_UNION_EN = "t_union";
 	TABLE_UNION_CN = "表合并";
 	
@@ -1120,6 +1130,15 @@ equation returns [EquationModel model]
 	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
 	|	#(ct2:NOT_IN_CN e1=expression e2=exp_set)
 	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
+	
+	|	#(ROWNUM_BLOCK re1:ROWNUM_EN cop1:compare_op rn1:REAL_NUM)
+	{e1 = new ExpressionModel(); e1.addConstant(re1.getText(), false);
+	 e2 = new ExpressionModel(); e2.addConstant(rn1.getText());
+	 model.addExpression(e1); model.addOperator(cop1.getText()); model.addExpression(e2);}
+	|	#(re2:ROWNUM_CN cop2:compare_op rn2:REAL_NUM)
+	{e1 = new ExpressionModel(); e1.addConstant(re2.getText(), false);
+	 e2 = new ExpressionModel(); e2.addConstant(rn2.getText());
+	 model.addExpression(e1); model.addOperator(cop2.getText()); model.addExpression(e2);}
 	;
 
 exp_set returns [ExpressionModel model]
