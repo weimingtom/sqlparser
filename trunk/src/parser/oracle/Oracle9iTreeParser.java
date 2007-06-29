@@ -5626,7 +5626,7 @@ public Oracle9iTreeParser() {
 		"\"\\u5728\\u4e8e\"",
 		"\"\\u4e0d\\u5728\\u4e8e\"",
 		"\"rownum\"",
-		"\"\\u884c\\u53f7\"",
+		"\"\\u6c42\\u884c\\u53f7\"",
 		"REAL_NUM",
 		"\"count\"",
 		"\"\\u6c42\\u8bb0\\u5f55\\u603b\\u6570\"",
