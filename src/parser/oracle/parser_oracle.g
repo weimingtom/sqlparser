@@ -21,6 +21,8 @@
 //		- exp_set\u8bed\u6cd5\u589e\u52a0\u5b50\u67e5\u8be2\u89e3\u6790\uff0c\u540c\u65f6\u589e\u52a0\u5b50\u67e5\u8be2\u7684\u8bed\u6cd5\u6811\u904d\u5386
 //	06/13/2007:
 //		- \u4fee\u6539\u4e86compare_method\u8bed\u6cd5\u6811\u904d\u5386NOT EXISTS\u5199\u9519\u7684\u95ee\u9898
+//	06/29/2007:
+//		- \u589e\u52a0\u5bf9rownum\u7684\u9a8c\u8bc1
 //==========================================================*/
 
 header {
@@ -74,6 +76,7 @@ tokens {
 	PAREN_DATA_TYPE;		//\u5e26\u62ec\u53f7\u7684\u6570\u636e\u7c7b\u578b TOKEN
 	PAREN_CHAR_DATA_TYPE;	//\u5e26\u62ec\u53f7\u7684\u4fdd\u7559\u5b57char\u6570\u636e\u7c7b\u578b TOKEN
 	LOGIC_BLOCK;			//WHERE\u6761\u4ef6\u903b\u8f91\u5757 TOKEN
+	ROWNUM_BLOCK;			//ROWNUM\u884c\u53f7\u5757 TOKEN
 }
 
 //\u7247\u6bb5\u5b57\u53e5\u89c4\u5219\u5165\u53e3
@@ -123,7 +126,7 @@ select_statement
 		//CUSTOM SQL Sentence
 		(SELECT_EN^ | SELECT_CN^) (DISTINCT_EN^ | DISTINCT_CN^)? select_list
 		((FROM_EN^ | FROM_CN^) table_list)?
-		((WHERE_EN^ | WHERE_CN^)search_condition)?
+		((WHERE_EN^ | WHERE_CN^) search_condition)?
 		((GROUP_EN^ BY_EN! | GROUP_BY_CN^) aggregate_expression_list)?
 		((ORDER_EN^ BY_EN! | ORDER_BY_CN^) order_expression_list)?
 	;
@@ -253,6 +256,10 @@ equation
 		| IN_CN^ | NOT_IN_CN^
 		) exp_set
 	)
+	
+	|	(ROWNUM_EN
+		 {#equation = #([ROWNUM_BLOCK, "rownum"], #equation);}
+		| ROWNUM_CN^) compare_op REAL_NUM
 	;
 
 //\u51fd\u6570\u5b9a\u4e49
@@ -574,6 +581,9 @@ options {
 }
 
 tokens {
+	ROWNUM_EN = "rownum";
+	ROWNUM_CN = "\u884c\u53f7";
+
 	TABLE_UNION_EN = "t_union";
 	TABLE_UNION_CN = "\u8868\u5408\u5e76";
 	
@@ -1120,6 +1130,15 @@ equation returns [EquationModel model]
 	{model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);}
 	|	#(ct2:NOT_IN_CN e1=expression e2=exp_set)
 	{model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);}
+	
+	|	#(ROWNUM_BLOCK re1:ROWNUM_EN cop1:compare_op rn1:REAL_NUM)
+	{e1 = new ExpressionModel(); e1.addConstant(re1.getText(), false);
+	 e2 = new ExpressionModel(); e2.addConstant(rn1.getText());
+	 model.addExpression(e1); model.addOperator(cop1.getText()); model.addExpression(e2);}
+	|	#(re2:ROWNUM_CN cop2:compare_op rn2:REAL_NUM)
+	{e1 = new ExpressionModel(); e1.addConstant(re2.getText(), false);
+	 e2 = new ExpressionModel(); e2.addConstant(rn2.getText());
+	 model.addExpression(e1); model.addOperator(cop2.getText()); model.addExpression(e2);}
 	;
 
 exp_set returns [ExpressionModel model]
