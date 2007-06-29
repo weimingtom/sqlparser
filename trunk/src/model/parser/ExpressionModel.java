@@ -8,15 +8,31 @@ package model.parser;
  * ======================================================
  * 06/12/2007:
  * 	- 增加addSelectStatement方法，用来存储in/not in子查询内容
- * 		
+ * 06/29/2007:
+ * 	- 增加addConstant(String c, boolean isContant)方法
+ * 		用isContant判断是否为常量，false时为系统关键字用到(rownum)
  * ======================================================
  */
 public class ExpressionModel extends QueryModel {
   private boolean hasConstant = false;
   private boolean hasTable = false;
   
+  /**
+   * 增加常量模型对象
+   * @param c 字符串或数字
+   */
   public void addConstant(String c) {
     hasConstant = true;
+    addChild(new StringModel(c));
+  }
+  
+  /**
+   * 增加常量模型对象
+   * @param c	字符串或数字或关键字
+   * @param isContant 是否为常量
+   */
+  public void addConstant(String c, boolean isContant) {
+    hasConstant = isContant;
     addChild(new StringModel(c));
   }
 
