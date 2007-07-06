@@ -34,6 +34,10 @@ public class FunctionsTestMain {
 			DateTimeFunctionsTest();
 		else if (funNum == 5)
 			ConversionFunctionsTest();
+		else if (funNum == 6)
+			AnalyticalFunctionsTest();
+		else if (funNum == 7)
+			MiscellaneousFunctionsTest();
 	}
 	
 	/**
@@ -288,6 +292,91 @@ public class FunctionsTestMain {
   	Translator t = new Translator();
   	for (int i = 0; i < functionsArr.length; i++){
   		System.out.println("数据类型转化函数测试" + (i + 1) + "：");
+	  	t.setChQuery(strHead + functionsArr[i] + strEnd);
+	    if (t.hasError()){
+	      ChWrongMessage[] msgs = t.showWrongMsgs();
+	      for (int j = 0; j < msgs.length; j++){
+	        System.out.println("【测试错误】：" + msgs[j]);
+	      }
+	    }else{
+	    	t.addDbTable("AI_94传票对照表", "CNF");
+	      t.addDbField("AI_94传票对照表", "省/市代号", "CNF01");
+	      t.addDbField("AI_94传票对照表", "行号", "CNF02");
+	      t.addDbField("AI_94传票对照表", "金额", "CNF03");
+	      t.addDbField("AI_94传票对照表", "货币码", "CNF04");
+	      t.addDbField("AI_94传票对照表", "日期", "CNF05");
+	      t.updateDbTables(t, t.getTables());
+	      System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
+	      System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
+//	      System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
+//	      System.out.println("EXE SQL IS: " + t.getQueryModel().getExecuteEnString("S001"));
+//	      String rXML = t.getXmlString();
+//	      System.out.println("TO DB XML: " + rXML);
+	    }
+	    System.out.println();
+  	}
+  }
+  
+  /**
+   * Analytical函数测试方法
+   */
+  public void AnalyticalFunctionsTest(){
+  	String strHead = "查询 ";
+  	String[] functionsArr = new String[]{
+  			"dense_rank()", 
+  			"ntile(20)",
+  			"percent_rank()",
+  			"percentile_count(AI_94传票对照表.金额)",
+  			"percentile_desc(230+900)",
+  			"rank()"
+  		};
+  	String strEnd = " 来自 AI_94传票对照表";
+  	Translator t = new Translator();
+  	for (int i = 0; i < functionsArr.length; i++){
+  		System.out.println("Analytical Functions 测试" + (i + 1) + "：");
+	  	t.setChQuery(strHead + functionsArr[i] + strEnd);
+	    if (t.hasError()){
+	      ChWrongMessage[] msgs = t.showWrongMsgs();
+	      for (int j = 0; j < msgs.length; j++){
+	        System.out.println("【测试错误】：" + msgs[j]);
+	      }
+	    }else{
+	    	t.addDbTable("AI_94传票对照表", "CNF");
+	      t.addDbField("AI_94传票对照表", "省/市代号", "CNF01");
+	      t.addDbField("AI_94传票对照表", "行号", "CNF02");
+	      t.addDbField("AI_94传票对照表", "金额", "CNF03");
+	      t.addDbField("AI_94传票对照表", "货币码", "CNF04");
+	      t.addDbField("AI_94传票对照表", "日期", "CNF05");
+	      t.updateDbTables(t, t.getTables());
+	      System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
+	      System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
+//	      System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
+//	      System.out.println("EXE SQL IS: " + t.getQueryModel().getExecuteEnString("S001"));
+//	      String rXML = t.getXmlString();
+//	      System.out.println("TO DB XML: " + rXML);
+	    }
+	    System.out.println();
+  	}
+  }
+  
+  /**
+   * Analytical函数测试方法
+   */
+  public void MiscellaneousFunctionsTest(){
+  	String strHead = "查询 ";
+  	String[] functionsArr = new String[]{
+  			"ARGN( 6, 1,2,3,4,5,6 )", 
+  			"COALESCE( NULL, 34, 13, 0 )",
+  			"IFNULL( NULL, -66 )",
+  			"ISNULL( NULL ,-66, 55, 45, NULL, 16 )",
+  			"ISNULL( AI_94传票对照表.金额, 90 )",
+  			"NULLIF( 'a', 'b' )",
+  			"NUMBER ( * )",
+  		};
+  	String strEnd = " 来自 AI_94传票对照表";
+  	Translator t = new Translator();
+  	for (int i = 0; i < functionsArr.length; i++){
+  		System.out.println("Analytical Functions 测试" + (i + 1) + "：");
 	  	t.setChQuery(strHead + functionsArr[i] + strEnd);
 	    if (t.hasError()){
 	      ChWrongMessage[] msgs = t.showWrongMsgs();
