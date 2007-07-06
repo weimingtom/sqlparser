@@ -442,7 +442,7 @@ star_function
 	:  	"pi"	|	"求圆周率"
 	|	"now"	|	"取当前日期时间1"
 	|	"today"	|	"求当前日期"
-	|	"number"
+	|	"number"|	"取自增列"
 	;
 
 //带数据类型函数[格式如： convert(char(10), f1)]
@@ -599,11 +599,11 @@ analytical_function
 
 //Miscellaneous functions
 miscellane_function
-	:	"argn"
-	|	"coalesce"
-	|	"ifnull"
-	|	"isnull"
-	|	"nullif"
+	:	"argn"		|	"取第n个变量"
+	|	"coalesce"	|	"取首个非空变量1"
+	|	"ifnull"	|	"空变量置换"
+	|	"isnull"	|	"取首个非空变量2"
+	|	"nullif"	|	"判断变量是否相等"
 	;
 
 //其他函数
@@ -1807,12 +1807,12 @@ analytical_function
 
 //Miscellaneous functions
 miscellane_function
-	:	"argn"
-	|	"coalesce"
-	|	"ifnull"
-	|	"isnull"
-	|	"nullif"
-	|	"number"
+	:	"argn"		|	"取第n个变量"
+	|	"coalesce"	|	"取首个非空变量1"
+	|	"ifnull"	|	"空变量置换"
+	|	"isnull"	|	"取首个非空变量2"
+	|	"nullif"	|	"判断变量是否相等"
+	|	"number"	|	"取自增列"
 	|	"rowid"	|	"求行号"
 	;
 
