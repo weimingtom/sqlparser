@@ -442,7 +442,7 @@ star_function
 	:  	"pi"	|	"\u6c42\u5706\u5468\u7387"
 	|	"now"	|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f41"
 	|	"today"	|	"\u6c42\u5f53\u524d\u65e5\u671f"
-	|	"number"
+	|	"number"|	"\u53d6\u81ea\u589e\u5217"
 	;
 
 //\u5e26\u6570\u636e\u7c7b\u578b\u51fd\u6570[\u683c\u5f0f\u5982\uff1a convert(char(10), f1)]
@@ -599,11 +599,11 @@ analytical_function
 
 //Miscellaneous functions
 miscellane_function
-	:	"argn"
-	|	"coalesce"
-	|	"ifnull"
-	|	"isnull"
-	|	"nullif"
+	:	"argn"		|	"\u53d6\u7b2cn\u4e2a\u53d8\u91cf"
+	|	"coalesce"	|	"\u53d6\u9996\u4e2a\u975e\u7a7a\u53d8\u91cf1"
+	|	"ifnull"	|	"\u7a7a\u53d8\u91cf\u7f6e\u6362"
+	|	"isnull"	|	"\u53d6\u9996\u4e2a\u975e\u7a7a\u53d8\u91cf2"
+	|	"nullif"	|	"\u5224\u65ad\u53d8\u91cf\u662f\u5426\u76f8\u7b49"
 	;
 
 //\u5176\u4ed6\u51fd\u6570
@@ -1807,12 +1807,12 @@ analytical_function
 
 //Miscellaneous functions
 miscellane_function
-	:	"argn"
-	|	"coalesce"
-	|	"ifnull"
-	|	"isnull"
-	|	"nullif"
-	|	"number"
+	:	"argn"		|	"\u53d6\u7b2cn\u4e2a\u53d8\u91cf"
+	|	"coalesce"	|	"\u53d6\u9996\u4e2a\u975e\u7a7a\u53d8\u91cf1"
+	|	"ifnull"	|	"\u7a7a\u53d8\u91cf\u7f6e\u6362"
+	|	"isnull"	|	"\u53d6\u9996\u4e2a\u975e\u7a7a\u53d8\u91cf2"
+	|	"nullif"	|	"\u5224\u65ad\u53d8\u91cf\u662f\u5426\u76f8\u7b49"
+	|	"number"	|	"\u53d6\u81ea\u589e\u5217"
 	|	"rowid"	|	"\u6c42\u884c\u53f7"
 	;
 
