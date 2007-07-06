@@ -365,12 +365,17 @@ public class FunctionsTestMain {
   public void MiscellaneousFunctionsTest(){
   	String strHead = "查询 ";
   	String[] functionsArr = new String[]{
+  			"取第n个变量( 2, 1,222,3,4,5,6 )",
   			"ARGN( 6, 1,2,3,4,5,6 )", 
+  			"取首个非空变量1( NULL, 34, 13, 0 )",
   			"COALESCE( NULL, 34, 13, 0 )",
+  			"空变量置换( NULL, -66 , 90)",
   			"IFNULL( NULL, -66 )",
   			"ISNULL( NULL ,-66, 55, 45, NULL, 16 )",
-  			"ISNULL( AI_94传票对照表.金额, 90 )",
+  			"ISNULL( AI_94传票对照表.金额, 'ABC' )",
+  			"判断变量是否相等( 'a', 'a' )",
   			"NULLIF( 'a', 'b' )",
+  			"取自增列 ( * )",
   			"NUMBER ( * )",
   		};
   	String strEnd = " 来自 AI_94传票对照表";
@@ -391,6 +396,7 @@ public class FunctionsTestMain {
 	      t.addDbField("AI_94传票对照表", "货币码", "CNF04");
 	      t.addDbField("AI_94传票对照表", "日期", "CNF05");
 	      t.updateDbTables(t, t.getTables());
+	      System.out.println("IN SQL IS: " + t.getQueryModel().getChQuery());
 	      System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
 	      System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
 //	      System.out.println("EMPTY EXE SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("S001"));
