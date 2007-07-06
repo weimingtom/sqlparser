@@ -49,6 +49,9 @@
 //		  \u81ea\u5df1\u5b9a\u4e49\u5173\u952e\u5b57
 //	06/25/2007:
 //		- \u589e\u52a0rowid\u51fd\u6570\u7684\u5904\u7406,\u540e\u9762\u53ea\u80fd\u662f\u8868\u540d
+//	07/06/2007:
+//		- \u589e\u52a0analytical_function\u3001miscellane_function\u51fd\u6570
+//		- \u4fee\u6b63\u4e86NULL\u7684\u5e38\u91cf\u904d\u5386\u95ee\u9898
 //==========================================================*/
 
 header {
@@ -429,6 +432,9 @@ nothing_function
 empty_function
 	: 	"getdate"	| 	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f42"
 	|	"rand"		|	"\u53d6\u968f\u673a\u6570"
+	|	"dense_rank"
+	|	"percent_rank"
+	|	"rank"
 	;
 
 //\u53c2\u6570\u4e3a*\u51fd\u6570[\u683c\u5f0f\u5982\uff1a pi()]
@@ -436,6 +442,7 @@ star_function
 	:  	"pi"	|	"\u6c42\u5706\u5468\u7387"
 	|	"now"	|	"\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f41"
 	|	"today"	|	"\u6c42\u5f53\u524d\u65e5\u671f"
+	|	"number"
 	;
 
 //\u5e26\u6570\u636e\u7c7b\u578b\u51fd\u6570[\u683c\u5f0f\u5982\uff1a convert(char(10), f1)]
@@ -456,7 +463,9 @@ function_name
 	|	datetime_function
 	|	conversion_function
 	|	system_function
-	|	other_function
+	|	analytical_function
+	|	miscellane_function
+//	|	other_function
 	;
 
 //\u6570\u5b66\u51fd\u6570
@@ -576,15 +585,31 @@ system_function
 	|	"user_name"
 	;
 
-//\u5176\u4ed6\u51fd\u6570
-other_function
-	:	"argn"
-//	| 	"rowid"	|	"\u6c42\u884c\u53f7"
-	;
-
+//\u6c42\u884c\u53f7\u51fd\u6570
 rowid_function
 	: 	"rowid"	|	"\u6c42\u884c\u53f7"
 	;
+
+//Analytical functions
+analytical_function
+	:	"ntile"
+	|	"percentile_count"
+	|	"percentile_desc"
+	;
+
+//Miscellaneous functions
+miscellane_function
+	:	"argn"
+	|	"coalesce"
+	|	"ifnull"
+	|	"isnull"
+	|	"nullif"
+	;
+
+//\u5176\u4ed6\u51fd\u6570
+//other_function
+//	:
+//	;
 
 //\u5355\u4e2a\u8fd0\u7b97\u7b26\u53f7[~]
 one_arg_op
@@ -1345,6 +1370,8 @@ expression returns [ExpressionModel model]
 	{model.addConstant(rn.getText());}
 	|	qs:QUOTED_STRING
 	{model.addConstant(qs.getText());}
+	|	nullStr:NULL_EN
+	{model.addConstant(nullStr.getText());}
 	|	allf:ALL_FIELDS
 	{model.addOperator(allf.getText());}
 	;
@@ -1647,8 +1674,9 @@ function_name
 	|	datetime_function
 	|	conversion_function
 	|	system_function
-	|	other_function
-	|	rowid_function
+	|	analytical_function
+	|	miscellane_function
+//	|	other_function
 	;
 
 //\u6570\u5b66\u51fd\u6570
@@ -1767,15 +1795,31 @@ system_function
 	|	"user_name"
 	;
 
-//\u5176\u4ed6\u51fd\u6570
-other_function
-	:	"argn"
-//	| 	"rowid"	|	"\u6c42\u884c\u53f7"
+//Analytical functions
+analytical_function
+	:	"dense_rank"
+	|	"ntile"
+	|	"percent_rank"
+	|	"percentile_count"
+	|	"percentile_desc"
+	|	"rank"
 	;
 
-rowid_function
-	: 	"rowid"	|	"\u6c42\u884c\u53f7"
+//Miscellaneous functions
+miscellane_function
+	:	"argn"
+	|	"coalesce"
+	|	"ifnull"
+	|	"isnull"
+	|	"nullif"
+	|	"number"
+	|	"rowid"	|	"\u6c42\u884c\u53f7"
 	;
+
+//\u5176\u4ed6\u51fd\u6570
+//other_function
+//	:
+//	;
 
 //\u65e5\u671fdate-part\u4fdd\u7559\u5b57
 date_key_word
