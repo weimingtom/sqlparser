@@ -49,6 +49,9 @@
 //		  自己定义关键字
 //	06/25/2007:
 //		- 增加rowid函数的处理,后面只能是表名
+//	07/06/2007:
+//		- 增加analytical_function、miscellane_function函数
+//		- 修正了NULL的常量遍历问题
 //==========================================================*/
 
 header {
@@ -429,6 +432,9 @@ nothing_function
 empty_function
 	: 	"getdate"	| 	"取当前日期时间2"
 	|	"rand"		|	"取随机数"
+	|	"dense_rank"
+	|	"percent_rank"
+	|	"rank"
 	;
 
 //参数为*函数[格式如： pi()]
@@ -436,6 +442,7 @@ star_function
 	:  	"pi"	|	"求圆周率"
 	|	"now"	|	"取当前日期时间1"
 	|	"today"	|	"求当前日期"
+	|	"number"
 	;
 
 //带数据类型函数[格式如： convert(char(10), f1)]
@@ -456,7 +463,9 @@ function_name
 	|	datetime_function
 	|	conversion_function
 	|	system_function
-	|	other_function
+	|	analytical_function
+	|	miscellane_function
+//	|	other_function
 	;
 
 //数学函数
@@ -576,15 +585,31 @@ system_function
 	|	"user_name"
 	;
 
-//其他函数
-other_function
-	:	"argn"
-//	| 	"rowid"	|	"求行号"
-	;
-
+//求行号函数
 rowid_function
 	: 	"rowid"	|	"求行号"
 	;
+
+//Analytical functions
+analytical_function
+	:	"ntile"
+	|	"percentile_count"
+	|	"percentile_desc"
+	;
+
+//Miscellaneous functions
+miscellane_function
+	:	"argn"
+	|	"coalesce"
+	|	"ifnull"
+	|	"isnull"
+	|	"nullif"
+	;
+
+//其他函数
+//other_function
+//	:
+//	;
 
 //单个运算符号[~]
 one_arg_op
@@ -1345,6 +1370,8 @@ expression returns [ExpressionModel model]
 	{model.addConstant(rn.getText());}
 	|	qs:QUOTED_STRING
 	{model.addConstant(qs.getText());}
+	|	nullStr:NULL_EN
+	{model.addConstant(nullStr.getText());}
 	|	allf:ALL_FIELDS
 	{model.addOperator(allf.getText());}
 	;
@@ -1647,8 +1674,9 @@ function_name
 	|	datetime_function
 	|	conversion_function
 	|	system_function
-	|	other_function
-	|	rowid_function
+	|	analytical_function
+	|	miscellane_function
+//	|	other_function
 	;
 
 //数学函数
@@ -1767,15 +1795,31 @@ system_function
 	|	"user_name"
 	;
 
-//其他函数
-other_function
-	:	"argn"
-//	| 	"rowid"	|	"求行号"
+//Analytical functions
+analytical_function
+	:	"dense_rank"
+	|	"ntile"
+	|	"percent_rank"
+	|	"percentile_count"
+	|	"percentile_desc"
+	|	"rank"
 	;
 
-rowid_function
-	: 	"rowid"	|	"求行号"
+//Miscellaneous functions
+miscellane_function
+	:	"argn"
+	|	"coalesce"
+	|	"ifnull"
+	|	"isnull"
+	|	"nullif"
+	|	"number"
+	|	"rowid"	|	"求行号"
 	;
+
+//其他函数
+//other_function
+//	:
+//	;
 
 //日期date-part保留字
 date_key_word

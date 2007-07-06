@@ -117,24 +117,9 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case AS_EN:
 			{
-				AST __t248 = _t;
+				AST __t249 = _t;
 				AST tmp3_AST_in = (AST)_t;
 				match(_t,AS_EN);
-				_t = _t.getFirstChild();
-				e=expression(_t);
-				_t = _retTree;
-				a=alias(_t);
-				_t = _retTree;
-				_t = __t248;
-				_t = _t.getNextSibling();
-				model.addExpression(e); model.addAlias(a);
-				break;
-			}
-			case AS_CN:
-			{
-				AST __t249 = _t;
-				AST tmp4_AST_in = (AST)_t;
-				match(_t,AS_CN);
 				_t = _t.getFirstChild();
 				e=expression(_t);
 				_t = _retTree;
@@ -145,9 +130,24 @@ public SybaseIQ12TreeParser() {
 				model.addExpression(e); model.addAlias(a);
 				break;
 			}
-			case ALIAS_EQU:
+			case AS_CN:
 			{
 				AST __t250 = _t;
+				AST tmp4_AST_in = (AST)_t;
+				match(_t,AS_CN);
+				_t = _t.getFirstChild();
+				e=expression(_t);
+				_t = _retTree;
+				a=alias(_t);
+				_t = _retTree;
+				_t = __t250;
+				_t = _t.getNextSibling();
+				model.addExpression(e); model.addAlias(a);
+				break;
+			}
+			case ALIAS_EQU:
+			{
+				AST __t251 = _t;
 				AST tmp5_AST_in = (AST)_t;
 				match(_t,ALIAS_EQU);
 				_t = _t.getFirstChild();
@@ -155,7 +155,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				e=expression(_t);
 				_t = _retTree;
-				_t = __t250;
+				_t = __t251;
 				_t = _t.getNextSibling();
 				model.addExpression(e); model.addAlias(a);
 				break;
@@ -174,6 +174,7 @@ public SybaseIQ12TreeParser() {
 			case DISTINCT_CN:
 			case REAL_NUM:
 			case LPAREN:
+			case NULL_EN:
 			case COUNT_EN:
 			case COUNT_CN:
 			case ALL_EN:
@@ -262,7 +263,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case AND_EN:
 			{
-				AST __t236 = _t;
+				AST __t237 = _t;
 				o1 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,AND_EN);
 				_t = _t.getFirstChild();
@@ -270,14 +271,14 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				m2=search_condition(_t);
 				_t = _retTree;
-				_t = __t236;
+				_t = __t237;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addOperator(o1.getText(), true); model.addChild(m2);
 				break;
 			}
 			case OR_EN:
 			{
-				AST __t237 = _t;
+				AST __t238 = _t;
 				o2 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,OR_EN);
 				_t = _t.getFirstChild();
@@ -285,14 +286,14 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				m2=search_condition(_t);
 				_t = _retTree;
-				_t = __t237;
+				_t = __t238;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addOperator(o2.getText(), true); model.addChild(m2);
 				break;
 			}
 			case AND_CN:
 			{
-				AST __t238 = _t;
+				AST __t239 = _t;
 				o3 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,AND_CN);
 				_t = _t.getFirstChild();
@@ -300,14 +301,14 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				m2=search_condition(_t);
 				_t = _retTree;
-				_t = __t238;
+				_t = __t239;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addOperator(o3.getText()); model.addChild(m2);
 				break;
 			}
 			case OR_CN:
 			{
-				AST __t239 = _t;
+				AST __t240 = _t;
 				o4 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,OR_CN);
 				_t = _t.getFirstChild();
@@ -315,27 +316,27 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				m2=search_condition(_t);
 				_t = _retTree;
-				_t = __t239;
+				_t = __t240;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addOperator(o4.getText()); model.addChild(m2);
 				break;
 			}
 			case LOGIC_BLOCK:
 			{
-				AST __t240 = _t;
+				AST __t241 = _t;
 				AST tmp6_AST_in = (AST)_t;
 				match(_t,LOGIC_BLOCK);
 				_t = _t.getFirstChild();
 				m3=search_condition(_t);
 				_t = _retTree;
-				_t = __t240;
+				_t = __t241;
 				_t = _t.getNextSibling();
 				model.addOperator("("); model.addChild(m3); model.addOperator(")");
 				break;
 			}
 			case SEARCH_NOT_CONDITION:
 			{
-				AST __t241 = _t;
+				AST __t242 = _t;
 				AST tmp7_AST_in = (AST)_t;
 				match(_t,SEARCH_NOT_CONDITION);
 				_t = _t.getFirstChild();
@@ -344,20 +345,20 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				m4=search_condition(_t);
 				_t = _retTree;
-				_t = __t241;
+				_t = __t242;
 				_t = _t.getNextSibling();
 				model.addOperator(o11.getText(), true); model.addChild(m4);
 				break;
 			}
 			case NOT_CN:
 			{
-				AST __t242 = _t;
+				AST __t243 = _t;
 				o12 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,NOT_CN);
 				_t = _t.getFirstChild();
 				m5=search_condition(_t);
 				_t = _retTree;
-				_t = __t242;
+				_t = __t243;
 				_t = _t.getNextSibling();
 				model.addOperator(o12.getText()); model.addChild(m5);
 				break;
@@ -412,7 +413,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case SEMI:
 			{
-				AST __t204 = _t;
+				AST __t205 = _t;
 				AST tmp8_AST_in = (AST)_t;
 				match(_t,SEMI);
 				_t = _t.getFirstChild();
@@ -420,7 +421,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				s2=statements(_t);
 				_t = _retTree;
-				_t = __t204;
+				_t = __t205;
 				_t = _t.getNextSibling();
 				model.addChild(s1); model.addChild(s2);
 				break;
@@ -467,13 +468,13 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case TABLE_UNION_CN:
 			{
-				AST __t206 = _t;
+				AST __t207 = _t;
 				AST tmp9_AST_in = (AST)_t;
 				match(_t,TABLE_UNION_CN);
 				_t = _t.getFirstChild();
 				t1=tableUnionList(_t);
 				_t = _retTree;
-				_t = __t206;
+				_t = __t207;
 				_t = _t.getNextSibling();
 				
 							union.addTableListModel(t1);
@@ -483,7 +484,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case TABLE_COMPARE_CN:
 			{
-				AST __t207 = _t;
+				AST __t208 = _t;
 				AST tmp10_AST_in = (AST)_t;
 				match(_t,TABLE_COMPARE_CN);
 				_t = _t.getFirstChild();
@@ -495,7 +496,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				cond=search_condition(_t);
 				_t = _retTree;
-				_t = __t207;
+				_t = __t208;
 				_t = _t.getNextSibling();
 					
 							tableCompare.addTableModel1(tableModel1);
@@ -508,13 +509,13 @@ public SybaseIQ12TreeParser() {
 			}
 			case SELECT_STATEMENT:
 			{
-				AST __t208 = _t;
+				AST __t209 = _t;
 				AST tmp11_AST_in = (AST)_t;
 				match(_t,SELECT_STATEMENT);
 				_t = _t.getFirstChild();
 				model=select_statement(_t);
 				_t = _retTree;
-				_t = __t208;
+				_t = __t209;
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -548,7 +549,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t210 = _t;
+				AST __t211 = _t;
 				AST tmp12_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -556,7 +557,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				m2=tableUnionList(_t);
 				_t = _retTree;
-				_t = __t210;
+				_t = __t211;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addChild(m2);
 				break;
@@ -606,7 +607,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case AS_EN:
 			{
-				AST __t323 = _t;
+				AST __t324 = _t;
 				AST tmp13_AST_in = (AST)_t;
 				match(_t,AS_EN);
 				_t = _t.getFirstChild();
@@ -615,14 +616,14 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				ta=tableAlias(_t);
 				_t = _retTree;
-				_t = __t323;
+				_t = __t324;
 				_t = _t.getNextSibling();
 				model = new TableModel(t1.getText()); model.setAlias(ta);
 				break;
 			}
 			case AS_CN:
 			{
-				AST __t324 = _t;
+				AST __t325 = _t;
 				AST tmp14_AST_in = (AST)_t;
 				match(_t,AS_CN);
 				_t = _t.getFirstChild();
@@ -631,7 +632,7 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				ta=tableAlias(_t);
 				_t = _retTree;
-				_t = __t324;
+				_t = __t325;
 				_t = _t.getNextSibling();
 				model = new TableModel(t2.getText()); model.setAlias(ta);
 				break;
@@ -674,7 +675,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case LOGICAL_NOT_EXISTS:
 			{
-				AST __t212 = _t;
+				AST __t213 = _t;
 				AST tmp15_AST_in = (AST)_t;
 				match(_t,LOGICAL_NOT_EXISTS);
 				_t = _t.getFirstChild();
@@ -684,7 +685,7 @@ public SybaseIQ12TreeParser() {
 				ne2 = (AST)_t;
 				match(_t,EXISTS_EN);
 				_t = _t.getNextSibling();
-				_t = __t212;
+				_t = __t213;
 				_t = _t.getNextSibling();
 				rValue = ne1.getText() + " " + ne2.getText();
 				break;
@@ -725,24 +726,9 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case DISTINCT_CN:
 			{
-				AST __t214 = _t;
+				AST __t215 = _t;
 				AST tmp16_AST_in = (AST)_t;
 				match(_t,DISTINCT_CN);
-				_t = _t.getFirstChild();
-				select(_t);
-				_t = _retTree;
-				sl=select_list(_t);
-				_t = _retTree;
-				_t = __t214;
-				_t = _t.getNextSibling();
-				sl.setDistinct(true); model.setSelectList(sl);
-				break;
-			}
-			case DISTINCT_EN:
-			{
-				AST __t215 = _t;
-				AST tmp17_AST_in = (AST)_t;
-				match(_t,DISTINCT_EN);
 				_t = _t.getFirstChild();
 				select(_t);
 				_t = _retTree;
@@ -753,9 +739,24 @@ public SybaseIQ12TreeParser() {
 				sl.setDistinct(true); model.setSelectList(sl);
 				break;
 			}
-			case TOP_CN:
+			case DISTINCT_EN:
 			{
 				AST __t216 = _t;
+				AST tmp17_AST_in = (AST)_t;
+				match(_t,DISTINCT_EN);
+				_t = _t.getFirstChild();
+				select(_t);
+				_t = _retTree;
+				sl=select_list(_t);
+				_t = _retTree;
+				_t = __t216;
+				_t = _t.getNextSibling();
+				sl.setDistinct(true); model.setSelectList(sl);
+				break;
+			}
+			case TOP_CN:
+			{
+				AST __t217 = _t;
 				AST tmp18_AST_in = (AST)_t;
 				match(_t,TOP_CN);
 				_t = _t.getFirstChild();
@@ -766,14 +767,14 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				sl=select_list(_t);
 				_t = _retTree;
-				_t = __t216;
+				_t = __t217;
 				_t = _t.getNextSibling();
 				sl.setTopNum(int1.getText()); sl.setDistinct(isdst); model.setSelectList(sl);
 				break;
 			}
 			case TOP_EN:
 			{
-				AST __t217 = _t;
+				AST __t218 = _t;
 				AST tmp19_AST_in = (AST)_t;
 				match(_t,TOP_EN);
 				_t = _t.getFirstChild();
@@ -784,29 +785,16 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				sl=select_list(_t);
 				_t = _retTree;
-				_t = __t217;
+				_t = __t218;
 				_t = _t.getNextSibling();
 				sl.setTopNum(int2.getText()); sl.setDistinct(isdst); model.setSelectList(sl);
 				break;
 			}
 			case SELECT_CN:
 			{
-				AST __t218 = _t;
+				AST __t219 = _t;
 				AST tmp20_AST_in = (AST)_t;
 				match(_t,SELECT_CN);
-				_t = _t.getFirstChild();
-				sl=select_list(_t);
-				_t = _retTree;
-				_t = __t218;
-				_t = _t.getNextSibling();
-				model.setSelectList(sl);
-				break;
-			}
-			case SELECT_EN:
-			{
-				AST __t219 = _t;
-				AST tmp21_AST_in = (AST)_t;
-				match(_t,SELECT_EN);
 				_t = _t.getFirstChild();
 				sl=select_list(_t);
 				_t = _retTree;
@@ -815,26 +803,24 @@ public SybaseIQ12TreeParser() {
 				model.setSelectList(sl);
 				break;
 			}
-			case FROM_CN:
+			case SELECT_EN:
 			{
 				AST __t220 = _t;
-				AST tmp22_AST_in = (AST)_t;
-				match(_t,FROM_CN);
+				AST tmp21_AST_in = (AST)_t;
+				match(_t,SELECT_EN);
 				_t = _t.getFirstChild();
-				s=select_statement(_t);
-				_t = _retTree;
-				tl=table_list(_t);
+				sl=select_list(_t);
 				_t = _retTree;
 				_t = __t220;
 				_t = _t.getNextSibling();
-				model.addChild(s); model.setTableList(tl);
+				model.setSelectList(sl);
 				break;
 			}
-			case FROM_EN:
+			case FROM_CN:
 			{
 				AST __t221 = _t;
-				AST tmp23_AST_in = (AST)_t;
-				match(_t,FROM_EN);
+				AST tmp22_AST_in = (AST)_t;
+				match(_t,FROM_CN);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
@@ -845,26 +831,26 @@ public SybaseIQ12TreeParser() {
 				model.addChild(s); model.setTableList(tl);
 				break;
 			}
-			case WHERE_CN:
+			case FROM_EN:
 			{
 				AST __t222 = _t;
-				AST tmp24_AST_in = (AST)_t;
-				match(_t,WHERE_CN);
+				AST tmp23_AST_in = (AST)_t;
+				match(_t,FROM_EN);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
-				cond=search_condition(_t);
+				tl=table_list(_t);
 				_t = _retTree;
 				_t = __t222;
 				_t = _t.getNextSibling();
-				model.addChild(s); model.setSearchCondition(cond);
+				model.addChild(s); model.setTableList(tl);
 				break;
 			}
-			case WHERE_EN:
+			case WHERE_CN:
 			{
 				AST __t223 = _t;
-				AST tmp25_AST_in = (AST)_t;
-				match(_t,WHERE_EN);
+				AST tmp24_AST_in = (AST)_t;
+				match(_t,WHERE_CN);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
@@ -875,26 +861,26 @@ public SybaseIQ12TreeParser() {
 				model.addChild(s); model.setSearchCondition(cond);
 				break;
 			}
-			case GROUP_BY_CN:
+			case WHERE_EN:
 			{
 				AST __t224 = _t;
-				AST tmp26_AST_in = (AST)_t;
-				match(_t,GROUP_BY_CN);
+				AST tmp25_AST_in = (AST)_t;
+				match(_t,WHERE_EN);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
-				group=aggregate_expression_list(_t);
+				cond=search_condition(_t);
 				_t = _retTree;
 				_t = __t224;
 				_t = _t.getNextSibling();
-				model.addChild(s); model.setGroupExpressionList(group);
+				model.addChild(s); model.setSearchCondition(cond);
 				break;
 			}
-			case GROUP_EN:
+			case GROUP_BY_CN:
 			{
 				AST __t225 = _t;
-				AST tmp27_AST_in = (AST)_t;
-				match(_t,GROUP_EN);
+				AST tmp26_AST_in = (AST)_t;
+				match(_t,GROUP_BY_CN);
 				_t = _t.getFirstChild();
 				s=select_statement(_t);
 				_t = _retTree;
@@ -905,9 +891,24 @@ public SybaseIQ12TreeParser() {
 				model.addChild(s); model.setGroupExpressionList(group);
 				break;
 			}
-			case ORDER_BY_CN:
+			case GROUP_EN:
 			{
 				AST __t226 = _t;
+				AST tmp27_AST_in = (AST)_t;
+				match(_t,GROUP_EN);
+				_t = _t.getFirstChild();
+				s=select_statement(_t);
+				_t = _retTree;
+				group=aggregate_expression_list(_t);
+				_t = _retTree;
+				_t = __t226;
+				_t = _t.getNextSibling();
+				model.addChild(s); model.setGroupExpressionList(group);
+				break;
+			}
+			case ORDER_BY_CN:
+			{
+				AST __t227 = _t;
 				AST tmp28_AST_in = (AST)_t;
 				match(_t,ORDER_BY_CN);
 				_t = _t.getFirstChild();
@@ -915,14 +916,14 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				order=order_expression_list(_t);
 				_t = _retTree;
-				_t = __t226;
+				_t = __t227;
 				_t = _t.getNextSibling();
 				model.addChild(s); model.setOrderExpressionList(order);
 				break;
 			}
 			case ORDER_EN:
 			{
-				AST __t227 = _t;
+				AST __t228 = _t;
 				AST tmp29_AST_in = (AST)_t;
 				match(_t,ORDER_EN);
 				_t = _t.getFirstChild();
@@ -930,7 +931,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				order=order_expression_list(_t);
 				_t = _retTree;
-				_t = __t227;
+				_t = __t228;
 				_t = _t.getNextSibling();
 				model.addChild(s); model.setOrderExpressionList(order);
 				break;
@@ -1039,7 +1040,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t232 = _t;
+				AST __t233 = _t;
 				AST tmp35_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -1047,7 +1048,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				m2=select_list(_t);
 				_t = _retTree;
-				_t = __t232;
+				_t = __t233;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addChild(m2);
 				break;
@@ -1069,6 +1070,7 @@ public SybaseIQ12TreeParser() {
 			case LPAREN:
 			case AS_EN:
 			case AS_CN:
+			case NULL_EN:
 			case COUNT_EN:
 			case COUNT_CN:
 			case ALL_EN:
@@ -1153,26 +1155,26 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case DISTINCT_CN:
 			{
-				AST __t229 = _t;
+				AST __t230 = _t;
 				AST tmp36_AST_in = (AST)_t;
 				match(_t,DISTINCT_CN);
 				_t = _t.getFirstChild();
 				select(_t);
 				_t = _retTree;
-				_t = __t229;
+				_t = __t230;
 				_t = _t.getNextSibling();
 				rValue = true;
 				break;
 			}
 			case DISTINCT_EN:
 			{
-				AST __t230 = _t;
+				AST __t231 = _t;
 				AST tmp37_AST_in = (AST)_t;
 				match(_t,DISTINCT_EN);
 				_t = _t.getFirstChild();
 				select(_t);
 				_t = _retTree;
-				_t = __t230;
+				_t = __t231;
 				_t = _t.getNextSibling();
 				rValue = true;
 				break;
@@ -1210,7 +1212,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t234 = _t;
+				AST __t235 = _t;
 				AST tmp38_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -1218,7 +1220,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				m2=table_list(_t);
 				_t = _retTree;
-				_t = __t234;
+				_t = __t235;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addChild(m2);
 				break;
@@ -1257,7 +1259,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t244 = _t;
+				AST __t245 = _t;
 				AST tmp39_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -1265,7 +1267,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				m2=aggregate_expression_list(_t);
 				_t = _retTree;
-				_t = __t244;
+				_t = __t245;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addChild(m2);
 				break;
@@ -1335,7 +1337,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t246 = _t;
+				AST __t247 = _t;
 				AST tmp40_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -1343,7 +1345,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				m2=order_expression_list(_t);
 				_t = _retTree;
-				_t = __t246;
+				_t = __t247;
 				_t = _t.getNextSibling();
 				model.addChild(m1); model.addChild(m2);
 				break;
@@ -1444,7 +1446,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case COMPARE_OP:
 			{
-				AST __t252 = _t;
+				AST __t253 = _t;
 				AST tmp41_AST_in = (AST)_t;
 				match(_t,COMPARE_OP);
 				_t = _t.getFirstChild();
@@ -1455,14 +1457,14 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				e2=expression(_t);
 				_t = _retTree;
-				_t = __t252;
+				_t = __t253;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(op.getText()); model.addExpression(e2);
 				break;
 			}
 			case LOGICAL_EXISTS:
 			{
-				AST __t253 = _t;
+				AST __t254 = _t;
 				AST tmp42_AST_in = (AST)_t;
 				match(_t,LOGICAL_EXISTS);
 				_t = _t.getFirstChild();
@@ -1471,22 +1473,22 @@ public SybaseIQ12TreeParser() {
 				le0 = (AST)_t;
 				match(_t,EXISTS_EN);
 				_t = _t.getNextSibling();
-				AST __t254 = _t;
+				AST __t255 = _t;
 				AST tmp43_AST_in = (AST)_t;
 				match(_t,SUBQUERY);
 				_t = _t.getFirstChild();
 				stmt=select_statement(_t);
 				_t = _retTree;
-				_t = __t254;
+				_t = __t255;
 				_t = _t.getNextSibling();
-				_t = __t253;
+				_t = __t254;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(le0.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);
 				break;
 			}
 			case LOGICAL_NOT_EXISTS:
 			{
-				AST __t255 = _t;
+				AST __t256 = _t;
 				AST tmp44_AST_in = (AST)_t;
 				match(_t,LOGICAL_NOT_EXISTS);
 				_t = _t.getFirstChild();
@@ -1498,64 +1500,64 @@ public SybaseIQ12TreeParser() {
 				le2 = (AST)_t;
 				match(_t,EXISTS_EN);
 				_t = _t.getNextSibling();
-				AST __t256 = _t;
+				AST __t257 = _t;
 				AST tmp45_AST_in = (AST)_t;
 				match(_t,SUBQUERY);
 				_t = _t.getFirstChild();
 				stmt=select_statement(_t);
 				_t = _retTree;
-				_t = __t256;
+				_t = __t257;
 				_t = _t.getNextSibling();
-				_t = __t255;
+				_t = __t256;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(le1.getText() + " " + le2.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);
 				break;
 			}
 			case EXISTS_CN:
 			{
-				AST __t257 = _t;
+				AST __t258 = _t;
 				le = _t==ASTNULL ? null :(AST)_t;
 				match(_t,EXISTS_CN);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
-				AST __t258 = _t;
+				AST __t259 = _t;
 				AST tmp46_AST_in = (AST)_t;
 				match(_t,SUBQUERY);
 				_t = _t.getFirstChild();
 				stmt=select_statement(_t);
 				_t = _retTree;
-				_t = __t258;
+				_t = __t259;
 				_t = _t.getNextSibling();
-				_t = __t257;
+				_t = __t258;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(le.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);
 				break;
 			}
 			case NOT_EXISTS_CN:
 			{
-				AST __t259 = _t;
+				AST __t260 = _t;
 				lne = _t==ASTNULL ? null :(AST)_t;
 				match(_t,NOT_EXISTS_CN);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
-				AST __t260 = _t;
+				AST __t261 = _t;
 				AST tmp47_AST_in = (AST)_t;
 				match(_t,SUBQUERY);
 				_t = _t.getFirstChild();
 				stmt=select_statement(_t);
 				_t = _retTree;
-				_t = __t260;
+				_t = __t261;
 				_t = _t.getNextSibling();
-				_t = __t259;
+				_t = __t260;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(lne.getText(), true); model.addSelectStatement(stmt); stmt.setSubquery(true);
 				break;
 			}
 			case LOGICAL_LIKE:
 			{
-				AST __t261 = _t;
+				AST __t262 = _t;
 				AST tmp48_AST_in = (AST)_t;
 				match(_t,LOGICAL_LIKE);
 				_t = _t.getFirstChild();
@@ -1566,14 +1568,14 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				e2=expression(_t);
 				_t = _retTree;
-				_t = __t261;
+				_t = __t262;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(ls.getText(), true); model.addExpression(e2);
 				break;
 			}
 			case LOGICAL_NOT_LIKE:
 			{
-				AST __t262 = _t;
+				AST __t263 = _t;
 				AST tmp49_AST_in = (AST)_t;
 				match(_t,LOGICAL_NOT_LIKE);
 				_t = _t.getFirstChild();
@@ -1587,14 +1589,14 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				e2=expression(_t);
 				_t = _retTree;
-				_t = __t262;
+				_t = __t263;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(ls1.getText() + " " + ls2.getText(), true); model.addExpression(e2);
 				break;
 			}
 			case LIKE_CN:
 			{
-				AST __t263 = _t;
+				AST __t264 = _t;
 				l = _t==ASTNULL ? null :(AST)_t;
 				match(_t,LIKE_CN);
 				_t = _t.getFirstChild();
@@ -1602,14 +1604,14 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				e2=expression(_t);
 				_t = _retTree;
-				_t = __t263;
+				_t = __t264;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(l.getText()); model.addExpression(e2);
 				break;
 			}
 			case NOT_LIKE_CN:
 			{
-				AST __t264 = _t;
+				AST __t265 = _t;
 				nl = _t==ASTNULL ? null :(AST)_t;
 				match(_t,NOT_LIKE_CN);
 				_t = _t.getFirstChild();
@@ -1617,14 +1619,14 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				e2=expression(_t);
 				_t = _retTree;
-				_t = __t264;
+				_t = __t265;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(nl.getText()); model.addExpression(e2);
 				break;
 			}
 			case LOGICAL_NULL:
 			{
-				AST __t265 = _t;
+				AST __t266 = _t;
 				AST tmp50_AST_in = (AST)_t;
 				match(_t,LOGICAL_NULL);
 				_t = _t.getFirstChild();
@@ -1636,27 +1638,27 @@ public SybaseIQ12TreeParser() {
 				nStr2 = (AST)_t;
 				match(_t,NULL_EN);
 				_t = _t.getNextSibling();
-				_t = __t265;
+				_t = __t266;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(nStr1.getText() + " " + nStr2.getText(), true);
 				break;
 			}
 			case NULL_CN:
 			{
-				AST __t266 = _t;
+				AST __t267 = _t;
 				n = _t==ASTNULL ? null :(AST)_t;
 				match(_t,NULL_CN);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
-				_t = __t266;
+				_t = __t267;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(n.getText());
 				break;
 			}
 			case LOGICAL_NOT_NULL:
 			{
-				AST __t267 = _t;
+				AST __t268 = _t;
 				AST tmp51_AST_in = (AST)_t;
 				match(_t,LOGICAL_NOT_NULL);
 				_t = _t.getFirstChild();
@@ -1671,27 +1673,27 @@ public SybaseIQ12TreeParser() {
 				nStr5 = (AST)_t;
 				match(_t,NULL_EN);
 				_t = _t.getNextSibling();
-				_t = __t267;
+				_t = __t268;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(nStr3.getText() + " " + nStr4.getText() + " " + nStr5.getText(), true);
 				break;
 			}
 			case NOT_NULL_CN:
 			{
-				AST __t268 = _t;
+				AST __t269 = _t;
 				nn = _t==ASTNULL ? null :(AST)_t;
 				match(_t,NOT_NULL_CN);
 				_t = _t.getFirstChild();
 				e1=expression(_t);
 				_t = _retTree;
-				_t = __t268;
+				_t = __t269;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(nn.getText());
 				break;
 			}
 			case BETWEEN_EN:
 			{
-				AST __t269 = _t;
+				AST __t270 = _t;
 				bt1 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,BETWEEN_EN);
 				_t = _t.getFirstChild();
@@ -1701,7 +1703,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				e3=expression(_t);
 				_t = _retTree;
-				_t = __t269;
+				_t = __t270;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(bt1.getText(), true);
 					 model.addExpression(e2); model.addExpression(e3);
@@ -1709,7 +1711,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case BETWEEN_CN:
 			{
-				AST __t270 = _t;
+				AST __t271 = _t;
 				btw = _t==ASTNULL ? null :(AST)_t;
 				match(_t,BETWEEN_CN);
 				_t = _t.getFirstChild();
@@ -1719,7 +1721,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				e3=expression(_t);
 				_t = _retTree;
-				_t = __t270;
+				_t = __t271;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(btw.getText());
 					 model.addExpression(e2); model.addExpression(e3);
@@ -1728,7 +1730,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case LOGICAL_IN:
 			{
-				AST __t271 = _t;
+				AST __t272 = _t;
 				AST tmp52_AST_in = (AST)_t;
 				match(_t,LOGICAL_IN);
 				_t = _t.getFirstChild();
@@ -1739,14 +1741,14 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				e2=exp_set(_t);
 				_t = _retTree;
-				_t = __t271;
+				_t = __t272;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(in1.getText(), true); model.addExpression(e2);
 				break;
 			}
 			case LOGICAL_NOT_IN:
 			{
-				AST __t272 = _t;
+				AST __t273 = _t;
 				AST tmp53_AST_in = (AST)_t;
 				match(_t,LOGICAL_NOT_IN);
 				_t = _t.getFirstChild();
@@ -1760,14 +1762,14 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				e2=exp_set(_t);
 				_t = _retTree;
-				_t = __t272;
+				_t = __t273;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(in2.getText() + " " + in3.getText(), true); model.addExpression(e2);
 				break;
 			}
 			case IN_CN:
 			{
-				AST __t273 = _t;
+				AST __t274 = _t;
 				ct1 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,IN_CN);
 				_t = _t.getFirstChild();
@@ -1775,14 +1777,14 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				e2=exp_set(_t);
 				_t = _retTree;
-				_t = __t273;
+				_t = __t274;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(ct1.getText()); model.addExpression(e2);
 				break;
 			}
 			case NOT_IN_CN:
 			{
-				AST __t274 = _t;
+				AST __t275 = _t;
 				ct2 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,NOT_IN_CN);
 				_t = _t.getFirstChild();
@@ -1790,7 +1792,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				e2=exp_set(_t);
 				_t = _retTree;
-				_t = __t274;
+				_t = __t275;
 				_t = _t.getNextSibling();
 				model.addExpression(e1); model.addOperator(ct2.getText()); model.addExpression(e2);
 				break;
@@ -1839,7 +1841,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case TWO_ARG_OP:
 			{
-				AST __t282 = _t;
+				AST __t283 = _t;
 				AST tmp54_AST_in = (AST)_t;
 				match(_t,TWO_ARG_OP);
 				_t = _t.getFirstChild();
@@ -1850,7 +1852,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				a2=aggregate_expression(_t);
 				_t = _retTree;
-				_t = __t282;
+				_t = __t283;
 				_t = _t.getNextSibling();
 				model.addChild(a1); model.addOperator(op.getText(), true); model.addChild(a2);
 				break;
@@ -1977,22 +1979,9 @@ public SybaseIQ12TreeParser() {
 			}
 			case ASC_EN:
 			{
-				AST __t284 = _t;
+				AST __t285 = _t;
 				AST tmp55_AST_in = (AST)_t;
 				match(_t,ASC_EN);
-				_t = _t.getFirstChild();
-				o=order_expression(_t);
-				_t = _retTree;
-				_t = __t284;
-				_t = _t.getNextSibling();
-				model.addChild(o); model.setSort(OrderExpressionModel.ASC);
-				break;
-			}
-			case ASC_CN:
-			{
-				AST __t285 = _t;
-				AST tmp56_AST_in = (AST)_t;
-				match(_t,ASC_CN);
 				_t = _t.getFirstChild();
 				o=order_expression(_t);
 				_t = _retTree;
@@ -2001,28 +1990,41 @@ public SybaseIQ12TreeParser() {
 				model.addChild(o); model.setSort(OrderExpressionModel.ASC);
 				break;
 			}
-			case DESC_EN:
+			case ASC_CN:
 			{
 				AST __t286 = _t;
+				AST tmp56_AST_in = (AST)_t;
+				match(_t,ASC_CN);
+				_t = _t.getFirstChild();
+				o=order_expression(_t);
+				_t = _retTree;
+				_t = __t286;
+				_t = _t.getNextSibling();
+				model.addChild(o); model.setSort(OrderExpressionModel.ASC);
+				break;
+			}
+			case DESC_EN:
+			{
+				AST __t287 = _t;
 				AST tmp57_AST_in = (AST)_t;
 				match(_t,DESC_EN);
 				_t = _t.getFirstChild();
 				o=order_expression(_t);
 				_t = _retTree;
-				_t = __t286;
+				_t = __t287;
 				_t = _t.getNextSibling();
 				model.addChild(o); model.setSort(OrderExpressionModel.DESC);
 				break;
 			}
 			case DESC_CN:
 			{
-				AST __t287 = _t;
+				AST __t288 = _t;
 				AST tmp58_AST_in = (AST)_t;
 				match(_t,DESC_CN);
 				_t = _t.getFirstChild();
 				o=order_expression(_t);
 				_t = _retTree;
-				_t = __t287;
+				_t = __t288;
 				_t = _t.getNextSibling();
 				model.addChild(o); model.setSort(OrderExpressionModel.DESC);
 				break;
@@ -2064,6 +2066,7 @@ public SybaseIQ12TreeParser() {
 		AST nrn = null;
 		AST rn = null;
 		AST qs = null;
+		AST nullStr = null;
 		AST allf = null;
 		FieldModel f; FunctionModel func; ParamModel param; ExpressionModel e1, e2; model=new ExpressionModel();
 		
@@ -2072,7 +2075,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case TWO_ARG_OP:
 			{
-				AST __t291 = _t;
+				AST __t292 = _t;
 				AST tmp59_AST_in = (AST)_t;
 				match(_t,TWO_ARG_OP);
 				_t = _t.getFirstChild();
@@ -2083,14 +2086,14 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				e2=expression(_t);
 				_t = _retTree;
-				_t = __t291;
+				_t = __t292;
 				_t = _t.getNextSibling();
 				model.addChild(e1); model.addOperator(op.getText(), true); model.addChild(e2);
 				break;
 			}
 			case ONE_ARG_OP:
 			{
-				AST __t292 = _t;
+				AST __t293 = _t;
 				AST tmp60_AST_in = (AST)_t;
 				match(_t,ONE_ARG_OP);
 				_t = _t.getFirstChild();
@@ -2099,7 +2102,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				e1=expression(_t);
 				_t = _retTree;
-				_t = __t292;
+				_t = __t293;
 				_t = _t.getNextSibling();
 				model.addOperator(op1.getText(), true); model.addChild(e1);
 				break;
@@ -2224,6 +2227,14 @@ public SybaseIQ12TreeParser() {
 				model.addConstant(qs.getText());
 				break;
 			}
+			case NULL_EN:
+			{
+				nullStr = (AST)_t;
+				match(_t,NULL_EN);
+				_t = _t.getNextSibling();
+				model.addConstant(nullStr.getText());
+				break;
+			}
 			case ALL_FIELDS:
 			{
 				allf = (AST)_t;
@@ -2315,45 +2326,45 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 323:
+			case 334:
 			{
 				AST tmp62_AST_in = (AST)_t;
-				match(_t,323);
+				match(_t,334);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 324:
+			case 335:
 			{
 				AST tmp63_AST_in = (AST)_t;
-				match(_t,324);
+				match(_t,335);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 325:
+			case 336:
 			{
 				AST tmp64_AST_in = (AST)_t;
-				match(_t,325);
+				match(_t,336);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 326:
+			case 337:
 			{
 				AST tmp65_AST_in = (AST)_t;
-				match(_t,326);
+				match(_t,337);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 327:
+			case 338:
 			{
 				AST tmp66_AST_in = (AST)_t;
-				match(_t,327);
+				match(_t,338);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 328:
+			case 339:
 			{
 				AST tmp67_AST_in = (AST)_t;
-				match(_t,328);
+				match(_t,339);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -2392,13 +2403,13 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case SUBCONTAIN_OP:
 			{
-				AST __t276 = _t;
+				AST __t277 = _t;
 				AST tmp69_AST_in = (AST)_t;
 				match(_t,SUBCONTAIN_OP);
 				_t = _t.getFirstChild();
 				expr=constexpset(_t);
 				_t = _retTree;
-				_t = __t276;
+				_t = __t277;
 				_t = _t.getNextSibling();
 				
 							model.addExprContainModel(expr);
@@ -2407,13 +2418,13 @@ public SybaseIQ12TreeParser() {
 			}
 			case SUBQUERY:
 			{
-				AST __t277 = _t;
+				AST __t278 = _t;
 				AST tmp70_AST_in = (AST)_t;
 				match(_t,SUBQUERY);
 				_t = _t.getFirstChild();
 				stmt=select_statement(_t);
 				_t = _retTree;
-				_t = __t277;
+				_t = __t278;
 				_t = _t.getNextSibling();
 				
 							model.addSelectStatement(stmt);
@@ -2450,7 +2461,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t279 = _t;
+				AST __t280 = _t;
 				AST tmp71_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -2458,7 +2469,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				cep2=constexpset(_t);
 				_t = _retTree;
-				_t = __t279;
+				_t = __t280;
 				_t = _t.getNextSibling();
 				model.addChild(cep1); model.addChild(cep2);
 				break;
@@ -2552,66 +2563,66 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				break;
 			}
-			case 308:
+			case 319:
 			{
 				AST tmp72_AST_in = (AST)_t;
-				match(_t,308);
+				match(_t,319);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 307:
+			case 318:
 			{
 				AST tmp73_AST_in = (AST)_t;
-				match(_t,307);
+				match(_t,318);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 309:
+			case 320:
 			{
 				AST tmp74_AST_in = (AST)_t;
-				match(_t,309);
+				match(_t,320);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 310:
+			case 321:
 			{
 				AST tmp75_AST_in = (AST)_t;
-				match(_t,310);
+				match(_t,321);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 311:
+			case 322:
 			{
 				AST tmp76_AST_in = (AST)_t;
-				match(_t,311);
+				match(_t,322);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 312:
+			case 323:
 			{
 				AST tmp77_AST_in = (AST)_t;
-				match(_t,312);
+				match(_t,323);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 313:
+			case 324:
 			{
 				AST tmp78_AST_in = (AST)_t;
-				match(_t,313);
+				match(_t,324);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 314:
+			case 325:
 			{
 				AST tmp79_AST_in = (AST)_t;
-				match(_t,314);
+				match(_t,325);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 158:
+			case 162:
 			{
 				AST tmp80_AST_in = (AST)_t;
-				match(_t,158);
+				match(_t,162);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -2643,7 +2654,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case POINT:
 			{
-				AST __t295 = _t;
+				AST __t296 = _t;
 				AST tmp81_AST_in = (AST)_t;
 				match(_t,POINT);
 				_t = _t.getFirstChild();
@@ -2651,7 +2662,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				fStr=sfield_name(_t);
 				_t = _retTree;
-				_t = __t295;
+				_t = __t296;
 				_t = _t.getNextSibling();
 				
 							model = new FieldModel(fStr, tStr);
@@ -2743,7 +2754,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case FUNCTION:
 			{
-				AST __t299 = _t;
+				AST __t300 = _t;
 				AST tmp82_AST_in = (AST)_t;
 				match(_t,FUNCTION);
 				_t = _t.getFirstChild();
@@ -2752,7 +2763,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				p=parameters(_t);
 				_t = _retTree;
-				_t = __t299;
+				_t = __t300;
 				_t = _t.getNextSibling();
 				
 							model = new FunctionModel(f.getText(), true);
@@ -2762,7 +2773,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case FUNCTION_ROWID:
 			{
-				AST __t300 = _t;
+				AST __t301 = _t;
 				AST tmp83_AST_in = (AST)_t;
 				match(_t,FUNCTION_ROWID);
 				_t = _t.getFirstChild();
@@ -2772,7 +2783,7 @@ public SybaseIQ12TreeParser() {
 				stable = (AST)_t;
 				match(_t,ID);
 				_t = _t.getNextSibling();
-				_t = __t300;
+				_t = __t301;
 				_t = _t.getNextSibling();
 				
 							model = new FunctionModel(rowidfun.getText(), true);
@@ -2786,14 +2797,14 @@ public SybaseIQ12TreeParser() {
 			}
 			case FUNCTION_NOTHING:
 			{
-				AST __t301 = _t;
+				AST __t302 = _t;
 				AST tmp84_AST_in = (AST)_t;
 				match(_t,FUNCTION_NOTHING);
 				_t = _t.getFirstChild();
 				nfun = _t==ASTNULL ? null : (AST)_t;
 				function_name(_t);
 				_t = _retTree;
-				_t = __t301;
+				_t = __t302;
 				_t = _t.getNextSibling();
 				
 							model = new FunctionModel(nfun.getText(), true);
@@ -2803,14 +2814,14 @@ public SybaseIQ12TreeParser() {
 			}
 			case FUNCTION_EMPTY_PARAM:
 			{
-				AST __t302 = _t;
+				AST __t303 = _t;
 				AST tmp85_AST_in = (AST)_t;
 				match(_t,FUNCTION_EMPTY_PARAM);
 				_t = _t.getFirstChild();
 				fun1 = _t==ASTNULL ? null : (AST)_t;
 				function_name(_t);
 				_t = _retTree;
-				_t = __t302;
+				_t = __t303;
 				_t = _t.getNextSibling();
 				
 							model = new FunctionModel(fun1.getText(), true);
@@ -2819,14 +2830,14 @@ public SybaseIQ12TreeParser() {
 			}
 			case FUNCTION_STAR_PARAM:
 			{
-				AST __t303 = _t;
+				AST __t304 = _t;
 				AST tmp86_AST_in = (AST)_t;
 				match(_t,FUNCTION_STAR_PARAM);
 				_t = _t.getFirstChild();
 				funStar = _t==ASTNULL ? null : (AST)_t;
 				function_name(_t);
 				_t = _retTree;
-				_t = __t303;
+				_t = __t304;
 				_t = _t.getNextSibling();
 				
 							model = new FunctionModel(funStar.getText(), true);
@@ -2839,7 +2850,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case FUNCTION_DATA_TYPE:
 			{
-				AST __t304 = _t;
+				AST __t305 = _t;
 				AST tmp87_AST_in = (AST)_t;
 				match(_t,FUNCTION_DATA_TYPE);
 				_t = _t.getFirstChild();
@@ -2848,7 +2859,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				dtp1=data_type_parameters(_t);
 				_t = _retTree;
-				_t = __t304;
+				_t = __t305;
 				_t = _t.getNextSibling();
 				
 							model = new FunctionModel(dtf1.getText(), true);
@@ -2858,7 +2869,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case FUNCTION_AS_DATA_TYPE:
 			{
-				AST __t305 = _t;
+				AST __t306 = _t;
 				AST tmp88_AST_in = (AST)_t;
 				match(_t,FUNCTION_AS_DATA_TYPE);
 				_t = _t.getFirstChild();
@@ -2867,7 +2878,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				dtp2=as_data_type_parameters(_t);
 				_t = _retTree;
-				_t = __t305;
+				_t = __t306;
 				_t = _t.getNextSibling();
 				
 							model = new FunctionModel(dtf2.getText(), true);
@@ -2877,7 +2888,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case ALL_CN:
 			{
-				AST __t308 = _t;
+				AST __t309 = _t;
 				all1 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,ALL_CN);
 				_t = _t.getFirstChild();
@@ -2886,7 +2897,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				p=parameters(_t);
 				_t = _retTree;
-				_t = __t308;
+				_t = __t309;
 				_t = _t.getNextSibling();
 				
 							model = new AggregateFuncModel(af11.getText(), AggregateFuncModel.ALL, true);
@@ -2896,7 +2907,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case ALL_EN:
 			{
-				AST __t309 = _t;
+				AST __t310 = _t;
 				all2 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,ALL_EN);
 				_t = _t.getFirstChild();
@@ -2905,7 +2916,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				p=parameters(_t);
 				_t = _retTree;
-				_t = __t309;
+				_t = __t310;
 				_t = _t.getNextSibling();
 				
 							model = new AggregateFuncModel(af12.getText(), AggregateFuncModel.ALL, true);
@@ -2915,7 +2926,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case DISTINCT_CN:
 			{
-				AST __t310 = _t;
+				AST __t311 = _t;
 				dist1 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,DISTINCT_CN);
 				_t = _t.getFirstChild();
@@ -2924,7 +2935,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				p=parameters(_t);
 				_t = _retTree;
-				_t = __t310;
+				_t = __t311;
 				_t = _t.getNextSibling();
 				
 							model = new AggregateFuncModel(af21.getText(), AggregateFuncModel.DISTINCT, true);
@@ -2934,7 +2945,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case DISTINCT_EN:
 			{
-				AST __t311 = _t;
+				AST __t312 = _t;
 				dist2 = _t==ASTNULL ? null :(AST)_t;
 				match(_t,DISTINCT_EN);
 				_t = _t.getFirstChild();
@@ -2943,7 +2954,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				p=parameters(_t);
 				_t = _retTree;
-				_t = __t311;
+				_t = __t312;
 				_t = _t.getNextSibling();
 				
 							model=new AggregateFuncModel(af22.getText(), AggregateFuncModel.DISTINCT, true);
@@ -2954,14 +2965,14 @@ public SybaseIQ12TreeParser() {
 			default:
 				if (_t==null) _t=ASTNULL;
 				if ((_t.getType()==FUNCTION_STAR_COUNT)) {
-					AST __t306 = _t;
+					AST __t307 = _t;
 					AST tmp89_AST_in = (AST)_t;
 					match(_t,FUNCTION_STAR_COUNT);
 					_t = _t.getFirstChild();
 					cf1 = (AST)_t;
 					match(_t,COUNT_CN);
 					_t = _t.getNextSibling();
-					_t = __t306;
+					_t = __t307;
 					_t = _t.getNextSibling();
 						
 								model = new AggregateFuncModel(cf1.getText(), AggregateFuncModel.NO_FILTER, true);
@@ -2972,14 +2983,14 @@ public SybaseIQ12TreeParser() {
 							
 				}
 				else if ((_t.getType()==FUNCTION_STAR_COUNT)) {
-					AST __t307 = _t;
+					AST __t308 = _t;
 					AST tmp90_AST_in = (AST)_t;
 					match(_t,FUNCTION_STAR_COUNT);
 					_t = _t.getFirstChild();
 					cf2 = (AST)_t;
 					match(_t,COUNT_EN);
 					_t = _t.getNextSibling();
-					_t = __t307;
+					_t = __t308;
 					_t = _t.getNextSibling();
 						
 								model = new AggregateFuncModel(cf2.getText(), AggregateFuncModel.NO_FILTER, true);
@@ -3057,10 +3068,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 307:
+			case 318:
 			{
 				AST tmp92_AST_in = (AST)_t;
-				match(_t,307);
+				match(_t,318);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -3328,7 +3339,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case PAREN_FIELD:
 			{
-				AST __t297 = _t;
+				AST __t298 = _t;
 				AST tmp121_AST_in = (AST)_t;
 				match(_t,PAREN_FIELD);
 				_t = _t.getFirstChild();
@@ -3338,7 +3349,7 @@ public SybaseIQ12TreeParser() {
 				f2 = (AST)_t;
 				match(_t,ID);
 				_t = _t.getNextSibling();
-				_t = __t297;
+				_t = __t298;
 				_t = _t.getNextSibling();
 				rValue = f1.getText() + "(" + f2.getText() + ")";
 				break;
@@ -3494,7 +3505,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t313 = _t;
+				AST __t314 = _t;
 				AST tmp136_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -3502,7 +3513,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				p2=parameters(_t);
 				_t = _retTree;
-				_t = __t313;
+				_t = __t314;
 				_t = _t.getNextSibling();
 				model.addChild(p1); model.addChild(p2);
 				break;
@@ -3521,6 +3532,7 @@ public SybaseIQ12TreeParser() {
 			case DISTINCT_CN:
 			case REAL_NUM:
 			case LPAREN:
+			case NULL_EN:
 			case COUNT_EN:
 			case COUNT_CN:
 			case ALL_EN:
@@ -3602,54 +3614,54 @@ public SybaseIQ12TreeParser() {
 			case LITERAL_rand:
 			case 120:
 			case LITERAL_pi:
-			case 122:
+			case 125:
 			case LITERAL_abs:
-			case 132:
-			case LITERAL_acos:
-			case 134:
-			case LITERAL_asin:
 			case 136:
-			case LITERAL_atan:
+			case LITERAL_acos:
 			case 138:
-			case 139:
+			case LITERAL_asin:
 			case 140:
-			case LITERAL_ceiling:
+			case LITERAL_atan:
 			case 142:
-			case LITERAL_cos:
+			case 143:
 			case 144:
-			case LITERAL_cot:
+			case LITERAL_ceiling:
 			case 146:
-			case LITERAL_degrees:
+			case LITERAL_cos:
 			case 148:
-			case LITERAL_exp:
+			case LITERAL_cot:
 			case 150:
-			case LITERAL_floor:
+			case LITERAL_degrees:
 			case 152:
-			case LITERAL_log:
+			case LITERAL_exp:
 			case 154:
-			case 155:
+			case LITERAL_floor:
 			case 156:
-			case LITERAL_mod:
+			case LITERAL_log:
 			case 158:
-			case LITERAL_power:
+			case 159:
 			case 160:
-			case LITERAL_radians:
+			case LITERAL_mod:
 			case 162:
-			case LITERAL_remainder:
+			case LITERAL_power:
 			case 164:
-			case LITERAL_round:
+			case LITERAL_radians:
 			case 166:
-			case LITERAL_sign:
+			case LITERAL_remainder:
 			case 168:
-			case LITERAL_sin:
+			case LITERAL_round:
 			case 170:
-			case LITERAL_sqrt:
+			case LITERAL_sign:
 			case 172:
-			case LITERAL_tan:
+			case LITERAL_sin:
 			case 174:
-			case 175:
+			case LITERAL_sqrt:
+			case 176:
+			case LITERAL_tan:
+			case 178:
+			case 179:
 			case LITERAL_truncnum:
-			case 177:
+			case 181:
 			{
 				number_function(_t);
 				_t = _retTree;
@@ -3657,68 +3669,68 @@ public SybaseIQ12TreeParser() {
 			}
 			case CHAR:
 			case LITERAL_ascii:
-			case 179:
-			case LITERAL_bit_length:
-			case 181:
-			case LITERAL_byte_length:
 			case 183:
-			case 184:
-			case LITERAL_char_length:
-			case 186:
-			case LITERAL_charindex:
+			case LITERAL_bit_length:
+			case 185:
+			case LITERAL_byte_length:
+			case 187:
 			case 188:
-			case LITERAL_difference:
+			case LITERAL_char_length:
 			case 190:
-			case LITERAL_insertstr:
+			case LITERAL_charindex:
 			case 192:
-			case LITERAL_lcase:
+			case LITERAL_difference:
 			case 194:
-			case LITERAL_left:
+			case LITERAL_insertstr:
 			case 196:
-			case LITERAL_length:
+			case LITERAL_lcase:
 			case 198:
-			case LITERAL_locate:
+			case LITERAL_left:
 			case 200:
-			case LITERAL_lower:
+			case LITERAL_length:
 			case 202:
-			case LITERAL_ltrim:
+			case LITERAL_locate:
 			case 204:
-			case LITERAL_octet_length:
+			case LITERAL_lower:
 			case 206:
-			case LITERAL_patindex:
+			case LITERAL_ltrim:
 			case 208:
-			case LITERAL_repeat:
+			case LITERAL_octet_length:
 			case 210:
-			case LITERAL_replace:
+			case LITERAL_patindex:
 			case 212:
-			case LITERAL_replicate:
+			case LITERAL_repeat:
 			case 214:
-			case LITERAL_right:
+			case LITERAL_replace:
 			case 216:
-			case LITERAL_rtrim:
+			case LITERAL_replicate:
 			case 218:
-			case LITERAL_similar:
+			case LITERAL_right:
 			case 220:
-			case LITERAL_sortkey:
+			case LITERAL_rtrim:
 			case 222:
-			case LITERAL_soundex:
+			case LITERAL_similar:
 			case 224:
-			case LITERAL_space:
+			case LITERAL_sortkey:
 			case 226:
-			case LITERAL_str:
+			case LITERAL_soundex:
 			case 228:
-			case LITERAL_string:
+			case LITERAL_space:
 			case 230:
-			case LITERAL_stuff:
+			case LITERAL_str:
 			case 232:
-			case LITERAL_substring:
+			case LITERAL_string:
 			case 234:
-			case LITERAL_trim:
+			case LITERAL_stuff:
 			case 236:
-			case LITERAL_ucase:
+			case LITERAL_substring:
 			case 238:
-			case LITERAL_upper:
+			case LITERAL_trim:
 			case 240:
+			case LITERAL_ucase:
+			case 242:
+			case LITERAL_upper:
+			case 244:
 			{
 				string_function(_t);
 				_t = _retTree;
@@ -3727,76 +3739,76 @@ public SybaseIQ12TreeParser() {
 			case LITERAL_getdate:
 			case 118:
 			case LITERAL_now:
-			case 124:
+			case 127:
 			case LITERAL_today:
-			case 126:
+			case 129:
 			case LITERAL_dateformat:
-			case 242:
-			case LITERAL_datename:
-			case 244:
-			case LITERAL_datepart:
 			case 246:
-			case LITERAL_datetime:
+			case LITERAL_datename:
 			case 248:
-			case LITERAL_date:
+			case LITERAL_datepart:
 			case 250:
-			case LITERAL_dayname:
+			case LITERAL_datetime:
 			case 252:
-			case LITERAL_days:
+			case LITERAL_date:
 			case 254:
-			case LITERAL_day:
+			case LITERAL_dayname:
 			case 256:
-			case LITERAL_dow:
+			case LITERAL_days:
 			case 258:
-			case LITERAL_hours:
+			case LITERAL_day:
 			case 260:
-			case LITERAL_hour:
+			case LITERAL_dow:
 			case 262:
-			case LITERAL_minutes:
+			case LITERAL_hours:
 			case 264:
-			case LITERAL_minute:
+			case LITERAL_hour:
 			case 266:
-			case LITERAL_monthname:
+			case LITERAL_minutes:
 			case 268:
-			case LITERAL_months:
+			case LITERAL_minute:
 			case 270:
-			case LITERAL_month:
+			case LITERAL_monthname:
 			case 272:
-			case LITERAL_quarter:
+			case LITERAL_months:
 			case 274:
-			case LITERAL_seconds:
+			case LITERAL_month:
 			case 276:
-			case LITERAL_second:
+			case LITERAL_quarter:
 			case 278:
-			case LITERAL_weeks:
+			case LITERAL_seconds:
 			case 280:
-			case LITERAL_years:
+			case LITERAL_second:
 			case 282:
-			case LITERAL_year:
+			case LITERAL_weeks:
 			case 284:
-			case LITERAL_ymd:
+			case LITERAL_years:
 			case 286:
-			case LITERAL_dateadd:
+			case LITERAL_year:
 			case 288:
-			case LITERAL_datediff:
+			case LITERAL_ymd:
 			case 290:
+			case LITERAL_dateadd:
+			case 292:
+			case LITERAL_datediff:
+			case 294:
 			{
 				datetime_function(_t);
 				_t = _retTree;
 				break;
 			}
 			case LITERAL_convert:
-			case 128:
+			case 132:
 			case LITERAL_cast:
-			case 130:
+			case 134:
 			case LITERAL_hextoint:
-			case 292:
-			case LITERAL_inttohex:
-			case 294:
-			case LITERAL_isdate:
 			case 296:
-			case LITERAL_isnumeric:
+			case LITERAL_inttohex:
 			case 298:
+			case LITERAL_isdate:
+			case 300:
+			case LITERAL_isnumeric:
+			case 302:
 			{
 				conversion_function(_t);
 				_t = _retTree;
@@ -3811,16 +3823,27 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				break;
 			}
-			case LITERAL_argn:
+			case LITERAL_dense_rank:
+			case LITERAL_percent_rank:
+			case LITERAL_rank:
+			case LITERAL_ntile:
+			case LITERAL_percentile_count:
+			case LITERAL_percentile_desc:
 			{
-				other_function(_t);
+				analytical_function(_t);
 				_t = _retTree;
 				break;
 			}
+			case LITERAL_number:
 			case LITERAL_rowid:
-			case 305:
+			case 308:
+			case LITERAL_argn:
+			case LITERAL_coalesce:
+			case LITERAL_ifnull:
+			case LITERAL_isnull:
+			case LITERAL_nullif:
 			{
-				rowid_function(_t);
+				miscellane_function(_t);
 				_t = _retTree;
 				break;
 			}
@@ -3848,7 +3871,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t315 = _t;
+				AST __t316 = _t;
 				AST tmp137_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -3856,7 +3879,7 @@ public SybaseIQ12TreeParser() {
 				_t = _retTree;
 				p2=data_type_parameters(_t);
 				_t = _retTree;
-				_t = __t315;
+				_t = __t316;
 				_t = _t.getNextSibling();
 				model.addChild(p1);model.addChild(p2);
 				break;
@@ -3899,6 +3922,7 @@ public SybaseIQ12TreeParser() {
 			case DISTINCT_CN:
 			case REAL_NUM:
 			case LPAREN:
+			case NULL_EN:
 			case COUNT_EN:
 			case COUNT_CN:
 			case ALL_EN:
@@ -4023,7 +4047,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case PAREN_CHAR_DATA_TYPE:
 			{
-				AST __t318 = _t;
+				AST __t319 = _t;
 				AST tmp138_AST_in = (AST)_t;
 				match(_t,PAREN_CHAR_DATA_TYPE);
 				_t = _t.getFirstChild();
@@ -4032,7 +4056,7 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				rp=datatype_precision_or_scale_or_maxlength(_t);
 				_t = _retTree;
-				_t = __t318;
+				_t = __t319;
 				_t = _t.getNextSibling();
 				
 							//\u8fd4\u56de\u5e26\u53c2\u6570char\u4fdd\u7559
@@ -4068,7 +4092,7 @@ public SybaseIQ12TreeParser() {
 			}
 			case PAREN_DATA_TYPE:
 			{
-				AST __t319 = _t;
+				AST __t320 = _t;
 				AST tmp139_AST_in = (AST)_t;
 				match(_t,PAREN_DATA_TYPE);
 				_t = _t.getFirstChild();
@@ -4077,7 +4101,7 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				rp=datatype_precision_or_scale_or_maxlength(_t);
 				_t = _retTree;
-				_t = __t319;
+				_t = __t320;
 				_t = _t.getNextSibling();
 				
 							//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u52a0\u5176\u53c2\u6570,\u5982char(10)\u3001numeric(20, 2)]
@@ -4126,7 +4150,7 @@ public SybaseIQ12TreeParser() {
 			switch ( _t.getType()) {
 			case COMMA:
 			{
-				AST __t321 = _t;
+				AST __t322 = _t;
 				AST tmp140_AST_in = (AST)_t;
 				match(_t,COMMA);
 				_t = _t.getFirstChild();
@@ -4136,7 +4160,7 @@ public SybaseIQ12TreeParser() {
 				rn2 = (AST)_t;
 				match(_t,REAL_NUM);
 				_t = _t.getNextSibling();
-				_t = __t321;
+				_t = __t322;
 				_t = _t.getNextSibling();
 				rValue = rn1.getText() + ", " + rn2.getText();
 				break;
@@ -4556,10 +4580,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 132:
+			case 136:
 			{
 				AST tmp176_AST_in = (AST)_t;
-				match(_t,132);
+				match(_t,136);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4570,10 +4594,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 134:
+			case 138:
 			{
 				AST tmp178_AST_in = (AST)_t;
-				match(_t,134);
+				match(_t,138);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4584,10 +4608,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 136:
+			case 140:
 			{
 				AST tmp180_AST_in = (AST)_t;
-				match(_t,136);
+				match(_t,140);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4598,24 +4622,24 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 138:
+			case 142:
 			{
 				AST tmp182_AST_in = (AST)_t;
-				match(_t,138);
+				match(_t,142);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 139:
+			case 143:
 			{
 				AST tmp183_AST_in = (AST)_t;
-				match(_t,139);
+				match(_t,143);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 140:
+			case 144:
 			{
 				AST tmp184_AST_in = (AST)_t;
-				match(_t,140);
+				match(_t,144);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4626,10 +4650,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 142:
+			case 146:
 			{
 				AST tmp186_AST_in = (AST)_t;
-				match(_t,142);
+				match(_t,146);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4640,10 +4664,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 144:
+			case 148:
 			{
 				AST tmp188_AST_in = (AST)_t;
-				match(_t,144);
+				match(_t,148);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4654,10 +4678,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 146:
+			case 150:
 			{
 				AST tmp190_AST_in = (AST)_t;
-				match(_t,146);
+				match(_t,150);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4668,10 +4692,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 148:
+			case 152:
 			{
 				AST tmp192_AST_in = (AST)_t;
-				match(_t,148);
+				match(_t,152);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4682,10 +4706,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 150:
+			case 154:
 			{
 				AST tmp194_AST_in = (AST)_t;
-				match(_t,150);
+				match(_t,154);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4696,10 +4720,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 152:
+			case 156:
 			{
 				AST tmp196_AST_in = (AST)_t;
-				match(_t,152);
+				match(_t,156);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4710,24 +4734,24 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 154:
+			case 158:
 			{
 				AST tmp198_AST_in = (AST)_t;
-				match(_t,154);
+				match(_t,158);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 155:
+			case 159:
 			{
 				AST tmp199_AST_in = (AST)_t;
-				match(_t,155);
+				match(_t,159);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 156:
+			case 160:
 			{
 				AST tmp200_AST_in = (AST)_t;
-				match(_t,156);
+				match(_t,160);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4738,10 +4762,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 158:
+			case 162:
 			{
 				AST tmp202_AST_in = (AST)_t;
-				match(_t,158);
+				match(_t,162);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4752,10 +4776,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 122:
+			case 125:
 			{
 				AST tmp204_AST_in = (AST)_t;
-				match(_t,122);
+				match(_t,125);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4766,10 +4790,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 160:
+			case 164:
 			{
 				AST tmp206_AST_in = (AST)_t;
-				match(_t,160);
+				match(_t,164);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4780,10 +4804,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 162:
+			case 166:
 			{
 				AST tmp208_AST_in = (AST)_t;
-				match(_t,162);
+				match(_t,166);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4808,10 +4832,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 164:
+			case 168:
 			{
 				AST tmp212_AST_in = (AST)_t;
-				match(_t,164);
+				match(_t,168);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4822,10 +4846,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 166:
+			case 170:
 			{
 				AST tmp214_AST_in = (AST)_t;
-				match(_t,166);
+				match(_t,170);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4836,10 +4860,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 168:
+			case 172:
 			{
 				AST tmp216_AST_in = (AST)_t;
-				match(_t,168);
+				match(_t,172);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4850,10 +4874,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 170:
+			case 174:
 			{
 				AST tmp218_AST_in = (AST)_t;
-				match(_t,170);
+				match(_t,174);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4864,10 +4888,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 172:
+			case 176:
 			{
 				AST tmp220_AST_in = (AST)_t;
-				match(_t,172);
+				match(_t,176);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4878,17 +4902,17 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 174:
+			case 178:
 			{
 				AST tmp222_AST_in = (AST)_t;
-				match(_t,174);
+				match(_t,178);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 175:
+			case 179:
 			{
 				AST tmp223_AST_in = (AST)_t;
-				match(_t,175);
+				match(_t,179);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4899,10 +4923,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 177:
+			case 181:
 			{
 				AST tmp225_AST_in = (AST)_t;
-				match(_t,177);
+				match(_t,181);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4933,10 +4957,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 179:
+			case 183:
 			{
 				AST tmp227_AST_in = (AST)_t;
-				match(_t,179);
+				match(_t,183);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4947,10 +4971,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 181:
+			case 185:
 			{
 				AST tmp229_AST_in = (AST)_t;
-				match(_t,181);
+				match(_t,185);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4961,10 +4985,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 183:
+			case 187:
 			{
 				AST tmp231_AST_in = (AST)_t;
-				match(_t,183);
+				match(_t,187);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4975,10 +4999,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 184:
+			case 188:
 			{
 				AST tmp233_AST_in = (AST)_t;
-				match(_t,184);
+				match(_t,188);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4989,10 +5013,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 186:
+			case 190:
 			{
 				AST tmp235_AST_in = (AST)_t;
-				match(_t,186);
+				match(_t,190);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5003,10 +5027,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 188:
+			case 192:
 			{
 				AST tmp237_AST_in = (AST)_t;
-				match(_t,188);
+				match(_t,192);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5017,10 +5041,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 190:
+			case 194:
 			{
 				AST tmp239_AST_in = (AST)_t;
-				match(_t,190);
+				match(_t,194);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5031,10 +5055,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 192:
+			case 196:
 			{
 				AST tmp241_AST_in = (AST)_t;
-				match(_t,192);
+				match(_t,196);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5045,10 +5069,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 194:
+			case 198:
 			{
 				AST tmp243_AST_in = (AST)_t;
-				match(_t,194);
+				match(_t,198);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5059,10 +5083,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 196:
+			case 200:
 			{
 				AST tmp245_AST_in = (AST)_t;
-				match(_t,196);
+				match(_t,200);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5073,10 +5097,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 198:
+			case 202:
 			{
 				AST tmp247_AST_in = (AST)_t;
-				match(_t,198);
+				match(_t,202);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5087,10 +5111,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 200:
+			case 204:
 			{
 				AST tmp249_AST_in = (AST)_t;
-				match(_t,200);
+				match(_t,204);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5101,10 +5125,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 202:
+			case 206:
 			{
 				AST tmp251_AST_in = (AST)_t;
-				match(_t,202);
+				match(_t,206);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5115,10 +5139,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 204:
+			case 208:
 			{
 				AST tmp253_AST_in = (AST)_t;
-				match(_t,204);
+				match(_t,208);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5129,10 +5153,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 206:
+			case 210:
 			{
 				AST tmp255_AST_in = (AST)_t;
-				match(_t,206);
+				match(_t,210);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5143,10 +5167,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 208:
+			case 212:
 			{
 				AST tmp257_AST_in = (AST)_t;
-				match(_t,208);
+				match(_t,212);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5157,10 +5181,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 210:
+			case 214:
 			{
 				AST tmp259_AST_in = (AST)_t;
-				match(_t,210);
+				match(_t,214);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5171,10 +5195,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 212:
+			case 216:
 			{
 				AST tmp261_AST_in = (AST)_t;
-				match(_t,212);
+				match(_t,216);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5185,10 +5209,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 214:
+			case 218:
 			{
 				AST tmp263_AST_in = (AST)_t;
-				match(_t,214);
+				match(_t,218);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5199,10 +5223,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 216:
+			case 220:
 			{
 				AST tmp265_AST_in = (AST)_t;
-				match(_t,216);
+				match(_t,220);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5213,10 +5237,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 218:
+			case 222:
 			{
 				AST tmp267_AST_in = (AST)_t;
-				match(_t,218);
+				match(_t,222);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5227,10 +5251,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 220:
+			case 224:
 			{
 				AST tmp269_AST_in = (AST)_t;
-				match(_t,220);
+				match(_t,224);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5241,10 +5265,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 222:
+			case 226:
 			{
 				AST tmp271_AST_in = (AST)_t;
-				match(_t,222);
+				match(_t,226);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5255,10 +5279,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 224:
+			case 228:
 			{
 				AST tmp273_AST_in = (AST)_t;
-				match(_t,224);
+				match(_t,228);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5269,10 +5293,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 226:
+			case 230:
 			{
 				AST tmp275_AST_in = (AST)_t;
-				match(_t,226);
+				match(_t,230);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5283,10 +5307,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 228:
+			case 232:
 			{
 				AST tmp277_AST_in = (AST)_t;
-				match(_t,228);
+				match(_t,232);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5297,10 +5321,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 230:
+			case 234:
 			{
 				AST tmp279_AST_in = (AST)_t;
-				match(_t,230);
+				match(_t,234);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5311,10 +5335,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 232:
+			case 236:
 			{
 				AST tmp281_AST_in = (AST)_t;
-				match(_t,232);
+				match(_t,236);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5325,10 +5349,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 234:
+			case 238:
 			{
 				AST tmp283_AST_in = (AST)_t;
-				match(_t,234);
+				match(_t,238);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5339,10 +5363,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 236:
+			case 240:
 			{
 				AST tmp285_AST_in = (AST)_t;
-				match(_t,236);
+				match(_t,240);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5353,10 +5377,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 238:
+			case 242:
 			{
 				AST tmp287_AST_in = (AST)_t;
-				match(_t,238);
+				match(_t,242);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5367,10 +5391,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 240:
+			case 244:
 			{
 				AST tmp289_AST_in = (AST)_t;
-				match(_t,240);
+				match(_t,244);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5401,10 +5425,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 242:
+			case 246:
 			{
 				AST tmp291_AST_in = (AST)_t;
-				match(_t,242);
+				match(_t,246);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5415,10 +5439,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 244:
+			case 248:
 			{
 				AST tmp293_AST_in = (AST)_t;
-				match(_t,244);
+				match(_t,248);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5429,10 +5453,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 246:
+			case 250:
 			{
 				AST tmp295_AST_in = (AST)_t;
-				match(_t,246);
+				match(_t,250);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5443,10 +5467,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 248:
+			case 252:
 			{
 				AST tmp297_AST_in = (AST)_t;
-				match(_t,248);
+				match(_t,252);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5457,10 +5481,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 250:
+			case 254:
 			{
 				AST tmp299_AST_in = (AST)_t;
-				match(_t,250);
+				match(_t,254);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5471,10 +5495,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 252:
+			case 256:
 			{
 				AST tmp301_AST_in = (AST)_t;
-				match(_t,252);
+				match(_t,256);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5485,10 +5509,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 254:
+			case 258:
 			{
 				AST tmp303_AST_in = (AST)_t;
-				match(_t,254);
+				match(_t,258);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5499,10 +5523,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 256:
+			case 260:
 			{
 				AST tmp305_AST_in = (AST)_t;
-				match(_t,256);
+				match(_t,260);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5513,10 +5537,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 258:
+			case 262:
 			{
 				AST tmp307_AST_in = (AST)_t;
-				match(_t,258);
+				match(_t,262);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5527,10 +5551,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 260:
+			case 264:
 			{
 				AST tmp309_AST_in = (AST)_t;
-				match(_t,260);
+				match(_t,264);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5541,10 +5565,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 262:
+			case 266:
 			{
 				AST tmp311_AST_in = (AST)_t;
-				match(_t,262);
+				match(_t,266);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5555,10 +5579,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 264:
+			case 268:
 			{
 				AST tmp313_AST_in = (AST)_t;
-				match(_t,264);
+				match(_t,268);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5569,10 +5593,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 266:
+			case 270:
 			{
 				AST tmp315_AST_in = (AST)_t;
-				match(_t,266);
+				match(_t,270);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5583,10 +5607,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 268:
+			case 272:
 			{
 				AST tmp317_AST_in = (AST)_t;
-				match(_t,268);
+				match(_t,272);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5597,10 +5621,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 270:
+			case 274:
 			{
 				AST tmp319_AST_in = (AST)_t;
-				match(_t,270);
+				match(_t,274);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5611,10 +5635,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 272:
+			case 276:
 			{
 				AST tmp321_AST_in = (AST)_t;
-				match(_t,272);
+				match(_t,276);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5625,10 +5649,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 124:
+			case 127:
 			{
 				AST tmp323_AST_in = (AST)_t;
-				match(_t,124);
+				match(_t,127);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5639,10 +5663,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 274:
+			case 278:
 			{
 				AST tmp325_AST_in = (AST)_t;
-				match(_t,274);
+				match(_t,278);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5653,10 +5677,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 276:
+			case 280:
 			{
 				AST tmp327_AST_in = (AST)_t;
-				match(_t,276);
+				match(_t,280);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5667,10 +5691,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 278:
+			case 282:
 			{
 				AST tmp329_AST_in = (AST)_t;
-				match(_t,278);
+				match(_t,282);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5681,10 +5705,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 126:
+			case 129:
 			{
 				AST tmp331_AST_in = (AST)_t;
-				match(_t,126);
+				match(_t,129);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5695,10 +5719,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 280:
+			case 284:
 			{
 				AST tmp333_AST_in = (AST)_t;
-				match(_t,280);
+				match(_t,284);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5709,10 +5733,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 282:
+			case 286:
 			{
 				AST tmp335_AST_in = (AST)_t;
-				match(_t,282);
+				match(_t,286);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5723,10 +5747,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 284:
+			case 288:
 			{
 				AST tmp337_AST_in = (AST)_t;
-				match(_t,284);
+				match(_t,288);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5737,10 +5761,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 286:
+			case 290:
 			{
 				AST tmp339_AST_in = (AST)_t;
-				match(_t,286);
+				match(_t,290);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5765,10 +5789,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 288:
+			case 292:
 			{
 				AST tmp343_AST_in = (AST)_t;
-				match(_t,288);
+				match(_t,292);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5779,10 +5803,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 290:
+			case 294:
 			{
 				AST tmp345_AST_in = (AST)_t;
-				match(_t,290);
+				match(_t,294);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5813,10 +5837,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 292:
+			case 296:
 			{
 				AST tmp347_AST_in = (AST)_t;
-				match(_t,292);
+				match(_t,296);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5827,10 +5851,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 294:
+			case 298:
 			{
 				AST tmp349_AST_in = (AST)_t;
-				match(_t,294);
+				match(_t,298);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5841,10 +5865,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 296:
+			case 300:
 			{
 				AST tmp351_AST_in = (AST)_t;
-				match(_t,296);
+				match(_t,300);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5855,10 +5879,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 298:
+			case 302:
 			{
 				AST tmp353_AST_in = (AST)_t;
-				match(_t,298);
+				match(_t,302);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5869,10 +5893,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 130:
+			case 134:
 			{
 				AST tmp355_AST_in = (AST)_t;
-				match(_t,130);
+				match(_t,134);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5883,10 +5907,10 @@ public SybaseIQ12TreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 128:
+			case 132:
 			{
 				AST tmp357_AST_in = (AST)_t;
-				match(_t,128);
+				match(_t,132);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5951,14 +5975,60 @@ public SybaseIQ12TreeParser() {
 		_retTree = _t;
 	}
 	
-	public final void other_function(AST _t) throws RecognitionException {
+	public final void analytical_function(AST _t) throws RecognitionException {
 		
-		AST other_function_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		AST analytical_function_AST_in = (_t == ASTNULL) ? null : (AST)_t;
 		
 		try {      // for error handling
-			AST tmp362_AST_in = (AST)_t;
-			match(_t,LITERAL_argn);
-			_t = _t.getNextSibling();
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case LITERAL_dense_rank:
+			{
+				AST tmp362_AST_in = (AST)_t;
+				match(_t,LITERAL_dense_rank);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_ntile:
+			{
+				AST tmp363_AST_in = (AST)_t;
+				match(_t,LITERAL_ntile);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_percent_rank:
+			{
+				AST tmp364_AST_in = (AST)_t;
+				match(_t,LITERAL_percent_rank);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_percentile_count:
+			{
+				AST tmp365_AST_in = (AST)_t;
+				match(_t,LITERAL_percentile_count);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_percentile_desc:
+			{
+				AST tmp366_AST_in = (AST)_t;
+				match(_t,LITERAL_percentile_desc);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_rank:
+			{
+				AST tmp367_AST_in = (AST)_t;
+				match(_t,LITERAL_rank);
+				_t = _t.getNextSibling();
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
 		}
 		catch (RecognitionException ex) {
 			reportError(ex);
@@ -5967,24 +6037,66 @@ public SybaseIQ12TreeParser() {
 		_retTree = _t;
 	}
 	
-	public final void rowid_function(AST _t) throws RecognitionException {
+	public final void miscellane_function(AST _t) throws RecognitionException {
 		
-		AST rowid_function_AST_in = (_t == ASTNULL) ? null : (AST)_t;
+		AST miscellane_function_AST_in = (_t == ASTNULL) ? null : (AST)_t;
 		
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
 			switch ( _t.getType()) {
+			case LITERAL_argn:
+			{
+				AST tmp368_AST_in = (AST)_t;
+				match(_t,LITERAL_argn);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_coalesce:
+			{
+				AST tmp369_AST_in = (AST)_t;
+				match(_t,LITERAL_coalesce);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_ifnull:
+			{
+				AST tmp370_AST_in = (AST)_t;
+				match(_t,LITERAL_ifnull);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_isnull:
+			{
+				AST tmp371_AST_in = (AST)_t;
+				match(_t,LITERAL_isnull);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_nullif:
+			{
+				AST tmp372_AST_in = (AST)_t;
+				match(_t,LITERAL_nullif);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_number:
+			{
+				AST tmp373_AST_in = (AST)_t;
+				match(_t,LITERAL_number);
+				_t = _t.getNextSibling();
+				break;
+			}
 			case LITERAL_rowid:
 			{
-				AST tmp363_AST_in = (AST)_t;
+				AST tmp374_AST_in = (AST)_t;
 				match(_t,LITERAL_rowid);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 305:
+			case 308:
 			{
-				AST tmp364_AST_in = (AST)_t;
-				match(_t,305);
+				AST tmp375_AST_in = (AST)_t;
+				match(_t,308);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -6124,12 +6236,16 @@ public SybaseIQ12TreeParser() {
 		"\"\\u53d6\\u5f53\\u524d\\u65e5\\u671f\\u65f6\\u95f42\"",
 		"\"rand\"",
 		"\"\\u53d6\\u968f\\u673a\\u6570\"",
+		"\"dense_rank\"",
+		"\"percent_rank\"",
+		"\"rank\"",
 		"\"pi\"",
 		"\"\\u6c42\\u5706\\u5468\\u7387\"",
 		"\"now\"",
 		"\"\\u53d6\\u5f53\\u524d\\u65e5\\u671f\\u65f6\\u95f41\"",
 		"\"today\"",
 		"\"\\u6c42\\u5f53\\u524d\\u65e5\\u671f\"",
+		"\"number\"",
 		"\"convert\"",
 		"\"\\u6570\\u636e\\u7c7b\\u578b\\u8f6c\\u6362\"",
 		"\"cast\"",
@@ -6306,9 +6422,16 @@ public SybaseIQ12TreeParser() {
 		"\"suser_name\"",
 		"\"user_id\"",
 		"\"user_name\"",
-		"\"argn\"",
 		"\"rowid\"",
 		"\"\\u6c42\\u884c\\u53f7\"",
+		"\"ntile\"",
+		"\"percentile_count\"",
+		"\"percentile_desc\"",
+		"\"argn\"",
+		"\"coalesce\"",
+		"\"ifnull\"",
+		"\"isnull\"",
+		"\"nullif\"",
 		"TILDE",
 		"\"\\u975e\\u8fd0\\u7b97\"",
 		"\"\\u4e0e\"",
