@@ -438,12 +438,12 @@ string_function
 	:	"ascii"			|	"求ASCII码"			//返回数字
 	|	"asciistr"		|	"求字符串ASCII码"
 	|	"chr"			|	"求等值的字符"
-	|	"cancat" 		| 	"字符串连接"
+	|	"concat" 		| 	"字符串连接"
 	|	"initcap" 		|	"单词首字母大写1"
 	|	"instr"			|	"求串位置"			//返回数字
-	|	"instrb"		|	"字节方式求串位置"		//返回数字
+//	|	"instrb"		|	"字节方式求串位置"		//返回数字
 	|	"length"		|	"求字符串长度"		//返回数字
-	|	"lengthb"		|	"求字符串字节数"		//返回数字
+//	|	"lengthb"		|	"求字符串字节数"		//返回数字
 	|	"lower"			|	"转为小写字母1"
 	|	"ltrim"			|	"去掉左空格"
 	|	"lpad"			|	"字符串左补"
@@ -457,7 +457,7 @@ string_function
 	|	"soundex"		|	"求字符串声音值"
 	|	"substr"		|	"字符串截取"
 	|	"trim"			|	"去左右空格"
-	|	"ranslate"		|	"字符串全替换"
+	|	"translate"		|	"字符串全替换"
 	|	"upper"			|	"转为大写字母1"
 	;
 
@@ -1578,12 +1578,12 @@ string_function
 	:	"ascii"			|	"求ASCII码"			//返回数字
 	|	"asciistr"		|	"求字符串ASCII码"
 	|	"chr"			|	"求等值的字符"
-	|	"cancat" 		| 	"字符串连接"
+	|	"concat" 		| 	"字符串连接"
 	|	"initcap" 		|	"单词首字母大写1"
 	|	"instr"			|	"求串位置"			//返回数字
-	|	"instrb"		|	"字节方式求串位置"		//返回数字
+//	|	"instrb"		|	"字节方式求串位置"		//返回数字
 	|	"length"		|	"求字符串长度"		//返回数字
-	|	"lengthb"		|	"求字符串字节数"		//返回数字
+//	|	"lengthb"		|	"求字符串字节数"		//返回数字
 	|	"lower"			|	"转为小写字母1"
 	|	"lpad"			|	"字符串左补"
 	|	"ltrim"			|	"去掉左空格"
@@ -1597,7 +1597,7 @@ string_function
 	|	"soundex"		|	"求字符串声音值"
 	|	"substr"		|	"字符串截取"
 	|	"trim"			|	"去左右空格"
-	|	"ranslate"		|	"字符串全替换"
+	|	"translate"		|	"字符串全替换"
 	|	"upper"			|	"转为大写字母1"
 	;
 

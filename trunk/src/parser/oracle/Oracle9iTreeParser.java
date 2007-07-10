@@ -216,8 +216,8 @@ public Oracle9iTreeParser() {
 			case LITERAL_dw:
 			case LITERAL_hour:
 			case LITERAL_hh:
-			case 317:
-			case 318:
+			case 313:
+			case 314:
 			case LITERAL_minute:
 			case LITERAL_mi:
 			case LITERAL_n:
@@ -1077,8 +1077,8 @@ public Oracle9iTreeParser() {
 			case LITERAL_dw:
 			case LITERAL_hour:
 			case LITERAL_hh:
-			case 317:
-			case 318:
+			case 313:
+			case 314:
 			case LITERAL_minute:
 			case LITERAL_mi:
 			case LITERAL_n:
@@ -2092,8 +2092,8 @@ public Oracle9iTreeParser() {
 			case LITERAL_dw:
 			case LITERAL_hour:
 			case LITERAL_hh:
-			case 317:
-			case 318:
+			case 313:
+			case 314:
 			case LITERAL_minute:
 			case LITERAL_mi:
 			case LITERAL_n:
@@ -2271,45 +2271,45 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 282:
+			case 278:
 			{
 				AST tmp59_AST_in = (AST)_t;
+				match(_t,278);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 279:
+			{
+				AST tmp60_AST_in = (AST)_t;
+				match(_t,279);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 280:
+			{
+				AST tmp61_AST_in = (AST)_t;
+				match(_t,280);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 281:
+			{
+				AST tmp62_AST_in = (AST)_t;
+				match(_t,281);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 282:
+			{
+				AST tmp63_AST_in = (AST)_t;
 				match(_t,282);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 283:
-			{
-				AST tmp60_AST_in = (AST)_t;
-				match(_t,283);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 284:
-			{
-				AST tmp61_AST_in = (AST)_t;
-				match(_t,284);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 285:
-			{
-				AST tmp62_AST_in = (AST)_t;
-				match(_t,285);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 286:
-			{
-				AST tmp63_AST_in = (AST)_t;
-				match(_t,286);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 351:
+			case 347:
 			{
 				AST tmp64_AST_in = (AST)_t;
-				match(_t,351);
+				match(_t,347);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -2508,59 +2508,59 @@ public Oracle9iTreeParser() {
 				_t = _retTree;
 				break;
 			}
-			case 267:
+			case 263:
 			{
 				AST tmp69_AST_in = (AST)_t;
-				match(_t,267);
+				match(_t,263);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 262:
+			{
+				AST tmp70_AST_in = (AST)_t;
+				match(_t,262);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 264:
+			{
+				AST tmp71_AST_in = (AST)_t;
+				match(_t,264);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 265:
+			{
+				AST tmp72_AST_in = (AST)_t;
+				match(_t,265);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 266:
 			{
-				AST tmp70_AST_in = (AST)_t;
+				AST tmp73_AST_in = (AST)_t;
 				match(_t,266);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 267:
+			{
+				AST tmp74_AST_in = (AST)_t;
+				match(_t,267);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 268:
 			{
-				AST tmp71_AST_in = (AST)_t;
+				AST tmp75_AST_in = (AST)_t;
 				match(_t,268);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 269:
 			{
-				AST tmp72_AST_in = (AST)_t;
-				match(_t,269);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 270:
-			{
-				AST tmp73_AST_in = (AST)_t;
-				match(_t,270);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 271:
-			{
-				AST tmp74_AST_in = (AST)_t;
-				match(_t,271);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 272:
-			{
-				AST tmp75_AST_in = (AST)_t;
-				match(_t,272);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 273:
-			{
 				AST tmp76_AST_in = (AST)_t;
-				match(_t,273);
+				match(_t,269);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -2987,10 +2987,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 266:
+			case 262:
 			{
 				AST tmp88_AST_in = (AST)_t;
-				match(_t,266);
+				match(_t,262);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -3168,17 +3168,17 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 317:
+			case 313:
 			{
 				AST tmp111_AST_in = (AST)_t;
-				match(_t,317);
+				match(_t,313);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 318:
+			case 314:
 			{
 				AST tmp112_AST_in = (AST)_t;
-				match(_t,318);
+				match(_t,314);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -3521,8 +3521,8 @@ public Oracle9iTreeParser() {
 			case LITERAL_dw:
 			case LITERAL_hour:
 			case LITERAL_hh:
-			case 317:
-			case 318:
+			case 313:
+			case 314:
 			case LITERAL_minute:
 			case LITERAL_mi:
 			case LITERAL_n:
@@ -3622,8 +3622,8 @@ public Oracle9iTreeParser() {
 			case LITERAL_dw:
 			case LITERAL_hour:
 			case LITERAL_hh:
-			case 317:
-			case 318:
+			case 313:
+			case 314:
 			case LITERAL_minute:
 			case LITERAL_mi:
 			case LITERAL_n:
@@ -3699,48 +3699,44 @@ public Oracle9iTreeParser() {
 			case 166:
 			case LITERAL_chr:
 			case 168:
-			case LITERAL_cancat:
+			case LITERAL_concat:
 			case 170:
 			case LITERAL_initcap:
 			case 172:
 			case LITERAL_instr:
 			case 174:
-			case LITERAL_instrb:
-			case 176:
 			case LITERAL_length:
-			case 178:
-			case LITERAL_lengthb:
-			case 180:
+			case 176:
 			case LITERAL_lower:
-			case 182:
+			case 178:
 			case LITERAL_ltrim:
-			case 184:
+			case 180:
 			case LITERAL_lpad:
-			case 186:
+			case 182:
 			case LITERAL_nls_initcap:
-			case 188:
+			case 184:
 			case LITERAL_nls_lower:
-			case 190:
+			case 186:
 			case LITERAL_nlssort:
-			case 192:
+			case 188:
 			case LITERAL_nls_upper:
-			case 194:
+			case 190:
 			case LITERAL_replace:
-			case 196:
+			case 192:
 			case LITERAL_rpad:
-			case 198:
+			case 194:
 			case LITERAL_rtrim:
-			case 200:
+			case 196:
 			case LITERAL_soundex:
-			case 202:
+			case 198:
 			case LITERAL_substr:
-			case 204:
+			case 200:
 			case LITERAL_trim:
-			case 206:
-			case LITERAL_ranslate:
-			case 208:
+			case 202:
+			case LITERAL_translate:
+			case 204:
 			case LITERAL_upper:
-			case 210:
+			case 206:
 			{
 				string_function(_t);
 				_t = _retTree;
@@ -3749,15 +3745,15 @@ public Oracle9iTreeParser() {
 			case SYSDATE_EN:
 			case SYSDATE_CN:
 			case LITERAL_add_months:
-			case 212:
+			case 208:
 			case LITERAL_last_day:
-			case 214:
+			case 210:
 			case LITERAL_months_between:
-			case 216:
+			case 212:
 			case LITERAL_new_time:
-			case 218:
+			case 214:
 			case LITERAL_next_day:
-			case 220:
+			case 216:
 			{
 				datetime_function(_t);
 				_t = _retTree;
@@ -3766,59 +3762,59 @@ public Oracle9iTreeParser() {
 			case LITERAL_cast:
 			case 118:
 			case LITERAL_bin_to_num:
-			case 222:
+			case 218:
 			case LITERAL_chartorowid:
-			case 224:
+			case 220:
 			case LITERAL_convert:
-			case 226:
+			case 222:
 			case LITERAL_hextoraw:
-			case 228:
+			case 224:
 			case LITERAL_rawtohex:
-			case 230:
+			case 226:
 			case LITERAL_rowidtochar:
-			case 232:
+			case 228:
 			case LITERAL_to_char:
-			case 234:
+			case 230:
 			case LITERAL_to_date:
-			case 236:
+			case 232:
 			case LITERAL_to_multi_byte:
-			case 238:
+			case 234:
 			case LITERAL_to_number:
-			case 240:
+			case 236:
 			case LITERAL_to_single_byte:
-			case 242:
+			case 238:
 			{
 				conversion_function(_t);
 				_t = _retTree;
 				break;
 			}
 			case LITERAL_uid:
-			case 244:
+			case 240:
 			case LITERAL_user:
-			case 246:
+			case 242:
 			case LITERAL_userenv:
-			case 248:
+			case 244:
 			case LITERAL_vsize:
-			case 250:
+			case 246:
 			{
 				system_function(_t);
 				_t = _retTree;
 				break;
 			}
 			case LITERAL_decode:
-			case 252:
+			case 248:
 			case LITERAL_dump:
-			case 254:
+			case 250:
 			case LITERAL_empty_blob:
-			case 256:
+			case 252:
 			case LITERAL_empty_clob:
-			case 258:
+			case 254:
 			case LITERAL_greatest:
 			case LITERAL_least:
 			case LITERAL_nvl:
-			case 264:
-			case 352:
-			case 353:
+			case 260:
+			case 348:
+			case 349:
 			{
 				other_function(_t);
 				_t = _retTree;
@@ -4742,10 +4738,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_cancat:
+			case LITERAL_concat:
 			{
 				AST tmp218_AST_in = (AST)_t;
-				match(_t,LITERAL_cancat);
+				match(_t,LITERAL_concat);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4784,10 +4780,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_instrb:
+			case LITERAL_length:
 			{
 				AST tmp224_AST_in = (AST)_t;
-				match(_t,LITERAL_instrb);
+				match(_t,LITERAL_length);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4798,10 +4794,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_length:
+			case LITERAL_lower:
 			{
 				AST tmp226_AST_in = (AST)_t;
-				match(_t,LITERAL_length);
+				match(_t,LITERAL_lower);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4812,66 +4808,66 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_lengthb:
+			case LITERAL_lpad:
 			{
 				AST tmp228_AST_in = (AST)_t;
-				match(_t,LITERAL_lengthb);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 180:
-			{
-				AST tmp229_AST_in = (AST)_t;
-				match(_t,180);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_lower:
-			{
-				AST tmp230_AST_in = (AST)_t;
-				match(_t,LITERAL_lower);
+				match(_t,LITERAL_lpad);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 182:
 			{
-				AST tmp231_AST_in = (AST)_t;
+				AST tmp229_AST_in = (AST)_t;
 				match(_t,182);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_lpad:
-			{
-				AST tmp232_AST_in = (AST)_t;
-				match(_t,LITERAL_lpad);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 186:
-			{
-				AST tmp233_AST_in = (AST)_t;
-				match(_t,186);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_ltrim:
 			{
-				AST tmp234_AST_in = (AST)_t;
+				AST tmp230_AST_in = (AST)_t;
 				match(_t,LITERAL_ltrim);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 184:
+			case 180:
 			{
-				AST tmp235_AST_in = (AST)_t;
-				match(_t,184);
+				AST tmp231_AST_in = (AST)_t;
+				match(_t,180);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_nls_initcap:
 			{
-				AST tmp236_AST_in = (AST)_t;
+				AST tmp232_AST_in = (AST)_t;
 				match(_t,LITERAL_nls_initcap);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 184:
+			{
+				AST tmp233_AST_in = (AST)_t;
+				match(_t,184);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_nls_lower:
+			{
+				AST tmp234_AST_in = (AST)_t;
+				match(_t,LITERAL_nls_lower);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 186:
+			{
+				AST tmp235_AST_in = (AST)_t;
+				match(_t,186);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_nlssort:
+			{
+				AST tmp236_AST_in = (AST)_t;
+				match(_t,LITERAL_nlssort);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4882,10 +4878,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_nls_lower:
+			case LITERAL_nls_upper:
 			{
 				AST tmp238_AST_in = (AST)_t;
-				match(_t,LITERAL_nls_lower);
+				match(_t,LITERAL_nls_upper);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4896,10 +4892,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_nlssort:
+			case LITERAL_replace:
 			{
 				AST tmp240_AST_in = (AST)_t;
-				match(_t,LITERAL_nlssort);
+				match(_t,LITERAL_replace);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4910,10 +4906,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_nls_upper:
+			case LITERAL_rpad:
 			{
 				AST tmp242_AST_in = (AST)_t;
-				match(_t,LITERAL_nls_upper);
+				match(_t,LITERAL_rpad);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4924,10 +4920,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_replace:
+			case LITERAL_rtrim:
 			{
 				AST tmp244_AST_in = (AST)_t;
-				match(_t,LITERAL_replace);
+				match(_t,LITERAL_rtrim);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4938,10 +4934,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_rpad:
+			case LITERAL_soundex:
 			{
 				AST tmp246_AST_in = (AST)_t;
-				match(_t,LITERAL_rpad);
+				match(_t,LITERAL_soundex);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4952,10 +4948,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_rtrim:
+			case LITERAL_substr:
 			{
 				AST tmp248_AST_in = (AST)_t;
-				match(_t,LITERAL_rtrim);
+				match(_t,LITERAL_substr);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4966,10 +4962,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_soundex:
+			case LITERAL_trim:
 			{
 				AST tmp250_AST_in = (AST)_t;
-				match(_t,LITERAL_soundex);
+				match(_t,LITERAL_trim);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4980,10 +4976,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_substr:
+			case LITERAL_translate:
 			{
 				AST tmp252_AST_in = (AST)_t;
-				match(_t,LITERAL_substr);
+				match(_t,LITERAL_translate);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -4994,10 +4990,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_trim:
+			case LITERAL_upper:
 			{
 				AST tmp254_AST_in = (AST)_t;
-				match(_t,LITERAL_trim);
+				match(_t,LITERAL_upper);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5005,34 +5001,6 @@ public Oracle9iTreeParser() {
 			{
 				AST tmp255_AST_in = (AST)_t;
 				match(_t,206);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_ranslate:
-			{
-				AST tmp256_AST_in = (AST)_t;
-				match(_t,LITERAL_ranslate);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 208:
-			{
-				AST tmp257_AST_in = (AST)_t;
-				match(_t,208);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_upper:
-			{
-				AST tmp258_AST_in = (AST)_t;
-				match(_t,LITERAL_upper);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 210:
-			{
-				AST tmp259_AST_in = (AST)_t;
-				match(_t,210);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5058,8 +5026,36 @@ public Oracle9iTreeParser() {
 			switch ( _t.getType()) {
 			case LITERAL_add_months:
 			{
-				AST tmp260_AST_in = (AST)_t;
+				AST tmp256_AST_in = (AST)_t;
 				match(_t,LITERAL_add_months);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 208:
+			{
+				AST tmp257_AST_in = (AST)_t;
+				match(_t,208);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_last_day:
+			{
+				AST tmp258_AST_in = (AST)_t;
+				match(_t,LITERAL_last_day);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 210:
+			{
+				AST tmp259_AST_in = (AST)_t;
+				match(_t,210);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_months_between:
+			{
+				AST tmp260_AST_in = (AST)_t;
+				match(_t,LITERAL_months_between);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5070,10 +5066,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_last_day:
+			case LITERAL_new_time:
 			{
 				AST tmp262_AST_in = (AST)_t;
-				match(_t,LITERAL_last_day);
+				match(_t,LITERAL_new_time);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5084,10 +5080,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_months_between:
+			case LITERAL_next_day:
 			{
 				AST tmp264_AST_in = (AST)_t;
-				match(_t,LITERAL_months_between);
+				match(_t,LITERAL_next_day);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5098,44 +5094,16 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_new_time:
-			{
-				AST tmp266_AST_in = (AST)_t;
-				match(_t,LITERAL_new_time);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 218:
-			{
-				AST tmp267_AST_in = (AST)_t;
-				match(_t,218);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_next_day:
-			{
-				AST tmp268_AST_in = (AST)_t;
-				match(_t,LITERAL_next_day);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 220:
-			{
-				AST tmp269_AST_in = (AST)_t;
-				match(_t,220);
-				_t = _t.getNextSibling();
-				break;
-			}
 			case SYSDATE_EN:
 			{
-				AST tmp270_AST_in = (AST)_t;
+				AST tmp266_AST_in = (AST)_t;
 				match(_t,SYSDATE_EN);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case SYSDATE_CN:
 			{
-				AST tmp271_AST_in = (AST)_t;
+				AST tmp267_AST_in = (AST)_t;
 				match(_t,SYSDATE_CN);
 				_t = _t.getNextSibling();
 				break;
@@ -5162,50 +5130,78 @@ public Oracle9iTreeParser() {
 			switch ( _t.getType()) {
 			case LITERAL_bin_to_num:
 			{
-				AST tmp272_AST_in = (AST)_t;
+				AST tmp268_AST_in = (AST)_t;
 				match(_t,LITERAL_bin_to_num);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 222:
+			case 218:
 			{
-				AST tmp273_AST_in = (AST)_t;
-				match(_t,222);
+				AST tmp269_AST_in = (AST)_t;
+				match(_t,218);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_chartorowid:
 			{
-				AST tmp274_AST_in = (AST)_t;
+				AST tmp270_AST_in = (AST)_t;
 				match(_t,LITERAL_chartorowid);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 224:
+			case 220:
 			{
-				AST tmp275_AST_in = (AST)_t;
-				match(_t,224);
+				AST tmp271_AST_in = (AST)_t;
+				match(_t,220);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_cast:
 			{
-				AST tmp276_AST_in = (AST)_t;
+				AST tmp272_AST_in = (AST)_t;
 				match(_t,LITERAL_cast);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case 118:
 			{
-				AST tmp277_AST_in = (AST)_t;
+				AST tmp273_AST_in = (AST)_t;
 				match(_t,118);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_convert:
 			{
-				AST tmp278_AST_in = (AST)_t;
+				AST tmp274_AST_in = (AST)_t;
 				match(_t,LITERAL_convert);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 222:
+			{
+				AST tmp275_AST_in = (AST)_t;
+				match(_t,222);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_hextoraw:
+			{
+				AST tmp276_AST_in = (AST)_t;
+				match(_t,LITERAL_hextoraw);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 224:
+			{
+				AST tmp277_AST_in = (AST)_t;
+				match(_t,224);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_rawtohex:
+			{
+				AST tmp278_AST_in = (AST)_t;
+				match(_t,LITERAL_rawtohex);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5216,10 +5212,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_hextoraw:
+			case LITERAL_rowidtochar:
 			{
 				AST tmp280_AST_in = (AST)_t;
-				match(_t,LITERAL_hextoraw);
+				match(_t,LITERAL_rowidtochar);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5230,10 +5226,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_rawtohex:
+			case LITERAL_to_char:
 			{
 				AST tmp282_AST_in = (AST)_t;
-				match(_t,LITERAL_rawtohex);
+				match(_t,LITERAL_to_char);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5244,10 +5240,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_rowidtochar:
+			case LITERAL_to_date:
 			{
 				AST tmp284_AST_in = (AST)_t;
-				match(_t,LITERAL_rowidtochar);
+				match(_t,LITERAL_to_date);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5258,10 +5254,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_to_char:
+			case LITERAL_to_multi_byte:
 			{
 				AST tmp286_AST_in = (AST)_t;
-				match(_t,LITERAL_to_char);
+				match(_t,LITERAL_to_multi_byte);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5272,10 +5268,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_to_date:
+			case LITERAL_to_number:
 			{
 				AST tmp288_AST_in = (AST)_t;
-				match(_t,LITERAL_to_date);
+				match(_t,LITERAL_to_number);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5286,10 +5282,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_to_multi_byte:
+			case LITERAL_to_single_byte:
 			{
 				AST tmp290_AST_in = (AST)_t;
-				match(_t,LITERAL_to_multi_byte);
+				match(_t,LITERAL_to_single_byte);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5297,34 +5293,6 @@ public Oracle9iTreeParser() {
 			{
 				AST tmp291_AST_in = (AST)_t;
 				match(_t,238);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_to_number:
-			{
-				AST tmp292_AST_in = (AST)_t;
-				match(_t,LITERAL_to_number);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 240:
-			{
-				AST tmp293_AST_in = (AST)_t;
-				match(_t,240);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_to_single_byte:
-			{
-				AST tmp294_AST_in = (AST)_t;
-				match(_t,LITERAL_to_single_byte);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 242:
-			{
-				AST tmp295_AST_in = (AST)_t;
-				match(_t,242);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5350,8 +5318,36 @@ public Oracle9iTreeParser() {
 			switch ( _t.getType()) {
 			case LITERAL_uid:
 			{
-				AST tmp296_AST_in = (AST)_t;
+				AST tmp292_AST_in = (AST)_t;
 				match(_t,LITERAL_uid);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 240:
+			{
+				AST tmp293_AST_in = (AST)_t;
+				match(_t,240);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_user:
+			{
+				AST tmp294_AST_in = (AST)_t;
+				match(_t,LITERAL_user);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 242:
+			{
+				AST tmp295_AST_in = (AST)_t;
+				match(_t,242);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_userenv:
+			{
+				AST tmp296_AST_in = (AST)_t;
+				match(_t,LITERAL_userenv);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5362,10 +5358,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_user:
+			case LITERAL_vsize:
 			{
 				AST tmp298_AST_in = (AST)_t;
-				match(_t,LITERAL_user);
+				match(_t,LITERAL_vsize);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5373,34 +5369,6 @@ public Oracle9iTreeParser() {
 			{
 				AST tmp299_AST_in = (AST)_t;
 				match(_t,246);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_userenv:
-			{
-				AST tmp300_AST_in = (AST)_t;
-				match(_t,LITERAL_userenv);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 248:
-			{
-				AST tmp301_AST_in = (AST)_t;
-				match(_t,248);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_vsize:
-			{
-				AST tmp302_AST_in = (AST)_t;
-				match(_t,LITERAL_vsize);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 250:
-			{
-				AST tmp303_AST_in = (AST)_t;
-				match(_t,250);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5426,8 +5394,36 @@ public Oracle9iTreeParser() {
 			switch ( _t.getType()) {
 			case LITERAL_decode:
 			{
-				AST tmp304_AST_in = (AST)_t;
+				AST tmp300_AST_in = (AST)_t;
 				match(_t,LITERAL_decode);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 248:
+			{
+				AST tmp301_AST_in = (AST)_t;
+				match(_t,248);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_dump:
+			{
+				AST tmp302_AST_in = (AST)_t;
+				match(_t,LITERAL_dump);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case 250:
+			{
+				AST tmp303_AST_in = (AST)_t;
+				match(_t,250);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case LITERAL_empty_blob:
+			{
+				AST tmp304_AST_in = (AST)_t;
+				match(_t,LITERAL_empty_blob);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5438,10 +5434,10 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_dump:
+			case LITERAL_empty_clob:
 			{
 				AST tmp306_AST_in = (AST)_t;
-				match(_t,LITERAL_dump);
+				match(_t,LITERAL_empty_clob);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5452,73 +5448,45 @@ public Oracle9iTreeParser() {
 				_t = _t.getNextSibling();
 				break;
 			}
-			case LITERAL_empty_blob:
-			{
-				AST tmp308_AST_in = (AST)_t;
-				match(_t,LITERAL_empty_blob);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 256:
-			{
-				AST tmp309_AST_in = (AST)_t;
-				match(_t,256);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case LITERAL_empty_clob:
-			{
-				AST tmp310_AST_in = (AST)_t;
-				match(_t,LITERAL_empty_clob);
-				_t = _t.getNextSibling();
-				break;
-			}
-			case 258:
-			{
-				AST tmp311_AST_in = (AST)_t;
-				match(_t,258);
-				_t = _t.getNextSibling();
-				break;
-			}
 			case LITERAL_greatest:
 			{
-				AST tmp312_AST_in = (AST)_t;
+				AST tmp308_AST_in = (AST)_t;
 				match(_t,LITERAL_greatest);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 352:
+			case 348:
 			{
-				AST tmp313_AST_in = (AST)_t;
-				match(_t,352);
+				AST tmp309_AST_in = (AST)_t;
+				match(_t,348);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_least:
 			{
-				AST tmp314_AST_in = (AST)_t;
+				AST tmp310_AST_in = (AST)_t;
 				match(_t,LITERAL_least);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 353:
+			case 349:
 			{
-				AST tmp315_AST_in = (AST)_t;
-				match(_t,353);
+				AST tmp311_AST_in = (AST)_t;
+				match(_t,349);
 				_t = _t.getNextSibling();
 				break;
 			}
 			case LITERAL_nvl:
 			{
-				AST tmp316_AST_in = (AST)_t;
+				AST tmp312_AST_in = (AST)_t;
 				match(_t,LITERAL_nvl);
 				_t = _t.getNextSibling();
 				break;
 			}
-			case 264:
+			case 260:
 			{
-				AST tmp317_AST_in = (AST)_t;
-				match(_t,264);
+				AST tmp313_AST_in = (AST)_t;
+				match(_t,260);
 				_t = _t.getNextSibling();
 				break;
 			}
@@ -5706,18 +5674,14 @@ public Oracle9iTreeParser() {
 		"\"\\u6c42\\u5b57\\u7b26\\u4e32ASCII\\u7801\"",
 		"\"chr\"",
 		"\"\\u6c42\\u7b49\\u503c\\u7684\\u5b57\\u7b26\"",
-		"\"cancat\"",
+		"\"concat\"",
 		"\"\\u5b57\\u7b26\\u4e32\\u8fde\\u63a5\"",
 		"\"initcap\"",
 		"\"\\u5355\\u8bcd\\u9996\\u5b57\\u6bcd\\u5927\\u51991\"",
 		"\"instr\"",
 		"\"\\u6c42\\u4e32\\u4f4d\\u7f6e\"",
-		"\"instrb\"",
-		"\"\\u5b57\\u8282\\u65b9\\u5f0f\\u6c42\\u4e32\\u4f4d\\u7f6e\"",
 		"\"length\"",
 		"\"\\u6c42\\u5b57\\u7b26\\u4e32\\u957f\\u5ea6\"",
-		"\"lengthb\"",
-		"\"\\u6c42\\u5b57\\u7b26\\u4e32\\u5b57\\u8282\\u6570\"",
 		"\"lower\"",
 		"\"\\u8f6c\\u4e3a\\u5c0f\\u5199\\u5b57\\u6bcd1\"",
 		"\"ltrim\"",
@@ -5744,7 +5708,7 @@ public Oracle9iTreeParser() {
 		"\"\\u5b57\\u7b26\\u4e32\\u622a\\u53d6\"",
 		"\"trim\"",
 		"\"\\u53bb\\u5de6\\u53f3\\u7a7a\\u683c\"",
-		"\"ranslate\"",
+		"\"translate\"",
 		"\"\\u5b57\\u7b26\\u4e32\\u5168\\u66ff\\u6362\"",
 		"\"upper\"",
 		"\"\\u8f6c\\u4e3a\\u5927\\u5199\\u5b57\\u6bcd1\"",
@@ -5897,8 +5861,8 @@ public Oracle9iTreeParser() {
 		long[] data = new long[12];
 		data[0]=3378253503003656L;
 		data[1]=2251797599092737L;
-		data[4]=-549755813888L;
-		data[5]=1610629119L;
+		data[4]=-34359738368L;
+		data[5]=100664319L;
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
@@ -5906,8 +5870,8 @@ public Oracle9iTreeParser() {
 		long[] data = new long[12];
 		data[0]=3377700525964288L;
 		data[1]=2251784714190849L;
-		data[4]=-549755813888L;
-		data[5]=1610612863L;
+		data[4]=-34359738368L;
+		data[5]=100663303L;
 		return data;
 	}
 	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
