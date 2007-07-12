@@ -360,6 +360,10 @@ public class QueryModel {
   public static QueryModel parseSegment(String chSegment, String databaseType) {
     QueryModel model = null;
     
+    if (databaseType == null || databaseType.equals(""))
+    	databaseType = DataBaseType.DEFAULT_DATABASE_TYPE;
+    setKeyWordsProp(databaseType);	//根据属性文件设置对应中英文关键字
+    
     List exs = new ArrayList();
     if (databaseType.equals(DataBaseType.ORACLE8i) || databaseType.equals(DataBaseType.ORACLE9i)){
   		Oracle9iLexer rOracle9iLexer = new Oracle9iLexer(new StringReader(chSegment));
