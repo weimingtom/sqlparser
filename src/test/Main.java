@@ -35,7 +35,7 @@ public class Main {
     	functionsTestMain.FunctionsTest(mNum);
   	}else{
   		Main main = new Main();
-//  		main.testSegment();
+  		main.testSegment();
 //  		main.testUnion();
 //      main.testCompare();
 //  		main.customQueryTest();
