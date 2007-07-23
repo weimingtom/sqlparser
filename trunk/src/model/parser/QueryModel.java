@@ -18,6 +18,9 @@ import parser.db2.DB2UDB8xLexer;
 import parser.db2.DB2UDB8xParser;
 import parser.db2.DB2UDB8xTreeParser;
 import parser.oracle.*;
+import parser.sqlserver.SqlServer2000Lexer;
+import parser.sqlserver.SqlServer2000Parser;
+import parser.sqlserver.SqlServer2000TreeParser;
 import parser.sybase.*;
 import antlr.ANTLRException;
 import antlr.CharStreamIOException;
@@ -52,9 +55,10 @@ import model.parser.exceptions.common.ErrorLexer;
  * ======================================================<br>
  */
 public class QueryModel {
-  private static final String KEYWORDS = "keywords";  							//关键字属性文件名称
-  private static final String KEYWORDS_ORACLE = "keywords_oracle";  //关键字属性文件名称
-  private static final String KEYWORDS_SYBASE = "keywords_sybase";  //关键字属性文件名称
+  private static final String KEYWORDS = "keywords";  										//关键字属性文件名称
+  private static final String KEYWORDS_ORACLE = "keywords_oracle";  			//关键字属性文件名称
+  private static final String KEYWORDS_SYBASE = "keywords_sybase";  			//关键字属性文件名称
+  private static final String KEYWORDS_SQLSERVER = "keywords_sqlserver";  //关键字属性文件名称
   private static final String KEYWORDS_DB2 = "keywords_db2";  //关键字属性文件名称
   
   private Oracle9iParser oracle9iParser;
@@ -63,6 +67,8 @@ public class QueryModel {
   private SybaseIQ12Lexer sybaseIQ12Lexer;
   private DB2UDB8xParser db2UDB8xParser;
   private DB2UDB8xLexer db2UDB8xLexer;
+  private SqlServer2000Parser sqlServer2000Parser;
+  private SqlServer2000Lexer sqlServer2000Lexer;
   
   private static Map mapKeyword = new HashMap();      //存放关键字的HashMap
   private String chQuery;
@@ -88,6 +94,8 @@ public class QueryModel {
   			rKeyWordsName = KEYWORDS_SYBASE;
   		}else if (_databaseType.equals(DataBaseType.DB2_UDB_8x) || _databaseType.equals(DataBaseType.DB2_UDB_9x)){
   			rKeyWordsName = KEYWORDS_DB2;
+  		}else if (_databaseType.equals(DataBaseType.MS_SQLSERVER2000)){
+  			rKeyWordsName = KEYWORDS_SQLSERVER;	
   		}else{
   			rKeyWordsName = KEYWORDS;
   		}
@@ -238,6 +246,25 @@ public class QueryModel {
       }
       model.setDb2UDB8xLexer(rDB2UDB8xLexer);
       model.setDb2UDB8xParser(rDB2UDB8xParser);
+  	}else if (databaseType.equals(DataBaseType.MS_SQLSERVER2000)){
+  		SqlServer2000Lexer rSqlServer2000Lexer = new SqlServer2000Lexer(new StringReader(chQuery));
+  		SqlServer2000Parser rSqlServer2000Parser = new SqlServer2000Parser(rSqlServer2000Lexer);
+  		try {
+  			rSqlServer2000Parser.statements();
+	      CommonAST ast = (CommonAST) rSqlServer2000Parser.getAST();
+	      // TODO Visible ASTFrame
+  	    //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+  	    //_ASTFrame.setVisible(true);
+	      SqlServer2000TreeParser rSqlServer2000TreeParser = new SqlServer2000TreeParser();
+	      model = rSqlServer2000TreeParser.statement(ast);
+    	}catch (ANTLRException e) {
+        exs.add(e);
+      }
+    	if (model == null){
+        model = new QueryModel();
+      }
+      model.setSqlServer2000Lexer(rSqlServer2000Lexer);
+      model.setSqlServer2000Parser(rSqlServer2000Parser);
   	}else{
   		if (model == null){
         model = new QueryModel();
@@ -427,6 +454,25 @@ public class QueryModel {
       }
       model.setDb2UDB8xLexer(rDB2UDB8xLexer);
       model.setDb2UDB8xParser(rDB2UDB8xParser);
+    }else if (databaseType.equals(DataBaseType.MS_SQLSERVER2000)){
+  		SqlServer2000Lexer rSqlServer2000Lexer = new SqlServer2000Lexer(new StringReader(chSegment));
+  		SqlServer2000Parser rSqlServer2000Parser = new SqlServer2000Parser(rSqlServer2000Lexer);
+  		try {
+  			rSqlServer2000Parser.statements();
+	      CommonAST ast = (CommonAST) rSqlServer2000Parser.getAST();
+	      // TODO Visible ASTFrame
+  	    //ASTFrame _ASTFrame = new ASTFrame("longtopParser", ast);
+  	    //_ASTFrame.setVisible(true);
+	      SqlServer2000TreeParser rSqlServer2000TreeParser = new SqlServer2000TreeParser();
+	      model = rSqlServer2000TreeParser.statement(ast);
+    	}catch (ANTLRException e) {
+        exs.add(e);
+      }
+    	if (model == null){
+        model = new QueryModel();
+      }
+      model.setSqlServer2000Lexer(rSqlServer2000Lexer);
+      model.setSqlServer2000Parser(rSqlServer2000Parser);
   	}else{
   		if (model == null){
         model = new QueryModel();
@@ -625,6 +671,22 @@ public class QueryModel {
 
 	public void setDb2UDB8xParser(DB2UDB8xParser db2UDB8xParser) {
 		this.db2UDB8xParser = db2UDB8xParser;
+	}
+	
+	public SqlServer2000Lexer getSqlServer2000Lexer() {
+		return sqlServer2000Lexer;
+	}
+
+	public void setSqlServer2000Lexer(SqlServer2000Lexer sqlServer2000Lexer) {
+		this.sqlServer2000Lexer = sqlServer2000Lexer;
+	}
+
+	public SqlServer2000Parser getSqlServer2000Parser() {
+		return sqlServer2000Parser;
+	}
+
+	public void setSqlServer2000Parser(SqlServer2000Parser sqlServer2000Parser) {
+		this.sqlServer2000Parser = sqlServer2000Parser;
 	}
 
 	/**
@@ -968,6 +1030,8 @@ public class QueryModel {
       		expecting = sybaseIQ12Parser.getTokenName(exception.expecting);
     	} else if (databaseType.equals(DataBaseType.DB2_UDB_8x) || databaseType.equals(DataBaseType.DB2_UDB_9x)){
     		expecting = db2UDB8xParser.getTokenName(exception.expecting);
+    	} else if (databaseType.equals(DataBaseType.MS_SQLSERVER2000)){
+    		expecting = sqlServer2000Parser.getTokenName(exception.expecting);
     	}else{
     		expecting = sybaseIQ12Parser.getTokenName(exception.expecting);
     	}
