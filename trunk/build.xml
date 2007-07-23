@@ -18,6 +18,10 @@
 	<property name="parser_db2_src_file" value="${parser_db2}/parser_db2_utf8.g" />
 	<property name="parser_db2_file" value="${parser_db2}/parser_db2.g" />
 
+	<property name="parser_sqlserver" value="${dir.src}/parser/sqlserver" />
+	<property name="parser_sqlserver_src_file" value="${parser_sqlserver}/parser_sqlserver_utf8.g" />
+	<property name="parser_sqlserver_file" value="${parser_sqlserver}/parser_sqlserver.g" />
+	
 	<property name="parser_expr" value="${dir.src}/parser/indicator" />
 	<property name="expr_parser_src_file" value="${parser_expr}/expression_utf8.g" />
 	<property name="expr_parser_file" value="${parser_expr}/expression.g" />
@@ -30,6 +34,9 @@
 
 	<property name="keyword_db2_src_file" value="keywords_db2_utf8.properties" />
 	<property name="keyword_db2_file" value="keywords_db2.properties" />
+	
+	<property name="keyword_sqlserver_src_file" value="keywords_sqlserver_utf8.properties" />
+	<property name="keyword_sqlserver_file" value="keywords_sqlserver.properties" />
 
 	<property name="keyword_src_file" value="keywords_utf8.properties" />
 	<property name="keyword_file" value="keywords.properties" />
@@ -111,6 +118,17 @@
 			</classpath>
 		</java>
 		
+		<!-- SQLSERVER2000 Parser file compile -->
+		<exec executable="native2ascii.exe">
+			<arg line="-encoding ${charset} ${parser_sqlserver_src_file} ${parser_sqlserver_file}"/>
+		</exec>
+		<java classname="antlr.Tool">
+			<arg line="-o ${parser_sqlserver} ${parser_sqlserver_file}"/>
+			<classpath>
+				<path refid="libfiles"/>
+			</classpath>
+		</java>
+		
 		<!-- Indicator Expression file compile -->
 		<exec executable="native2ascii.exe">
 			<arg line="-encoding ${charset} ${expr_parser_src_file} ${expr_parser_file}"/>
@@ -137,6 +155,11 @@
 		<!-- DB2 properties file encode -->
 		<exec executable="native2ascii.exe">
 			<arg line="-encoding ${charset} ${keyword_db2_src_file} ${keyword_db2_file}" />
+		</exec>
+		
+		<!-- SqlServer2000 properties file encode -->
+		<exec executable="native2ascii.exe">
+			<arg line="-encoding ${charset} ${keyword_sqlserver_src_file} ${keyword_sqlserver_file}" />
 		</exec>
 		
 		<!-- DEFAULT properties file encode -->
