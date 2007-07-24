@@ -3906,26 +3906,16 @@ public Oracle9iTreeParser() {
 		ExpressionModel model;
 		
 		AST datatype_constant_AST_in = (_t == ASTNULL) ? null : (AST)_t;
-		AST c1 = null;
 		AST c2 = null;
-		AST dtw = null;
 		AST dts = null;
 		AST sdts = null;
+		AST dtw = null;
+		AST c1 = null;
 		model=new ExpressionModel(); String rValue = ""; String rp = "";
 		
 		try {      // for error handling
 			if (_t==null) _t=ASTNULL;
-			if ((_t.getType()==CHAR)) {
-				c1 = (AST)_t;
-				match(_t,CHAR);
-				_t = _t.getNextSibling();
-				
-							//\u8fd4\u56dechar\u4fdd\u7559\u5b57
-							rValue = c1.getText();
-							model.addConstant(rValue);
-						
-			}
-			else if ((_t.getType()==PAREN_CHAR_DATA_TYPE)) {
+			if ((_t.getType()==PAREN_CHAR_DATA_TYPE)) {
 				AST __t307 = _t;
 				AST tmp138_AST_in = (AST)_t;
 				match(_t,PAREN_CHAR_DATA_TYPE);
@@ -3940,16 +3930,6 @@ public Oracle9iTreeParser() {
 				
 							//\u8fd4\u56de\u5e26\u53c2\u6570char\u4fdd\u7559
 							rValue = c2.getText() + "(" + rp + ")";
-							model.addConstant(rValue);
-						
-			}
-			else if ((_tokenSet_0.member(_t.getType()))) {
-				dtw = _t==ASTNULL ? null : (AST)_t;
-				data_type_word(_t);
-				_t = _retTree;
-				
-							//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57(date\u3001datetime...)
-							rValue = dtw.getText();
 							model.addConstant(rValue);
 						
 			}
@@ -3978,6 +3958,26 @@ public Oracle9iTreeParser() {
 				
 							//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u4e3a\u53ef\u4e0d\u5e26\u53c2\u6570]
 							rValue = sdts.getText();
+							model.addConstant(rValue);
+						
+			}
+			else if ((_tokenSet_0.member(_t.getType()))) {
+				dtw = _t==ASTNULL ? null : (AST)_t;
+				data_type_word(_t);
+				_t = _retTree;
+				
+							//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57(date\u3001datetime...)
+							rValue = dtw.getText();
+							model.addConstant(rValue);
+						
+			}
+			else if ((_t.getType()==CHAR)) {
+				c1 = (AST)_t;
+				match(_t,CHAR);
+				_t = _t.getNextSibling();
+				
+							//\u8fd4\u56dechar\u4fdd\u7559\u5b57
+							rValue = c1.getText();
 							model.addConstant(rValue);
 						
 			}

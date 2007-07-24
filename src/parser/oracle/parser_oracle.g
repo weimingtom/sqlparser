@@ -1422,22 +1422,10 @@ as_data_type_parameters returns [ParametersModel model]
 //\u6570\u636e\u7c7b\u578b\u5e38\u91cf\u904d\u5386
 datatype_constant returns [ExpressionModel model]
 {model=new ExpressionModel(); String rValue = ""; String rp = "";}
-	:	c1:CHAR
-		{
-			//\u8fd4\u56dechar\u4fdd\u7559\u5b57
-			rValue = c1.getText();
-			model.addConstant(rValue);
-		}
-	|	#(PAREN_CHAR_DATA_TYPE c2:CHAR rp=datatype_precision_or_scale_or_maxlength)
+	:	#(PAREN_CHAR_DATA_TYPE c2:CHAR rp=datatype_precision_or_scale_or_maxlength)
 		{
 			//\u8fd4\u56de\u5e26\u53c2\u6570char\u4fdd\u7559
 			rValue = c2.getText() + "(" + rp + ")";
-			model.addConstant(rValue);
-		}
-	|	dtw:data_type_word
-		{
-			//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57(date\u3001datetime...)
-			rValue = dtw.getText();
 			model.addConstant(rValue);
 		}
 	|	#(PAREN_DATA_TYPE dts:DATA_TYPE_STRING rp=datatype_precision_or_scale_or_maxlength)
@@ -1450,6 +1438,18 @@ datatype_constant returns [ExpressionModel model]
 		{
 			//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u4e3a\u53ef\u4e0d\u5e26\u53c2\u6570]
 			rValue = sdts.getText();
+			model.addConstant(rValue);
+		}
+	|	dtw:data_type_word
+		{
+			//\u8fd4\u56de\u6570\u636e\u7c7b\u578b\u4fdd\u7559\u5b57(date\u3001datetime...)
+			rValue = dtw.getText();
+			model.addConstant(rValue);
+		}
+	|	c1:CHAR
+		{
+			//\u8fd4\u56dechar\u4fdd\u7559\u5b57
+			rValue = c1.getText();
 			model.addConstant(rValue);
 		}
 	;

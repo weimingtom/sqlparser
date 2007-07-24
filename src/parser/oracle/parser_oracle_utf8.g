@@ -1422,22 +1422,10 @@ as_data_type_parameters returns [ParametersModel model]
 //数据类型常量遍历
 datatype_constant returns [ExpressionModel model]
 {model=new ExpressionModel(); String rValue = ""; String rp = "";}
-	:	c1:CHAR
-		{
-			//返回char保留字
-			rValue = c1.getText();
-			model.addConstant(rValue);
-		}
-	|	#(PAREN_CHAR_DATA_TYPE c2:CHAR rp=datatype_precision_or_scale_or_maxlength)
+	:	#(PAREN_CHAR_DATA_TYPE c2:CHAR rp=datatype_precision_or_scale_or_maxlength)
 		{
 			//返回带参数char保留
 			rValue = c2.getText() + "(" + rp + ")";
-			model.addConstant(rValue);
-		}
-	|	dtw:data_type_word
-		{
-			//返回数据类型保留字(date、datetime...)
-			rValue = dtw.getText();
 			model.addConstant(rValue);
 		}
 	|	#(PAREN_DATA_TYPE dts:DATA_TYPE_STRING rp=datatype_precision_or_scale_or_maxlength)
@@ -1450,6 +1438,18 @@ datatype_constant returns [ExpressionModel model]
 		{
 			//返回数据类型为可不带参数]
 			rValue = sdts.getText();
+			model.addConstant(rValue);
+		}
+	|	dtw:data_type_word
+		{
+			//返回数据类型保留字(date、datetime...)
+			rValue = dtw.getText();
+			model.addConstant(rValue);
+		}
+	|	c1:CHAR
+		{
+			//返回char保留字
+			rValue = c1.getText();
 			model.addConstant(rValue);
 		}
 	;
