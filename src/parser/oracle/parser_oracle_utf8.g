@@ -381,9 +381,9 @@ aggregate_func_name
 	|	COUNT_EN	|	COUNT_CN
 	|	"max" 		| 	"求最大值"
 	|	"min" 		| 	"求最小值"
-	|	"stddev" 	| 	"求标准差"
+	|	"stddev" 	| 	"求方差"
 	|	"sum" 		|	"求总和"
-	|	"variance" 	| 	"求协方差"
+	|	"variance" 	| 	"求统计方差"
 	;
 
 //没有带任何东西的函数[格式如： sysdate]
@@ -413,7 +413,7 @@ number_function
 	|	"acos"		|	"求反余弦值"
 	|	"asin"		|	"求反正弦值"
 	|	"atan"		|	"求反正切值"
-	|	"atin2"		|	"求二个数的反正切值"
+	|	"atan2"		|	"求二个数的反正切值"
 	|	"ceil"		|	"取上限整数"
 	|	"cos"		|	"求余弦值"
 	|	"cosh"		|	"求余切值"
@@ -500,10 +500,11 @@ other_function
 	|	"dump"		|	"返回数据格式"
 	| 	"empty_blob"|	"初始化BLOB"
 	|	"empty_clob"|	"初始化CLOB"
-	|	"greatest"	|	"求最大表达式"
-	|	"least"		|	"求最小表达式"
+	|	"greatest"	|	"求字符串最大值"
+	|	"least"		|	"求字符串最小值"
 	|	"nvl"		|	"求非空值"
 	;
+
 
 //单个运算符号[~]
 one_arg_op
@@ -1531,9 +1532,9 @@ aggregate_func_name
 	|	COUNT_EN	|	COUNT_CN
 	|	"max" 		| 	"求最大值"
 	|	"min" 		| 	"求最小值"
-	|	"stddev" 	| 	"求标准差"
+	|	"stddev" 	| 	"求方差"
 	|	"sum" 		|	"求总和"
-	|	"variance" 	| 	"求协方差"
+	|	"variance" 	| 	"求统计方差"
 	;
 
 //普通函数(数学函数、字符串函数、日期时间函数、系统函数、数据类型转化函数、其他函数)
@@ -1553,7 +1554,7 @@ number_function
 	|	"acos"		|	"求反余弦值"
 	|	"asin"		|	"求反正弦值"
 	|	"atan"		|	"求反正切值"
-	|	"atin2"		|	"求二个数的反正切值"
+	|	"atan2"		|	"求二个数的反正切值"
 	|	"ceil"		|	"取上限整数"
 	|	"cos"		|	"求余弦值"
 	|	"cosh"		|	"求余切值"

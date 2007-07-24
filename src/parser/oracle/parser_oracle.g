@@ -381,9 +381,9 @@ aggregate_func_name
 	|	COUNT_EN	|	COUNT_CN
 	|	"max" 		| 	"\u6c42\u6700\u5927\u503c"
 	|	"min" 		| 	"\u6c42\u6700\u5c0f\u503c"
-	|	"stddev" 	| 	"\u6c42\u6807\u51c6\u5dee"
+	|	"stddev" 	| 	"\u6c42\u65b9\u5dee"
 	|	"sum" 		|	"\u6c42\u603b\u548c"
-	|	"variance" 	| 	"\u6c42\u534f\u65b9\u5dee"
+	|	"variance" 	| 	"\u6c42\u7edf\u8ba1\u65b9\u5dee"
 	;
 
 //\u6ca1\u6709\u5e26\u4efb\u4f55\u4e1c\u897f\u7684\u51fd\u6570[\u683c\u5f0f\u5982\uff1a sysdate]
@@ -413,7 +413,7 @@ number_function
 	|	"acos"		|	"\u6c42\u53cd\u4f59\u5f26\u503c"
 	|	"asin"		|	"\u6c42\u53cd\u6b63\u5f26\u503c"
 	|	"atan"		|	"\u6c42\u53cd\u6b63\u5207\u503c"
-	|	"atin2"		|	"\u6c42\u4e8c\u4e2a\u6570\u7684\u53cd\u6b63\u5207\u503c"
+	|	"atan2"		|	"\u6c42\u4e8c\u4e2a\u6570\u7684\u53cd\u6b63\u5207\u503c"
 	|	"ceil"		|	"\u53d6\u4e0a\u9650\u6574\u6570"
 	|	"cos"		|	"\u6c42\u4f59\u5f26\u503c"
 	|	"cosh"		|	"\u6c42\u4f59\u5207\u503c"
@@ -500,10 +500,11 @@ other_function
 	|	"dump"		|	"\u8fd4\u56de\u6570\u636e\u683c\u5f0f"
 	| 	"empty_blob"|	"\u521d\u59cb\u5316BLOB"
 	|	"empty_clob"|	"\u521d\u59cb\u5316CLOB"
-	|	"greatest"	|	"\u6c42\u6700\u5927\u8868\u8fbe\u5f0f"
-	|	"least"		|	"\u6c42\u6700\u5c0f\u8868\u8fbe\u5f0f"
+	|	"greatest"	|	"\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c"
+	|	"least"		|	"\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c"
 	|	"nvl"		|	"\u6c42\u975e\u7a7a\u503c"
 	;
+
 
 //\u5355\u4e2a\u8fd0\u7b97\u7b26\u53f7[~]
 one_arg_op
@@ -1531,9 +1532,9 @@ aggregate_func_name
 	|	COUNT_EN	|	COUNT_CN
 	|	"max" 		| 	"\u6c42\u6700\u5927\u503c"
 	|	"min" 		| 	"\u6c42\u6700\u5c0f\u503c"
-	|	"stddev" 	| 	"\u6c42\u6807\u51c6\u5dee"
+	|	"stddev" 	| 	"\u6c42\u65b9\u5dee"
 	|	"sum" 		|	"\u6c42\u603b\u548c"
-	|	"variance" 	| 	"\u6c42\u534f\u65b9\u5dee"
+	|	"variance" 	| 	"\u6c42\u7edf\u8ba1\u65b9\u5dee"
 	;
 
 //\u666e\u901a\u51fd\u6570(\u6570\u5b66\u51fd\u6570\u3001\u5b57\u7b26\u4e32\u51fd\u6570\u3001\u65e5\u671f\u65f6\u95f4\u51fd\u6570\u3001\u7cfb\u7edf\u51fd\u6570\u3001\u6570\u636e\u7c7b\u578b\u8f6c\u5316\u51fd\u6570\u3001\u5176\u4ed6\u51fd\u6570)
@@ -1553,7 +1554,7 @@ number_function
 	|	"acos"		|	"\u6c42\u53cd\u4f59\u5f26\u503c"
 	|	"asin"		|	"\u6c42\u53cd\u6b63\u5f26\u503c"
 	|	"atan"		|	"\u6c42\u53cd\u6b63\u5207\u503c"
-	|	"atin2"		|	"\u6c42\u4e8c\u4e2a\u6570\u7684\u53cd\u6b63\u5207\u503c"
+	|	"atan2"		|	"\u6c42\u4e8c\u4e2a\u6570\u7684\u53cd\u6b63\u5207\u503c"
 	|	"ceil"		|	"\u53d6\u4e0a\u9650\u6574\u6570"
 	|	"cos"		|	"\u6c42\u4f59\u5f26\u503c"
 	|	"cosh"		|	"\u6c42\u4f59\u5207\u503c"

@@ -111,11 +111,11 @@ public interface Oracle9iParserTokenTypes {
 	int LITERAL_min = 107;
 	// "\u6c42\u6700\u5c0f\u503c" = 108
 	int LITERAL_stddev = 109;
-	// "\u6c42\u6807\u51c6\u5dee" = 110
+	// "\u6c42\u65b9\u5dee" = 110
 	int LITERAL_sum = 111;
 	// "\u6c42\u603b\u548c" = 112
 	int LITERAL_variance = 113;
-	// "\u6c42\u534f\u65b9\u5dee" = 114
+	// "\u6c42\u7edf\u8ba1\u65b9\u5dee" = 114
 	int SYSDATE_EN = 115;
 	int SYSDATE_CN = 116;
 	int LITERAL_cast = 117;
@@ -128,7 +128,7 @@ public interface Oracle9iParserTokenTypes {
 	// "\u6c42\u53cd\u6b63\u5f26\u503c" = 124
 	int LITERAL_atan = 125;
 	// "\u6c42\u53cd\u6b63\u5207\u503c" = 126
-	// "atin2" = 127
+	// "atan2" = 127
 	// "\u6c42\u4e8c\u4e2a\u6570\u7684\u53cd\u6b63\u5207\u503c" = 128
 	int LITERAL_ceil = 129;
 	// "\u53d6\u4e0a\u9650\u6574\u6570" = 130
@@ -257,9 +257,9 @@ public interface Oracle9iParserTokenTypes {
 	int LITERAL_empty_clob = 253;
 	// "\u521d\u59cb\u5316CLOB" = 254
 	int LITERAL_greatest = 255;
-	// "\u6c42\u6700\u5927\u8868\u8fbe\u5f0f" = 256
+	// "\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c" = 256
 	int LITERAL_least = 257;
-	// "\u6c42\u6700\u5c0f\u8868\u8fbe\u5f0f" = 258
+	// "\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c" = 258
 	int LITERAL_nvl = 259;
 	// "\u6c42\u975e\u7a7a\u503c" = 260
 	int TILDE = 261;
@@ -349,6 +349,4 @@ public interface Oracle9iParserTokenTypes {
 	int TWO_ARG_OP = 345;
 	int ONE_ARG_OP = 346;
 	// "\u5de6\u8fde\u63a5" = 347
-	// "\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c" = 348
-	// "\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c" = 349
 }
