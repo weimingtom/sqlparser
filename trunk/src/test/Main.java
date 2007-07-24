@@ -35,9 +35,9 @@ public class Main {
     	functionsTestMain.FunctionsTest(mNum);
   	}else{
   		Main main = new Main();
-//  		main.testSegment();
-//  		main.testUnion();
-//      main.testCompare();
+  		main.testSegment();
+  		main.testUnion();
+      main.testCompare();
 //  		main.customQueryTest();
   		main.testTranslator();
   	}
@@ -103,7 +103,7 @@ public class Main {
   }
   
   public void testCompare(){
-    String str = "表比较 AI_94传票对照表, AI_94传票对照月表 条件 exists AI_94传票对照表.省/市代号 等于 AI_94传票对照月表.省/市代号 并且 AI_94传票对照表.行号 大于 5 并且 AI_94传票对照表.行号 < 2";
+    String str = "表比较 AI_94传票对照表, AI_94传票对照月表 条件 存在 AI_94传票对照表.省/市代号 等于 AI_94传票对照月表.省/市代号";
     Translator t = new Translator();
     System.out.println("比较语句测试：");
     t.setChQuery(str);
@@ -140,8 +140,8 @@ public class Main {
     System.out.println("IN SQL IS: " + t.getQueryModel().getChQuery());
     System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
     System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
-//    System.out.println(t.getQueryModel().getEmptyExecuteEnString("CNF238494"));
-//    System.out.println(t.getQueryModel().getExecuteEnString("CNF238494"));
+    System.out.println("EMPTY SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("CNF238494"));
+    System.out.println("EXECUTE SQL IS: " + t.getQueryModel().getExecuteEnString("CNF238494"));
 //    String xml = t.getXmlString();
 //    System.out.println("TO DB XML: " + xml);
     
