@@ -61,6 +61,7 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32ASCII\u7801", this), new Integer(166));
 	literals.put(new ANTLRHashString("hh12", this), new Integer(313));
 	literals.put(new ANTLRHashString("count", this), new Integer(91));
+	literals.put(new ANTLRHashString("\u6c42\u7edf\u8ba1\u65b9\u5dee", this), new Integer(114));
 	literals.put(new ANTLRHashString("tan", this), new Integer(157));
 	literals.put(new ANTLRHashString("\u8f6c\u4e3a\u65e5\u671f\u578b", this), new Integer(232));
 	literals.put(new ANTLRHashString("day", this), new Integer(297));
@@ -72,7 +73,6 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u6c42\u53cd\u4f59\u5f26\u503c", this), new Integer(122));
 	literals.put(new ANTLRHashString("\u6c42\u5b57\u6bb5\u5927\u5c0f", this), new Integer(246));
 	literals.put(new ANTLRHashString("trunc", this), new Integer(161));
-	literals.put(new ANTLRHashString("\u6c42\u6700\u5c0f\u8868\u8fbe\u5f0f", this), new Integer(258));
 	literals.put(new ANTLRHashString("\u4e58", this), new Integer(268));
 	literals.put(new ANTLRHashString("\u8fd4\u56de\u6570\u636e\u683c\u5f0f", this), new Integer(250));
 	literals.put(new ANTLRHashString("\u6c42ASCII\u7801", this), new Integer(164));
@@ -83,7 +83,6 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u5b57\u7b26\u4e32\u5de6\u8865", this), new Integer(182));
 	literals.put(new ANTLRHashString("initcap", this), new Integer(171));
 	literals.put(new ANTLRHashString("is", this), new Integer(79));
-	literals.put(new ANTLRHashString("\u6c42\u6807\u51c6\u5dee", this), new Integer(110));
 	literals.put(new ANTLRHashString("\u8f6c\u4e3a\u591a\u5b57\u8282\u578b", this), new Integer(234));
 	literals.put(new ANTLRHashString("\u53d6\u4e0a\u9650\u6574\u6570", this), new Integer(130));
 	literals.put(new ANTLRHashString("to_single_byte", this), new Integer(237));
@@ -94,7 +93,6 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("concat", this), new Integer(169));
 	literals.put(new ANTLRHashString("user", this), new Integer(241));
 	literals.put(new ANTLRHashString("dy", this), new Integer(307));
-	literals.put(new ANTLRHashString("\u6c42\u6700\u5927\u8868\u8fbe\u5f0f", this), new Integer(256));
 	literals.put(new ANTLRHashString("as", this), new Integer(66));
 	literals.put(new ANTLRHashString("\u6c42\u5bf9\u6570", this), new Integer(142));
 	literals.put(new ANTLRHashString("convert", this), new Integer(221));
@@ -109,7 +107,7 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("like", this), new Integer(76));
 	literals.put(new ANTLRHashString("date", this), new Integer(324));
 	literals.put(new ANTLRHashString("\u9664", this), new Integer(269));
-	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c", this), new Integer(348));
+	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c", this), new Integer(256));
 	literals.put(new ANTLRHashString("variance", this), new Integer(113));
 	literals.put(new ANTLRHashString("hextoraw", this), new Integer(223));
 	literals.put(new ANTLRHashString("dayofyear", this), new Integer(306));
@@ -129,7 +127,7 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u51cf", this), new Integer(267));
 	literals.put(new ANTLRHashString("\u6c42\u6807\u8bc6\u7f16\u53f7", this), new Integer(240));
 	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u58f0\u97f3\u503c", this), new Integer(198));
-	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c", this), new Integer(349));
+	literals.put(new ANTLRHashString("\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c", this), new Integer(258));
 	literals.put(new ANTLRHashString("\u683c\u5f0f\u5316\u6570\u503c2", this), new Integer(162));
 	literals.put(new ANTLRHashString("to_multi_byte", this), new Integer(233));
 	literals.put(new ANTLRHashString("empty_clob", this), new Integer(253));
@@ -180,6 +178,7 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u6c42\u5f53\u524d\u7528\u6237\u73af\u5883\u4fe1\u606f", this), new Integer(244));
 	literals.put(new ANTLRHashString("rpad", this), new Integer(193));
 	literals.put(new ANTLRHashString("\u53bb\u6389\u53f3\u7a7a\u683c", this), new Integer(196));
+	literals.put(new ANTLRHashString("atan2", this), new Integer(127));
 	literals.put(new ANTLRHashString("blob", this), new Integer(328));
 	literals.put(new ANTLRHashString("month", this), new Integer(294));
 	literals.put(new ANTLRHashString("\u6c42\u8bb0\u5f55\u603b\u6570", this), new Integer(92));
@@ -217,6 +216,7 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("rowidtochar", this), new Integer(227));
 	literals.put(new ANTLRHashString("ss", this), new Integer(319));
 	literals.put(new ANTLRHashString("sqrt", this), new Integer(155));
+	literals.put(new ANTLRHashString("\u6c42\u65b9\u5dee", this), new Integer(110));
 	literals.put(new ANTLRHashString("cos", this), new Integer(131));
 	literals.put(new ANTLRHashString("\u5206\u7ec4", this), new Integer(56));
 	literals.put(new ANTLRHashString("cosh", this), new Integer(133));
@@ -249,7 +249,6 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u8f6c\u4e3a\u6570\u503c\u578b", this), new Integer(236));
 	literals.put(new ANTLRHashString("\u6c42\u5bf9\u5e94\u65f6\u533a\u7684\u65f6\u95f4", this), new Integer(214));
 	literals.put(new ANTLRHashString("where", this), new Integer(42));
-	literals.put(new ANTLRHashString("atin2", this), new Integer(127));
 	literals.put(new ANTLRHashString("\u4e0d\u5305\u542b", this), new Integer(78));
 	literals.put(new ANTLRHashString("\u53d6\u7edd\u5bf9\u503c", this), new Integer(120));
 	literals.put(new ANTLRHashString("\u4e3a\u7a7a", this), new Integer(81));
@@ -258,7 +257,6 @@ public Oracle9iLexer(LexerSharedInputState state) {
 	literals.put(new ANTLRHashString("\u6c42\u5177\u4f53\u661f\u671f\u7684\u65e5\u671f", this), new Integer(216));
 	literals.put(new ANTLRHashString("\u6c42\u5e73\u65b9\u6839", this), new Integer(156));
 	literals.put(new ANTLRHashString("order", this), new Integer(57));
-	literals.put(new ANTLRHashString("\u6c42\u534f\u65b9\u5dee", this), new Integer(114));
 	literals.put(new ANTLRHashString("\u6392\u5e8f", this), new Integer(58));
 	literals.put(new ANTLRHashString("\u521d\u59cb\u5316BLOB", this), new Integer(252));
 	literals.put(new ANTLRHashString("mod", this), new Integer(143));

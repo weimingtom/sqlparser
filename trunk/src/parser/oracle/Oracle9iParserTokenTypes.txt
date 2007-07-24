@@ -106,11 +106,11 @@ LITERAL_max="max"=105
 LITERAL_min="min"=107
 "\u6c42\u6700\u5c0f\u503c"=108
 LITERAL_stddev="stddev"=109
-"\u6c42\u6807\u51c6\u5dee"=110
+"\u6c42\u65b9\u5dee"=110
 LITERAL_sum="sum"=111
 "\u6c42\u603b\u548c"=112
 LITERAL_variance="variance"=113
-"\u6c42\u534f\u65b9\u5dee"=114
+"\u6c42\u7edf\u8ba1\u65b9\u5dee"=114
 SYSDATE_EN="SYSDATE"=115
 SYSDATE_CN="\u53d6\u5f53\u524d\u65e5\u671f\u65f6\u95f4"=116
 LITERAL_cast="cast"=117
@@ -123,7 +123,7 @@ LITERAL_asin="asin"=123
 "\u6c42\u53cd\u6b63\u5f26\u503c"=124
 LITERAL_atan="atan"=125
 "\u6c42\u53cd\u6b63\u5207\u503c"=126
-"atin2"=127
+"atan2"=127
 "\u6c42\u4e8c\u4e2a\u6570\u7684\u53cd\u6b63\u5207\u503c"=128
 LITERAL_ceil="ceil"=129
 "\u53d6\u4e0a\u9650\u6574\u6570"=130
@@ -252,9 +252,9 @@ LITERAL_empty_blob="empty_blob"=251
 LITERAL_empty_clob="empty_clob"=253
 "\u521d\u59cb\u5316CLOB"=254
 LITERAL_greatest="greatest"=255
-"\u6c42\u6700\u5927\u8868\u8fbe\u5f0f"=256
+"\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c"=256
 LITERAL_least="least"=257
-"\u6c42\u6700\u5c0f\u8868\u8fbe\u5f0f"=258
+"\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c"=258
 LITERAL_nvl="nvl"=259
 "\u6c42\u975e\u7a7a\u503c"=260
 TILDE=261
@@ -344,5 +344,3 @@ COMPARE_OP=344
 TWO_ARG_OP=345
 ONE_ARG_OP=346
 "\u5de6\u8fde\u63a5"=347
-"\u6c42\u5b57\u7b26\u4e32\u6700\u5927\u503c"=348
-"\u6c42\u5b57\u7b26\u4e32\u6700\u5c0f\u503c"=349

@@ -5557,11 +5557,11 @@ inputState.guessing--;
 		"\"min\"",
 		"\"\\u6c42\\u6700\\u5c0f\\u503c\"",
 		"\"stddev\"",
-		"\"\\u6c42\\u6807\\u51c6\\u5dee\"",
+		"\"\\u6c42\\u65b9\\u5dee\"",
 		"\"sum\"",
 		"\"\\u6c42\\u603b\\u548c\"",
 		"\"variance\"",
-		"\"\\u6c42\\u534f\\u65b9\\u5dee\"",
+		"\"\\u6c42\\u7edf\\u8ba1\\u65b9\\u5dee\"",
 		"\"SYSDATE\"",
 		"\"\\u53d6\\u5f53\\u524d\\u65e5\\u671f\\u65f6\\u95f4\"",
 		"\"cast\"",
@@ -5574,7 +5574,7 @@ inputState.guessing--;
 		"\"\\u6c42\\u53cd\\u6b63\\u5f26\\u503c\"",
 		"\"atan\"",
 		"\"\\u6c42\\u53cd\\u6b63\\u5207\\u503c\"",
-		"\"atin2\"",
+		"\"atan2\"",
 		"\"\\u6c42\\u4e8c\\u4e2a\\u6570\\u7684\\u53cd\\u6b63\\u5207\\u503c\"",
 		"\"ceil\"",
 		"\"\\u53d6\\u4e0a\\u9650\\u6574\\u6570\"",
@@ -5703,9 +5703,9 @@ inputState.guessing--;
 		"\"empty_clob\"",
 		"\"\\u521d\\u59cb\\u5316CLOB\"",
 		"\"greatest\"",
-		"\"\\u6c42\\u6700\\u5927\\u8868\\u8fbe\\u5f0f\"",
+		"\"\\u6c42\\u5b57\\u7b26\\u4e32\\u6700\\u5927\\u503c\"",
 		"\"least\"",
-		"\"\\u6c42\\u6700\\u5c0f\\u8868\\u8fbe\\u5f0f\"",
+		"\"\\u6c42\\u5b57\\u7b26\\u4e32\\u6700\\u5c0f\\u503c\"",
 		"\"nvl\"",
 		"\"\\u6c42\\u975e\\u7a7a\\u503c\"",
 		"TILDE",
@@ -5794,9 +5794,7 @@ inputState.guessing--;
 		"COMPARE_OP",
 		"TWO_ARG_OP",
 		"ONE_ARG_OP",
-		"\"\\u5de6\\u8fde\\u63a5\"",
-		"\"\\u6c42\\u5b57\\u7b26\\u4e32\\u6700\\u5927\\u503c\"",
-		"\"\\u6c42\\u5b57\\u7b26\\u4e32\\u6700\\u5c0f\\u503c\""
+		"\"\\u5de6\\u8fde\\u63a5\""
 	};
 	
 	protected void buildTokenTypeASTClassMap() {
