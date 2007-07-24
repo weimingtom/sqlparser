@@ -501,6 +501,10 @@ public SybaseIQ12TreeParser() {
 					
 							tableCompare.addTableModel1(tableModel1);
 							tableCompare.addTableModel2(tableModel2);
+							t1 = new TableListModel();
+							t1.addTable(tableModel1);
+							t1.addTable(tableModel2);
+							tableCompare.addTableListModel(t1);
 							tableCompare.setCompareMethod(method);
 							tableCompare.setSearchCondition(cond);
 							model = tableCompare;
