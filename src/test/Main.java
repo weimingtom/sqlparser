@@ -35,7 +35,7 @@ public class Main {
     	functionsTestMain.FunctionsTest(mNum);
   	}else{
   		Main main = new Main();
-  		main.testSegment();
+//  		main.testSegment();
   		main.testUnion();
       main.testCompare();
 //  		main.customQueryTest();
@@ -136,7 +136,7 @@ public class Main {
       AppDbField[] appDbFieldArr = appDbTable.getFields();
 //      System.out.println(appDbTable.getTableName());
     }
-
+    System.out.println("FROM SQL IS: " + t.getChFromStr());
     System.out.println("IN SQL IS: " + t.getQueryModel().getChQuery());
     System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
     System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
@@ -210,10 +210,13 @@ public class Main {
       }
       return;
     }else{
-	    System.out.println(t.getChQuery());
-	    System.out.println(t.getQueryModel().getEnString());
-	    System.out.println(t.getQueryModel().getEmptyExecuteEnString("CNF2087803"));
-	    System.out.println(t.getQueryModel().getExecuteEnString("CNF2087803"));
+	    System.out.println("FROM SQL IS: " + t.getChFromStr());
+	    System.out.println("IN SQL IS: " + t.getQueryModel().getChQuery());
+	    System.out.println("CN SQL IS: " + t.getQueryModel().getChString());
+	    System.out.println("EN SQL IS: " + t.getQueryModel().getEnString());
+	    System.out.println("EMPTY SQL IS: " + t.getQueryModel().getEmptyExecuteEnString("CNF2087803"));
+	    System.out.println("EXECUTE SQL IS: " + t.getQueryModel().getExecuteEnString("CNF2087803"));
+	    
 //	    xml = t.getXmlString();
 //	    System.out.println("TO DB XML: " + xml);
     }
@@ -643,13 +646,13 @@ public class Main {
     		  "并且 AI_94传票对照表.货币码 NOT IN(查询 唯一 AI_94传票对照表.货币码 来自 AI_94传票对照表 where AI_94传票对照表.行号 exists (select distinct AI_94传票对照表.行号 from AI_94传票对照表) )" +
     		  ")";
     
-    str = "查询 AI_94传票对照表.省/市代号 作为 省/市代号,AI_94传票对照表.行号 作为 行号, 取绝对值(AI_94传票对照表.金额) 作为 金额" +
+    str = "查询 数据类型转化(AI_94传票对照表.行号 为 CHAR)" +
 					" 来自 AI_94传票对照表 作为 CNF"+
     			" 条件 AI_94传票对照表.行号 > 100";
 //    str = "查询 AI_94传票对照表.省/市代号 来自 AI_94传票对照表 条件 AI_94传票对照表.省/市代号 大于 '50' 并且 求行号 小于等于 10000";
     
     Translator t = new Translator();
-    t.setDatabaseType(DataBaseType.MS_SQLSERVER2000);
+    t.setDatabaseType(DataBaseType.ORACLE9i);
 //    String _cnKeyWords = t.getCnKeyWords(Translator.CNKEY_WORDS);
 //    String _cnKeyLogic = t.getCnKeyWords(Translator.CNKEY_LOGICSYMBOL);
 //		String _cnKeyFun = t.getCnKeyWords(Translator.CNKEY_FUNC);
