@@ -60,7 +60,8 @@ import model.parser.exceptions.TableNumberException;
  * 06/13/2007:<br>
  * 	- 重载getCnKeyWords方法，增加databaseType参数，用来根据数据<br>
  * 		库类型获取对应中文关键字信息
- * 		
+ * 07/31/2007:<br>
+ *  - 修改了getChFromStr()方法，表名因rowid(表)而引起的重复问题
  * ======================================================
  */
 public class Translator {
@@ -256,13 +257,16 @@ public class Translator {
   public String getChFromStr(){
     String rValue = "";
     if (model instanceof TableCompareModel || model instanceof TableUnionModel){
-      QueryModel[] tableModelArr = model.getModelsFromAllChildrenByClass(TableModel.class);
-      if (tableModelArr.length > 0){
-        rValue = tableModelArr[0].getChString();
-        for (int i = 1; i < tableModelArr.length; i++){
-          rValue += ", " + tableModelArr[i].getChString();
-        }
-      }
+    	QueryModel tableListModel = model.getFirstModelByClass(TableListModel.class);	//2007-07-31 HJD Add
+    	if (tableListModel != null){
+	      QueryModel[] tableModelArr = tableListModel.getModelsFromAllChildrenByClass(TableModel.class);
+	      if (tableModelArr.length > 0){
+	        rValue = tableModelArr[0].getChString();
+	        for (int i = 1; i < tableModelArr.length; i++){
+	          rValue += ", " + tableModelArr[i].getChString();
+	        }
+	      }
+    	}
     }else{
       if (model.getFirstModelByClass(TableListModel.class) != null)
         rValue = (model.getFirstModelByClass(TableListModel.class)).getChString();
